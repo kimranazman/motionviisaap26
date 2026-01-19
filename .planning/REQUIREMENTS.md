@@ -66,23 +66,23 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SRCH-01 | TBD | Pending |
-| NOTF-01 | TBD | Pending |
-| NOTF-02 | TBD | Pending |
-| DETL-01 | TBD | Pending |
-| DETL-02 | TBD | Pending |
-| DETL-03 | TBD | Pending |
-| KANB-01 | TBD | Pending |
-| KANB-02 | TBD | Pending |
-| NAV-01 | TBD | Pending |
-| NAV-02 | TBD | Pending |
-| NAV-03 | TBD | Pending |
+| NAV-01 | Phase 1 | Pending |
+| NAV-02 | Phase 1 | Pending |
+| NAV-03 | Phase 1 | Pending |
+| DETL-01 | Phase 1 | Pending |
+| DETL-02 | Phase 1 | Pending |
+| DETL-03 | Phase 1 | Pending |
+| SRCH-01 | Phase 2 | Pending |
+| NOTF-01 | Phase 2 | Pending |
+| NOTF-02 | Phase 2 | Pending |
+| KANB-01 | Phase 3 | Pending |
+| KANB-02 | Phase 3 | Pending |
 
 **Coverage:**
 - v1 requirements: 11 total
-- Mapped to phases: 0
-- Unmapped: 11 ⚠️
+- Mapped to phases: 11
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-20*
-*Last updated: 2026-01-20 after initial definition*
+*Last updated: 2026-01-20 after roadmap creation*
