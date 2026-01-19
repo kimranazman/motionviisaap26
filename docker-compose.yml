@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: saap2026-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=mysql://saap_user:saap_password_2026@db:3306/saap2026
+      - NODE_ENV=production
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - saap-network
+
+  db:
+    image: mariadb:10.11
+    container_name: saap2026-db
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password_2026
+      - MYSQL_DATABASE=saap2026
+      - MYSQL_USER=saap_user
+      - MYSQL_PASSWORD=saap_password_2026
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - saap-network
+
+networks:
+  saap-network:
+    driver: bridge
+
+volumes:
+  mariadb_data:
+    driver: local

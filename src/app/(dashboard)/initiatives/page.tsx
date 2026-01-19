@@ -1,0 +1,37 @@
+export const dynamic = 'force-dynamic'
+
+import { Header } from '@/components/layout/header'
+import { InitiativesList } from '@/components/initiatives/initiatives-list'
+import prisma from '@/lib/prisma'
+
+async function getInitiatives() {
+  const initiatives = await prisma.initiative.findMany({
+    orderBy: { sequenceNumber: 'asc' },
+  })
+
+  return initiatives.map(i => ({
+    ...i,
+    startDate: i.startDate.toISOString(),
+    endDate: i.endDate.toISOString(),
+    createdAt: i.createdAt.toISOString(),
+    updatedAt: i.updatedAt.toISOString(),
+    resourcesFinancial: i.resourcesFinancial ? Number(i.resourcesFinancial) : null,
+  }))
+}
+
+export default async function InitiativesPage() {
+  const initiatives = await getInitiatives()
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header
+        title="Initiatives"
+        description="Manage all 28 strategic initiatives"
+      />
+
+      <div className="p-6">
+        <InitiativesList initialData={initiatives} />
+      </div>
+    </div>
+  )
+}
