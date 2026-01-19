@@ -10,7 +10,7 @@ Complete the SAAP2026v2 UI by filling gaps in navigation, initiative detail view
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 1: Navigation & Detail Page** - Clean up dead links and build the detail page they should point to
+- [x] **Phase 1: Navigation & Detail Page** - Clean up dead links and build the detail page they should point to
 - [ ] **Phase 2: Header Features** - Add working search and notification bell
 - [ ] **Phase 3: Kanban Quick Actions** - Enable status change and reassignment from context menu
 
@@ -29,8 +29,8 @@ Complete the SAAP2026v2 UI by filling gaps in navigation, initiative detail view
 **Plans:** 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Remove dead navigation links (Settings, Profile, Edit)
-- [ ] 01-02-PLAN.md — Create initiative detail page with inline editing and comments
+- [x] 01-01-PLAN.md — Remove dead navigation links (Settings, Profile, Edit)
+- [x] 01-02-PLAN.md — Create initiative detail page with inline editing and comments
 
 ### Phase 2: Header Features
 **Goal**: Users can discover initiatives through search and get alerted to at-risk items
@@ -65,6 +65,6 @@ Phases execute in numeric order: 1 -> 2 -> 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Navigation & Detail Page | 0/2 | Planned | - |
+| 1. Navigation & Detail Page | 2/2 | ✓ Complete | 2026-01-20 |
 | 2. Header Features | 0/2 | Not started | - |
 | 3. Kanban Quick Actions | 0/1 | Not started | - |

@@ -18,9 +18,9 @@ Requirements for this milestone: Complete incomplete UI elements.
 
 ### Initiative Detail
 
-- [ ] **DETL-01**: User can view full initiative details on dedicated page (/initiatives/[id])
-- [ ] **DETL-02**: User can edit initiative fields inline on detail page
-- [ ] **DETL-03**: User can view and add comments on detail page
+- [x] **DETL-01**: User can view full initiative details on dedicated page (/initiatives/[id])
+- [x] **DETL-02**: User can edit initiative fields inline on detail page
+- [x] **DETL-03**: User can view and add comments on detail page
 
 ### Kanban Quick Actions
 
@@ -29,9 +29,9 @@ Requirements for this milestone: Complete incomplete UI elements.
 
 ### Navigation Cleanup
 
-- [ ] **NAV-01**: Settings link removed from sidebar (prevents 404)
-- [ ] **NAV-02**: Non-functional Profile/Settings/Logout removed from user dropdown
-- [ ] **NAV-03**: All initiative links across app navigate to working detail page
+- [x] **NAV-01**: Settings link removed from sidebar (prevents 404)
+- [x] **NAV-02**: Non-functional Profile/Settings/Logout removed from user dropdown
+- [x] **NAV-03**: All initiative links across app navigate to working detail page
 
 ## v2 Requirements
 
@@ -66,12 +66,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| NAV-01 | Phase 1 | Pending |
-| NAV-02 | Phase 1 | Pending |
-| NAV-03 | Phase 1 | Pending |
-| DETL-01 | Phase 1 | Pending |
-| DETL-02 | Phase 1 | Pending |
-| DETL-03 | Phase 1 | Pending |
+| NAV-01 | Phase 1 | Complete |
+| NAV-02 | Phase 1 | Complete |
+| NAV-03 | Phase 1 | Complete |
+| DETL-01 | Phase 1 | Complete |
+| DETL-02 | Phase 1 | Complete |
+| DETL-03 | Phase 1 | Complete |
 | SRCH-01 | Phase 2 | Pending |
 | NOTF-01 | Phase 2 | Pending |
 | NOTF-02 | Phase 2 | Pending |
@@ -85,4 +85,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-20*
-*Last updated: 2026-01-20 after roadmap creation*
+*Last updated: 2026-01-20 after Phase 1 completion*
