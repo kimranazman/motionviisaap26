@@ -26,11 +26,11 @@ Complete the SAAP2026v2 UI by filling gaps in navigation, initiative detail view
   3. User can view existing comments and add new comments on detail page
   4. Sidebar has no Settings link (no 404)
   5. User dropdown shows no non-functional items (Profile/Settings/Logout removed)
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 01-01: Navigation cleanup (remove dead links)
-- [ ] 01-02: Initiative detail page with inline edit and comments
+- [ ] 01-01-PLAN.md — Remove dead navigation links (Settings, Profile, Edit)
+- [ ] 01-02-PLAN.md — Create initiative detail page with inline editing and comments
 
 ### Phase 2: Header Features
 **Goal**: Users can discover initiatives through search and get alerted to at-risk items
@@ -65,6 +65,6 @@ Phases execute in numeric order: 1 -> 2 -> 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Navigation & Detail Page | 0/2 | Not started | - |
+| 1. Navigation & Detail Page | 0/2 | Planned | - |
 | 2. Header Features | 0/2 | Not started | - |
 | 3. Kanban Quick Actions | 0/1 | Not started | - |
