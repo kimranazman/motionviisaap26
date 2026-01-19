@@ -38,7 +38,7 @@ import {
   STATUS_OPTIONS,
   DEPARTMENT_OPTIONS,
 } from '@/lib/utils'
-import { Plus, Search, Filter, Eye, Pencil } from 'lucide-react'
+import { Plus, Search, Filter, Eye } from 'lucide-react'
 
 interface Initiative {
   id: string
@@ -204,18 +204,11 @@ export function InitiativesList({ initialData }: InitiativesListProps) {
                     </span>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-1">
-                      <Button variant="ghost" size="icon" asChild>
-                        <Link href={`/initiatives/${initiative.id}`}>
-                          <Eye className="h-4 w-4" />
-                        </Link>
-                      </Button>
-                      <Button variant="ghost" size="icon" asChild>
-                        <Link href={`/initiatives/${initiative.id}/edit`}>
-                          <Pencil className="h-4 w-4" />
-                        </Link>
-                      </Button>
-                    </div>
+                    <Button variant="ghost" size="icon" asChild>
+                      <Link href={`/initiatives/${initiative.id}`}>
+                        <Eye className="h-4 w-4" />
+                      </Link>
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}

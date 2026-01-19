@@ -97,6 +97,10 @@ export async function PATCH(
       updateData.remarks = body.remarks
     }
 
+    if (body.personInCharge !== undefined) {
+      updateData.personInCharge = body.personInCharge
+    }
+
     const initiative = await prisma.initiative.update({
       where: { id },
       data: updateData,
