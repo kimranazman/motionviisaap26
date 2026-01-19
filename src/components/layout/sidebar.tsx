@@ -9,7 +9,6 @@ import {
   KanbanSquare,
   Calendar,
   ListTodo,
-  Settings,
   Target,
   Ticket,
 } from 'lucide-react'
@@ -61,26 +60,6 @@ export function Sidebar() {
           )
         })}
       </nav>
-
-      {/* Footer */}
-      <div className="absolute bottom-0 left-0 right-0 border-t border-gray-200 p-4">
-        <Link
-          href="/settings"
-          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-        >
-          <Settings className="h-5 w-5" />
-          Settings
-        </Link>
-        <div className="mt-4 px-3">
-          <div className="text-xs text-gray-400">Revenue Target 2026</div>
-          <div className="mt-1 text-lg font-semibold text-gray-900">RM 1,000,000</div>
-          <div className="mt-1 flex gap-2 text-xs text-gray-500">
-            <span>Events: RM 800K</span>
-            <span>|</span>
-            <span>AI: RM 200K</span>
-          </div>
-        </div>
-      </div>
     </aside>
   )
 }
