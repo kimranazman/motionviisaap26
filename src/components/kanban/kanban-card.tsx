@@ -10,8 +10,13 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
 } from '@/components/ui/dropdown-menu'
-import { cn } from '@/lib/utils'
+import { cn, STATUS_OPTIONS, TEAM_MEMBER_OPTIONS, getStatusColor } from '@/lib/utils'
 import { MoreHorizontal, Eye, RefreshCw, UserPlus } from 'lucide-react'
 
 interface Initiative {
@@ -31,6 +36,8 @@ interface KanbanCardProps {
   item: Initiative
   isDragging?: boolean
   onClick?: () => void
+  onStatusChange?: (id: string, status: string) => Promise<void>
+  onReassign?: (id: string, personInCharge: string | null) => Promise<void>
 }
 
 const TEAM_INITIALS: Record<string, string> = {
@@ -53,7 +60,7 @@ const DEPARTMENT_BORDER_BOTTOM: Record<string, string> = {
   MARKETING: 'border-b-orange-400',
 }
 
-export function KanbanCard({ item, isDragging, onClick }: KanbanCardProps) {
+export function KanbanCard({ item, isDragging, onClick, onStatusChange, onReassign }: KanbanCardProps) {
   const {
     attributes,
     listeners,
@@ -118,14 +125,58 @@ export function KanbanCard({ item, isDragging, onClick }: KanbanCardProps) {
               <Eye className="h-4 w-4 mr-2" />
               View Details
             </DropdownMenuItem>
-            <DropdownMenuItem onPointerDown={(e) => e.stopPropagation()}>
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Change Status
-            </DropdownMenuItem>
-            <DropdownMenuItem onPointerDown={(e) => e.stopPropagation()}>
-              <UserPlus className="h-4 w-4 mr-2" />
-              Reassign
-            </DropdownMenuItem>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger onPointerDown={(e) => e.stopPropagation()}>
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Change Status
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                <DropdownMenuRadioGroup
+                  value={item.status}
+                  onValueChange={(value) => onStatusChange?.(item.id, value)}
+                >
+                  {STATUS_OPTIONS.map((option) => (
+                    <DropdownMenuRadioItem
+                      key={option.value}
+                      value={option.value}
+                      onPointerDown={(e) => e.stopPropagation()}
+                    >
+                      <Badge className={cn('ml-2', getStatusColor(option.value))}>
+                        {option.label}
+                      </Badge>
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger onPointerDown={(e) => e.stopPropagation()}>
+                <UserPlus className="h-4 w-4 mr-2" />
+                Reassign
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                <DropdownMenuRadioGroup
+                  value={item.personInCharge || ''}
+                  onValueChange={(value) => onReassign?.(item.id, value || null)}
+                >
+                  <DropdownMenuRadioItem
+                    value=""
+                    onPointerDown={(e) => e.stopPropagation()}
+                  >
+                    Unassigned
+                  </DropdownMenuRadioItem>
+                  {TEAM_MEMBER_OPTIONS.map((option) => (
+                    <DropdownMenuRadioItem
+                      key={option.value}
+                      value={option.value}
+                      onPointerDown={(e) => e.stopPropagation()}
+                    >
+                      {option.label}
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
