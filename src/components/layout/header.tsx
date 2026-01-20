@@ -1,7 +1,5 @@
 'use client'
 
-import { Bell, Search } from 'lucide-react'
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
@@ -10,6 +8,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { HeaderSearch } from './header-search'
+import { NotificationBell } from './notification-bell'
 
 interface HeaderProps {
   title: string
@@ -28,21 +28,10 @@ export function Header({ title, description }: HeaderProps) {
 
       <div className="flex items-center gap-4">
         {/* Search */}
-        <div className="relative hidden md:block">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <Input
-            placeholder="Search initiatives..."
-            className="w-64 pl-9 bg-gray-50 border-gray-200"
-          />
-        </div>
+        <HeaderSearch />
 
         {/* Notifications */}
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5 text-gray-600" />
-          <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-medium text-white">
-            3
-          </span>
-        </Button>
+        <NotificationBell />
 
         {/* User Menu */}
         <DropdownMenu>
