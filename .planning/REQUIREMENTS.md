@@ -72,32 +72,32 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | TBD | Pending |
-| AUTH-02 | TBD | Pending |
-| AUTH-03 | TBD | Pending |
-| AUTH-04 | TBD | Pending |
-| AUTH-05 | TBD | Pending |
-| ROLE-01 | TBD | Pending |
-| ROLE-02 | TBD | Pending |
-| ROLE-03 | TBD | Pending |
-| ROLE-04 | TBD | Pending |
-| ROLE-05 | TBD | Pending |
-| ROLE-06 | TBD | Pending |
-| PROT-01 | TBD | Pending |
-| PROT-02 | TBD | Pending |
-| PROT-03 | TBD | Pending |
-| PROT-04 | TBD | Pending |
-| UI-01 | TBD | Pending |
-| UI-02 | TBD | Pending |
-| UI-03 | TBD | Pending |
-| UI-04 | TBD | Pending |
-| UI-05 | TBD | Pending |
+| AUTH-01 | Phase 4 | Pending |
+| AUTH-02 | Phase 4 | Pending |
+| AUTH-03 | Phase 4 | Pending |
+| AUTH-04 | Phase 4 | Pending |
+| AUTH-05 | Phase 4 | Pending |
+| ROLE-01 | Phase 5 | Pending |
+| ROLE-02 | Phase 5 | Pending |
+| ROLE-03 | Phase 5 | Pending |
+| ROLE-04 | Phase 7 | Pending |
+| ROLE-05 | Phase 7 | Pending |
+| ROLE-06 | Phase 7 | Pending |
+| PROT-01 | Phase 6 | Pending |
+| PROT-02 | Phase 6 | Pending |
+| PROT-03 | Phase 6 | Pending |
+| PROT-04 | Phase 6 | Pending |
+| UI-01 | Phase 8 | Pending |
+| UI-02 | Phase 8 | Pending |
+| UI-03 | Phase 8 | Pending |
+| UI-04 | Phase 8 | Pending |
+| UI-05 | Phase 8 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 20 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 20
+- Mapped to phases: 20
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-21*
-*Last updated: 2026-01-21 after initial definition*
+*Last updated: 2026-01-21 after roadmap creation*

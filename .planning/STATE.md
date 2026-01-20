@@ -2,19 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-01-20)
+See: .planning/PROJECT.md (updated 2026-01-21)
 
 **Core value:** Team can visualize and track initiative progress across multiple views with intuitive drag-and-drop.
-**Current focus:** Project Complete
+**Current focus:** v1.1 Authentication - Phase 4 (Auth Foundation)
 
 ## Current Position
 
-Phase: 3 of 3 (Kanban Quick Actions)
-Plan: 1 of 1 in current phase
-Status: Complete
-Last activity: 2026-01-20 - Phase 3 verified and complete, milestone complete
+Phase: 4 of 8 (Auth Foundation)
+Plan: 0 of ? in current phase
+Status: Ready to plan
+Last activity: 2026-01-21 - Roadmap created for v1.1 milestone
 
-Progress: [##########] 100%
+Progress: [#####-----] 50% (5/10 plans from v1.0 + 0/? from v1.1)
 
 ## Performance Metrics
 
@@ -32,7 +32,7 @@ Progress: [##########] 100%
 | 03-kanban-quick-actions | 1 | 3min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (6min), 02-02 (2min), 02-01 (3min), 03-01 (3min)
+- Last 5 plans: 01-02 (6min), 02-01 (3min), 02-02 (2min), 03-01 (3min)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -46,15 +46,8 @@ Recent decisions affecting current work:
 
 | Plan | Decision | Rationale |
 |------|----------|-----------|
-| 01-01 | Remove sidebar footer entirely | Settings + revenue display both removed, cleaner UI |
-| 01-01 | User dropdown shows info only | No Profile/Settings/Logout until auth implemented |
-| 01-01 | Edit on detail page, not separate route | Plan 02 implements inline editing |
-| 01-02 | Inline editing on detail page | Simpler UX, fewer routes to maintain |
-| 02-01 | Limit search to 10 results | Keeps dropdown manageable |
-| 02-01 | Search includes personInCharge | Users search by name, not enum value |
-| 02-02 | Notifications show all initiatives | No user filtering until auth implemented |
-| 02-02 | Badge hidden during loading | Prevents flicker (Pitfall 3 from research) |
-| 03-01 | Use DropdownMenuRadioGroup for single-select options | Provides visual indicator of current selection |
+| v1.1 roadmap | 5 phases for auth | Natural grouping: foundation, roles, protection, admin, UI |
+| v1.1 roadmap | Start at Phase 4 | Continuous numbering from v1.0 |
 
 ### Pending Todos
 
@@ -62,10 +55,10 @@ None.
 
 ### Blockers/Concerns
 
-None. All phases complete.
+None.
 
 ## Session Continuity
 
-Last session: 2026-01-20
-Stopped at: Milestone complete - all phases verified
+Last session: 2026-01-21
+Stopped at: Roadmap created for v1.1 milestone
 Resume file: None
