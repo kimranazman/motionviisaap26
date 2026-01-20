@@ -35,11 +35,28 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - ✓ Kanban quick action "Reassign" — v1
 - ✓ Clean navigation (no dead links) — v1
 
+## Current Milestone: v1.1 Authentication
+
+**Goal:** Restrict access to authorized @talenta.com.my users with role-based permissions.
+
+**Target features:**
+- Google OAuth login (NextAuth.js)
+- Domain restriction (@talenta.com.my only)
+- Three-tier roles: Admin, Editor, Viewer
+- Auto-approve domain users as Viewer
+- Admin user management page
+- Role-based action permissions
+
 ### Active
 
 <!-- Current scope. Building toward these. -->
 
-(Starting v2 milestone)
+- [ ] Google OAuth login with NextAuth.js
+- [ ] Domain-restricted access (@talenta.com.my)
+- [ ] User roles (Admin, Editor, Viewer)
+- [ ] Admin user management page
+- [ ] Protected routes and API endpoints
+- [ ] Role-based UI (hide edit buttons for Viewers)
 
 ### Out of Scope
 
@@ -56,14 +73,14 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - Accessible at https://saap.motionvii.com (Cloudflare tunnel)
 - Data seeded from Excel file (MotionVii_SAAP_2026.xlsx)
 - 28 initiatives, 38 events currently in database
-- No authentication — currently trusted network access only
+- Adding authentication (v1.1) — Google OAuth with domain restriction
 
 ## Constraints
 
 - **Tech stack**: Next.js 14, Prisma, MariaDB, Tailwind/shadcn — established, don't change
 - **Deployment**: Must work on NAS with low CPU priority (nice -n 19)
 - **Team size**: 3 hardcoded team members (Khairul, Azlan, Izyani) in Prisma enum
-- **No new dependencies**: Prefer using existing UI components over adding libraries
+- **Minimal dependencies**: Prefer existing UI components; NextAuth.js approved for auth
 
 ## Key Decisions
 
@@ -77,4 +94,4 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | Notifications as popover not page | Quick glance, not a separate view | ✓ Good |
 
 ---
-*Last updated: 2026-01-21 after v1 milestone archived*
+*Last updated: 2026-01-21 after v1.1 milestone started*
