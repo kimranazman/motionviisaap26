@@ -40,11 +40,11 @@ Plans:
   1. User types in header search and sees filtered initiative results
   2. User sees badge count on bell icon showing overdue/at-risk initiatives
   3. User clicks bell and sees popover list with links to each at-risk initiative
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] 02-01: Global search implementation
-- [ ] 02-02: Notification bell with badge and popover
+- [ ] 02-01-PLAN.md — Global search with debounced input and popover results
+- [ ] 02-02-PLAN.md — Notification bell with badge count and grouped popover
 
 ### Phase 3: Kanban Quick Actions
 **Goal**: Users can update initiatives directly from Kanban board without opening forms
@@ -65,6 +65,6 @@ Phases execute in numeric order: 1 -> 2 -> 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Navigation & Detail Page | 2/2 | ✓ Complete | 2026-01-20 |
-| 2. Header Features | 0/2 | Not started | - |
+| 1. Navigation & Detail Page | 2/2 | Complete | 2026-01-20 |
+| 2. Header Features | 0/2 | Planned | - |
 | 3. Kanban Quick Actions | 0/1 | Not started | - |
