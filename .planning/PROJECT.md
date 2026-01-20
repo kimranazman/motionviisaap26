@@ -27,27 +27,24 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - ✓ Filter by person, status, date range — existing
 - ✓ NAS deployment with Docker — existing
 - ✓ Public access via Cloudflare tunnel (saap.motionvii.com) — existing
+- ✓ Global search with debounced popover results — v1
+- ✓ Notification bell with badge count and grouped alerts — v1
+- ✓ Initiative detail page (/initiatives/[id]) with inline editing — v1
+- ✓ Comments on initiative detail page — v1
+- ✓ Kanban quick action "Change Status" — v1
+- ✓ Kanban quick action "Reassign" — v1
+- ✓ Clean navigation (no dead links) — v1
 
 ### Active
 
 <!-- Current scope. Building toward these. -->
 
-- [ ] Global search actually filters initiatives
-- [ ] Notification bell shows overdue/at-risk initiatives with dynamic count
-- [ ] Initiative detail page (/initiatives/[id]) with full view
-- [ ] Initiative edit page (/initiatives/[id]/edit) or inline editing
-- [ ] Kanban quick action "Change Status" works
-- [ ] Kanban quick action "Reassign" works
-- [ ] Remove dead Settings link from sidebar
-- [ ] Remove/disable non-functional auth UI (Profile, Settings, Logout menu items)
-- [ ] Fix all dead links pointing to non-existent routes
+(Starting v2 milestone)
 
 ### Out of Scope
 
 <!-- Explicit boundaries. Includes reasoning to prevent re-adding. -->
 
-- Authentication/authorization — planned for future milestone, internal tool for now
-- Settings page — requires auth, defer until auth milestone
 - Real-time collaboration — single user typically, not needed
 - Mobile app — web-first, responsive design sufficient
 - Email notifications — overkill for 3-person team
@@ -59,7 +56,7 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - Accessible at https://saap.motionvii.com (Cloudflare tunnel)
 - Data seeded from Excel file (MotionVii_SAAP_2026.xlsx)
 - 28 initiatives, 38 events currently in database
-- No authentication — trusted network access only
+- No authentication — currently trusted network access only
 
 ## Constraints
 
@@ -74,10 +71,10 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Use existing detail sheet for quick edits | Avoid duplicate UI, sheet already works well | — Pending |
-| Full detail page for comprehensive view | Some workflows need full-page context | — Pending |
-| Remove auth UI vs disable | Cleaner UX, auth coming in dedicated milestone | — Pending |
-| Notifications as popover not page | Quick glance, not a separate view | — Pending |
+| Use existing detail sheet for quick edits | Avoid duplicate UI, sheet already works well | ✓ Good |
+| Full detail page for comprehensive view | Some workflows need full-page context | ✓ Good |
+| Remove auth UI vs disable | Cleaner UX, auth coming in dedicated milestone | ✓ Good |
+| Notifications as popover not page | Quick glance, not a separate view | ✓ Good |
 
 ---
-*Last updated: 2026-01-20 after initialization*
+*Last updated: 2026-01-21 after v1 milestone archived*
