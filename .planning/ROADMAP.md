@@ -12,7 +12,7 @@ Complete the SAAP2026v2 UI by filling gaps in navigation, initiative detail view
 
 - [x] **Phase 1: Navigation & Detail Page** - Clean up dead links and build the detail page they should point to
 - [x] **Phase 2: Header Features** - Add working search and notification bell
-- [ ] **Phase 3: Kanban Quick Actions** - Enable status change and reassignment from context menu
+- [x] **Phase 3: Kanban Quick Actions** - Enable status change and reassignment from context menu
 
 ## Phase Details
 
@@ -56,7 +56,7 @@ Plans:
 **Plans:** 1 plan
 
 Plans:
-- [ ] 03-01-PLAN.md — Add dropdown submenus for status change and reassign with API persistence
+- [x] 03-01-PLAN.md — Add dropdown submenus for status change and reassign with API persistence
 
 ## Progress
 
@@ -67,4 +67,4 @@ Phases execute in numeric order: 1 -> 2 -> 3
 |-------|----------------|--------|-----------|
 | 1. Navigation & Detail Page | 2/2 | Complete | 2026-01-20 |
 | 2. Header Features | 2/2 | Complete | 2026-01-20 |
-| 3. Kanban Quick Actions | 0/1 | Ready to execute | - |
+| 3. Kanban Quick Actions | 1/1 | Complete | 2026-01-20 |

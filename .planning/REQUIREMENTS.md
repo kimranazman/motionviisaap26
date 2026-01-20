@@ -24,8 +24,8 @@ Requirements for this milestone: Complete incomplete UI elements.
 
 ### Kanban Quick Actions
 
-- [ ] **KANB-01**: User can change initiative status via context menu "Change Status"
-- [ ] **KANB-02**: User can reassign initiative via context menu "Reassign"
+- [x] **KANB-01**: User can change initiative status via context menu "Change Status"
+- [x] **KANB-02**: User can reassign initiative via context menu "Reassign"
 
 ### Navigation Cleanup
 
@@ -75,8 +75,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SRCH-01 | Phase 2 | Complete |
 | NOTF-01 | Phase 2 | Complete |
 | NOTF-02 | Phase 2 | Complete |
-| KANB-01 | Phase 3 | Pending |
-| KANB-02 | Phase 3 | Pending |
+| KANB-01 | Phase 3 | Complete |
+| KANB-02 | Phase 3 | Complete |
 
 **Coverage:**
 - v1 requirements: 11 total
@@ -85,4 +85,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-20*
-*Last updated: 2026-01-20 after Phase 2 completion*
+*Last updated: 2026-01-20 after Phase 3 completion*
