@@ -278,6 +278,48 @@ export function KanbanBoard({ initialData }: KanbanBoardProps) {
     setSelectedInitiative(updated)
   }
 
+  const handleStatusChange = async (id: string, newStatus: string) => {
+    // Optimistic update - card moves to new column immediately
+    setInitiatives(prev =>
+      prev.map(item => (item.id === id ? { ...item, status: newStatus } : item))
+    )
+
+    // Persist to API (PATCH endpoint supports status field)
+    try {
+      const response = await fetch(`/api/initiatives/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      })
+      if (!response.ok) {
+        console.error('Failed to update status:', await response.text())
+      }
+    } catch (error) {
+      console.error('Failed to update status:', error)
+    }
+  }
+
+  const handleReassign = async (id: string, personInCharge: string | null) => {
+    // Optimistic update - avatar changes immediately
+    setInitiatives(prev =>
+      prev.map(item => (item.id === id ? { ...item, personInCharge } : item))
+    )
+
+    // Persist to API (PATCH endpoint supports personInCharge field)
+    try {
+      const response = await fetch(`/api/initiatives/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ personInCharge }),
+      })
+      if (!response.ok) {
+        console.error('Failed to reassign:', await response.text())
+      }
+    } catch (error) {
+      console.error('Failed to reassign:', error)
+    }
+  }
+
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string)
   }
@@ -459,6 +501,8 @@ export function KanbanBoard({ initialData }: KanbanBoardProps) {
                         key={item.id}
                         item={item}
                         onClick={() => handleCardClick(item)}
+                        onStatusChange={handleStatusChange}
+                        onReassign={handleReassign}
                       />
                     ))}
                   </SortableContext>
@@ -469,7 +513,12 @@ export function KanbanBoard({ initialData }: KanbanBoardProps) {
 
           <DragOverlay>
             {activeId ? (
-              <KanbanCard item={getActiveItem()!} isDragging />
+              <KanbanCard
+                item={getActiveItem()!}
+                isDragging
+                onStatusChange={handleStatusChange}
+                onReassign={handleReassign}
+              />
             ) : null}
           </DragOverlay>
         </DndContext>
