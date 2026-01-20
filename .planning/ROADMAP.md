@@ -51,12 +51,12 @@ Plans:
 **Depends on**: Phase 1 (uses same data patterns)
 **Requirements**: KANB-01, KANB-02
 **Success Criteria** (what must be TRUE):
-  1. User right-clicks Kanban card, selects "Change Status", and status updates immediately
-  2. User right-clicks Kanban card, selects "Reassign", picks new owner, and card updates
-**Plans**: TBD
+  1. User hovers over Kanban card, clicks menu, selects "Change Status", and status updates immediately
+  2. User hovers over Kanban card, clicks menu, selects "Reassign", picks new owner, and card updates
+**Plans:** 1 plan
 
 Plans:
-- [ ] 03-01: Kanban context menu actions (Change Status, Reassign)
+- [ ] 03-01-PLAN.md — Add dropdown submenus for status change and reassign with API persistence
 
 ## Progress
 
@@ -67,4 +67,4 @@ Phases execute in numeric order: 1 -> 2 -> 3
 |-------|----------------|--------|-----------|
 | 1. Navigation & Detail Page | 2/2 | Complete | 2026-01-20 |
 | 2. Header Features | 2/2 | Complete | 2026-01-20 |
-| 3. Kanban Quick Actions | 0/1 | Not started | - |
+| 3. Kanban Quick Actions | 0/1 | Ready to execute | - |
