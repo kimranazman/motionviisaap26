@@ -11,7 +11,7 @@ Complete the SAAP2026v2 UI by filling gaps in navigation, initiative detail view
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 1: Navigation & Detail Page** - Clean up dead links and build the detail page they should point to
-- [ ] **Phase 2: Header Features** - Add working search and notification bell
+- [x] **Phase 2: Header Features** - Add working search and notification bell
 - [ ] **Phase 3: Kanban Quick Actions** - Enable status change and reassignment from context menu
 
 ## Phase Details
@@ -43,8 +43,8 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Global search with debounced input and popover results
-- [ ] 02-02-PLAN.md — Notification bell with badge count and grouped popover
+- [x] 02-01-PLAN.md — Global search with debounced input and popover results
+- [x] 02-02-PLAN.md — Notification bell with badge count and grouped popover
 
 ### Phase 3: Kanban Quick Actions
 **Goal**: Users can update initiatives directly from Kanban board without opening forms
@@ -66,5 +66,5 @@ Phases execute in numeric order: 1 -> 2 -> 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Navigation & Detail Page | 2/2 | Complete | 2026-01-20 |
-| 2. Header Features | 0/2 | Planned | - |
+| 2. Header Features | 2/2 | Complete | 2026-01-20 |
 | 3. Kanban Quick Actions | 0/1 | Not started | - |

@@ -9,12 +9,12 @@ Requirements for this milestone: Complete incomplete UI elements.
 
 ### Search
 
-- [ ] **SRCH-01**: User can search initiatives from header and see filtered results
+- [x] **SRCH-01**: User can search initiatives from header and see filtered results
 
 ### Notifications
 
-- [ ] **NOTF-01**: User can see count of overdue/at-risk initiatives on bell icon
-- [ ] **NOTF-02**: User can click bell to see list of overdue/at-risk initiatives with links
+- [x] **NOTF-01**: User can see count of overdue/at-risk initiatives on bell icon
+- [x] **NOTF-02**: User can click bell to see list of overdue/at-risk initiatives with links
 
 ### Initiative Detail
 
@@ -72,9 +72,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DETL-01 | Phase 1 | Complete |
 | DETL-02 | Phase 1 | Complete |
 | DETL-03 | Phase 1 | Complete |
-| SRCH-01 | Phase 2 | Pending |
-| NOTF-01 | Phase 2 | Pending |
-| NOTF-02 | Phase 2 | Pending |
+| SRCH-01 | Phase 2 | Complete |
+| NOTF-01 | Phase 2 | Complete |
+| NOTF-02 | Phase 2 | Complete |
 | KANB-01 | Phase 3 | Pending |
 | KANB-02 | Phase 3 | Pending |
 
@@ -85,4 +85,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-20*
-*Last updated: 2026-01-20 after Phase 1 completion*
+*Last updated: 2026-01-20 after Phase 2 completion*
