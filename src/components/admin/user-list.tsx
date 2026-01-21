@@ -30,17 +30,6 @@ interface UserListProps {
   currentUserId: string
 }
 
-function getRoleBadgeVariant(role: UserRole) {
-  switch (role) {
-    case "ADMIN":
-      return "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400"
-    case "EDITOR":
-      return "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400"
-    case "VIEWER":
-      return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400"
-  }
-}
-
 function getInitials(name: string | null): string {
   if (!name) return "?"
   return name

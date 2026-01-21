@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, useMemo } from 'react'
+import { useSession } from 'next-auth/react'
 import {
   DndContext,
   DragOverlay,
@@ -27,6 +28,7 @@ import { KanbanCard } from './kanban-card'
 import { KanbanFilterBar, type DateFilter } from './kanban-filter-bar'
 import { KanbanSwimlaneView } from './kanban-swimlane-view'
 import { InitiativeDetailSheet } from './initiative-detail-sheet'
+import { canEdit } from '@/lib/permissions'
 import { LayoutGrid, Users } from 'lucide-react'
 
 // Date filter helper functions
@@ -173,6 +175,9 @@ const STATUS_TO_COLUMN: Record<string, string> = {
 type ViewMode = 'board' | 'by-person'
 
 export function KanbanBoard({ initialData }: KanbanBoardProps) {
+  const { data: session } = useSession()
+  const userCanEdit = canEdit(session?.user?.role)
+
   const [initiatives, setInitiatives] = useState(initialData)
   const [activeId, setActiveId] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<ViewMode>('board')
@@ -503,6 +508,7 @@ export function KanbanBoard({ initialData }: KanbanBoardProps) {
                         onClick={() => handleCardClick(item)}
                         onStatusChange={handleStatusChange}
                         onReassign={handleReassign}
+                        canEdit={userCanEdit}
                       />
                     ))}
                   </SortableContext>
@@ -518,6 +524,7 @@ export function KanbanBoard({ initialData }: KanbanBoardProps) {
                 isDragging
                 onStatusChange={handleStatusChange}
                 onReassign={handleReassign}
+                canEdit={userCanEdit}
               />
             ) : null}
           </DragOverlay>
