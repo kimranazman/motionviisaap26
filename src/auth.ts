@@ -20,6 +20,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           hd: "talenta.com.my", // UI hint only - NOT security control
         },
       },
+      profile(profile) {
+        return {
+          id: profile.sub,
+          name: profile.name,
+          email: profile.email,
+          image: profile.picture,
+          role: "VIEWER", // Default role for all new users
+        }
+      },
     }),
   ],
   callbacks: {
