@@ -15,6 +15,16 @@ export async function GET(
     const comments = await prisma.comment.findMany({
       where: { initiativeId: id },
       orderBy: { createdAt: 'desc' },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+          },
+        },
+      },
     })
 
     return NextResponse.json(comments)
@@ -33,16 +43,16 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { error } = await requireAuth()
+  const { session, error } = await requireAuth()
   if (error) return error
 
   try {
     const { id } = await params
     const body = await request.json()
 
-    if (!body.content || !body.author) {
+    if (!body.content) {
       return NextResponse.json(
-        { error: 'Content and author are required' },
+        { error: 'Content is required' },
         { status: 400 }
       )
     }
@@ -59,11 +69,22 @@ export async function POST(
       )
     }
 
+    // Create comment with logged-in user's ID
     const comment = await prisma.comment.create({
       data: {
         content: body.content,
-        author: body.author,
+        userId: session.user.id,
         initiativeId: id,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+          },
+        },
       },
     })
 

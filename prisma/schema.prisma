@@ -74,7 +74,8 @@ model Initiative {
 model Comment {
   id            String      @id @default(cuid())
   content       String      @db.Text
-  author        TeamMember
+  userId        String      @map("user_id")
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   initiativeId  String
   initiative    Initiative  @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
 
@@ -82,6 +83,7 @@ model Comment {
   updatedAt     DateTime    @updatedAt
 
   @@index([initiativeId])
+  @@index([userId])
   @@index([createdAt])
   @@map("comments")
 }
@@ -169,6 +171,7 @@ model User {
 
   accounts      Account[]
   sessions      Session[]
+  comments      Comment[]
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt

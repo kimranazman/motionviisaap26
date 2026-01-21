@@ -41,10 +41,17 @@ import {
   FileText,
 } from 'lucide-react'
 
+interface CommentUser {
+  id: string
+  name: string | null
+  email: string | null
+  image: string | null
+}
+
 interface Comment {
   id: string
   content: string
-  author: string
+  user: CommentUser
   createdAt: string
 }
 
@@ -110,7 +117,6 @@ export function InitiativeDetail({ initiative }: InitiativeDetailProps) {
   // Comments state
   const [comments, setComments] = useState<Comment[]>(initiative.comments)
   const [newComment, setNewComment] = useState('')
-  const [commentAuthor, setCommentAuthor] = useState('KHAIRUL')
 
   // Loading states
   const [isSaving, setIsSaving] = useState(false)
@@ -165,7 +171,6 @@ export function InitiativeDetail({ initiative }: InitiativeDetailProps) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             content: newComment,
-            author: commentAuthor,
           }),
         }
       )
@@ -436,19 +441,16 @@ export function InitiativeDetail({ initiative }: InitiativeDetailProps) {
           <CardContent className="space-y-4">
             {/* New Comment Input */}
             <div className="space-y-2">
-              <div className="flex gap-2">
-                <Select value={commentAuthor} onValueChange={setCommentAuthor}>
-                  <SelectTrigger className="w-28 h-9">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {TEAM_MEMBER_OPTIONS.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="flex gap-3">
+                <Avatar className="h-8 w-8 shrink-0">
+                  {session?.user?.image ? (
+                    <img src={session.user.image} alt={session?.user?.name || ''} className="h-8 w-8 rounded-full" />
+                  ) : (
+                    <AvatarFallback className="text-xs bg-blue-600 text-white">
+                      {session?.user?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || '?'}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
                 <Textarea
                   placeholder="Add a comment..."
                   value={newComment}
@@ -495,17 +497,16 @@ export function InitiativeDetail({ initiative }: InitiativeDetailProps) {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Avatar className="h-6 w-6">
-                          <AvatarFallback
-                            className={cn(
-                              'text-[10px] text-white font-medium',
-                              TEAM_COLORS[comment.author] || 'bg-gray-400'
-                            )}
-                          >
-                            {TEAM_INITIALS[comment.author] || '??'}
-                          </AvatarFallback>
+                          {comment.user?.image ? (
+                            <img src={comment.user.image} alt={comment.user.name || ''} className="h-6 w-6 rounded-full" />
+                          ) : (
+                            <AvatarFallback className="text-[10px] text-white font-medium bg-blue-600">
+                              {comment.user?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || '?'}
+                            </AvatarFallback>
+                          )}
                         </Avatar>
                         <span className="text-sm font-medium">
-                          {formatTeamMember(comment.author)}
+                          {comment.user?.name || comment.user?.email || 'Unknown'}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">

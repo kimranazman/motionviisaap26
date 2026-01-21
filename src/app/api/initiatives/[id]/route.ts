@@ -18,6 +18,16 @@ export async function GET(
       include: {
         comments: {
           orderBy: { createdAt: 'desc' },
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
         },
       },
     })

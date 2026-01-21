@@ -10,6 +10,16 @@ async function getInitiative(id: string) {
     include: {
       comments: {
         orderBy: { createdAt: 'desc' },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              image: true,
+            },
+          },
+        },
       },
     },
   })
@@ -29,9 +39,10 @@ async function getInitiative(id: string) {
       ? Number(initiative.resourcesFinancial)
       : null,
     comments: initiative.comments.map((c) => ({
-      ...c,
+      id: c.id,
+      content: c.content,
       createdAt: c.createdAt.toISOString(),
-      updatedAt: c.updatedAt.toISOString(),
+      user: c.user,
     })),
   }
 }

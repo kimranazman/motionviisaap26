@@ -44,10 +44,17 @@ import {
   Trash2,
 } from 'lucide-react'
 
+interface CommentUser {
+  id: string
+  name: string | null
+  email: string | null
+  image: string | null
+}
+
 interface Comment {
   id: string
   content: string
-  author: string
+  user: CommentUser
   createdAt: string
 }
 
@@ -77,16 +84,19 @@ interface InitiativeDetailSheetProps {
   onUpdate?: (updated: Initiative) => void
 }
 
-const TEAM_INITIALS: Record<string, string> = {
-  KHAIRUL: 'KH',
-  AZLAN: 'AZ',
-  IZYANI: 'IZ',
-}
-
-const TEAM_COLORS: Record<string, string> = {
-  KHAIRUL: 'bg-blue-600',
-  AZLAN: 'bg-green-600',
-  IZYANI: 'bg-purple-600',
+// Helper to get initials from name or email
+const getInitials = (user: CommentUser): string => {
+  if (user.name) {
+    const parts = user.name.split(' ')
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase()
+    }
+    return user.name.substring(0, 2).toUpperCase()
+  }
+  if (user.email) {
+    return user.email.substring(0, 2).toUpperCase()
+  }
+  return '??'
 }
 
 export function InitiativeDetailSheet({
@@ -102,7 +112,6 @@ export function InitiativeDetailSheet({
   const [personInCharge, setPersonInCharge] = useState(initiative?.personInCharge || '')
   const [comments, setComments] = useState<Comment[]>([])
   const [newComment, setNewComment] = useState('')
-  const [commentAuthor, setCommentAuthor] = useState('KHAIRUL')
   const [isLoading, setIsLoading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [isSubmittingComment, setIsSubmittingComment] = useState(false)
@@ -165,7 +174,6 @@ export function InitiativeDetailSheet({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           content: newComment,
-          author: commentAuthor,
         }),
       })
 
@@ -358,47 +366,50 @@ export function InitiativeDetailSheet({
 
               {/* New Comment Input */}
               <div className="space-y-2">
-                <div className="flex gap-2">
-                  <Select value={commentAuthor} onValueChange={setCommentAuthor}>
-                    <SelectTrigger className="w-28 h-9">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {TEAM_MEMBER_OPTIONS.map(opt => (
-                        <SelectItem key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Textarea
-                    placeholder="Add a comment..."
-                    value={newComment}
-                    onChange={e => setNewComment(e.target.value)}
-                    className="min-h-[80px] flex-1"
-                    onKeyDown={e => {
-                      if (e.key === 'Enter' && e.metaKey) {
-                        handleSubmitComment()
-                      }
-                    }}
-                  />
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-xs text-gray-400">⌘ + Enter to submit</span>
-                  <Button
-                    size="sm"
-                    onClick={handleSubmitComment}
-                    disabled={!newComment.trim() || isSubmittingComment}
-                  >
-                    {isSubmittingComment ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                <div className="flex gap-3">
+                  <Avatar className="h-8 w-8 shrink-0">
+                    {session?.user?.image ? (
+                      <img
+                        src={session.user.image}
+                        alt={session.user.name || 'User'}
+                        className="h-full w-full object-cover"
+                      />
                     ) : (
-                      <>
-                        <Send className="h-4 w-4 mr-1" />
-                        Send
-                      </>
+                      <AvatarFallback className="text-xs bg-blue-600 text-white">
+                        {session?.user?.name?.substring(0, 2).toUpperCase() || '??'}
+                      </AvatarFallback>
                     )}
-                  </Button>
+                  </Avatar>
+                  <div className="flex-1 space-y-2">
+                    <Textarea
+                      placeholder="Add a comment..."
+                      value={newComment}
+                      onChange={e => setNewComment(e.target.value)}
+                      className="min-h-[80px]"
+                      onKeyDown={e => {
+                        if (e.key === 'Enter' && e.metaKey) {
+                          handleSubmitComment()
+                        }
+                      }}
+                    />
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-gray-400">⌘ + Enter to submit</span>
+                      <Button
+                        size="sm"
+                        onClick={handleSubmitComment}
+                        disabled={!newComment.trim() || isSubmittingComment}
+                      >
+                        {isSubmittingComment ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <>
+                            <Send className="h-4 w-4 mr-1" />
+                            Send
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -421,17 +432,20 @@ export function InitiativeDetailSheet({
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Avatar className="h-6 w-6">
-                            <AvatarFallback
-                              className={cn(
-                                'text-[10px] text-white font-medium',
-                                TEAM_COLORS[comment.author] || 'bg-gray-400'
-                              )}
-                            >
-                              {TEAM_INITIALS[comment.author] || '??'}
-                            </AvatarFallback>
+                            {comment.user.image ? (
+                              <img
+                                src={comment.user.image}
+                                alt={comment.user.name || 'User'}
+                                className="h-full w-full object-cover"
+                              />
+                            ) : (
+                              <AvatarFallback className="text-[10px] text-white font-medium bg-blue-600">
+                                {getInitials(comment.user)}
+                              </AvatarFallback>
+                            )}
                           </Avatar>
                           <span className="text-sm font-medium">
-                            {formatTeamMember(comment.author)}
+                            {comment.user.name || comment.user.email || 'Unknown'}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
