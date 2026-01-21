@@ -82,18 +82,6 @@ interface InitiativeDetailProps {
   initiative: Initiative
 }
 
-const TEAM_INITIALS: Record<string, string> = {
-  KHAIRUL: 'KH',
-  AZLAN: 'AZ',
-  IZYANI: 'IZ',
-}
-
-const TEAM_COLORS: Record<string, string> = {
-  KHAIRUL: 'bg-blue-600',
-  AZLAN: 'bg-green-600',
-  IZYANI: 'bg-purple-600',
-}
-
 export function InitiativeDetail({ initiative }: InitiativeDetailProps) {
   const router = useRouter()
   const { data: session } = useSession()
