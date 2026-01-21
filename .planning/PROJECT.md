@@ -8,10 +8,21 @@ Strategic Annual Action Plan (SAAP) application for Motionvii to track 2026 busi
 
 Team can visualize and track initiative progress across multiple views (Kanban, timeline, calendar) and update status through intuitive drag-and-drop — with secure access restricted to authorized @talenta.com.my users.
 
+## Current Milestone: v1.2 CRM & Project Financials
+
+**Goal:** Add sales pipeline and project tracking with cost breakdowns to forecast revenue and calculate net profit.
+
+**Target features:**
+- Sales pipeline for new leads (Lead → Qualified → Proposal → Negotiation → Won/Lost)
+- Potential projects for repeat clients (Potential → Confirmed/Cancelled)
+- Projects entity (can link to KRIs or standalone, three entry points)
+- Project costs with category breakdowns and receipt uploads
+- Basic pipeline and revenue dashboard widgets
+
 ## Current State
 
-**Version:** v1.1 Authentication (shipped 2026-01-22)
-**Next:** Planning next milestone
+**Version:** v1.2 CRM & Project Financials (in progress)
+**Previous:** v1.1 Authentication (shipped 2026-01-22)
 
 ## Requirements
 
@@ -54,7 +65,18 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 <!-- Current scope. Building toward these. -->
 
-(None — planning next milestone)
+**v1.2 CRM & Project Financials:**
+- [ ] Sales pipeline with stages (Lead → Qualified → Proposal → Negotiation → Won/Lost)
+- [ ] Potential projects for repeat clients (Potential → Confirmed/Cancelled)
+- [ ] Pipeline/potential deals auto-create Projects when closed
+- [ ] Projects can link to KRIs (initiatives) or be standalone
+- [ ] Direct project creation (no pipeline, for internal/Talenta work)
+- [ ] Project revenue tracking (from deal value)
+- [ ] Project cost breakdowns by category (labor, materials, vendors, etc.)
+- [ ] Receipt uploads for cost items
+- [ ] Company and client PIC tracking on deals
+- [ ] Pipeline dashboard widget (deals by stage, forecasted value)
+- [ ] Revenue/profit dashboard widgets
 
 ### Out of Scope
 
@@ -110,4 +132,4 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | Fetch role on sign-in only | Edge runtime doesn't support Prisma | ✓ Good |
 
 ---
-*Last updated: 2026-01-22 after v1.1 milestone shipped*
+*Last updated: 2026-01-22 after v1.2 milestone started*
