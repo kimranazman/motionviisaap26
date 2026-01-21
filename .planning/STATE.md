@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-21)
 ## Current Position
 
 Phase: 4 of 8 (Auth Foundation)
-Plan: 0 of ? in current phase
-Status: Ready to plan
-Last activity: 2026-01-21 - Roadmap created for v1.1 milestone
+Plan: 2 of 4 in current phase
+Status: In progress
+Last activity: 2026-01-21 - Completed 04-02-PLAN.md
 
-Progress: [#####-----] 50% (5/10 plans from v1.0 + 0/? from v1.1)
+Progress: [######----] 58% (5/10 plans from v1.0 + 2/7 from v1.1)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: 6 min
-- Total execution time: 29 min
+- Total plans completed: 7
+- Average duration: 5 min
+- Total execution time: 35 min
 
 **By Phase:**
 
@@ -30,9 +30,10 @@ Progress: [#####-----] 50% (5/10 plans from v1.0 + 0/? from v1.1)
 | 01-navigation-detail-page | 2 | 18min | 9min |
 | 02-header-features | 2 | 8min | 4min |
 | 03-kanban-quick-actions | 1 | 3min | 3min |
+| 04-auth-foundation | 2 | 6min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (6min), 02-01 (3min), 02-02 (2min), 03-01 (3min)
+- Last 5 plans: 02-01 (3min), 02-02 (2min), 03-01 (3min), 04-01 (4min), 04-02 (3min)
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -48,6 +49,8 @@ Recent decisions affecting current work:
 |------|----------|-----------|
 | v1.1 roadmap | 5 phases for auth | Natural grouping: foundation, roles, protection, admin, UI |
 | v1.1 roadmap | Start at Phase 4 | Continuous numbering from v1.0 |
+| 04-02 | JWT session strategy | Edge middleware compatible |
+| 04-02 | Server-side domain validation | hd parameter alone insufficient for security |
 
 ### Pending Todos
 
@@ -60,5 +63,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-21
-Stopped at: Roadmap created for v1.1 milestone
+Stopped at: Completed 04-02-PLAN.md
 Resume file: None
