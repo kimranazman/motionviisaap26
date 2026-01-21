@@ -49,10 +49,13 @@ Plans:
   3. User without @talenta.com.my email sees "Access Denied" page
   4. User session persists after browser refresh (no re-login required)
   5. User can sign out and is redirected to login page
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 04-01: TBD
+- [ ] 04-01-PLAN.md — Dependencies and database schema (next-auth, prisma models)
+- [ ] 04-02-PLAN.md — Auth configuration and route handler
+- [ ] 04-03-PLAN.md — Login page and access denied page
+- [ ] 04-04-PLAN.md — Environment setup and end-to-end verification
 
 #### Phase 5: Role Infrastructure
 **Goal**: Users are assigned roles and admin is seeded
@@ -119,7 +122,7 @@ Phases execute in numeric order. Decimal phases (if inserted) execute between in
 | 1. Navigation & Detail Page | v1.0 | 2/2 | Complete | 2026-01-20 |
 | 2. Header Features | v1.0 | 2/2 | Complete | 2026-01-20 |
 | 3. Kanban Quick Actions | v1.0 | 1/1 | Complete | 2026-01-20 |
-| 4. Auth Foundation | v1.1 | 0/? | Not started | - |
+| 4. Auth Foundation | v1.1 | 0/4 | Ready | - |
 | 5. Role Infrastructure | v1.1 | 0/? | Not started | - |
 | 6. Route Protection | v1.1 | 0/? | Not started | - |
 | 7. Admin User Management | v1.1 | 0/? | Not started | - |
