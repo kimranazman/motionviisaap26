@@ -1,6 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useSession } from 'next-auth/react'
+import { canEdit } from '@/lib/permissions'
+import { PermissionDeniedDialog } from '@/components/permission-denied-dialog'
 import {
   Sheet,
   SheetContent,
@@ -92,6 +95,9 @@ export function InitiativeDetailSheet({
   onOpenChange,
   onUpdate,
 }: InitiativeDetailSheetProps) {
+  const { data: session } = useSession()
+  const userCanEdit = canEdit(session?.user?.role)
+  const [showPermissionDenied, setShowPermissionDenied] = useState(false)
   const [status, setStatus] = useState(initiative?.status || '')
   const [personInCharge, setPersonInCharge] = useState(initiative?.personInCharge || '')
   const [comments, setComments] = useState<Comment[]>([])
@@ -132,6 +138,11 @@ export function InitiativeDetailSheet({
         }),
       })
 
+      if (response.status === 403) {
+        setShowPermissionDenied(true)
+        return
+      }
+
       if (response.ok) {
         const updated = await response.json()
         onUpdate?.({ ...initiative, ...updated })
@@ -158,6 +169,11 @@ export function InitiativeDetailSheet({
         }),
       })
 
+      if (response.status === 403) {
+        setShowPermissionDenied(true)
+        return
+      }
+
       if (response.ok) {
         const comment = await response.json()
         setComments(prev => [comment, ...prev])
@@ -179,6 +195,11 @@ export function InitiativeDetailSheet({
         `/api/initiatives/${initiative.id}/comments?commentId=${commentId}`,
         { method: 'DELETE' }
       )
+
+      if (response.status === 403) {
+        setShowPermissionDenied(true)
+        return
+      }
 
       if (response.ok) {
         setComments(prev => prev.filter(c => c.id !== commentId))
@@ -226,52 +247,66 @@ export function InitiativeDetailSheet({
           <div className="p-6 space-y-6">
             {/* Quick Info Grid */}
             <div className="grid grid-cols-2 gap-4">
-              {/* Status */}
+              {/* Status - Editable only for Editor/Admin */}
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
                   <Target className="h-3.5 w-3.5" />
                   Status
                 </label>
-                <Select value={status} onValueChange={setStatus}>
-                  <SelectTrigger className="h-9">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {STATUS_OPTIONS.map(opt => (
-                      <SelectItem key={opt.value} value={opt.value}>
-                        <span className={cn('px-2 py-0.5 rounded text-xs', getStatusColor(opt.value))}>
-                          {opt.label}
-                        </span>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                {userCanEdit ? (
+                  <Select value={status} onValueChange={setStatus}>
+                    <SelectTrigger className="h-9">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {STATUS_OPTIONS.map(opt => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          <span className={cn('px-2 py-0.5 rounded text-xs', getStatusColor(opt.value))}>
+                            {opt.label}
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <div className="h-9 px-3 flex items-center text-sm bg-gray-50 rounded-md border">
+                    <span className={cn('px-2 py-0.5 rounded text-xs', getStatusColor(initiative.status))}>
+                      {STATUS_OPTIONS.find(o => o.value === initiative.status)?.label}
+                    </span>
+                  </div>
+                )}
               </div>
 
-              {/* Person In Charge */}
+              {/* Person In Charge - Editable only for Editor/Admin */}
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
                   <User className="h-3.5 w-3.5" />
                   Person In Charge
                 </label>
-                <Select
+                {userCanEdit ? (
+                  <Select
                     value={personInCharge || '__unassigned__'}
                     onValueChange={(val) =>
                       setPersonInCharge(val === '__unassigned__' ? '' : val)
                     }
                   >
-                  <SelectTrigger className="h-9">
-                    <SelectValue placeholder="Unassigned" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="__unassigned__">Unassigned</SelectItem>
-                    {TEAM_MEMBER_OPTIONS.map(opt => (
-                      <SelectItem key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                    <SelectTrigger className="h-9">
+                      <SelectValue placeholder="Unassigned" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__unassigned__">Unassigned</SelectItem>
+                      {TEAM_MEMBER_OPTIONS.map(opt => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <div className="h-9 px-3 flex items-center text-sm bg-gray-50 rounded-md border">
+                    {initiative.personInCharge ? formatTeamMember(initiative.personInCharge) : 'Unassigned'}
+                  </div>
+                )}
               </div>
 
               {/* Department */}
@@ -404,14 +439,16 @@ export function InitiativeDetailSheet({
                             <Clock className="h-3 w-3" />
                             {formatCommentTime(comment.createdAt)}
                           </span>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                            onClick={() => handleDeleteComment(comment.id)}
-                          >
-                            <Trash2 className="h-3.5 w-3.5 text-gray-400 hover:text-red-500" />
-                          </Button>
+                          {userCanEdit && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={() => handleDeleteComment(comment.id)}
+                            >
+                              <Trash2 className="h-3.5 w-3.5 text-gray-400 hover:text-red-500" />
+                            </Button>
+                          )}
                         </div>
                       </div>
                       <p className="text-sm text-gray-700 whitespace-pre-wrap">
@@ -425,6 +462,11 @@ export function InitiativeDetailSheet({
           </div>
         </ScrollArea>
       </SheetContent>
+
+      <PermissionDeniedDialog
+        open={showPermissionDenied}
+        onOpenChange={setShowPermissionDenied}
+      />
     </Sheet>
   )
 }

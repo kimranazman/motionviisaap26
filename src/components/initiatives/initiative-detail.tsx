@@ -2,6 +2,9 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
+import { canEdit } from '@/lib/permissions'
+import { PermissionDeniedDialog } from '@/components/permission-denied-dialog'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -86,6 +89,9 @@ const TEAM_COLORS: Record<string, string> = {
 
 export function InitiativeDetail({ initiative }: InitiativeDetailProps) {
   const router = useRouter()
+  const { data: session } = useSession()
+  const userCanEdit = canEdit(session?.user?.role)
+  const [showPermissionDenied, setShowPermissionDenied] = useState(false)
 
   // Editable fields state
   const [status, setStatus] = useState(initiative.status)
@@ -130,6 +136,11 @@ export function InitiativeDetail({ initiative }: InitiativeDetailProps) {
         }),
       })
 
+      if (response.status === 403) {
+        setShowPermissionDenied(true)
+        return
+      }
+
       if (response.ok) {
         // Refresh the page to get updated data
         router.refresh()
@@ -159,6 +170,11 @@ export function InitiativeDetail({ initiative }: InitiativeDetailProps) {
         }
       )
 
+      if (response.status === 403) {
+        setShowPermissionDenied(true)
+        return
+      }
+
       if (response.ok) {
         const comment = await response.json()
         setComments((prev) => [comment, ...prev])
@@ -178,6 +194,11 @@ export function InitiativeDetail({ initiative }: InitiativeDetailProps) {
         `/api/initiatives/${initiative.id}/comments?commentId=${commentId}`,
         { method: 'DELETE' }
       )
+
+      if (response.status === 403) {
+        setShowPermissionDenied(true)
+        return
+      }
 
       if (response.ok) {
         setComments((prev) => prev.filter((c) => c.id !== commentId))
@@ -251,57 +272,71 @@ export function InitiativeDetail({ initiative }: InitiativeDetailProps) {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-6">
-              {/* Status - Editable */}
+              {/* Status - Editable only for Editor/Admin */}
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
                   <Target className="h-3.5 w-3.5" />
                   Status
                 </label>
-                <Select value={status} onValueChange={setStatus}>
-                  <SelectTrigger className="h-9">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {STATUS_OPTIONS.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value}>
-                        <span
-                          className={cn(
-                            'px-2 py-0.5 rounded text-xs',
-                            getStatusColor(opt.value)
-                          )}
-                        >
-                          {opt.label}
-                        </span>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                {userCanEdit ? (
+                  <Select value={status} onValueChange={setStatus}>
+                    <SelectTrigger className="h-9">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {STATUS_OPTIONS.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          <span
+                            className={cn(
+                              'px-2 py-0.5 rounded text-xs',
+                              getStatusColor(opt.value)
+                            )}
+                          >
+                            {opt.label}
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <div className="h-9 px-3 flex items-center text-sm bg-gray-50 rounded-md border">
+                    <span className={cn('px-2 py-0.5 rounded text-xs', getStatusColor(initiative.status))}>
+                      {STATUS_OPTIONS.find(o => o.value === initiative.status)?.label}
+                    </span>
+                  </div>
+                )}
               </div>
 
-              {/* Person In Charge - Editable */}
+              {/* Person In Charge - Editable only for Editor/Admin */}
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
                   <User className="h-3.5 w-3.5" />
                   Person In Charge
                 </label>
-                <Select
-                  value={personInCharge || '__unassigned__'}
-                  onValueChange={(val) =>
-                    setPersonInCharge(val === '__unassigned__' ? '' : val)
-                  }
-                >
-                  <SelectTrigger className="h-9">
-                    <SelectValue placeholder="Unassigned" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="__unassigned__">Unassigned</SelectItem>
-                    {TEAM_MEMBER_OPTIONS.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                {userCanEdit ? (
+                  <Select
+                    value={personInCharge || '__unassigned__'}
+                    onValueChange={(val) =>
+                      setPersonInCharge(val === '__unassigned__' ? '' : val)
+                    }
+                  >
+                    <SelectTrigger className="h-9">
+                      <SelectValue placeholder="Unassigned" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__unassigned__">Unassigned</SelectItem>
+                      {TEAM_MEMBER_OPTIONS.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <div className="h-9 px-3 flex items-center text-sm bg-gray-50 rounded-md border">
+                    {initiative.personInCharge ? formatTeamMember(initiative.personInCharge) : 'Unassigned'}
+                  </div>
+                )}
               </div>
 
               {/* Department - Read Only */}
@@ -360,12 +395,18 @@ export function InitiativeDetail({ initiative }: InitiativeDetailProps) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Textarea
-              placeholder="Add remarks or notes about this initiative..."
-              value={remarks}
-              onChange={(e) => setRemarks(e.target.value)}
-              className="min-h-[100px]"
-            />
+            {userCanEdit ? (
+              <Textarea
+                placeholder="Add remarks or notes about this initiative..."
+                value={remarks}
+                onChange={(e) => setRemarks(e.target.value)}
+                className="min-h-[100px]"
+              />
+            ) : (
+              <div className="text-sm text-gray-700 min-h-[100px] p-3 bg-gray-50 rounded-md border">
+                {remarks || <span className="text-gray-400">No remarks</span>}
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -472,14 +513,16 @@ export function InitiativeDetail({ initiative }: InitiativeDetailProps) {
                           <Clock className="h-3 w-3" />
                           {formatCommentTime(comment.createdAt)}
                         </span>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={() => handleDeleteComment(comment.id)}
-                        >
-                          <Trash2 className="h-3.5 w-3.5 text-gray-400 hover:text-red-500" />
-                        </Button>
+                        {userCanEdit && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => handleDeleteComment(comment.id)}
+                          >
+                            <Trash2 className="h-3.5 w-3.5 text-gray-400 hover:text-red-500" />
+                          </Button>
+                        )}
                       </div>
                     </div>
                     <p className="text-sm text-gray-700 whitespace-pre-wrap">
@@ -492,6 +535,11 @@ export function InitiativeDetail({ initiative }: InitiativeDetailProps) {
           </CardContent>
         </Card>
       </div>
+
+      <PermissionDeniedDialog
+        open={showPermissionDenied}
+        onOpenChange={setShowPermissionDenied}
+      />
     </div>
   )
 }
