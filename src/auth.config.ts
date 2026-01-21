@@ -6,10 +6,26 @@ export const authConfig = {
     error: "/login",
   },
   callbacks: {
-    authorized() {
-      // This runs on Edge - used by middleware
-      // For now, allow all requests through to the page handlers
-      // Route protection will be implemented in a later phase
+    authorized({ auth, request: { nextUrl } }) {
+      const isLoggedIn = !!auth?.user
+      const isOnAuthPage =
+        nextUrl.pathname.startsWith("/login") ||
+        nextUrl.pathname.startsWith("/access-denied")
+
+      // Allow access to auth pages regardless of login status
+      if (isOnAuthPage) {
+        // Redirect logged-in users away from login page
+        if (isLoggedIn && nextUrl.pathname === "/login") {
+          return Response.redirect(new URL("/", nextUrl))
+        }
+        return true
+      }
+
+      // Require login for all other pages
+      if (!isLoggedIn) {
+        return false // Redirects to signIn page
+      }
+
       return true
     },
   },
