@@ -9,6 +9,7 @@ services:
     restart: unless-stopped
     ports:
       - "3000:3000"
+      - "3002:3000"
     environment:
       - DATABASE_URL=mysql://saap_user:saap_password_2026@db:3306/saap2026
       - NODE_ENV=production
