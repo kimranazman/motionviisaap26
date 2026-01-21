@@ -9,6 +9,8 @@ services:
     restart: unless-stopped
     ports:
       - "3002:3000"  # Different port to avoid conflicts with Gallery (3001)
+    env_file:
+      - .env
     environment:
       - DATABASE_URL=mysql://saap_user:saap_password_2026@db:3306/saap2026
       - NODE_ENV=production
