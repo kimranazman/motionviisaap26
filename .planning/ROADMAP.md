@@ -2,13 +2,13 @@
 
 ## Milestones
 
-- ✅ **v1.0 MVP** - Phases 1-3 (shipped 2026-01-20)
-- 🚧 **v1.1 Authentication** - Phases 4-8 (in progress)
+- [x] **v1.0 MVP** - Phases 1-3 (shipped 2026-01-20)
+- [ ] **v1.1 Authentication** - Phases 4-8 (in progress)
 
 ## Phases
 
 <details>
-<summary>✅ v1.0 MVP (Phases 1-3) - SHIPPED 2026-01-20</summary>
+<summary>v1.0 MVP (Phases 1-3) - SHIPPED 2026-01-20</summary>
 
 ### Phase 1: Navigation & Detail Page
 **Goal**: Users can navigate cleanly and view initiative details on dedicated page
@@ -35,7 +35,7 @@ Plans:
 
 </details>
 
-### 🚧 v1.1 Authentication (In Progress)
+### v1.1 Authentication (In Progress)
 
 **Milestone Goal:** Restrict access to authorized @talenta.com.my users with role-based permissions.
 
@@ -105,14 +105,15 @@ Plans:
 **Requirements**: UI-01, UI-02, UI-03, UI-04, UI-05
 **Success Criteria** (what must be TRUE):
   1. Viewer does not see edit controls (status dropdown, reassign, etc.)
-  2. Viewer does not see comment form
+  2. Viewer CAN add comments (participation allowed per CONTEXT.md)
   3. Viewer does not see Kanban quick action menu
   4. Editor and Admin see all edit controls
-  5. Only Admin sees "Manage Users" link in navigation
-**Plans**: TBD
+  5. Only Admin sees "Manage Users" link in navigation (already implemented)
+**Plans**: 2 plans
 
 Plans:
-- [ ] 08-01: TBD
+- [ ] 08-01-PLAN.md — Permission utilities and Kanban role-based controls
+- [ ] 08-02-PLAN.md — Initiative detail role-based controls and permission dialog
 
 ## Progress
 
@@ -128,7 +129,7 @@ Phases execute in numeric order. Decimal phases (if inserted) execute between in
 | 5. Role Infrastructure | v1.1 | 1/1 | Complete | 2026-01-21 |
 | 6. Route Protection | v1.1 | 2/2 | Complete | 2026-01-21 |
 | 7. Admin User Management | v1.1 | 2/2 | Complete | 2026-01-21 |
-| 8. Role-Based UI | v1.1 | 0/? | Not started | - |
+| 8. Role-Based UI | v1.1 | 0/2 | Not started | - |
 
 ---
 *Roadmap created: 2026-01-21*
