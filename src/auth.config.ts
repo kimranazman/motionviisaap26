@@ -6,11 +6,11 @@ export const authConfig = {
     error: "/login",
   },
   callbacks: {
-    authorized({ auth, request: { nextUrl } }) {
+    authorized() {
       // This runs on Edge - used by middleware
-      // For now, just check if user exists
-      // More granular checks happen in auth.ts
-      return true // Let middleware.ts handle redirection
+      // For now, allow all requests through to the page handlers
+      // Route protection will be implemented in a later phase
+      return true
     },
   },
   providers: [], // Providers configured in main auth.ts
