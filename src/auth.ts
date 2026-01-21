@@ -44,10 +44,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return false // Reject non-Google providers
     },
     async jwt({ token, user }) {
-      // Add role and id to JWT when user signs in
+      // Add id to JWT when user signs in
       if (user) {
         token.id = user.id!
-        token.role = user.role
+      }
+      // Always fetch role from database to handle role changes
+      // This ensures admin promotions take effect immediately
+      if (token.id) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { role: true },
+        })
+        token.role = dbUser?.role ?? "VIEWER"
       }
       return token
     },
