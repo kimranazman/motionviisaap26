@@ -43,28 +43,28 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return false // Reject non-Google providers
     },
-    async jwt({ token, user }) {
-      // Add id to JWT when user signs in
+    async jwt({ token, user, trigger }) {
+      // Only fetch role on sign-in or explicit update (Node.js runtime)
+      // Don't fetch on every request - Edge runtime doesn't support Prisma
       if (user) {
         token.id = user.id!
-        console.log("[AUTH JWT] User sign-in, id:", user.id, "user.role:", user.role)
+        // Fetch role from database on sign-in
+        const dbUser = await prisma.user.findUnique({
+          where: { id: user.id! },
+          select: { role: true },
+        })
+        token.role = dbUser?.role ?? "VIEWER"
+        console.log("[AUTH JWT] Sign-in - fetched role:", token.role)
       }
-      // Always fetch role from database to handle role changes
-      // This ensures admin promotions take effect immediately
-      if (token.id) {
-        try {
-          const dbUser = await prisma.user.findUnique({
-            where: { id: token.id as string },
-            select: { role: true },
-          })
-          console.log("[AUTH JWT] DB lookup for id:", token.id, "result:", dbUser)
-          token.role = dbUser?.role ?? "VIEWER"
-        } catch (error) {
-          console.error("[AUTH JWT] DB error:", error)
-          token.role = "VIEWER"
-        }
+      // Handle session update trigger (e.g., after role change)
+      if (trigger === "update" && token.id) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { role: true },
+        })
+        token.role = dbUser?.role ?? token.role
+        console.log("[AUTH JWT] Update trigger - refreshed role:", token.role)
       }
-      console.log("[AUTH JWT] Final token.role:", token.role)
       return token
     },
     async session({ session, token }) {
