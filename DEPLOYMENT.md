@@ -77,9 +77,22 @@ ssh adminmotionvii@192.168.1.20 "sudo /usr/local/bin/docker exec saap2026-db mys
 
 ## Admin User Setup
 
-After fresh database setup, seed the admin user:
+**Primary Admin**: `khairul@talenta.com.my` - This account should always have ADMIN role.
+
+After a fresh database setup:
+
+1. **First, let the user sign in with Google** - This creates the user with proper OAuth linking
+2. **Then update their role to ADMIN**:
 ```bash
-ssh adminmotionvii@192.168.1.20 "sudo /usr/local/bin/docker exec saap2026-db mysql -u saap_user -psaap_password_2026 saap2026 -e \"INSERT INTO users (id, name, email, role, createdAt, updatedAt) VALUES ('admin-user-001', 'Khairul', 'khairul@talenta.com.my', 'ADMIN', NOW(), NOW());\""
+ssh adminmotionvii@192.168.1.20 "sudo /usr/local/bin/docker exec saap2026-db mysql -u saap_user -psaap_password_2026 saap2026 -e \"UPDATE users SET role = 'ADMIN' WHERE email = 'khairul@talenta.com.my';\""
+```
+3. **User must log out and log back in** to refresh their session with the new role
+
+**Important**: Do NOT manually INSERT users - this causes "OAuthAccountNotLinked" errors. Always let users sign in first via Google, then update their role.
+
+### Check current users and roles:
+```bash
+ssh adminmotionvii@192.168.1.20 "sudo /usr/local/bin/docker exec saap2026-db mysql -u saap_user -psaap_password_2026 saap2026 -e \"SELECT id, email, role FROM users;\""
 ```
 
 ## Common Issues
@@ -98,3 +111,11 @@ ssh adminmotionvii@192.168.1.20 "sudo /usr/local/bin/docker exec saap2026-db mys
 ### Database Unhealthy
 - Wait for initialization to complete, then restart: `sudo /usr/local/bin/docker restart saap2026-db`
 - Then start app: `sudo /usr/local/bin/docker compose up -d`
+
+### OAuthAccountNotLinked Error
+- Caused by manually inserting a user without OAuth account link
+- Fix: Delete the user and let them sign in fresh via Google
+```bash
+ssh adminmotionvii@192.168.1.20 "sudo /usr/local/bin/docker exec saap2026-db mysql -u saap_user -psaap_password_2026 saap2026 -e \"DELETE FROM users WHERE email = 'user@example.com';\""
+```
+- Then have them sign in again, and update role if needed
