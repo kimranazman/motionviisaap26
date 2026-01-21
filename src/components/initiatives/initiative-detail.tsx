@@ -284,12 +284,17 @@ export function InitiativeDetail({ initiative }: InitiativeDetailProps) {
                   <User className="h-3.5 w-3.5" />
                   Person In Charge
                 </label>
-                <Select value={personInCharge} onValueChange={setPersonInCharge}>
+                <Select
+                  value={personInCharge || '__unassigned__'}
+                  onValueChange={(val) =>
+                    setPersonInCharge(val === '__unassigned__' ? '' : val)
+                  }
+                >
                   <SelectTrigger className="h-9">
                     <SelectValue placeholder="Unassigned" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Unassigned</SelectItem>
+                    <SelectItem value="__unassigned__">Unassigned</SelectItem>
                     {TEAM_MEMBER_OPTIONS.map((opt) => (
                       <SelectItem key={opt.value} value={opt.value}>
                         {opt.label}
