@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
+import { requireAuth } from '@/lib/auth-utils'
 
 // GET /api/initiatives/search - Search initiatives by text query
 export async function GET(request: NextRequest) {
+  const { error } = await requireAuth()
+  if (error) return error
+
   try {
     const searchParams = request.nextUrl.searchParams
     const query = searchParams.get('q')

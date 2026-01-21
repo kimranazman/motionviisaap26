@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { Prisma, InitiativeStatus, Department, Objective, TeamMember } from '@prisma/client'
+import { requireAuth, requireEditor } from '@/lib/auth-utils'
 
 // GET /api/initiatives - List all initiatives with filters
 export async function GET(request: NextRequest) {
+  const { error } = await requireAuth()
+  if (error) return error
+
   try {
     const searchParams = request.nextUrl.searchParams
     const status = searchParams.get('status')
@@ -56,6 +60,9 @@ export async function GET(request: NextRequest) {
 
 // POST /api/initiatives - Create new initiative
 export async function POST(request: NextRequest) {
+  const { error } = await requireEditor()
+  if (error) return error
+
   try {
     const body = await request.json()
 

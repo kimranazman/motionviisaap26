@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
+import { requireAuth, requireEditor } from '@/lib/auth-utils'
 
 // GET /api/initiatives/[id] - Get single initiative
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { error } = await requireAuth()
+  if (error) return error
+
   try {
     const { id } = await params
     const initiative = await prisma.initiative.findUnique({
@@ -40,6 +44,9 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { error } = await requireEditor()
+  if (error) return error
+
   try {
     const { id } = await params
     const body = await request.json()
@@ -79,6 +86,9 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { error } = await requireEditor()
+  if (error) return error
+
   try {
     const { id } = await params
     const body = await request.json()
@@ -121,6 +131,9 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { error } = await requireEditor()
+  if (error) return error
+
   try {
     const { id } = await params
     await prisma.initiative.delete({

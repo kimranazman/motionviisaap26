@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { InitiativeStatus } from '@prisma/client'
+import { requireEditor } from '@/lib/auth-utils'
 
 // PATCH /api/initiatives/reorder - Reorder initiatives (for Kanban)
 export async function PATCH(request: NextRequest) {
+  const { error } = await requireEditor()
+  if (error) return error
+
   try {
     const body = await request.json()
     const { updates } = body
