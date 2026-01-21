@@ -31,6 +31,7 @@ export const authConfig = {
       // Role-based route protection: Admin routes require ADMIN role
       if (pathname.startsWith("/admin")) {
         const userRole = auth?.user?.role
+        console.log("[AUTH CONFIG] Admin check - auth.user:", JSON.stringify(auth?.user))
         if (userRole !== "ADMIN") {
           console.log(
             `[AUTH] Admin access denied: ${auth?.user?.email} (${userRole}) -> ${pathname}`

@@ -47,16 +47,24 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       // Add id to JWT when user signs in
       if (user) {
         token.id = user.id!
+        console.log("[AUTH JWT] User sign-in, id:", user.id, "user.role:", user.role)
       }
       // Always fetch role from database to handle role changes
       // This ensures admin promotions take effect immediately
       if (token.id) {
-        const dbUser = await prisma.user.findUnique({
-          where: { id: token.id as string },
-          select: { role: true },
-        })
-        token.role = dbUser?.role ?? "VIEWER"
+        try {
+          const dbUser = await prisma.user.findUnique({
+            where: { id: token.id as string },
+            select: { role: true },
+          })
+          console.log("[AUTH JWT] DB lookup for id:", token.id, "result:", dbUser)
+          token.role = dbUser?.role ?? "VIEWER"
+        } catch (error) {
+          console.error("[AUTH JWT] DB error:", error)
+          token.role = "VIEWER"
+        }
       }
+      console.log("[AUTH JWT] Final token.role:", token.role)
       return token
     },
     async session({ session, token }) {
