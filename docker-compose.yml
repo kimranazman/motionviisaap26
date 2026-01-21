@@ -15,6 +15,10 @@ services:
       - NODE_ENV=production
       - AUTH_TRUST_HOST=true
       - AUTH_URL=https://saap.motionvii.com
+      # NOTE: On NAS, also add these (values from .env, not committed for security):
+      # - AUTH_SECRET=<from .env>
+      # - AUTH_GOOGLE_ID=<from .env>
+      # - AUTH_GOOGLE_SECRET=<from .env>
     depends_on:
       db:
         condition: service_healthy
