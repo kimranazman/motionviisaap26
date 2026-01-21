@@ -27,9 +27,9 @@ Requirements for authentication milestone: Restrict access to authorized @talent
 ### Route Protection
 
 - [x] **PROT-01**: Unauthenticated user is redirected to login page
-- [ ] **PROT-02**: API endpoints return 401 for unauthenticated requests
-- [ ] **PROT-03**: API endpoints return 403 for unauthorized role
-- [ ] **PROT-04**: Admin-only pages (user management) block non-admins
+- [x] **PROT-02**: API endpoints return 401 for unauthenticated requests
+- [x] **PROT-03**: API endpoints return 403 for unauthorized role
+- [x] **PROT-04**: Admin-only pages (user management) block non-admins
 
 ### Role-Based UI
 
@@ -84,9 +84,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ROLE-05 | Phase 7 | Pending |
 | ROLE-06 | Phase 7 | Pending |
 | PROT-01 | Phase 4 | Complete |
-| PROT-02 | Phase 6 | Pending |
-| PROT-03 | Phase 6 | Pending |
-| PROT-04 | Phase 6 | Pending |
+| PROT-02 | Phase 6 | Complete |
+| PROT-03 | Phase 6 | Complete |
+| PROT-04 | Phase 6 | Complete |
 | UI-01 | Phase 8 | Pending |
 | UI-02 | Phase 8 | Pending |
 | UI-03 | Phase 8 | Pending |
@@ -100,4 +100,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-21*
-*Last updated: 2026-01-21 after Phase 5 completion*
+*Last updated: 2026-01-21 after Phase 6 completion*

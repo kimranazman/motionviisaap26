@@ -82,8 +82,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 06-01-PLAN.md — Auth utilities and forbidden page
-- [ ] 06-02-PLAN.md — API route protection
+- [x] 06-01-PLAN.md — Auth utilities and forbidden page
+- [x] 06-02-PLAN.md — API route protection
 
 #### Phase 7: Admin User Management
 **Goal**: Admin can manage user access and roles
@@ -125,7 +125,7 @@ Phases execute in numeric order. Decimal phases (if inserted) execute between in
 | 3. Kanban Quick Actions | v1.0 | 1/1 | Complete | 2026-01-20 |
 | 4. Auth Foundation | v1.1 | 4/4 | Complete | 2026-01-21 |
 | 5. Role Infrastructure | v1.1 | 1/1 | Complete | 2026-01-21 |
-| 6. Route Protection | v1.1 | 0/2 | Ready | - |
+| 6. Route Protection | v1.1 | 2/2 | Complete | 2026-01-21 |
 | 7. Admin User Management | v1.1 | 0/? | Not started | - |
 | 8. Role-Based UI | v1.1 | 0/? | Not started | - |
 
