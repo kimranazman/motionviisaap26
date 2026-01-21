@@ -9,11 +9,11 @@ Requirements for authentication milestone: Restrict access to authorized @talent
 
 ### Authentication
 
-- [ ] **AUTH-01**: User can sign in with Google OAuth
-- [ ] **AUTH-02**: User without @talenta.com.my email sees "Access Denied" page
-- [ ] **AUTH-03**: User session persists across browser refresh
-- [ ] **AUTH-04**: User can sign out
-- [ ] **AUTH-05**: User sees branded login page with Google sign-in button
+- [x] **AUTH-01**: User can sign in with Google OAuth
+- [x] **AUTH-02**: User without @talenta.com.my email sees "Access Denied" page
+- [x] **AUTH-03**: User session persists across browser refresh
+- [x] **AUTH-04**: User can sign out
+- [x] **AUTH-05**: User sees branded login page with Google sign-in button
 
 ### Role Management
 
@@ -26,7 +26,7 @@ Requirements for authentication milestone: Restrict access to authorized @talent
 
 ### Route Protection
 
-- [ ] **PROT-01**: Unauthenticated user is redirected to login page
+- [x] **PROT-01**: Unauthenticated user is redirected to login page
 - [ ] **PROT-02**: API endpoints return 401 for unauthenticated requests
 - [ ] **PROT-03**: API endpoints return 403 for unauthorized role
 - [ ] **PROT-04**: Admin-only pages (user management) block non-admins
@@ -72,18 +72,18 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | Phase 4 | Pending |
-| AUTH-02 | Phase 4 | Pending |
-| AUTH-03 | Phase 4 | Pending |
-| AUTH-04 | Phase 4 | Pending |
-| AUTH-05 | Phase 4 | Pending |
+| AUTH-01 | Phase 4 | Complete |
+| AUTH-02 | Phase 4 | Complete |
+| AUTH-03 | Phase 4 | Complete |
+| AUTH-04 | Phase 4 | Complete |
+| AUTH-05 | Phase 4 | Complete |
 | ROLE-01 | Phase 5 | Pending |
 | ROLE-02 | Phase 5 | Pending |
 | ROLE-03 | Phase 5 | Pending |
 | ROLE-04 | Phase 7 | Pending |
 | ROLE-05 | Phase 7 | Pending |
 | ROLE-06 | Phase 7 | Pending |
-| PROT-01 | Phase 6 | Pending |
+| PROT-01 | Phase 4 | Complete |
 | PROT-02 | Phase 6 | Pending |
 | PROT-03 | Phase 6 | Pending |
 | PROT-04 | Phase 6 | Pending |
