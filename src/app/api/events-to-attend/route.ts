@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { EventPriority, EventCategory, EventStatus } from '@prisma/client'
+import { requireAuth, requireEditor } from '@/lib/auth-utils'
 
 export async function GET(request: Request) {
+  const { error } = await requireAuth()
+  if (error) return error
+
   try {
     const { searchParams } = new URL(request.url)
     const priority = searchParams.get('priority') as EventPriority | null
@@ -35,6 +39,9 @@ export async function GET(request: Request) {
 }
 
 export async function PATCH(request: Request) {
+  const { error } = await requireEditor()
+  if (error) return error
+
   try {
     const body = await request.json()
     const { id, status, remarks } = body

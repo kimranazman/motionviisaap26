@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { requireAuth, requireEditor } from '@/lib/auth-utils'
 
 // GET /api/initiatives/[id]/comments - Get comments for an initiative
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { error } = await requireAuth()
+  if (error) return error
+
   try {
     const { id } = await params
     const comments = await prisma.comment.findMany({
@@ -24,10 +28,14 @@ export async function GET(
 }
 
 // POST /api/initiatives/[id]/comments - Create a new comment
+// Note: Any authenticated user can comment (VIEWER included per design decision)
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { error } = await requireAuth()
+  if (error) return error
+
   try {
     const { id } = await params
     const body = await request.json()
@@ -74,6 +82,9 @@ export async function DELETE(
   request: NextRequest,
   { params: _params }: { params: Promise<{ id: string }> }
 ) {
+  const { error } = await requireEditor()
+  if (error) return error
+
   try {
     void _params // Acknowledge params for route segment
     const { searchParams } = new URL(request.url)
