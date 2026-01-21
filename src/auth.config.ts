@@ -8,14 +8,16 @@ export const authConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user
+      const pathname = nextUrl.pathname
       const isOnAuthPage =
-        nextUrl.pathname.startsWith("/login") ||
-        nextUrl.pathname.startsWith("/access-denied")
+        pathname.startsWith("/login") ||
+        pathname.startsWith("/access-denied") ||
+        pathname.startsWith("/forbidden")
 
       // Allow access to auth pages regardless of login status
       if (isOnAuthPage) {
         // Redirect logged-in users away from login page
-        if (isLoggedIn && nextUrl.pathname === "/login") {
+        if (isLoggedIn && pathname === "/login") {
           return Response.redirect(new URL("/", nextUrl))
         }
         return true
@@ -24,6 +26,17 @@ export const authConfig = {
       // Require login for all other pages
       if (!isLoggedIn) {
         return false // Redirects to signIn page
+      }
+
+      // Role-based route protection: Admin routes require ADMIN role
+      if (pathname.startsWith("/admin")) {
+        const userRole = auth?.user?.role
+        if (userRole !== "ADMIN") {
+          console.log(
+            `[AUTH] Admin access denied: ${auth?.user?.email} (${userRole}) -> ${pathname}`
+          )
+          return Response.redirect(new URL("/forbidden", nextUrl))
+        }
       }
 
       return true

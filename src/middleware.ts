@@ -8,13 +8,13 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except:
-     * - /login, /access-denied (auth pages)
+     * - /login, /access-denied, /forbidden (auth pages)
      * - /api/auth/* (auth API routes)
      * - /_next/static (static files)
      * - /_next/image (image optimization files)
      * - /favicon.ico (favicon)
      * - /images/* (public images)
      */
-    "/((?!login|access-denied|api/auth|_next/static|_next/image|favicon.ico|images).*)",
+    "/((?!login|access-denied|forbidden|api/auth|_next/static|_next/image|favicon.ico|images).*)",
   ],
 }
