@@ -20,9 +20,9 @@ Requirements for authentication milestone: Restrict access to authorized @talent
 - [x] **ROLE-01**: New @talenta.com.my user is automatically created as Viewer
 - [x] **ROLE-02**: User role (ADMIN, EDITOR, VIEWER) is stored in database
 - [x] **ROLE-03**: Admin (khairul@talenta.com.my) is seeded on first run
-- [ ] **ROLE-04**: Admin can view list of all users with their roles
-- [ ] **ROLE-05**: Admin can change user role (promote/demote)
-- [ ] **ROLE-06**: Admin can remove user access
+- [x] **ROLE-04**: Admin can view list of all users with their roles
+- [x] **ROLE-05**: Admin can change user role (promote/demote)
+- [x] **ROLE-06**: Admin can remove user access
 
 ### Route Protection
 
@@ -80,9 +80,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ROLE-01 | Phase 5 | Complete |
 | ROLE-02 | Phase 5 | Complete |
 | ROLE-03 | Phase 5 | Complete |
-| ROLE-04 | Phase 7 | Pending |
-| ROLE-05 | Phase 7 | Pending |
-| ROLE-06 | Phase 7 | Pending |
+| ROLE-04 | Phase 7 | Complete |
+| ROLE-05 | Phase 7 | Complete |
+| ROLE-06 | Phase 7 | Complete |
 | PROT-01 | Phase 4 | Complete |
 | PROT-02 | Phase 6 | Complete |
 | PROT-03 | Phase 6 | Complete |
@@ -100,4 +100,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-21*
-*Last updated: 2026-01-21 after Phase 6 completion*
+*Last updated: 2026-01-21 after Phase 7 completion*

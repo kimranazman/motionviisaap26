@@ -96,8 +96,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 07-01-PLAN.md — Server Actions and AlertDialog setup
-- [ ] 07-02-PLAN.md — Admin users page and sidebar navigation
+- [x] 07-01-PLAN.md — Server Actions and AlertDialog setup
+- [x] 07-02-PLAN.md — Admin users page and sidebar navigation
 
 #### Phase 8: Role-Based UI
 **Goal**: UI adapts based on user role
@@ -127,7 +127,7 @@ Phases execute in numeric order. Decimal phases (if inserted) execute between in
 | 4. Auth Foundation | v1.1 | 4/4 | Complete | 2026-01-21 |
 | 5. Role Infrastructure | v1.1 | 1/1 | Complete | 2026-01-21 |
 | 6. Route Protection | v1.1 | 2/2 | Complete | 2026-01-21 |
-| 7. Admin User Management | v1.1 | 0/2 | Planned | - |
+| 7. Admin User Management | v1.1 | 2/2 | Complete | 2026-01-21 |
 | 8. Role-Based UI | v1.1 | 0/? | Not started | - |
 
 ---
