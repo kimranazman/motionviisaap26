@@ -75,6 +75,15 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - 28 initiatives, 38 events currently in database
 - Adding authentication (v1.1) — Google OAuth with domain restriction
 
+## Infrastructure
+
+- **NAS IP**: 192.168.1.20
+- **NAS SSH**: `ssh adminmotionvii@192.168.1.20`
+- **Database**: MariaDB running in Docker on NAS, port 3308 (external) → 3306 (internal)
+- **Dev connection**: `mysql://saap_user:saap_password_2026@192.168.1.20:3308/saap2026`
+- **Docker path**: `/var/packages/ContainerManager/target/usr/bin/docker` (requires sudo)
+- **Start DB**: `ssh adminmotionvii@192.168.1.20 "sudo /var/packages/ContainerManager/target/usr/bin/docker start saap2026-db"`
+
 ## Constraints
 
 - **Tech stack**: Next.js 14, Prisma, MariaDB, Tailwind/shadcn — established, don't change
