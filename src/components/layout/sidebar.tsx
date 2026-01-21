@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import { cn } from '@/lib/utils'
 import {
   LayoutDashboard,
@@ -11,6 +12,7 @@ import {
   ListTodo,
   Target,
   Ticket,
+  Users,
 } from 'lucide-react'
 
 const navigation = [
@@ -24,6 +26,7 @@ const navigation = [
 
 export function Sidebar() {
   const pathname = usePathname()
+  const { data: session } = useSession()
 
   return (
     <aside className="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200">
@@ -59,6 +62,27 @@ export function Sidebar() {
             </Link>
           )
         })}
+
+        {/* Admin Section */}
+        {session?.user?.role === "ADMIN" && (
+          <>
+            <div className="mt-6 mb-2 px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              Admin
+            </div>
+            <Link
+              href="/admin/users"
+              className={cn(
+                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                pathname.startsWith('/admin/users')
+                  ? 'bg-gray-100 text-gray-900'
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+              )}
+            >
+              <Users className="h-5 w-5" />
+              Users
+            </Link>
+          </>
+        )}
       </nav>
     </aside>
   )
