@@ -1,735 +1,809 @@
-# Pitfalls Research: NextAuth.js + Google OAuth
+# Pitfalls Research: CRM & Project Financials (v1.2)
 
 **Project:** SAAP 2026 v2
-**Context:** Adding authentication to existing Next.js 14 App Router application
-**Researched:** 2026-01-21
-**Overall Confidence:** HIGH (verified with official documentation and recent security advisories)
+**Context:** Adding sales pipeline and project cost tracking to existing Next.js 14 App Router application
+**Researched:** 2026-01-22
+**Overall Confidence:** HIGH (verified with industry best practices and technical documentation)
 
 ---
 
 ## Critical Pitfalls
 
-Mistakes that can cause security vulnerabilities, rewrites, or major issues.
+Mistakes that can cause data corruption, financial inaccuracies, or major rewrites.
 
-### Pitfall 1: CVE-2025-29927 - Next.js Middleware Authorization Bypass
+### Pitfall 1: Floating Point Currency Calculations
 
-**What goes wrong:** Attackers can bypass middleware-based authentication by adding the `x-middleware-subrequest` header to HTTP requests. This critical vulnerability (CVSS 9.1) affects all Next.js versions from 11.1.4 through 13.5.6, 14.x before 14.2.25, and 15.x before 15.2.3.
+**What goes wrong:** Using JavaScript's native `Number` type for financial calculations leads to precision errors. The classic `0.1 + 0.2 = 0.30000000000000004` problem compounds across multiple operations, causing revenue/profit miscalculations.
 
-**Why it happens:** The `x-middleware-subrequest` header was designed for internal use to prevent infinite middleware loops. Attackers can manipulate this header to skip middleware execution entirely.
-
-**Consequences:**
-- Complete authentication bypass
-- Unauthorized access to protected routes
-- All middleware security checks circumvented
-
-**Warning signs:**
-- Using Next.js < 14.2.25
-- Relying solely on middleware for authentication
-- No additional server-side auth checks in API routes
-
-**Prevention:**
-1. **Upgrade Next.js immediately** to 14.2.25+ (your `package.json` shows `^14.2.28` which is safe)
-2. **Never rely solely on middleware** - Always verify authentication in Server Components, API Routes, and Server Actions
-3. If upgrade not possible, configure reverse proxy/WAF to strip `x-middleware-subrequest` header
-
-**Phase to address:** Phase 1 (Initial Setup) - Verify Next.js version, implement multi-layer auth checks
-
-**Sources:**
-- [CVE-2025-29927 - Datadog Security Labs](https://securitylabs.datadoghq.com/articles/nextjs-middleware-auth-bypass/)
-- [CVE-2025-29927 - ProjectDiscovery](https://projectdiscovery.io/blog/nextjs-middleware-authorization-bypass)
-
----
-
-### Pitfall 2: Domain Restriction Bypass via `hd` Parameter Only
-
-**What goes wrong:** Using only the `hd` (hosted domain) parameter to restrict Google OAuth to `@talenta.com.my` is insufficient. The `hd` parameter only filters which accounts Google shows during sign-in UI - it does NOT prevent authorization of other accounts.
-
-**Why it happens:** The `hd` parameter is a convenience hint for Google's UI, not a security control. An attacker can modify the authorization URL to remove the `hd` parameter or use direct API calls.
+**Why it happens:** JavaScript uses IEEE 754 floating-point arithmetic which cannot precisely represent many decimal fractions. Financial calculations involving discounts, taxes, or multiple cost items accumulate these tiny errors into significant discrepancies.
 
 **Consequences:**
-- Users from any Google account can authenticate
-- Domain restriction completely bypassed
-- Unauthorized access to internal application
+- Revenue totals don't match sum of individual deals
+- Profit margins show incorrect values
+- Receipt totals mismatch with calculated costs
+- Audit reports reveal unexplainable discrepancies
 
 **Warning signs:**
-- Only using `authorization: { params: { hd: 'talenta.com.my' } }`
-- No server-side email domain validation
-- Assuming Google enforces domain restriction
+- Dashboard totals differ from line-item sums
+- "Rounding errors" appearing in financial reports
+- Balance calculations that don't reach zero when expected
+- Currency values displaying with 10+ decimal places
 
 **Prevention:**
 ```typescript
-// CORRECT: Combine hd parameter WITH signIn callback validation
-export const authOptions = {
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      authorization: {
-        params: {
-          hd: 'talenta.com.my' // UI hint only
-        }
+// WRONG: Native JavaScript arithmetic
+const total = price * quantity; // 19.99 * 3 = 59.96999...
+
+// CORRECT: Store amounts in cents (smallest currency unit)
+// In Prisma schema - already using Decimal:
+// revenue Decimal @db.Decimal(12, 2)
+
+// In application code, use currency.js or store as integers:
+import currency from 'currency.js';
+
+const price = currency(19.99);
+const total = price.multiply(3); // Precise: 59.97
+
+// Or use integer cents:
+const priceInCents = 1999; // RM19.99
+const totalInCents = priceInCents * 3; // 5997 (RM59.97)
+const displayTotal = (totalInCents / 100).toFixed(2); // "59.97"
+```
+
+**Phase to address:** Phase 1 (Schema & Types) - Establish money handling patterns before any financial data is stored
+
+**Sources:**
+- [Currency Calculations in JavaScript - Honeybadger](https://www.honeybadger.io/blog/currency-money-calculations-in-javascript/)
+- [currency.js Documentation](https://currency.js.org/)
+- [How to Handle Monetary Values in JavaScript](https://frontstuff.io/how-to-handle-monetary-values-in-javascript)
+
+---
+
+### Pitfall 2: Missing Audit Trail for Financial Changes
+
+**What goes wrong:** Financial data (deal values, costs, receipts) is modified without tracking who changed what and when. When discrepancies arise, there's no way to investigate or establish accountability.
+
+**Why it happens:** Developers focus on CRUD operations without considering the compliance and debugging value of change history. The existing app doesn't have audit logging, making it easy to overlook.
+
+**Consequences:**
+- Cannot investigate financial discrepancies
+- No accountability for data changes
+- Compliance issues if audited
+- Lost business intelligence about deal progression
+
+**Warning signs:**
+- Unable to answer "who changed this deal value?"
+- No history of cost adjustments
+- Disputes about original vs. modified figures
+- Manual tracking in external spreadsheets
+
+**Prevention:**
+```prisma
+// Add audit log for financial entities
+model DealHistory {
+  id            String   @id @default(cuid())
+  dealId        String
+  deal          Deal     @relation(fields: [dealId], references: [id])
+  field         String   // e.g., "value", "stage"
+  oldValue      String?
+  newValue      String?
+  changedBy     String
+  changedByUser User     @relation(fields: [changedBy], references: [id])
+  changedAt     DateTime @default(now())
+  reason        String?  // Optional: why was this changed?
+
+  @@index([dealId])
+  @@index([changedAt])
+  @@map("deal_history")
+}
+
+// Track changes in update operations
+async function updateDealValue(dealId: string, newValue: number, userId: string) {
+  const deal = await prisma.deal.findUnique({ where: { id: dealId } });
+
+  await prisma.$transaction([
+    prisma.dealHistory.create({
+      data: {
+        dealId,
+        field: 'value',
+        oldValue: deal.value.toString(),
+        newValue: newValue.toString(),
+        changedBy: userId,
       }
+    }),
+    prisma.deal.update({
+      where: { id: dealId },
+      data: { value: newValue }
     })
-  ],
-  callbacks: {
-    async signIn({ account, profile }) {
-      if (account?.provider === "google") {
-        // CRITICAL: Server-side validation
-        return (
-          profile?.email_verified === true &&
-          profile?.email?.endsWith("@talenta.com.my")
-        );
-      }
-      return false;
-    }
-  }
+  ]);
+}
+```
+
+**Phase to address:** Phase 2 (Deal Tracking) - Build audit trail into deal operations from the start
+
+**Sources:**
+- [Audit Trails: Track Changes - Bill.com](https://www.bill.com/learning/audit-trails)
+- [Audit Trail Best Practices - Ramp](https://ramp.com/blog/what-are-audit-trails)
+
+---
+
+### Pitfall 3: Pipeline Stage Transitions Without Validation
+
+**What goes wrong:** Deals can be moved to any stage without business logic validation, allowing invalid transitions like Lead -> Won (skipping qualification) or moving backwards after invoicing.
+
+**Why it happens:** Simple CRUD-based stage updates without state machine logic. The UI allows drag-and-drop to any column without checking if the transition is valid.
+
+**Consequences:**
+- Unreliable pipeline metrics (deals bypass qualification)
+- Revenue forecasting based on unqualified deals
+- Projects created from improperly closed deals
+- Confusion about deal status and history
+
+**Warning signs:**
+- Deals jumping multiple stages at once
+- "Won" deals with no proposal/negotiation history
+- Inconsistent stage progression patterns
+- Arguments about "correct" way to move deals
+
+**Prevention:**
+```typescript
+// Define valid transitions as a state machine
+const VALID_TRANSITIONS: Record<DealStage, DealStage[]> = {
+  LEAD: ['QUALIFIED', 'LOST'],           // Can qualify or disqualify
+  QUALIFIED: ['PROPOSAL', 'LEAD', 'LOST'], // Can progress, revert, or lose
+  PROPOSAL: ['NEGOTIATION', 'QUALIFIED', 'LOST'],
+  NEGOTIATION: ['WON', 'PROPOSAL', 'LOST'],
+  WON: [],                                // Terminal state - no changes
+  LOST: ['LEAD'],                         // Can resurrect to lead only
 };
+
+// Validate before updating
+function canTransition(from: DealStage, to: DealStage): boolean {
+  return VALID_TRANSITIONS[from].includes(to);
+}
+
+// In API route
+export async function PATCH(req: Request) {
+  const { dealId, newStage } = await req.json();
+  const deal = await prisma.deal.findUnique({ where: { id: dealId } });
+
+  if (!canTransition(deal.stage, newStage)) {
+    return Response.json(
+      { error: `Cannot move from ${deal.stage} to ${newStage}` },
+      { status: 400 }
+    );
+  }
+
+  // Proceed with update...
+}
 ```
 
-**Phase to address:** Phase 1 (Core Auth Setup) - Must implement signIn callback validation from day one
+**Phase to address:** Phase 2 (Pipeline Implementation) - Implement validation before building UI
 
 **Sources:**
-- [Google Provider - Auth.js](https://authjs.dev/getting-started/providers/google)
-- [Domain Restriction Discussion #266](https://github.com/nextauthjs/next-auth/discussions/266)
+- [State Machines in Practice - DEV](https://dev.to/pragativerma18/state-machines-in-practice-implementing-solutions-for-real-challenges-3l76)
+- [Mastering State Machines - Java Tech Blog](https://javanexus.com/blog/mastering-state-machines-avoiding-pitfalls)
+- [How to Design State Machines for Microservices - Red Hat](https://developers.redhat.com/articles/2021/11/23/how-design-state-machines-microservices)
 
 ---
 
-### Pitfall 3: Frontend-Only Permission Checks
+### Pitfall 4: Deal-to-Project Conversion Data Loss
 
-**What goes wrong:** Checking user roles (Admin/Editor/Viewer) only in React components or middleware without backend verification. Users can modify frontend state or bypass checks.
+**What goes wrong:** When a deal is marked "Won" and creates a Project, important context (client contacts, proposal details, negotiation history) is lost or not carried over.
 
-**Why it happens:** Developers assume client-side checks are sufficient, or middleware is the final authority.
+**Why it happens:** Deal and Project are designed as separate entities without proper relationship mapping. The conversion process only copies basic fields like name and value.
 
 **Consequences:**
-- Privilege escalation (Viewer accessing Admin functions)
-- Data manipulation by unauthorized users
-- Complete RBAC bypass using browser developer tools
+- Project team lacks deal context
+- Client expectations from proposal not visible
+- Repeated questions to client about already-discussed items
+- No traceability from project costs back to original deal
 
 **Warning signs:**
-- Permission checks scattered across components: `if (user.role === 'admin')`
-- No role verification in API routes
-- Trusting session data without server-side verification
-
-**Prevention:**
-```typescript
-// In every API route and Server Action:
-export async function POST(req: Request) {
-  const session = await auth();
-
-  // ALWAYS verify on backend
-  if (!session?.user || session.user.role !== 'ADMIN') {
-    return new Response('Unauthorized', { status: 403 });
-  }
-
-  // Proceed with operation...
-}
-```
-
-**Phase to address:** Phase 2 (Role Implementation) - Design centralized permission checking from start
-
-**Sources:**
-- [Role Based Access Control - Auth.js](https://authjs.dev/guides/role-based-access-control)
-- [RBAC Discussion #9609](https://github.com/nextauthjs/next-auth/discussions/9609)
-
----
-
-### Pitfall 4: Role Not Available in JWT/Session
-
-**What goes wrong:** After adding a `role` field to the User model, the role is not accessible in middleware or client components because it's not included in the JWT/session by default.
-
-**Why it happens:** NextAuth.js only includes `name`, `email`, and `image` in the session by default. Custom fields require explicit callbacks configuration.
-
-**Consequences:**
-- RBAC doesn't work
-- Middleware can't check roles
-- Need to fetch user from database on every request
-
-**Warning signs:**
-- `session.user.role` is undefined
-- Role checks fail even for admin users
-- Excessive database queries to check permissions
-
-**Prevention:**
-```typescript
-// auth.ts
-export const { handlers, auth } = NextAuth({
-  callbacks: {
-    async jwt({ token, user }) {
-      // Add role to JWT when user signs in
-      if (user) {
-        token.role = user.role;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      // Add role to session from JWT
-      if (session.user) {
-        session.user.role = token.role as Role;
-      }
-      return session;
-    }
-  }
-});
-
-// types/next-auth.d.ts - Extend types
-declare module "next-auth" {
-  interface User {
-    role: 'ADMIN' | 'EDITOR' | 'VIEWER';
-  }
-  interface Session {
-    user: User & DefaultSession["user"];
-  }
-}
-
-declare module "next-auth/jwt" {
-  interface JWT {
-    role: 'ADMIN' | 'EDITOR' | 'VIEWER';
-  }
-}
-```
-
-**Phase to address:** Phase 1 (Core Setup) and Phase 2 (Roles) - Design type extensions early
-
-**Sources:**
-- [Auth.js Callbacks](https://authjs.dev/getting-started/session-management/protecting-resources)
-- [RBAC in Next.js with NextAuth - Medium](https://medium.com/@mkilincaslan/rbac-in-next-js-with-nextauth-b438fe59eeeb)
-
----
-
-## MariaDB-Specific Issues
-
-### Pitfall 5: Using `provider = "mariadb"` in Prisma Schema
-
-**What goes wrong:** Attempting to use `provider = "mariadb"` in the Prisma schema results in error: "Datasource provider not known: 'mariadb'".
-
-**Why it happens:** Prisma treats MariaDB as MySQL-compatible and uses the mysql provider for both.
+- Manually copying deal notes to project
+- "Who was the client contact again?" questions
+- Proposal terms not reflected in project setup
+- Cannot find original deal from project view
 
 **Prevention:**
 ```prisma
-// CORRECT - Your current schema is correct
-datasource db {
-  provider = "mysql"  // Use mysql for MariaDB
-  url      = env("DATABASE_URL")
+// Maintain bidirectional relationship
+model Deal {
+  id            String       @id @default(cuid())
+  // ... other fields
+  project       Project?     @relation("DealProject")
+  projectId     String?      @unique
+
+  // Store proposal/negotiation details that should carry over
+  proposalNotes String?      @db.Text
+  agreedTerms   String?      @db.Text
+  clientPIC     String?      // Client person in charge
+  companyId     String?
+  company       Company?     @relation(fields: [companyId], references: [id])
+}
+
+model Project {
+  id              String   @id @default(cuid())
+  // ... other fields
+  sourceDealId    String?  @unique
+  sourceDeal      Deal?    @relation("DealProject", fields: [sourceDealId], references: [id])
+
+  // Copy essential context at creation, maintain link for history
+}
+
+// Conversion function preserves context
+async function convertDealToProject(dealId: string) {
+  const deal = await prisma.deal.findUnique({
+    where: { id: dealId },
+    include: { company: true }
+  });
+
+  return prisma.$transaction([
+    prisma.project.create({
+      data: {
+        name: deal.name,
+        revenue: deal.value,
+        sourceDealId: deal.id,
+        clientName: deal.company?.name,
+        clientPIC: deal.clientPIC,
+        notes: deal.proposalNotes, // Carry over deal context
+      }
+    }),
+    prisma.deal.update({
+      where: { id: dealId },
+      data: { stage: 'WON' }
+    })
+  ]);
 }
 ```
 
-**Phase to address:** Phase 1 (Schema Setup) - Already correct in existing schema
+**Phase to address:** Phase 3 (Projects) - Design Project schema with Deal relationship in mind
 
 **Sources:**
-- [Prisma MySQL Connector](https://www.prisma.io/docs/orm/overview/databases/mysql)
+- [CRM Workflow Automation - Nutshell](https://www.nutshell.com/blog/crm-automation-examples)
+- [When CRMs Go Bad - Secret Source Marketing](https://blog.secretsourcemarketing.com/double-digit/crm-implementing)
 
 ---
 
-### Pitfall 6: Prisma Adapter Version Incompatibility
+### Pitfall 5: Receipt Storage in Database BLOB
 
-**What goes wrong:** Recent versions of `@auth/prisma-adapter` have breaking changes with certain Prisma client versions. Specifically:
-- `@auth/prisma-adapter@2.9.0` doesn't work with `@prisma/client@6.6.0`
-- `@auth/prisma-adapter@2.7.4` broke compatibility from v2.7.2
+**What goes wrong:** Storing uploaded receipt images directly in the database as BLOBs, causing database bloat, slow backups, and poor performance.
 
-**Why it happens:** Rapid Auth.js v5 development causing dependency mismatches.
+**Why it happens:** Simplest implementation path - save file bytes to database column. Avoids complexity of external storage setup.
 
 **Consequences:**
-- Build failures with "UnhandledSchemeError"
-- Application won't start
-- Authentication completely broken
+- Database size explodes (50KB-5MB per receipt)
+- Backups become slow and unreliable
+- Database queries slow down
+- NAS storage fills up faster than expected
+- Cannot use CDN for file delivery
 
 **Warning signs:**
-- Webpack errors mentioning "node:child_process"
-- Build failures after npm update
-- Auth routes returning 500 errors
+- Database size growing disproportionately
+- Slow page loads when viewing costs with receipts
+- Backup failures or timeouts
+- "File too large" errors
 
 **Prevention:**
-1. Pin specific compatible versions in `package.json`
-2. Test auth flow after any dependency update
-3. Use lockfile (`package-lock.json`) to prevent accidental updates
-
-```bash
-# If issues occur, try pinning to known working version
-npm install @auth/prisma-adapter@2.7.2 --legacy-peer-deps
-```
-
-**Phase to address:** Phase 1 (Dependencies) - Lock versions from start
-
-**Sources:**
-- [Issue #12899 - Prisma Adapter Compatibility](https://github.com/nextauthjs/next-auth/issues/12899)
-- [Issue #12325 - Breaking Changes](https://github.com/nextauthjs/next-auth/issues/12325)
-
----
-
-### Pitfall 7: Prisma Connection Pool Exhaustion
-
-**What goes wrong:** In development with Hot Module Reloading (HMR), each reload creates a new PrismaClient instance, exhausting database connections.
-
-**Why it happens:** Next.js HMR re-executes modules, creating multiple PrismaClient instances without closing old connections.
-
-**Consequences:**
-- "Too many connections" database errors
-- Application becomes unresponsive
-- Database server under stress
-
-**Warning signs:**
-- Errors after few code changes in development
-- Database refusing connections
-- Slow queries due to connection contention
-
-**Prevention:**
-Your existing `/src/lib/prisma.ts` should use singleton pattern:
 ```typescript
-import { PrismaClient } from '@prisma/client';
+// Store files on filesystem, store path in database
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
-
-export const prisma = globalForPrisma.prisma ?? new PrismaClient();
-
-if (process.env.NODE_ENV !== 'production') {
-  globalForPrisma.prisma = prisma;
+// Prisma schema - store path only
+model CostItem {
+  id            String   @id @default(cuid())
+  // ... other fields
+  receiptPath   String?  // e.g., "/uploads/receipts/2026/01/abc123.pdf"
+  receiptName   String?  // Original filename for display
 }
+
+// Server action for upload
+async function uploadReceipt(formData: FormData, projectId: string) {
+  const file = formData.get('receipt') as File;
+
+  // Generate unique path
+  const date = new Date();
+  const dir = `receipts/${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}`;
+  const filename = `${cuid()}_${file.name}`;
+  const fullPath = path.join(process.cwd(), 'uploads', dir, filename);
+
+  // Ensure directory exists
+  await fs.mkdir(path.dirname(fullPath), { recursive: true });
+
+  // Write file
+  const buffer = Buffer.from(await file.arrayBuffer());
+  await fs.writeFile(fullPath, buffer);
+
+  // Return relative path for database storage
+  return `/uploads/${dir}/${filename}`;
+}
+
+// For internal tool, local filesystem is fine
+// For production scale, use S3/Cloudflare R2
 ```
 
-**Phase to address:** Phase 1 - Verify existing prisma.ts uses singleton pattern
+**Phase to address:** Phase 4 (Cost Tracking) - Set up file storage pattern before implementing receipts
 
 **Sources:**
-- [Prisma Issue #23685](https://github.com/prisma/prisma/issues/23685)
-
----
-
-### Pitfall 8: NextAuth Schema Missing Required Tables
-
-**What goes wrong:** NextAuth.js with database sessions requires specific tables (User, Account, Session, VerificationToken) that aren't in your current schema.
-
-**Why it happens:** The Prisma adapter expects specific table structure. Your current schema has `TeamMember` enum but no `User` model.
-
-**Consequences:**
-- Authentication completely fails
-- "Table does not exist" errors
-- Data model conflicts with existing schema
-
-**Prevention:**
-Add NextAuth required models to your Prisma schema:
-```prisma
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  emailVerified DateTime?
-  image         String?
-  role          Role      @default(VIEWER)
-
-  accounts      Account[]
-  sessions      Session[]
-
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  @@map("users")
-}
-
-model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-  @@map("accounts")
-}
-
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("sessions")
-}
-
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
-  @@map("verification_tokens")
-}
-
-enum Role {
-  ADMIN
-  EDITOR
-  VIEWER
-}
-```
-
-**Phase to address:** Phase 1 (Schema Migration) - Plan migration carefully to preserve existing data
-
-**Sources:**
-- [Prisma Adapter - Auth.js](https://authjs.dev/getting-started/adapters/prisma)
-
----
-
-## Docker/Cloudflare Issues
-
-### Pitfall 9: NEXTAUTH_URL Mismatch Behind Cloudflare Tunnel
-
-**What goes wrong:** OAuth callback URLs are generated incorrectly when behind Cloudflare tunnel, causing "redirect_uri_mismatch" errors from Google.
-
-**Why it happens:** NextAuth.js uses the request host to generate callback URLs. Behind a tunnel, the internal host differs from the public URL.
-
-**Consequences:**
-- Google OAuth fails with redirect_uri error
-- Users can't sign in
-- Infinite redirect loops
-
-**Warning signs:**
-- OAuth works locally but fails in Docker
-- Error mentions "redirect_uri_mismatch"
-- Callback URL shows internal hostname/IP
-
-**Prevention:**
-```bash
-# .env (Docker production)
-NEXTAUTH_URL=https://your-public-domain.com
-NEXTAUTH_SECRET=your-secure-secret-at-least-32-chars
-
-# Google OAuth Console
-# Add authorized redirect URI:
-# https://your-public-domain.com/api/auth/callback/google
-```
-
-**Additional Docker configuration:**
-```dockerfile
-# Ensure environment variables are passed
-ENV NEXTAUTH_URL=${NEXTAUTH_URL}
-```
-
-**Phase to address:** Phase 1 (Environment Setup) and Phase 3 (Deployment)
-
-**Sources:**
-- [Redirect URI Issue #6526](https://github.com/nextauthjs/next-auth/issues/6526)
-- [Cloudflare Tunnel Docker Issues](https://community.cloudflare.com/t/cloudflare-tunnel-with-docker-issues/649505)
-
----
-
-### Pitfall 10: Missing NEXTAUTH_SECRET in Production
-
-**What goes wrong:** Application deploys but sessions don't persist, JWTs fail to decrypt, or random authentication errors occur.
-
-**Why it happens:** `NEXTAUTH_SECRET` is used to encrypt JWTs. If missing or changed, all existing sessions become invalid.
-
-**Consequences:**
-- Users logged out unexpectedly
-- "JWEDecryptionFailed" errors
-- Session data corrupted
-
-**Warning signs:**
-- Authentication works in dev but not production
-- "JWEDecryptionFailed" in logs
-- Users randomly logged out
-
-**Prevention:**
-```bash
-# Generate strong secret
-openssl rand -base64 32
-
-# .env.production
-NEXTAUTH_SECRET=your-generated-secret-NEVER-CHANGE-THIS
-```
-
-**CRITICAL:** Once set, never change `NEXTAUTH_SECRET` without a migration plan - all existing sessions will be invalidated.
-
-**Phase to address:** Phase 1 (Environment Setup)
-
-**Sources:**
-- [NextAuth.js Errors](https://next-auth.js.org/errors)
-
----
-
-### Pitfall 11: Edge Runtime Incompatibility with Prisma Adapter
-
-**What goes wrong:** Middleware using database sessions fails because Prisma doesn't run on Edge runtime.
-
-**Why it happens:** NextAuth.js middleware runs on Edge runtime, but Prisma requires Node.js runtime.
-
-**Consequences:**
-- Middleware throws runtime errors
-- Authentication breaks in production
-- "PrismaClient is unable to run in this environment" errors
-
-**Warning signs:**
-- Works locally, fails on Vercel/Cloudflare
-- Edge runtime errors in logs
-- Database operations fail in middleware
-
-**Prevention:**
-Use JWT sessions for middleware compatibility:
-```typescript
-// auth.config.ts
-export const authConfig = {
-  session: {
-    strategy: "jwt"  // Required for Edge compatibility
-  },
-  providers: [...],
-  callbacks: {...}
-};
-```
-
-If database sessions are needed, split configuration:
-```typescript
-// auth.config.ts - Edge-safe config for middleware
-export const authConfig = {
-  providers: [...],
-  pages: { signIn: '/login' }
-};
-
-// auth.ts - Full config with adapter (Node.js runtime)
-import { authConfig } from './auth.config';
-
-export const { handlers, auth } = NextAuth({
-  ...authConfig,
-  adapter: PrismaAdapter(prisma),
-  session: { strategy: "database" }
-});
-```
-
-**Phase to address:** Phase 1 (Architecture Decision) - Decide JWT vs Database sessions early
-
-**Sources:**
-- [Prisma Edge Runtime Issue #23685](https://github.com/prisma/prisma/issues/23685)
-- [NextAuth.js Middleware Discussion #8547](https://github.com/nextauthjs/next-auth/discussions/8547)
+- [Building File Storage with Next.js and S3](https://www.alexefimenko.com/posts/file-storage-nextjs-postgres-s3)
+- [How to Optimize File Management in Next.js](https://www.telerik.com/blogs/how-optimize-file-management-next-js)
 
 ---
 
 ## Moderate Pitfalls
 
-### Pitfall 12: Google Refresh Token Only Issued Once
+Mistakes that cause delays, rework, or suboptimal user experience.
 
-**What goes wrong:** Google only provides a refresh token the first time a user authorizes your app. Subsequent sign-ins don't include it.
+### Pitfall 6: Over-Complicated Pipeline Stages
 
-**Why it happens:** Google's OAuth behavior - refresh tokens are issued only on initial consent.
+**What goes wrong:** Defining too many pipeline stages (8+) trying to capture every possible deal state, leading to confusion and inconsistent usage.
 
-**Consequences:**
-- Access tokens expire and can't be refreshed
-- Users need to re-authorize frequently
-- Long-running operations fail
-
-**Prevention:**
-Force re-consent to get new refresh token:
-```typescript
-GoogleProvider({
-  clientId: process.env.GOOGLE_CLIENT_ID!,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-  authorization: {
-    params: {
-      prompt: "consent",
-      access_type: "offline",
-      response_type: "code"
-    }
-  }
-})
-```
-
-**Phase to address:** Phase 1 (Provider Setup) - Only if you need long-lived Google API access
-
-**Sources:**
-- [Google Provider - NextAuth.js](https://next-auth.js.org/providers/google)
-
----
-
-### Pitfall 13: App Router vs Pages Router Confusion
-
-**What goes wrong:** Following outdated tutorials that use Pages Router patterns in App Router project.
-
-**Why it happens:** Most NextAuth.js tutorials were written for Pages Router. Auth.js v5 patterns differ significantly.
+**Why it happens:** Attempting to map every business scenario into pipeline stages. "What if the client requested a revised proposal?" becomes its own stage.
 
 **Consequences:**
-- Route handlers not found (404)
-- Session not available in components
-- Configuration doesn't work
+- Users skip stages or use them inconsistently
+- Pipeline view becomes cluttered
+- Forecasting loses accuracy (too many intermediate states)
+- Disagreements about which stage applies
 
 **Warning signs:**
-- Using `pages/api/auth/[...nextauth].js` (Pages Router)
-- Using `getServerSession()` (v4 pattern)
-- Session undefined in Server Components
+- Stages with few or no deals
+- Users asking "which stage should I use?"
+- Same deal bouncing between similar stages
+- Stages named "Proposal Sent" vs "Proposal Received" vs "Proposal Reviewed"
 
-**Prevention - App Router patterns:**
+**Prevention:**
 ```typescript
-// app/api/auth/[...nextauth]/route.ts (NOT pages/api/auth/)
-import { handlers } from "@/auth";
-export const { GET, POST } = handlers;
-
-// Server Component - use auth()
-import { auth } from "@/auth";
-export default async function Page() {
-  const session = await auth();
-  // ...
+// Keep it simple: 5-6 stages maximum
+enum DealStage {
+  LEAD = 'LEAD',                // Initial contact
+  QUALIFIED = 'QUALIFIED',       // Budget/authority/need/timing confirmed
+  PROPOSAL = 'PROPOSAL',         // Proposal sent
+  NEGOTIATION = 'NEGOTIATION',   // Active negotiation
+  WON = 'WON',                   // Deal closed successfully
+  LOST = 'LOST',                 // Deal lost
 }
 
-// Client Component - use SessionProvider + useSession
-"use client";
-import { useSession } from "next-auth/react";
+// Use tags or custom fields for nuance, not stages
+model Deal {
+  id            String     @id @default(cuid())
+  stage         DealStage
+  // Use tags for sub-states
+  tags          String?    // e.g., "revised-proposal,pending-approval"
+  // Use notes for context
+  notes         String?    @db.Text
+}
 ```
 
-**Phase to address:** Phase 1 (Initial Setup) - Use Auth.js v5 patterns from start
+For your context (high-ticket, low-volume deals): 5 stages (Lead -> Qualified -> Proposal -> Negotiation -> Won/Lost) is sufficient.
+
+**Phase to address:** Phase 1 (Schema Design) - Define stages once and stick to them
 
 **Sources:**
-- [Auth.js v5 Getting Started](https://authjs.dev/getting-started)
+- [The 9 CRM Stages That Separate Pros from Amateurs - Sparkle](https://sparkle.io/blog/crm-stages/)
+- [Sales Pipeline Stages - Pipedrive](https://www.pipedrive.com/en/blog/sales-pipeline-fundamental-stages)
+- [A Sales Pipeline Guide - Pipeline CRM](https://pipelinecrm.com/blog/a-sales-pipeline-guide/)
 
 ---
 
-### Pitfall 14: SessionProvider Bundle Size Bloat
+### Pitfall 7: Ignoring Indirect/Overhead Costs
 
-**What goes wrong:** Importing `SessionProvider` causes large Node.js polyfills (crypto) to be bundled into client JavaScript.
+**What goes wrong:** Project cost tracking only captures direct expenses (materials, subcontractors), missing indirect costs that consume 20-30% of actual project spend.
 
-**Why it happens:** NextAuth.js client utilities import Node.js modules that need polyfilling for browser.
+**Why it happens:** Direct costs are obvious and have receipts. Indirect costs (staff time, office overhead, equipment depreciation) are harder to allocate.
 
 **Consequences:**
-- Large bundle size (100KB+ additional)
-- Slower page loads
-- Poor Core Web Vitals
+- Projects appear more profitable than reality
+- Pricing future work incorrectly
+- "Profitable" projects actually lose money
+- Surprised by actual margins at year end
 
 **Warning signs:**
-- Large JavaScript bundles
-- Webpack warnings about Node.js polyfills
-- Slow initial page load
+- Projects always seem profitable but company isn't
+- No mechanism to track internal labor
+- Overhead costs not attributed anywhere
+- Wide gap between project profits and company profits
 
 **Prevention:**
-- Use server-side `auth()` when possible
-- Lazy load SessionProvider
-- Only use `useSession()` where necessary
+```prisma
+// Include labor/overhead in cost categories
+enum CostCategory {
+  LABOR_INTERNAL    // Staff time (even if not "billed")
+  LABOR_EXTERNAL    // Contractors/freelancers
+  MATERIALS         // Physical goods
+  VENDORS           // Third-party services
+  TRAVEL            // Transportation, accommodation
+  OVERHEAD          // Allocated portion of rent/utilities
+  OTHER
+}
 
-```typescript
-// Prefer server components
-import { auth } from "@/auth";
+model CostItem {
+  id            String       @id @default(cuid())
+  projectId     String
+  project       Project      @relation(fields: [projectId], references: [id])
+  category      CostCategory
+  description   String
+  amount        Decimal      @db.Decimal(12, 2)
+  date          DateTime
+  // For labor tracking
+  hours         Decimal?     @db.Decimal(6, 2)
+  hourlyRate    Decimal?     @db.Decimal(8, 2)  // Internal cost rate
+  // For receipts (materials, vendors, travel)
+  receiptPath   String?
 
-export default async function Page() {
-  const session = await auth(); // No client bundle impact
-  return <div>Welcome {session?.user?.name}</div>;
+  @@index([projectId])
+  @@index([category])
+  @@map("cost_items")
 }
 ```
 
-**Phase to address:** Phase 2 (Optimization) - Consider after basic auth works
+For a 3-person team, even simple time allocation helps: "Khairul spent ~20 hours on this project at RM100/hr internal rate = RM2,000 labor cost."
+
+**Phase to address:** Phase 4 (Cost Tracking) - Include labor category in cost schema
 
 **Sources:**
-- [Issue #12902 - Performance Bug](https://github.com/nextauthjs/next-auth/issues/12902)
+- [Project Cost Tracking Guide - Monday.com](https://monday.com/blog/project-management/project-cost-tracking/)
+- [Project Budget Tracking - Mastt](https://www.mastt.com/blogs/project-budget-tracking)
+- [How to Track Project Costs - Hubstaff](https://hubstaff.com/blog/how-to-track-project-costs-expenses/)
 
 ---
 
-### Pitfall 15: Scattered Permission Code
+### Pitfall 8: Revenue Forecasting Without Probability Weighting
 
-**What goes wrong:** Permission checks like `if (user.role === 'admin')` scattered across 20+ files, making role changes difficult.
+**What goes wrong:** Forecasting revenue by simply summing all pipeline deal values, regardless of stage or likelihood to close.
 
-**Why it happens:** Organic code growth without centralized permission system.
+**Why it happens:** Simple calculation: "We have 5 deals worth RM100K each = RM500K forecast." Ignores that early-stage deals rarely close at initial value.
 
 **Consequences:**
-- Adding new roles requires changes in many files
-- Inconsistent permission enforcement
-- Easy to miss permission checks
+- Wildly optimistic revenue forecasts
+- Poor business planning decisions
+- Disappointment when actual revenue falls short
+- Loss of trust in pipeline data
+
+**Warning signs:**
+- Forecast never matches actual results
+- Early-stage deals dominating forecast
+- No difference between "possible" and "probable" revenue
+- Team stops trusting dashboard numbers
 
 **Prevention:**
-Create centralized permission config:
 ```typescript
-// lib/permissions.ts
-export const PERMISSIONS = {
-  'initiatives:create': ['ADMIN', 'EDITOR'],
-  'initiatives:edit': ['ADMIN', 'EDITOR'],
-  'initiatives:delete': ['ADMIN'],
-  'initiatives:view': ['ADMIN', 'EDITOR', 'VIEWER'],
-} as const;
+// Assign probability to each stage
+const STAGE_PROBABILITY: Record<DealStage, number> = {
+  LEAD: 0.10,        // 10% - most leads don't convert
+  QUALIFIED: 0.25,   // 25% - qualified but early
+  PROPOSAL: 0.50,    // 50% - active opportunity
+  NEGOTIATION: 0.75, // 75% - likely to close
+  WON: 1.00,         // 100% - closed
+  LOST: 0.00,        // 0% - lost
+};
 
-export function hasPermission(
-  role: Role,
-  permission: keyof typeof PERMISSIONS
-): boolean {
-  return PERMISSIONS[permission].includes(role);
+// Calculate weighted forecast
+async function calculatePipelineForecast() {
+  const deals = await prisma.deal.findMany({
+    where: { stage: { notIn: ['WON', 'LOST'] } }
+  });
+
+  const forecast = deals.reduce((sum, deal) => {
+    const probability = STAGE_PROBABILITY[deal.stage];
+    return sum + (Number(deal.value) * probability);
+  }, 0);
+
+  return {
+    pipeline: deals.reduce((s, d) => s + Number(d.value), 0), // Total pipeline
+    weighted: forecast,  // Probability-weighted forecast
+  };
 }
 
-// Usage everywhere:
-if (!hasPermission(session.user.role, 'initiatives:delete')) {
-  return new Response('Forbidden', { status: 403 });
+// Dashboard shows both:
+// Total Pipeline: RM500,000
+// Weighted Forecast: RM187,500
+```
+
+**Phase to address:** Phase 5 (Dashboard) - Implement weighted forecasting in dashboard widgets
+
+**Sources:**
+- [Revenue Forecasting Tools - Irvine Bookkeeping](https://www.irvinebookkeeping.com/post/top-revenue-forecasting-tools-for-small-businesses)
+- [Sales Forecasting Software Guide - Forecastio](https://forecastio.ai/blog/sales-forecasting-software)
+
+---
+
+### Pitfall 9: Separate Pipelines for New vs. Repeat Clients Confusion
+
+**What goes wrong:** Having two separate pipeline types (Sales Pipeline for new leads, Potential Pipeline for repeat clients) but unclear criteria for which to use, leading to inconsistent data.
+
+**Why it happens:** Business logic distinction (new client acquisition vs. existing client upsell) translated directly to separate database entities without clear rules.
+
+**Consequences:**
+- Deals miscategorized
+- Duplicate records (same opportunity in both)
+- Inconsistent reporting (repeat client revenue not counted in "sales")
+- Users confused about where to log opportunities
+
+**Warning signs:**
+- "Should I put this in Pipeline or Potential?"
+- Same client appearing in both systems
+- Arguments about total pipeline value
+- Different metrics for same business outcome
+
+**Prevention:**
+```prisma
+// Single Deal entity with source indicator
+enum DealSource {
+  NEW_LEAD          // New client - came through marketing/outreach
+  REPEAT_CLIENT     // Existing client - repeat business
+  REFERRAL          // Referred by existing client
+  INTERNAL          // Internal/Talenta work
+}
+
+model Deal {
+  id            String      @id @default(cuid())
+  source        DealSource
+  companyId     String?
+  company       Company?    @relation(fields: [companyId], references: [id])
+  // ... same stages, same fields
+
+  // Company relationship tells you if new vs. repeat
+  // - No company = new lead (company TBD)
+  // - Company with past projects = repeat
+}
+
+// Query by source for separate views if needed
+const newDeals = await prisma.deal.findMany({
+  where: { source: 'NEW_LEAD' }
+});
+
+const repeatDeals = await prisma.deal.findMany({
+  where: { source: 'REPEAT_CLIENT' }
+});
+```
+
+**Phase to address:** Phase 1 (Schema Design) - Unify pipeline concept with source attribute
+
+**Sources:**
+- [Understanding Pipelines and Deals - ActiveCampaign](https://help.activecampaign.com/hc/en-us/articles/206797510-Understanding-pipelines-stages-deals-and-tasks)
+- [Set Up and Manage Pipelines - HubSpot](https://knowledge.hubspot.com/object-settings/set-up-and-customize-pipelines)
+
+---
+
+### Pitfall 10: Not Planning for Project Entry Points
+
+**What goes wrong:** Projects can only be created from won deals, but the requirement includes three entry points: (1) from deals, (2) linked to KRIs, (3) standalone. Schema designed for only one path.
+
+**Why it happens:** Initial implementation focuses on deal-to-project flow, treating other entry points as afterthoughts.
+
+**Consequences:**
+- Internal work (Talenta projects) can't be tracked
+- KRI-linked projects awkwardly shoehorned into deal flow
+- Database schema requires hacks to support multiple sources
+- Reporting doesn't distinguish project origins
+
+**Warning signs:**
+- "Fake" deals created just to make projects
+- Missing link between KRIs and their projects
+- Internal work not visible in project list
+- Confusion about project provenance
+
+**Prevention:**
+```prisma
+enum ProjectSource {
+  DEAL              // From won deal (external client)
+  KRI               // Linked to Key Result Initiative
+  STANDALONE        // Direct creation (internal work)
+}
+
+model Project {
+  id              String         @id @default(cuid())
+  name            String
+  source          ProjectSource
+
+  // Optional links based on source
+  sourceDealId    String?        @unique
+  sourceDeal      Deal?          @relation(fields: [sourceDealId], references: [id])
+
+  sourceKRIId     String?
+  sourceKRI       Initiative?    @relation(fields: [sourceKRIId], references: [id])
+
+  // Client info (may come from deal or be entered directly)
+  clientName      String?
+  clientCompanyId String?
+  clientCompany   Company?       @relation(fields: [clientCompanyId], references: [id])
+
+  // Financials
+  revenue         Decimal?       @db.Decimal(12, 2)
+  costs           CostItem[]
+
+  @@index([source])
+  @@map("projects")
 }
 ```
 
-**Phase to address:** Phase 2 (RBAC Implementation) - Design permission system before implementing
-
-**Sources:**
-- [Next.js Admin Panel RBAC Guide](https://eastondev.com/blog/en/posts/dev/20260107-nextjs-rbac-admin-guide/)
+**Phase to address:** Phase 1 (Schema Design) - Design for all three entry points upfront
 
 ---
 
 ## Minor Pitfalls
 
-### Pitfall 16: Missing email_verified Check
+Mistakes that cause annoyance or minor inefficiency.
 
-**What goes wrong:** Allowing users with unverified emails to sign in.
+### Pitfall 11: Dashboard Showing Stale Pipeline Data
 
-**Why it happens:** Assuming Google always returns verified emails.
+**What goes wrong:** Dashboard widgets query data on every page load, causing slow rendering and inconsistent numbers if data changes mid-session.
 
-**Prevention:**
-Always check `profile.email_verified` in signIn callback (shown in Pitfall 2).
+**Why it happens:** Simple implementation fetches fresh data each time. Works initially but becomes noticeable as data grows.
 
-**Phase to address:** Phase 1 (Provider Setup)
-
----
-
-### Pitfall 17: Not Handling Sign-In Errors Gracefully
-
-**What goes wrong:** Users see cryptic error pages when authentication fails.
-
-**Why it happens:** No custom error page configured.
+**Consequences:**
+- Slow dashboard loads
+- Numbers changing unexpectedly
+- Multiple database queries for same data
+- Poor perceived performance
 
 **Prevention:**
 ```typescript
-// auth.ts
-export const { handlers, auth } = NextAuth({
-  pages: {
-    signIn: '/login',
-    error: '/auth/error', // Custom error page
-  }
-});
+// Use React Query or SWR for caching and revalidation
+import { useQuery } from '@tanstack/react-query';
 
-// app/auth/error/page.tsx
-export default function AuthError({ searchParams }) {
-  const error = searchParams.error;
-  // Show user-friendly message based on error type
+function usePipelineStats() {
+  return useQuery({
+    queryKey: ['pipeline-stats'],
+    queryFn: () => fetch('/api/dashboard/pipeline').then(r => r.json()),
+    staleTime: 60 * 1000, // Consider fresh for 1 minute
+    refetchOnWindowFocus: true, // Refresh when user returns
+  });
 }
+
+// Or use Next.js unstable_cache for server-side
+import { unstable_cache } from 'next/cache';
+
+const getPipelineStats = unstable_cache(
+  async () => {
+    // Expensive query here
+  },
+  ['pipeline-stats'],
+  { revalidate: 60 } // Cache for 60 seconds
+);
 ```
 
-**Phase to address:** Phase 1 (UX Polish)
+**Phase to address:** Phase 5 (Dashboard) - Implement caching when building widgets
 
 ---
 
-### Pitfall 18: Linking Existing TeamMember to User
+### Pitfall 12: Lost Deal Reasons Not Tracked
 
-**What goes wrong:** After adding auth, existing `TeamMember` enum values (KHAIRUL, AZLAN, IZYANI) don't link to authenticated users.
+**What goes wrong:** When deals are marked "Lost," no reason is captured. Impossible to analyze why deals fail.
 
-**Why it happens:** Your schema uses enums for team members, but NextAuth creates separate User records.
+**Why it happens:** Focus on successful path (Lead -> Won). Lost deals treated as simple deletions.
 
 **Consequences:**
-- Disconnect between auth users and initiative assignments
-- Can't determine which authenticated user is which team member
-- Need manual data migration
+- No learning from lost opportunities
+- Cannot identify patterns in losses
+- Sales process can't improve
+- "Why did we lose that deal?" has no answer
 
 **Prevention:**
-Plan migration strategy:
-1. Create User records for each team member
-2. Add `userId` foreign key to Initiative for personInCharge/accountable
-3. Migrate existing enum data to relationships
-4. Consider keeping enum for backward compatibility during transition
+```prisma
+enum LostReason {
+  PRICE             // Too expensive
+  TIMING            // Bad timing / budget cycle
+  COMPETITOR        // Went with competitor
+  NO_BUDGET         // No budget available
+  NO_DECISION       // Client didn't decide
+  SCOPE_MISMATCH    // Our offering didn't fit
+  OTHER
+}
 
-**Phase to address:** Phase 1 (Schema Planning) - Design migration before implementation
+model Deal {
+  id            String       @id @default(cuid())
+  // ... other fields
+  lostReason    LostReason?
+  lostNotes     String?      @db.Text
+  lostAt        DateTime?
+}
+
+// Require reason when closing as lost
+async function closeDealAsLost(
+  dealId: string,
+  reason: LostReason,
+  notes?: string
+) {
+  return prisma.deal.update({
+    where: { id: dealId },
+    data: {
+      stage: 'LOST',
+      lostReason: reason,
+      lostNotes: notes,
+      lostAt: new Date(),
+    }
+  });
+}
+```
+
+**Phase to address:** Phase 2 (Pipeline) - Include lost reason in stage transition UI
+
+---
+
+### Pitfall 13: No Date Tracking for Stage Changes
+
+**What goes wrong:** Only current stage is stored, not when the deal entered each stage. Cannot calculate time-in-stage or sales velocity.
+
+**Why it happens:** Simple implementation only stores current state. Historical progression requires additional tracking.
+
+**Consequences:**
+- Cannot measure sales cycle length
+- No visibility into bottlenecks
+- Unable to identify stuck deals
+- "How long has this been in Proposal?" requires guessing
+
+**Prevention:**
+```prisma
+// Track stage history
+model DealStageHistory {
+  id            String     @id @default(cuid())
+  dealId        String
+  deal          Deal       @relation(fields: [dealId], references: [id])
+  stage         DealStage
+  enteredAt     DateTime   @default(now())
+  exitedAt      DateTime?
+
+  @@index([dealId])
+  @@map("deal_stage_history")
+}
+
+// Helper to get time in current stage
+async function getTimeInStage(dealId: string) {
+  const current = await prisma.dealStageHistory.findFirst({
+    where: { dealId, exitedAt: null },
+    orderBy: { enteredAt: 'desc' }
+  });
+
+  if (!current) return null;
+
+  const daysInStage = Math.floor(
+    (Date.now() - current.enteredAt.getTime()) / (1000 * 60 * 60 * 24)
+  );
+
+  return daysInStage;
+}
+```
+
+**Phase to address:** Phase 2 (Pipeline) - Build stage history tracking into transitions
+
+---
+
+### Pitfall 14: Cost Categories Too Rigid or Too Loose
+
+**What goes wrong:** Either too few categories (everything is "Other") or too many (analysis paralysis when entering costs).
+
+**Consequences:**
+- Cost breakdown reports are meaningless
+- Users skip categorization
+- Can't identify where money goes
+- Financial analysis becomes guesswork
+
+**Prevention:**
+```typescript
+// Start with 5-7 categories that match your business
+enum CostCategory {
+  LABOR         // Internal and external labor
+  MATERIALS     // Physical goods, supplies
+  VENDORS       // Third-party services (venues, catering, AV)
+  TRAVEL        // Transportation, accommodation, meals
+  MARKETING     // Promotional materials, advertising
+  OTHER         // Catch-all (monitor and split if grows)
+}
+
+// Allow custom subcategories via tags if needed
+model CostItem {
+  category    CostCategory
+  subcategory String?       // Free-form for flexibility
+  // e.g., category: VENDORS, subcategory: "Venue Rental"
+}
+
+// Review "Other" periodically - if >20%, add new category
+```
+
+For event/training business: Labor, Vendors, Materials, Travel, Marketing, Other covers most cases.
+
+**Phase to address:** Phase 4 (Cost Tracking) - Define categories based on actual business expenses
 
 ---
 
@@ -737,55 +811,86 @@ Plan migration strategy:
 
 | Phase | Topic | Likely Pitfall | Mitigation |
 |-------|-------|---------------|------------|
-| Phase 1 | Next.js Version | CVE-2025-29927 | Verify 14.2.25+, multi-layer auth |
-| Phase 1 | Environment | NEXTAUTH_SECRET/URL | Set correctly for Docker/Cloudflare |
-| Phase 1 | Domain Restriction | hd parameter bypass | signIn callback validation |
-| Phase 1 | Schema | Missing NextAuth tables | Add User/Account/Session models |
-| Phase 1 | Dependencies | Adapter version issues | Pin compatible versions |
-| Phase 1 | Runtime | Edge/Prisma conflict | Use JWT strategy |
-| Phase 2 | RBAC | Role not in session | JWT/session callbacks |
-| Phase 2 | RBAC | Frontend-only checks | Backend verification |
-| Phase 2 | RBAC | Scattered code | Centralized permissions |
-| Phase 3 | Deployment | URL mismatch | Correct NEXTAUTH_URL |
-| Phase 3 | Deployment | Session issues | Test auth flow end-to-end |
+| Phase 1 | Schema Design | Floating point money | Use Decimal, establish currency.js patterns |
+| Phase 1 | Schema Design | Multiple project sources | Design for all 3 entry points upfront |
+| Phase 1 | Schema Design | Pipeline confusion | Single Deal entity with source field |
+| Phase 2 | Pipeline | Invalid stage transitions | Implement state machine validation |
+| Phase 2 | Pipeline | No stage history | Track stage changes with timestamps |
+| Phase 2 | Pipeline | Lost deals not analyzed | Require lost reason on close |
+| Phase 3 | Projects | Deal context lost | Maintain bidirectional Deal-Project link |
+| Phase 3 | Projects | No audit trail | Log all financial changes |
+| Phase 4 | Costs | Database bloat | Store receipt files on filesystem |
+| Phase 4 | Costs | Missing indirect costs | Include labor/overhead category |
+| Phase 4 | Costs | Bad categories | Start with 5-7 business-aligned categories |
+| Phase 5 | Dashboard | Stale data | Implement caching/revalidation |
+| Phase 5 | Dashboard | Unrealistic forecast | Use probability-weighted calculations |
 
 ---
 
-## Security Checklist
+## Security Checklist for Financial Features
 
-Before going live, verify:
+Before deploying v1.2:
 
-- [ ] Next.js version >= 14.2.25 (CVE-2025-29927 patched)
-- [ ] Domain restriction in signIn callback (not just hd parameter)
-- [ ] NEXTAUTH_SECRET set and secure (32+ characters)
-- [ ] NEXTAUTH_URL matches public domain
-- [ ] Role included in JWT/session
-- [ ] All API routes verify authentication AND authorization
-- [ ] Server Actions verify permissions
-- [ ] Custom error pages configured
-- [ ] No client secrets in frontend code
-- [ ] Session expiry configured appropriately
+- [ ] All financial API routes verify user authentication
+- [ ] Only Editors/Admins can create/edit deals and costs
+- [ ] Only Admins can delete financial records
+- [ ] Receipt uploads validated (file type, size limits)
+- [ ] Receipt files stored outside web root or with access control
+- [ ] Deal value changes logged with user attribution
+- [ ] Cost modifications tracked in audit log
+- [ ] Dashboard queries protected against SQL injection (Prisma handles this)
+- [ ] File paths sanitized to prevent directory traversal
+
+---
+
+## Checklist Before Implementation
+
+Pre-implementation verification:
+
+- [ ] Money handling approach decided (integer cents or Decimal + currency.js)
+- [ ] Pipeline stages defined and validated with team
+- [ ] All three project entry points designed in schema
+- [ ] Audit trail tables included in migration
+- [ ] Receipt storage location planned (filesystem path)
+- [ ] Cost categories reviewed with business requirements
+- [ ] Dashboard caching strategy chosen
+- [ ] Stage transition validation rules documented
 
 ---
 
 ## Sources
 
-**Official Documentation:**
-- [Auth.js Getting Started](https://authjs.dev/getting-started)
-- [Auth.js Prisma Adapter](https://authjs.dev/getting-started/adapters/prisma)
-- [Auth.js Role Based Access Control](https://authjs.dev/guides/role-based-access-control)
-- [NextAuth.js Google Provider](https://next-auth.js.org/providers/google)
+### Financial Calculations
+- [Currency Calculations in JavaScript - Honeybadger](https://www.honeybadger.io/blog/currency-money-calculations-in-javascript/)
+- [How to Handle Monetary Values in JavaScript - Frontstuff](https://frontstuff.io/how-to-handle-monetary-values-in-javascript)
+- [currency.js Documentation](https://currency.js.org/)
 
-**Security Advisories:**
-- [CVE-2025-29927 - Datadog Security Labs](https://securitylabs.datadoghq.com/articles/nextjs-middleware-auth-bypass/)
-- [CVE-2025-29927 - ProjectDiscovery](https://projectdiscovery.io/blog/nextjs-middleware-authorization-bypass)
+### CRM & Pipeline Design
+- [CRM Implementation Mistakes - Hyegro](https://www.hyegro.com/blog/crm-implementation-mistakes)
+- [CRM Challenges - Salesflare](https://blog.salesflare.com/crm-challenges)
+- [Sales Pipeline Guide - Pipeline CRM](https://pipelinecrm.com/blog/a-sales-pipeline-guide/)
+- [CRM Stages Guide - Sparkle](https://sparkle.io/blog/crm-stages/)
+- [Pipeline Stages - Pipedrive](https://www.pipedrive.com/en/blog/sales-pipeline-fundamental-stages)
 
-**GitHub Issues & Discussions:**
-- [Domain Restriction Discussion #266](https://github.com/nextauthjs/next-auth/discussions/266)
-- [RBAC Middleware Discussion #9609](https://github.com/nextauthjs/next-auth/discussions/9609)
-- [Prisma Adapter Issue #12899](https://github.com/nextauthjs/next-auth/issues/12899)
-- [Redirect URI Issue #6526](https://github.com/nextauthjs/next-auth/issues/6526)
+### Project Cost Tracking
+- [Project Cost Tracking Guide - Monday.com](https://monday.com/blog/project-management/project-cost-tracking/)
+- [Project Budget Tracking - Mastt](https://www.mastt.com/blogs/project-budget-tracking)
+- [How to Track Project Costs - Hubstaff](https://hubstaff.com/blog/how-to-track-project-costs-expenses/)
 
-**Guides:**
-- [Next.js Security Guide 2025 - TurboStarter](https://www.turbostarter.dev/blog/complete-nextjs-security-guide-2025-authentication-api-protection-and-best-practices)
-- [RBAC in Next.js - Medium](https://medium.com/@mkilincaslan/rbac-in-next-js-with-nextauth-b438fe59eeeb)
+### State Machine Design
+- [State Machines in Practice - DEV](https://dev.to/pragativerma18/state-machines-in-practice-implementing-solutions-for-real-challenges-3l76)
+- [Mastering State Machines - Java Tech Blog](https://javanexus.com/blog/mastering-state-machines-avoiding-pitfalls)
+- [State Machines for Microservices - Red Hat](https://developers.redhat.com/articles/2021/11/23/how-design-state-machines-microservices)
+
+### Audit Trails
+- [Audit Trails Guide - Bill.com](https://www.bill.com/learning/audit-trails)
+- [Audit Trail Best Practices - Ramp](https://ramp.com/blog/what-are-audit-trails)
+- [Audit Trail Definition - AccountingTools](https://www.accountingtools.com/articles/audit-trail)
+
+### File Storage
+- [File Storage with Next.js and S3](https://www.alexefimenko.com/posts/file-storage-nextjs-postgres-s3)
+- [File Management in Next.js - Telerik](https://www.telerik.com/blogs/how-optimize-file-management-next-js)
+
+### Revenue Forecasting
+- [Sales Forecasting Software - Forecastio](https://forecastio.ai/blog/sales-forecasting-software)
+- [Revenue Forecasting Tools - Irvine Bookkeeping](https://www.irvinebookkeeping.com/post/top-revenue-forecasting-tools-for-small-businesses)

@@ -1,295 +1,329 @@
-# Features Research: Authentication
+# Feature Landscape: CRM & Project Financials
 
-**Domain:** Internal team app with Google OAuth and role-based access control
-**Researched:** 2026-01-21
-**Confidence:** HIGH (verified with official Auth.js documentation and industry best practices)
+**Domain:** Sales pipeline + project cost tracking for internal team
+**Context:** 3-person team, high-ticket deals, repeat clients
+**Researched:** 2026-01-22
+**Confidence:** HIGH (well-established domain patterns)
 
 ## Context
 
-This research addresses authentication features for an internal team app with:
-- Small team at @talenta.com.my domain
-- Three-tier roles: Admin, Editor, Viewer
-- Auto-approve domain users as Viewer
-- Admin manually promotes users
-- Goal: Restrict who can edit/comment vs view-only
+This research addresses CRM and project financials features for:
+- Small internal team (3 people: Khairul, Azlan, Izyani)
+- High-ticket B2B deals (few but significant)
+- Repeat clients with simpler qualification flow
+- Three project entry points: pipeline deals, repeat client potentials, direct creation
+- Projects can optionally link to strategic initiatives (KRIs)
+- Goal: Track pipeline, convert won deals to projects, monitor costs and profit
 
 ---
 
 ## Table Stakes
 
-Features users expect. Missing = app feels incomplete or insecure.
+Features users expect. Missing = system feels incomplete for CRM/project financials.
+
+### Sales Pipeline
 
 | Feature | Why Expected | Complexity | Implementation Notes |
 |---------|--------------|------------|---------------------|
-| **Google OAuth Sign-In** | Standard for internal apps; no password management burden | Low | Use NextAuth.js GoogleProvider; eliminates password-related vulnerabilities |
-| **Domain Restriction** | Internal app must reject non-@talenta.com.my users | Low | Use `signIn` callback to verify `profile.email.endsWith("@talenta.com.my")` + `hd` parameter for UI filtering |
-| **Session Management** | Users expect to stay logged in across browser sessions | Low | JWT strategy with reasonable expiry (7-30 days); auto-refresh on activity |
-| **Role Storage in Session** | Role must be available for UI/API authorization | Low | Persist role in JWT via `jwt()` callback; expose via `session` callback |
-| **Protected Routes** | Unauthorized users should not see protected pages | Medium | Next.js middleware checks session before rendering |
-| **Server-Side Authorization** | API routes must verify permissions (not just UI) | Medium | Validate `session.user.role` in every API handler |
-| **Sign Out** | Users must be able to log out cleanly | Low | NextAuth.js provides this out of the box |
-| **User Profile Display** | Show who is logged in (name, avatar) | Low | Access Google profile data via session |
+| **Visual pipeline (Kanban)** | Standard CRM pattern, intuitive deal tracking | Low | Already have Kanban infra from initiatives |
+| **Deal stages (Lead > Won/Lost)** | Fundamental to pipeline management | Low | 5-stage: Lead, Qualified, Proposal, Negotiation, Won/Lost |
+| **Deal value tracking** | Core to forecasting, always expected | Low | Currency field on deal (MYR) |
+| **Deal title/description** | Know what the deal is about | Low | Text fields |
+| **Deal-to-project conversion** | Won deals become work; manual creation wasteful | Medium | Auto-create Project when status = Won |
+| **Company tracking** | High-ticket B2B always tracks company | Low | Company entity with name, industry |
+| **Client PIC (contact)** | Know who to talk to at each company | Low | Contact linked to company |
+| **Basic pipeline metrics** | "How much is in pipeline?" is first question | Low | Total value by stage, deal count |
+
+### Repeat Client Tracking
+
+| Feature | Why Expected | Complexity | Implementation Notes |
+|---------|--------------|------------|---------------------|
+| **Potential projects list** | Repeat clients have simpler flow than new leads | Low | Separate Kanban: Potential > Confirmed/Cancelled |
+| **Client history visibility** | See past projects for context on new work | Low | Company detail shows related projects |
+| **Potential-to-project conversion** | Same pattern as pipeline, just simpler | Low | Auto-create Project when Potential = Confirmed |
+| **Link to company** | Know which client the potential is for | Low | Required foreign key to Company |
+
+### Project Entity
+
+| Feature | Why Expected | Complexity | Implementation Notes |
+|---------|--------------|------------|---------------------|
+| **Three entry points** | Projects come from: pipeline, potential, direct | Medium | Three creation flows, one Project entity |
+| **Link to KRI (optional)** | Some projects tie to strategic initiatives | Low | Optional foreign key to Initiative |
+| **Standalone projects** | Internal work, Talenta projects have no deal | Low | No pipeline/potential link required |
+| **Project status tracking** | Know what stage project is in | Low | Draft, Active, Completed, Cancelled |
+| **Revenue from deal** | Carried from won deal value | Low | Auto-populated, editable |
+| **Project title/description** | Know what the project is | Low | Text fields |
+
+### Project Costs
+
+| Feature | Why Expected | Complexity | Implementation Notes |
+|---------|--------------|------------|---------------------|
+| **Cost line items** | Break down expenses by item | Low | Description, amount, category, date |
+| **Cost categories** | Labor, materials, vendors, misc | Low | Enum: Labor, Materials, Vendors, Travel, Software, Other |
+| **Receipt uploads** | Proof of expense for reference | Medium | File upload to local storage |
+| **Cost totals** | Sum of all cost items | Low | Computed field |
+| **Profit calculation** | Revenue minus costs | Low | Derived: deal value - total costs |
+
+### Dashboard Widgets
+
+| Feature | Why Expected | Complexity | Implementation Notes |
+|---------|--------------|------------|---------------------|
+| **Pipeline by stage** | Visual breakdown of deal stages | Low | Bar chart or stage cards with values |
+| **Pipeline total value** | Answer "what's total forecasted?" | Low | Sum of all open deal values |
+| **Revenue summary** | What did we earn? | Low | Sum of completed project revenues |
+| **Profit summary** | What did we net? | Low | Revenue - costs for completed projects |
 
 ### Why These Are Table Stakes
 
-According to [Auth.js official documentation](https://authjs.dev/guides/role-based-access-control), role-based access control requires:
-1. Storing roles in JWT tokens or database
-2. Exposing roles via session callback
-3. Server-side validation (client-side is "for UX only")
-
-Industry consensus from [enterprise authentication standards](https://www.linkedin.com/pulse/table-stake-features-saas-enterprise-products-rohit-pareek) identifies SSO via Google Workspace as "hypercritical" for internal enterprise apps, along with RBAC/Admin features for user management.
+According to industry research:
+- Visual pipeline management is "non-negotiable" for sales CRMs ([Superoffice](https://www.superoffice.com/blog/pipeline-management/))
+- Deal-to-project conversion is standard in CRMs that combine sales and project management ([eWay-CRM](https://www.eway-crm.com/resources/how-to-use-eway-crm/convert-deals-companies-contacts-projects/))
+- Cost tracking with categories and receipt storage is expected for project profitability ([Scoro](https://www.scoro.com/blog/project-cost-tracking/))
+- High-ticket B2B sales require company and contact (PIC) tracking ([Salesflare](https://blog.salesflare.com/best-b2b-crm))
 
 ---
 
 ## Differentiators
 
-Features that improve experience but are not expected for MVP. Consider for v1.1+.
+Features that would add value but are NOT expected for an internal 3-person tool.
 
-| Feature | Value Proposition | Complexity | When to Add |
-|---------|-------------------|------------|-------------|
-| **Activity Audit Log** | Track who changed what, when (accountability for sensitive actions) | Medium | Post-MVP if compliance needs arise |
-| **Role Change Notifications** | Email users when their role changes | Low | Nice-to-have for transparency |
-| **"Remember Me" Toggle** | Let users choose session duration | Low | If users request shorter sessions |
-| **Session Device List** | Show active sessions, allow remote logout | High | Only if security concerns arise |
-| **Passkeys/WebAuthn** | Phishing-resistant authentication | High | [Moving toward table stakes](https://www.centerforcybersecuritypolicy.org/insights-and-research/is-phishing-resistant-mfa-table-stakes) but overkill for small internal team |
-| **MFA/2FA** | Extra layer of security | Medium | Google OAuth already provides Google's MFA; adding app-level MFA is redundant |
-| **Granular Permissions** | Per-initiative permissions beyond roles | High | Only if role-based proves insufficient |
-| **Invite-Only Registration** | Admins must invite users before they can join | Medium | Consider if auto-approve feels too open |
-| **User Deactivation (vs Delete)** | Disable accounts without deleting history | Low | Post-MVP for audit trail preservation |
+| Feature | Value Proposition | Complexity | Recommendation |
+|---------|-------------------|------------|----------------|
+| **Weighted pipeline value** | More accurate forecast (probability * value) | Low | **Build** - simple multiplication, high value |
+| **Win rate tracking** | Learn from past performance | Low | **Build** - count won / count closed |
+| **Deal aging alerts** | Catch stale deals before they go cold | Low | **Build** - reuse notification infra |
+| **Deal notes/activity log** | Record conversations and progress | Low | **Build** - simple text log per deal |
+| **Expected close date** | Better forecasting by time period | Low | **Build** - date field on deal |
+| **Cost vs budget comparison** | "Are we on track?" for each project | Medium | **Defer** - adds budget field, comparison logic |
+| **Time tracking on projects** | Know labor cost accurately | High | **Defer** - significant new feature |
+| **Invoice generation** | Create invoices from projects | High | **Defer** - use external accounting tool |
+| **Multi-currency support** | International deals | Medium | **Defer** - 3-person team, MYR sufficient |
+| **Client portal** | External client access | High | **Defer** - internal tool only |
+| **Email integration** | Log emails to deals | High | **Defer** - overkill for 3-person team |
+| **Sales cycle analytics** | Detailed conversion insights | Medium | **Defer** - nice but not essential |
+| **Recurring revenue tracking** | Subscription model | Medium | **Defer** - project-based, not SaaS |
 
 ### Why These Are Differentiators (Not Table Stakes)
 
-For a small internal team app (3 users currently):
-- **Google's MFA** already protects accounts; app-level MFA adds friction without significant security gain
-- **Audit logs** matter for compliance; small teams often know who did what
-- **Passkeys** are emerging but not yet expected for internal tools
-- **Granular permissions** add complexity; start with role-based, add granularity only if needed
+For a small internal team (3 users):
+- **Weighted pipeline** adds forecasting accuracy with minimal effort
+- **Win rate** is valuable learning but not blocking functionality
+- **Time tracking** is a whole separate system; use external tools if needed
+- **Invoice generation** belongs in accounting software (already have external tools)
+- **Multi-currency** is unnecessary when all clients pay in MYR
 
 ---
 
 ## Anti-Features
 
-Features to deliberately NOT build. Common mistakes in this domain.
+Features to deliberately NOT build. Common mistakes for small internal teams.
 
 | Anti-Feature | Why Avoid | What to Do Instead |
 |--------------|-----------|-------------------|
-| **Username/Password Authentication** | Adds password storage, reset flows, security burden. [Google deprecated basic auth March 2025](https://support.google.com/a/answer/14114704?hl=en) | Use Google OAuth exclusively; no passwords to manage |
-| **Email/Magic Link Auth** | Adds email sending complexity; doesn't integrate with Workspace | Rely on Google OAuth which users already have |
-| **Self-Registration Without Domain Check** | Anyone could create accounts | Always validate @talenta.com.my domain in `signIn` callback |
-| **Client-Side Only Authorization** | Trivially bypassed; security theater | Always validate on server; client-side is for UX only |
-| **Complex Permission Trees** | Overkill for 3 roles; maintenance nightmare | Simple role hierarchy (Admin > Editor > Viewer) |
-| **Custom Role Creation UI** | YAGNI for fixed 3-role system | Hardcode Admin/Editor/Viewer; add custom roles only if actually needed |
-| **Multiple Auth Providers** | Adds complexity; team already has Google Workspace | Google OAuth only; one provider, one user record |
-| **Public User Profiles** | Internal app; no need for discoverability | Keep user data internal to the app |
-| **Social Features (Follow, Friend)** | This is a work tool, not a social network | Focus on task/initiative collaboration |
-| **Password Reset Flow** | No passwords = no reset flow needed | OAuth handles all authentication |
-| **Email Verification** | Google already verified the email | Trust Google's `email_verified` claim |
-| **Remember Password Across Devices** | No passwords to remember | OAuth session management handles this |
-| **Rate Limiting Login Attempts** | OAuth provider handles brute force protection | Google protects their own auth flow |
+| **Complex lead scoring** | 3-person team doesn't need automated prioritization; few deals means manual review is fast | Manual qualification through pipeline stages |
+| **AI-powered forecasting** | Overkill for few deals; insufficient data for ML to be meaningful | Simple sum of weighted pipeline value |
+| **Marketing automation** | Not a marketing tool; focus on deal/project tracking | External tools (Mailchimp) if ever needed |
+| **Territory management** | No territories; 3 people share everything | Single shared pipeline |
+| **Role-based deal visibility** | Entire team should see all deals for context | Everyone sees everything |
+| **Activity tracking/logging every action** | Every click logged is overhead for small team; creates noise | Manual notes on deals/projects when meaningful |
+| **Customer support ticketing** | Different domain, different tool | Use email or external ticketing |
+| **Advanced reporting builder** | 3 people don't need customizable reports | Fixed, simple dashboard widgets |
+| **Approval workflows for deals** | Small team decides together informally | No formal approval chains needed |
+| **API for external integrations** | Internal tool only; no external consumers | Build only if specific integration needed |
+| **Mobile app** | Web responsive is enough for internal tool | Mobile-responsive design sufficient |
+| **Gamification/leaderboards** | 3 people; no need for sales competition mechanics | Skip entirely |
+| **Email/SMS notifications** | 3-person team; verbal/Slack is faster | In-app notifications only (existing system) |
+| **Duplicate detection AI** | Low deal volume; team knows clients personally | Manual awareness |
+| **Custom pipeline stages** | Fixed stages are clearer for small team; prevents confusion | Hardcode the 5 stages |
+| **Multi-pipeline support** | One business, one sales pipeline | Single pipeline + separate potential projects Kanban |
+| **Contact enrichment** | Auto-populate from LinkedIn/etc is overkill for few clients | Manual entry |
+| **Call recording/transcription** | Adds complexity and storage burden | Take notes manually |
+| **Quote/proposal generator** | Use external tools (Google Docs) for complex quotes | Link to external quote documents |
 
 ### Why Anti-Features Matter
 
-According to [Auth0's common authentication mistakes](https://auth0.com/blog/five-common-authentication-and-authorization-mistakes-to-avoid-in-your-saas-application/):
-- Building password auth when OAuth is available creates unnecessary attack surface
-- Client-side authorization is a critical mistake: "always validate on the server"
-- [Overprivileged accounts and permission sprawl](https://www.valencesecurity.com/resources/blogs/saas-security-best-practices-and-strategies-for-2025) are major 2025 security concerns
-
----
-
-## Role Permission Matrix
-
-What each role should be able to do in the SAAP application.
-
-### Core Permissions
-
-| Action | Admin | Editor | Viewer |
-|--------|-------|--------|--------|
-| **View Dashboard** | Yes | Yes | Yes |
-| **View Initiatives** | Yes | Yes | Yes |
-| **View Timeline/Gantt** | Yes | Yes | Yes |
-| **View Kanban** | Yes | Yes | Yes |
-| **View Events** | Yes | Yes | Yes |
-| **View Calendar** | Yes | Yes | Yes |
-
-### Initiative Management
-
-| Action | Admin | Editor | Viewer |
-|--------|-------|--------|--------|
-| **Create Initiative** | Yes | Yes | No |
-| **Edit Initiative** | Yes | Yes | No |
-| **Delete Initiative** | Yes | No | No |
-| **Change Initiative Status** | Yes | Yes | No |
-| **Drag/Reorder Kanban Cards** | Yes | Yes | No |
-| **Reassign Initiative** | Yes | Yes (own dept) | No |
-
-### Comments/Collaboration
-
-| Action | Admin | Editor | Viewer |
-|--------|-------|--------|--------|
-| **View Comments** | Yes | Yes | Yes |
-| **Add Comments** | Yes | Yes | No |
-| **Edit Own Comments** | Yes | Yes | No |
-| **Delete Own Comments** | Yes | Yes | No |
-| **Delete Any Comment** | Yes | No | No |
-
-### User/Admin Functions
-
-| Action | Admin | Editor | Viewer |
-|--------|-------|--------|--------|
-| **View User List** | Yes | No | No |
-| **Promote User Role** | Yes | No | No |
-| **Demote User Role** | Yes | No | No |
-| **Remove User** | Yes | No | No |
-
-### Role Hierarchy Rationale
-
-**Viewer (Default for new @talenta.com.my users)**
-- Read-only access to all data
-- Cannot modify anything
-- Suitable for stakeholders who need visibility but shouldn't change data
-
-**Editor**
-- Full create/edit capabilities for initiatives and comments
-- Cannot delete initiatives (prevents accidents)
-- Cannot manage users
-- Suitable for team members actively working on initiatives
-
-**Admin**
-- Full permissions including destructive actions
-- User management (role changes)
-- Should be limited to 1-2 trusted individuals
-
-### Implementation Notes
-
-1. **New users auto-approved as Viewer** - Implemented via `signIn` callback checking domain
-2. **Role stored in database User model** - Per [Auth.js recommendation](https://authjs.dev/guides/role-based-access-control) for database strategy
-3. **Role exposed in session** - Via `session` callback for both client and server access
-4. **Server-side enforcement** - Every API route checks `session.user.role` before mutations
-
----
-
-## Auto-Approval Flow
-
-Recommended flow for domain-restricted auto-approval:
-
-```
-User clicks "Sign in with Google"
-        |
-        v
-Google OAuth flow completes
-        |
-        v
-NextAuth signIn callback fires
-        |
-        v
-Check: Does email end with @talenta.com.my?
-        |
-    NO -+-> Return false (reject sign-in)
-        |     User sees error message
-        |
-   YES -+-> Check: Does user exist in database?
-              |
-          NO -+-> Create user with role: "VIEWER"
-              |
-         YES -+-> Load existing user (role unchanged)
-              |
-              v
-        Sign-in successful
-        Session contains user.role
-```
-
-### Key Implementation Points
-
-1. **`hd` parameter** - Add to Google auth URL to pre-filter account selection UI
-   ```typescript
-   GoogleProvider({
-     authorization: {
-       params: { hd: 'talenta.com.my' }
-     }
-   })
-   ```
-   Note: This only filters the UI; actual validation must happen in callback
-
-2. **`signIn` callback** - Server-side domain validation (required)
-   ```typescript
-   callbacks: {
-     async signIn({ account, profile }) {
-       if (account?.provider === "google") {
-         return profile?.email?.endsWith("@talenta.com.my") ?? false
-       }
-       return true
-     }
-   }
-   ```
-
-3. **Database adapter** - User record created automatically with role field defaulting to "VIEWER"
+According to CRM implementation research:
+- "Over-customization is a major reason CRM projects fail" ([Close.com](https://www.close.com/blog/crm-implementation-mistakes))
+- "65% of CRM failures can be attributed to poor user adoption" - often caused by complexity ([Rapitek](https://rapitek.com/en/blog/2025/7/top-7-crm-mistakes-small-teams-make-2025-how-to-avoid/))
+- "Creating too many unnecessary fields can cause the system to feel bulky" ([SmallBusinessHQ](https://smallbusinesshq.co/crm-mistakes/))
+- Teams using phased, simple approaches achieve 30% higher adoption rates
 
 ---
 
 ## Feature Dependencies
 
 ```
-Google OAuth Setup
-       |
-       +---> Domain Restriction (signIn callback)
-       |            |
-       |            +---> Auto-Approval Flow
-       |
-       +---> Session Management (JWT/Database)
-                    |
-                    +---> Role in Session
-                              |
-                              +---> Protected Routes (Middleware)
-                              |
-                              +---> Server-Side Authorization (API)
-                              |
-                              +---> Client-Side UI Adaptation
-                                        |
-                                        +---> Role-Based UI (hide/show buttons)
+Company
+  |
+  +---> Contact (client PIC, belongs to company)
+  |
+  +---> Pipeline Deal
+  |        |
+  |        +---> (status = Won) ---> Creates Project
+  |        +---> (status = Lost) ---> No project
+  |
+  +---> Potential Project (for repeat clients)
+           |
+           +---> (status = Confirmed) ---> Creates Project
+           +---> (status = Cancelled) ---> No project
+
+Project
+  |
+  +---> Source: Pipeline Deal | Potential | Direct
+  |
+  +---> Initiative (optional link to KRI)
+  |
+  +---> Cost Items[]
+           |
+           +---> Receipt (file upload, optional)
 ```
+
+**Key dependency chain:**
+1. Company must exist before Deal/Potential/Project
+2. Contact links to Company
+3. Deal/Potential auto-creates Project on Won/Confirmed
+4. Projects can exist without Deal/Potential (direct creation)
+5. Cost items belong to Project
+6. Initiative link is optional (many projects are standalone)
+
+---
+
+## Data Model Sketch
+
+```
+Company
+  - id, name, industry, notes
+  - createdAt, updatedAt
+
+Contact
+  - id, companyId, name, email, phone, role
+  - createdAt, updatedAt
+
+PipelineDeal
+  - id, companyId, contactId
+  - title, description, value
+  - stage: Lead | Qualified | Proposal | Negotiation | Won | Lost
+  - expectedCloseDate?
+  - projectId? (set when converted)
+  - createdAt, closedAt, updatedAt
+
+PotentialProject
+  - id, companyId, contactId
+  - title, description, estimatedValue
+  - status: Potential | Confirmed | Cancelled
+  - projectId? (set when converted)
+  - createdAt, updatedAt
+
+Project
+  - id, companyId
+  - title, description, revenue
+  - status: Draft | Active | Completed | Cancelled
+  - sourceType: Pipeline | Potential | Direct
+  - pipelineDealId?, potentialProjectId?, initiativeId?
+  - createdAt, completedAt, updatedAt
+
+CostItem
+  - id, projectId
+  - description, amount
+  - category: Labor | Materials | Vendors | Travel | Software | Other
+  - date, receiptUrl?
+  - createdAt, updatedAt
+```
+
+---
+
+## Pipeline Stage Definitions
+
+| Stage | Meaning | Entry Criteria | Exit Criteria |
+|-------|---------|----------------|---------------|
+| **Lead** | Initial contact or inquiry | New opportunity identified | Budget/need confirmed |
+| **Qualified** | Confirmed budget, authority, need, timeline | BANT criteria met | Requested proposal |
+| **Proposal** | Quote/proposal submitted | Proposal sent to client | Client reviewing/negotiating |
+| **Negotiation** | Terms being discussed | Client engaged in back-and-forth | Agreement reached or deal lost |
+| **Won** | Deal closed successfully | Contract signed/PO received | Project created |
+| **Lost** | Deal did not close | Client declined or went silent | Reason documented |
+
+### Potential Project Stages
+
+| Stage | Meaning |
+|-------|---------|
+| **Potential** | Repeat client discussed new work; not yet confirmed |
+| **Confirmed** | Client confirmed they want to proceed; project created |
+| **Cancelled** | Client decided not to proceed |
 
 ---
 
 ## MVP Recommendation
 
-For MVP authentication (v1.1), prioritize:
+### Phase 1: Core Entities and Pipeline
+- Company entity (name, industry, notes)
+- Contact entity linked to company
+- Pipeline Deal with 5 stages
+- Potential Project for repeat clients (3 stages)
+- Kanban views for both pipeline and potentials
 
-### Must Have (Table Stakes)
-1. Google OAuth sign-in
-2. Domain restriction (@talenta.com.my only)
-3. Auto-approval as Viewer
-4. Role storage (Admin/Editor/Viewer)
-5. Protected routes via middleware
-6. Server-side authorization in API routes
-7. Admin UI to change user roles
+### Phase 2: Projects and Conversion
+- Project entity with status tracking
+- Three entry points: pipeline, potential, direct
+- Auto-create project when Deal = Won or Potential = Confirmed
+- Optional KRI linking
 
-### Defer to Post-MVP
-- Activity audit logging (add if compliance needed)
-- Session device management (add if security concerns)
-- Granular per-initiative permissions (add if roles prove insufficient)
-- Role change notifications (nice-to-have)
+### Phase 3: Financials and Dashboard
+- Cost line items with categories
+- Receipt uploads
+- Profit calculation (revenue - costs)
+- Dashboard widgets (pipeline value, revenue, profit)
+
+### Defer to Post-v1.2
+- Weighted pipeline value
+- Win rate tracking
+- Deal aging alerts
+- Budget vs actual comparison
 
 ---
 
 ## Sources
 
-### Official Documentation
-- [Auth.js Role-Based Access Control Guide](https://authjs.dev/guides/role-based-access-control)
-- [Auth.js Google Provider](https://authjs.dev/getting-started/providers/google)
-- [NextAuth.js Google Provider](https://next-auth.js.org/providers/google)
-- [Google OAuth Domain Restriction Discussion](https://github.com/nextauthjs/next-auth/discussions/266)
-- [Google Workspace OAuth Transition](https://support.google.com/a/answer/14114704?hl=en)
+### CRM Pipeline Management
+- [monday.com - Sales Pipeline Stages](https://monday.com/blog/crm-and-sales/sales-pipeline-stages/)
+- [Superoffice - Pipeline Management](https://www.superoffice.com/blog/pipeline-management/)
+- [Superoffice - Boost Your Sales Pipeline](https://www.superoffice.com/blog/boost-your-sales-pipeline/)
+- [Salesforce - Pipeline Management](https://www.salesforce.com/sales/pipeline/management/)
 
-### Industry Best Practices
-- [Auth0: Common Authentication Mistakes](https://auth0.com/blog/five-common-authentication-and-authorization-mistakes-to-avoid-in-your-saas-application/)
-- [SaaS Security Best Practices 2025](https://www.valencesecurity.com/resources/blogs/saas-security-best-practices-and-strategies-for-2025)
-- [Enterprise Table-Stake Features](https://www.linkedin.com/pulse/table-stake-features-saas-enterprise-products-rohit-pareek)
-- [Phishing-Resistant MFA as Table Stakes](https://www.centerforcybersecuritypolicy.org/insights-and-research/is-phishing-resistant-mfa-table-stakes)
+### High-Ticket B2B Sales
+- [Folk.app - High Ticket Sales](https://www.folk.app/articles/high-ticket-sales-101-how-to-build-a-personalized-approach-for-significant-deals)
+- [Breakcold - CRM in High-Ticket Sales](https://www.breakcold.com/how-to/how-to-use-crm-in-high-ticket-sales)
+- [Salesflare - Best B2B CRM](https://blog.salesflare.com/best-b2b-crm)
+- [Apollo.io - High Ticket Sales](https://www.apollo.io/insights/what-are-high-ticket-sales)
 
-### Permission Matrix References
-- [Best Practices for Users, Roles, and Permissions](https://dev.to/anna_p_s/best-practices-for-managing-users-roles-and-permissions-5140)
-- [Grafana Roles and Permissions](https://grafana.com/docs/grafana/latest/administration/roles-and-permissions/)
-- [Sirv Users, Roles, Permissions](https://sirv.com/help/articles/users-roles-permissions/)
+### Deal-to-Project Conversion
+- [eWay-CRM - Convert Deals to Projects](https://www.eway-crm.com/resources/how-to-use-eway-crm/convert-deals-companies-contacts-projects/)
+- [Capsule CRM - Pipeline to Project Management](https://capsulecrm.com/blog/after-sales-moving-to-pipeline/)
+- [OnePageCRM - Project Management CRM](https://www.onepagecrm.com/blog/project-management-crm/)
+- [Zoho - Deal to Project Automation](https://www.blungo.com/blogs/post/Automatically-create-a-Zoho-Project-when-deal-is-won-in-Zoho-CRM)
+
+### Project Cost Tracking
+- [monday.com - Project Cost Tracking Guide](https://monday.com/blog/project-management/project-cost-tracking/)
+- [monday.com - Cost Breakdown Structure](https://monday.com/blog/project-management/cost-breakdown-structure/)
+- [Scoro - Project Cost Tracking](https://www.scoro.com/blog/project-cost-tracking/)
+- [Avaza - Project Profitability](https://www.avaza.com/how-to-measure-project-profitability/)
+- [Toggl - Project Profitability](https://toggl.com/resources/project-profitability/)
+
+### Repeat Client Management
+- [Method - Repeat Customers with CRM](https://www.method.me/blog/repeat-customer/)
+- [Kylas - Repeat Customers CRM](https://kylas.io/blog/repeat-customers)
+- [HubSpot - Customer Retention Tools](https://blog.hubspot.com/service/customer-retention-tools)
+
+### Revenue Forecasting
+- [Forecastio - Sales Forecasting Tools 2026](https://forecastio.ai/blog/sales-forecasting-software)
+- [monday.com - Revenue Management Software](https://monday.com/blog/crm-and-sales/revenue-management-software/)
+- [Salesmate - CRM Small Business](https://www.salesmate.io/crm-small-business/)
+
+### CRM Mistakes to Avoid
+- [Close.com - CRM Implementation Mistakes](https://www.close.com/blog/crm-implementation-mistakes)
+- [Rapitek - CRM Mistakes Small Teams 2025](https://rapitek.com/en/blog/2025/7/top-7-crm-mistakes-small-teams-make-2025-how-to-avoid/)
+- [SmallBusinessHQ - CRM Mistakes](https://smallbusinesshq.co/crm-mistakes/)
+- [Sable CRM - CRM Mistakes](https://www.sablecrm.com/10-crm-mistakes-businesses-should-avoid/)
 
 ---
 
@@ -297,8 +331,9 @@ For MVP authentication (v1.1), prioritize:
 
 | Area | Confidence | Reason |
 |------|------------|--------|
-| Table Stakes | HIGH | Verified with Auth.js official docs and industry standards |
-| Differentiators | HIGH | Based on complexity analysis and small team context |
-| Anti-Features | HIGH | Auth0 and security best practices clearly document these pitfalls |
-| Permission Matrix | MEDIUM | Standard patterns; may need adjustment based on actual workflow |
-| Auto-Approval Flow | HIGH | Verified implementation patterns from NextAuth.js discussions |
+| Table Stakes | HIGH | Well-established CRM and project management patterns |
+| Differentiators | HIGH | Based on complexity vs value analysis for small team |
+| Anti-Features | HIGH | Strong consensus in CRM implementation literature |
+| Data Model | MEDIUM | Standard patterns; may need adjustment during implementation |
+| Pipeline Stages | HIGH | Industry-standard 5-stage pipeline for B2B |
+| Cost Categories | MEDIUM | Common categories; may add/adjust based on actual usage |

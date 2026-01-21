@@ -1,700 +1,607 @@
-# Architecture Research: NextAuth.js Integration
+# Architecture Patterns: CRM & Project Financials
 
-**Project:** SAAP 2026 v2
-**Researched:** 2026-01-21
-**Overall Confidence:** HIGH (verified with official Auth.js documentation)
+**Domain:** Sales Pipeline + Project Cost Tracking
+**Researched:** 2026-01-22
+**Confidence:** HIGH (builds on established codebase patterns)
 
----
+## Recommended Architecture
 
-## Executive Summary
+This milestone extends the existing Next.js 14 App Router architecture with new domain models and API routes following established patterns.
 
-NextAuth.js v5 (now branded as Auth.js) provides a well-documented integration path for Next.js 14 App Router with Prisma. The architecture centers on a root-level `auth.ts` configuration file that exports a universal `auth()` function, replacing the previous scattered `getServerSession` calls. For this project with existing MySQL/Prisma setup, **JWT session strategy is recommended** to maintain Edge middleware compatibility and avoid additional database queries per request.
-
----
-
-## Folder Structure
-
-### Recommended File Layout
+### High-Level Component Diagram
 
 ```
-src/
-├── auth.ts                          # Main auth configuration (NEW)
-├── auth.config.ts                   # Edge-compatible config subset (NEW)
-├── middleware.ts                    # Route protection middleware (NEW)
-├── app/
-│   ├── api/
-│   │   └── auth/
-│   │       └── [...nextauth]/
-│   │           └── route.ts         # Auth API route handler (NEW)
-│   ├── (auth)/                      # Auth pages route group (NEW)
-│   │   ├── login/
-│   │   │   └── page.tsx
-│   │   └── layout.tsx
-│   └── (dashboard)/                 # EXISTING - protected route group
-│       ├── layout.tsx               # Add session check here
-│       └── ...existing pages
-├── lib/
-│   ├── prisma.ts                    # EXISTING - no changes needed
-│   └── auth/
-│       └── hash.ts                  # Password hashing utilities (NEW)
-└── components/
-    └── auth/
-        ├── login-form.tsx           # Login form component (NEW)
-        ├── session-provider.tsx     # Client session provider (NEW)
-        └── user-menu.tsx            # User dropdown in header (NEW)
++------------------+     +------------------+     +------------------+
+|   Sales Pipeline |     |     Projects     |     |   Initiatives    |
+|------------------|     |------------------|     |------------------|
+| Lead             |---->| Project          |<----| Initiative (KRI) |
+| Deal             |     | (auto-created    |     | (optional link)  |
+| PotentialProject |---->|  or standalone)  |     |                  |
++------------------+     +--------+---------+     +------------------+
+                                  |
+                                  v
+                         +------------------+
+                         |   Project Costs  |
+                         |------------------|
+                         | Cost             |
+                         | CostCategory     |
+                         | Receipt (upload) |
+                         +------------------+
 ```
 
-### Key Files Explained
+### Data Model Relationships (ERD)
 
-| File | Purpose |
-|------|---------|
-| `src/auth.ts` | Main Auth.js config with Prisma adapter, callbacks, providers |
-| `src/auth.config.ts` | Edge-safe config (no Prisma) for middleware |
-| `src/middleware.ts` | Protects routes using auth config |
-| `src/app/api/auth/[...nextauth]/route.ts` | Handles OAuth callbacks, sign-in/out |
-
----
-
-## Route Protection
-
-### Three-Layer Protection Strategy
-
-Auth.js documentation recommends **defense in depth**: middleware + server component + data layer.
-
-### Layer 1: Middleware (First Line of Defense)
-
-```typescript
-// src/middleware.ts
-import { auth } from "@/auth"
-
-export default auth((req) => {
-  const isLoggedIn = !!req.auth
-  const isOnDashboard = req.nextUrl.pathname.startsWith("/(dashboard)")
-  const isOnAuthPage = req.nextUrl.pathname.startsWith("/login")
-
-  if (isOnDashboard && !isLoggedIn) {
-    return Response.redirect(new URL("/login", req.nextUrl.origin))
-  }
-
-  if (isOnAuthPage && isLoggedIn) {
-    return Response.redirect(new URL("/", req.nextUrl.origin))
-  }
-})
-
-export const config = {
-  matcher: [
-    // Match all paths except static files and images
-    "/((?!api|_next/static|_next/image|favicon.ico).*)",
-  ],
-}
+```
++-------------------+       +--------------------+       +-------------------+
+|       Client      |       |        Deal        |       |      Project      |
+|-------------------|       |--------------------|       |-------------------|
+| id (PK)           |<---+  | id (PK)            |       | id (PK)           |
+| name              |    |  | clientId (FK)      |------>| dealId? (FK)      |
+| email?            |    |  | contactName        |       | potentialId? (FK) |
+| phone?            |    |  | contactEmail?      |       | initiativeId? (FK)|
+| company?          |    |  | title              |       | clientId (FK)     |
+| isRepeatClient    |    |  | description?       |       | name              |
+| createdAt         |    |  | estimatedValue     |       | description?      |
+| updatedAt         |    |  | stage (enum)       |       | status (enum)     |
++-------------------+    |  | probability        |       | revenue           |
+         ^               |  | expectedCloseDate  |       | startDate?        |
+         |               |  | assignedTo         |       | endDate?          |
+         |               |  | source?            |       | assignedTo        |
+         |               |  | createdAt          |       | createdAt         |
+         |               |  | updatedAt          |       | updatedAt         |
+         |               |  +--------------------+       +--------+----------+
+         |               |                                        |
+         |               |  +--------------------+                 |
+         |               |  | PotentialProject   |                 |
+         |               |  |--------------------|                 |
+         |               +--| clientId (FK)      |                 |
+         |                  | title              |                 |
+         |                  | description?       |                 |
+         |                  | estimatedValue     |                 |
+         |                  | stage (enum)       |                 |
+         |                  | expectedDate?      |                 |
+         |                  | assignedTo         |                 |
+         |                  | remarks?           |                 |
+         |                  | createdAt          |                 |
+         |                  | updatedAt          |                 |
+         +------------------| (repeat clients)   |                 |
+                            +--------------------+                 |
+                                                                   |
++-------------------+       +--------------------+                  |
+|   CostCategory    |       |        Cost        |                  |
+|-------------------|       |--------------------|                  |
+| id (PK)           |<------| id (PK)            |                  |
+| name              |       | projectId (FK)     |<-----------------+
+| description?      |       | categoryId (FK)    |
+| color?            |       | description        |
+| position          |       | amount             |
++-------------------+       | date               |
+                            | receiptUrl?        |
+                            | receiptFilename?   |
+                            | notes?             |
+                            | createdAt          |
+                            | updatedAt          |
+                            +--------------------+
 ```
 
-**Edge Compatibility Note:** Because Prisma requires Node.js runtime, middleware must use a separate edge-compatible config:
+### Component Boundaries
 
-```typescript
-// src/auth.config.ts (Edge-safe, no Prisma)
-import type { NextAuthConfig } from "next-auth"
+| Component | Responsibility | Communicates With |
+|-----------|---------------|-------------------|
+| **Client** | Company/contact information, repeat client tracking | Deals, PotentialProjects, Projects |
+| **Deal** | New business pipeline (Lead->Won/Lost) | Client, Project (creates on Won) |
+| **PotentialProject** | Repeat client pipeline (Potential->Confirmed) | Client, Project (creates on Confirmed) |
+| **Project** | Actual work tracking, revenue/profit | Client, Deal?, PotentialProject?, Initiative?, Costs |
+| **Cost** | Individual expense line items | Project, CostCategory |
+| **CostCategory** | Expense classification (labor, materials, etc.) | Costs |
+| **Initiative** | Existing KRI tracking | Projects (optional backlink) |
 
-export const authConfig: NextAuthConfig = {
-  pages: {
-    signIn: "/login",
-  },
-  callbacks: {
-    authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user
-      const isOnDashboard = nextUrl.pathname.startsWith("/(dashboard)")
-        || nextUrl.pathname === "/"
-
-      if (isOnDashboard) {
-        return isLoggedIn // Redirect to login if not authenticated
-      }
-      return true
-    },
-  },
-  providers: [], // Providers added in main auth.ts
-}
-```
-
-### Layer 2: Server Component Protection
-
-```typescript
-// src/app/(dashboard)/layout.tsx
-import { auth } from "@/auth"
-import { redirect } from "next/navigation"
-
-export default async function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  const session = await auth()
-
-  if (!session?.user) {
-    redirect("/login")
-  }
-
-  return (
-    <div className="min-h-screen">
-      <Sidebar user={session.user} />
-      <main className="pl-64">{children}</main>
-    </div>
-  )
-}
-```
-
-### Layer 3: API Route Protection
-
-```typescript
-// src/app/api/initiatives/route.ts (MODIFIED)
-import { auth } from "@/auth"
-import { NextResponse } from "next/server"
-import prisma from "@/lib/prisma"
-
-export async function GET(request: Request) {
-  const session = await auth()
-
-  if (!session?.user) {
-    return NextResponse.json(
-      { error: "Unauthorized" },
-      { status: 401 }
-    )
-  }
-
-  // Existing logic...
-  const initiatives = await prisma.initiative.findMany({...})
-  return NextResponse.json(initiatives)
-}
-```
-
-**Alternative: Wrap API routes with auth helper**
-
-```typescript
-import { auth } from "@/auth"
-import { NextResponse } from "next/server"
-
-// Auth-wrapped handler
-export const GET = auth(function GET(req) {
-  if (!req.auth) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  }
-
-  // req.auth.user is available here
-  // ...existing logic
-})
-```
-
----
-
-## Session Handling
-
-### Server Components vs Client Components
-
-| Context | Method | Example |
-|---------|--------|---------|
-| Server Component | `await auth()` | `const session = await auth()` |
-| Server Action | `await auth()` | Same as above |
-| API Route | `await auth()` or wrapped handler | `export const GET = auth(...)` |
-| Client Component | `useSession()` hook | Requires `SessionProvider` wrapper |
-| Middleware | `req.auth` | Available in auth callback |
-
-### Server Component (Recommended Default)
-
-```typescript
-// Any Server Component
-import { auth } from "@/auth"
-
-export default async function AdminPanel() {
-  const session = await auth()
-
-  if (!session?.user) {
-    return <div>Please sign in</div>
-  }
-
-  if (session.user.role !== "ADMIN") {
-    return <div>Access denied</div>
-  }
-
-  return <AdminDashboard user={session.user} />
-}
-```
-
-### Client Component (When Needed)
-
-```typescript
-// src/components/auth/session-provider.tsx
-"use client"
-
-import { SessionProvider } from "next-auth/react"
-
-export function AuthSessionProvider({
-  children
-}: {
-  children: React.ReactNode
-}) {
-  return <SessionProvider>{children}</SessionProvider>
-}
-```
-
-```typescript
-// src/app/layout.tsx
-import { AuthSessionProvider } from "@/components/auth/session-provider"
-
-export default function RootLayout({ children }) {
-  return (
-    <html lang="en">
-      <body>
-        <AuthSessionProvider>
-          {children}
-        </AuthSessionProvider>
-      </body>
-    </html>
-  )
-}
-```
-
-```typescript
-// Any Client Component
-"use client"
-
-import { useSession } from "next-auth/react"
-
-export function UserMenu() {
-  const { data: session, status } = useSession()
-
-  if (status === "loading") return <Skeleton />
-  if (!session) return <LoginButton />
-
-  return <UserDropdown user={session.user} />
-}
-```
-
-### JWT vs Database Session Strategy
-
-**Recommendation: Use JWT strategy** for this project.
-
-| Factor | JWT | Database |
-|--------|-----|----------|
-| Edge Middleware | Compatible | Limited compatibility |
-| Scalability | Stateless, no DB queries | Requires DB query per request |
-| Session Invalidation | Cannot revoke before expiry | Can invalidate anytime |
-| Use Case | Most web apps | High-security apps needing logout-everywhere |
-
-**Configuration:**
-
-```typescript
-// src/auth.ts
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
-  session: {
-    strategy: "jwt", // Explicit JWT even with adapter
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-  },
-  // ...
-})
-```
-
----
-
-## Database Schema
-
-### Required Auth.js Models
-
-Add these to your existing `prisma/schema.prisma`:
+## Prisma Schema Extension
 
 ```prisma
-// ============================================
-// AUTH.JS MODELS (add after existing models)
-// ============================================
+// ============================================================
+// CRM & Project Financials Models (v1.2)
+// ============================================================
 
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  emailVerified DateTime?
-  image         String?
-  password      String?   // For credentials provider
-  role          UserRole  @default(USER)
-
-  accounts      Account[]
-  sessions      Session[]
-
-  // Relationship to existing models (optional)
-  comments      Comment[]  // If you want to link comments to users
-
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  @@map("users")
+// Sales pipeline stages for new business
+enum DealStage {
+  LEAD           // Initial contact, not yet qualified
+  QUALIFIED      // Budget, authority, need, timeline confirmed
+  PROPOSAL       // Proposal sent, awaiting response
+  NEGOTIATION    // Active negotiation on terms
+  WON            // Deal closed, project created
+  LOST           // Deal lost, no project
 }
 
-model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-  @@index([userId])
-  @@map("accounts")
+// Pipeline stages for repeat clients
+enum PotentialStage {
+  POTENTIAL      // Discussion with existing client
+  CONFIRMED      // Client confirmed, project created
+  CANCELLED      // Client declined or postponed
 }
 
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@map("sessions")
+// Project status tracking
+enum ProjectStatus {
+  PLANNING       // Pre-work, scoping
+  IN_PROGRESS    // Active execution
+  ON_HOLD        // Paused, waiting on external factor
+  COMPLETED      // Delivered, pending final payment
+  INVOICED       // Invoice sent
+  PAID           // Payment received
+  CANCELLED      // Project cancelled
 }
 
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
+// Client/Company for CRM
+model Client {
+  id              String            @id @default(cuid())
+  name            String            @db.VarChar(255)
+  email           String?           @db.VarChar(255)
+  phone           String?           @db.VarChar(50)
+  company         String?           @db.VarChar(255)
+  isRepeatClient  Boolean           @default(false)
+  remarks         String?           @db.Text
 
-  @@unique([identifier, token])
-  @@map("verification_tokens")
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  deals             Deal[]
+  potentialProjects PotentialProject[]
+  projects          Project[]
+
+  @@index([name])
+  @@index([company])
+  @@map("clients")
 }
 
-enum UserRole {
-  USER
-  ADMIN
+// Sales pipeline for new business
+model Deal {
+  id                String      @id @default(cuid())
+  clientId          String
+  client            Client      @relation(fields: [clientId], references: [id])
+
+  contactName       String      @db.VarChar(255)
+  contactEmail      String?     @db.VarChar(255)
+  contactPhone      String?     @db.VarChar(50)
+
+  title             String      @db.VarChar(500)
+  description       String?     @db.Text
+  estimatedValue    Decimal     @db.Decimal(12, 2)
+  stage             DealStage   @default(LEAD)
+  probability       Int         @default(10)  // 0-100%
+  expectedCloseDate DateTime?
+
+  assignedTo        TeamMember?
+  source            String?     @db.VarChar(100)  // e.g., "Referral", "Event", "Website"
+  lostReason        String?     @db.Text
+  remarks           String?     @db.Text
+
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  project           Project?    // Created when stage = WON
+
+  @@index([clientId])
+  @@index([stage])
+  @@index([assignedTo])
+  @@index([expectedCloseDate])
+  @@map("deals")
 }
-```
 
-### Connecting to Existing Models
+// Pipeline for repeat clients
+model PotentialProject {
+  id              String          @id @default(cuid())
+  clientId        String
+  client          Client          @relation(fields: [clientId], references: [id])
 
-Update `Comment` model to optionally link to authenticated users:
+  title           String          @db.VarChar(500)
+  description     String?         @db.Text
+  estimatedValue  Decimal         @db.Decimal(12, 2)
+  stage           PotentialStage  @default(POTENTIAL)
+  expectedDate    DateTime?
 
-```prisma
-model Comment {
-  id            String      @id @default(cuid())
-  content       String      @db.Text
-  author        TeamMember  // Keep existing enum for migration
-  authorId      String?     // NEW: Optional link to User
-  user          User?       @relation(fields: [authorId], references: [id])
-  initiativeId  String
-  initiative    Initiative  @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  assignedTo      TeamMember?
+  remarks         String?         @db.Text
 
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 
+  project         Project?        // Created when stage = CONFIRMED
+
+  @@index([clientId])
+  @@index([stage])
+  @@index([assignedTo])
+  @@map("potential_projects")
+}
+
+// Project entity (three entry points)
+model Project {
+  id              String          @id @default(cuid())
+
+  // Entry point references (one of these, or none for direct creation)
+  dealId          String?         @unique
+  deal            Deal?           @relation(fields: [dealId], references: [id])
+
+  potentialId     String?         @unique
+  potential       PotentialProject? @relation(fields: [potentialId], references: [id])
+
+  initiativeId    String?
+  initiative      Initiative?     @relation(fields: [initiativeId], references: [id])
+
+  // Client (copied from Deal/Potential or set directly)
+  clientId        String
+  client          Client          @relation(fields: [clientId], references: [id])
+
+  // Project details
+  name            String          @db.VarChar(500)
+  description     String?         @db.Text
+  status          ProjectStatus   @default(PLANNING)
+
+  // Financials
+  revenue         Decimal         @db.Decimal(12, 2)  // From deal value or manual
+
+  // Timeline
+  startDate       DateTime?
+  endDate         DateTime?
+
+  assignedTo      TeamMember?
+  remarks         String?         @db.Text
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  costs           Cost[]
+
+  @@index([clientId])
+  @@index([status])
+  @@index([assignedTo])
   @@index([initiativeId])
-  @@index([authorId])
-  @@index([createdAt])
-  @@map("comments")
+  @@map("projects")
+}
+
+// Cost categories (seeded, admin-managed)
+model CostCategory {
+  id          String    @id @default(cuid())
+  name        String    @db.VarChar(100)
+  description String?   @db.VarChar(255)
+  color       String?   @db.VarChar(7)   // Hex color for UI
+  position    Int       @default(0)       // Display order
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  costs       Cost[]
+
+  @@unique([name])
+  @@map("cost_categories")
+}
+
+// Individual cost items
+model Cost {
+  id              String        @id @default(cuid())
+  projectId       String
+  project         Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  categoryId      String
+  category        CostCategory  @relation(fields: [categoryId], references: [id])
+
+  description     String        @db.VarChar(500)
+  amount          Decimal       @db.Decimal(12, 2)
+  date            DateTime      @db.Date
+
+  // Receipt upload
+  receiptUrl      String?       @db.VarChar(500)
+  receiptFilename String?       @db.VarChar(255)
+
+  notes           String?       @db.Text
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([projectId])
+  @@index([categoryId])
+  @@index([date])
+  @@map("costs")
+}
+
+// Add relation to existing Initiative model
+// (Add to existing Initiative model)
+// projects         Project[]
+```
+
+## API Routes Structure
+
+Following existing patterns from `src/app/api/initiatives/`:
+
+```
+src/app/api/
+├── clients/
+│   ├── route.ts                 # GET (list), POST (create)
+│   └── [id]/
+│       └── route.ts             # GET, PUT, DELETE
+│
+├── deals/
+│   ├── route.ts                 # GET (with stage filter), POST
+│   └── [id]/
+│       ├── route.ts             # GET, PUT, PATCH, DELETE
+│       └── convert/
+│           └── route.ts         # POST - Convert to Project (stage=WON)
+│
+├── potential-projects/
+│   ├── route.ts                 # GET (with stage filter), POST
+│   └── [id]/
+│       ├── route.ts             # GET, PUT, PATCH, DELETE
+│       └── convert/
+│           └── route.ts         # POST - Convert to Project (stage=CONFIRMED)
+│
+├── projects/
+│   ├── route.ts                 # GET (with filters), POST (direct create)
+│   └── [id]/
+│       ├── route.ts             # GET (with costs), PUT, PATCH, DELETE
+│       └── costs/
+│           └── route.ts         # GET, POST (add cost)
+│
+├── costs/
+│   └── [id]/
+│       └── route.ts             # PUT, DELETE (update/remove individual cost)
+│
+├── cost-categories/
+│   └── route.ts                 # GET (list for dropdowns)
+│
+└── dashboard/
+    └── pipeline/
+        └── route.ts             # GET - Pipeline stats, forecasts
+```
+
+## Page Structure
+
+Following existing `(dashboard)` route group pattern:
+
+```
+src/app/(dashboard)/
+├── pipeline/
+│   └── page.tsx                 # Sales pipeline Kanban view
+│
+├── potential/
+│   └── page.tsx                 # Repeat client pipeline view
+│
+├── projects/
+│   ├── page.tsx                 # Projects list/table view
+│   ├── [id]/
+│   │   └── page.tsx             # Project detail with costs
+│   └── new/
+│       └── page.tsx             # Direct project creation form
+│
+├── clients/
+│   ├── page.tsx                 # Client list view
+│   └── [id]/
+│       └── page.tsx             # Client detail (all deals, projects)
+│
+└── (existing pages...)
+```
+
+## Component Structure
+
+```
+src/components/
+├── pipeline/
+│   ├── pipeline-board.tsx       # Kanban board for deals
+│   ├── pipeline-card.tsx        # Deal card component
+│   ├── deal-form.tsx            # Create/edit deal modal
+│   └── deal-convert-dialog.tsx  # Convert to project confirmation
+│
+├── potential/
+│   ├── potential-board.tsx      # Kanban for potential projects
+│   ├── potential-card.tsx       # Potential project card
+│   └── potential-form.tsx       # Create/edit potential project
+│
+├── projects/
+│   ├── project-list.tsx         # Table view of projects
+│   ├── project-card.tsx         # Card for grid view
+│   ├── project-detail.tsx       # Full detail view
+│   ├── project-form.tsx         # Create/edit project
+│   ├── cost-table.tsx           # Costs table with totals
+│   ├── cost-form.tsx            # Add/edit cost modal
+│   └── receipt-upload.tsx       # File upload component
+│
+├── clients/
+│   ├── client-list.tsx          # Client table
+│   ├── client-form.tsx          # Create/edit client
+│   └── client-detail.tsx        # Client with history
+│
+└── dashboard/
+    ├── pipeline-widget.tsx      # Deals by stage summary
+    ├── revenue-widget.tsx       # Revenue/profit summary
+    └── (existing widgets...)
+```
+
+## Suggested Build Order
+
+Dependencies dictate the following order:
+
+### Phase 1: Foundation Models (No Dependencies)
+1. **CostCategory model** - Seed data, no relations needed
+2. **Client model** - Foundation for deals and projects
+3. **API routes**: `/cost-categories`, `/clients`
+4. **UI**: Client list page, client form
+
+### Phase 2: Sales Pipeline (Depends on Client)
+1. **Deal model** - Requires Client
+2. **API routes**: `/deals`, `/deals/[id]`
+3. **UI**: Pipeline board (Kanban), deal form
+4. **Sidebar navigation update**
+
+### Phase 3: Potential Projects (Depends on Client)
+1. **PotentialProject model** - Requires Client
+2. **API routes**: `/potential-projects`, `/potential-projects/[id]`
+3. **UI**: Potential board, potential form
+
+### Phase 4: Projects (Depends on Deal, Potential, Client, Initiative)
+1. **Project model** - Requires all above
+2. **Update Initiative model** - Add projects relation
+3. **API routes**: `/projects`, `/projects/[id]`
+4. **Conversion endpoints**: `/deals/[id]/convert`, `/potential-projects/[id]/convert`
+5. **UI**: Projects list, project form (3 entry points), project detail
+
+### Phase 5: Costs (Depends on Project, CostCategory)
+1. **Cost model** - Requires Project, CostCategory
+2. **API routes**: `/projects/[id]/costs`, `/costs/[id]`
+3. **File upload setup** (local storage or S3)
+4. **UI**: Cost table, cost form, receipt upload
+
+### Phase 6: Dashboard & Polish
+1. **Dashboard widgets**: Pipeline summary, revenue/profit
+2. **Reports**: Project profitability view
+3. **Integration testing**
+4. **Polish: Loading states, error handling**
+
+## Patterns to Follow
+
+### Pattern 1: Server Component Data Fetching
+**What:** Fetch data in Server Components, serialize for Client Components
+**When:** All page loads
+**Example:**
+```typescript
+// src/app/(dashboard)/projects/page.tsx
+export const dynamic = 'force-dynamic'
+
+async function getProjects() {
+  const projects = await prisma.project.findMany({
+    include: { client: true, costs: true },
+    orderBy: { createdAt: 'desc' }
+  })
+  return projects.map(p => ({
+    ...p,
+    startDate: p.startDate?.toISOString() ?? null,
+    endDate: p.endDate?.toISOString() ?? null,
+    revenue: Number(p.revenue),
+    costs: p.costs.map(c => ({
+      ...c,
+      amount: Number(c.amount),
+      date: c.date.toISOString()
+    }))
+  }))
 }
 ```
 
-### Migration Strategy
-
-1. Add auth models without breaking existing functionality
-2. Keep `TeamMember` enum for backward compatibility during transition
-3. Gradually migrate to `User.id` references
-4. Eventually deprecate `TeamMember` enum
-
----
-
-## Middleware
-
-### Complete Middleware Implementation
-
+### Pattern 2: API Route Authorization
+**What:** Use existing `requireAuth`/`requireEditor` helpers
+**When:** All mutations
+**Example:**
 ```typescript
-// src/middleware.ts
-import NextAuth from "next-auth"
-import { authConfig } from "./auth.config"
-
-export default NextAuth(authConfig).auth
-
-export const config = {
-  matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder
-     * - api/auth (auth endpoints must be accessible)
-     */
-    "/((?!_next/static|_next/image|favicon.ico|public|api/auth).*)",
-  ],
+// src/app/api/deals/route.ts
+export async function POST(request: NextRequest) {
+  const { error } = await requireEditor()
+  if (error) return error
+  // ... create deal
 }
 ```
 
-### Auth Config (Edge-Compatible)
-
+### Pattern 3: Stage Transitions with Side Effects
+**What:** Use transactions for state changes that create related records
+**When:** Converting Deal->Project, PotentialProject->Project
+**Example:**
 ```typescript
-// src/auth.config.ts
-import type { NextAuthConfig } from "next-auth"
+// src/app/api/deals/[id]/convert/route.ts
+const result = await prisma.$transaction(async (tx) => {
+  // Update deal to WON
+  const deal = await tx.deal.update({
+    where: { id },
+    data: { stage: 'WON' }
+  })
 
-export const authConfig = {
-  pages: {
-    signIn: "/login",
-    error: "/login", // Redirect auth errors to login page
-  },
-  callbacks: {
-    authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user
+  // Create project from deal
+  const project = await tx.project.create({
+    data: {
+      dealId: deal.id,
+      clientId: deal.clientId,
+      name: deal.title,
+      revenue: deal.estimatedValue,
+      status: 'PLANNING',
+      assignedTo: deal.assignedTo
+    }
+  })
 
-      // Define protected routes
-      const protectedRoutes = [
-        "/",
-        "/initiatives",
-        "/timeline",
-        "/kanban",
-        "/events",
-        "/calendar",
-      ]
-
-      const isProtected = protectedRoutes.some(
-        route => nextUrl.pathname === route ||
-                 nextUrl.pathname.startsWith(`${route}/`)
-      )
-
-      if (isProtected && !isLoggedIn) {
-        const redirectUrl = new URL("/login", nextUrl.origin)
-        redirectUrl.searchParams.set("callbackUrl", nextUrl.pathname)
-        return Response.redirect(redirectUrl)
-      }
-
-      // Redirect logged-in users away from login page
-      if (nextUrl.pathname === "/login" && isLoggedIn) {
-        return Response.redirect(new URL("/", nextUrl.origin))
-      }
-
-      return true
-    },
-  },
-  providers: [], // Configured in main auth.ts
-} satisfies NextAuthConfig
-```
-
-### Main Auth Configuration
-
-```typescript
-// src/auth.ts
-import NextAuth from "next-auth"
-import { PrismaAdapter } from "@auth/prisma-adapter"
-import Credentials from "next-auth/providers/credentials"
-import bcrypt from "bcryptjs"
-import { authConfig } from "./auth.config"
-import prisma from "@/lib/prisma"
-
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  ...authConfig,
-  adapter: PrismaAdapter(prisma),
-  session: {
-    strategy: "jwt",
-  },
-  providers: [
-    Credentials({
-      name: "credentials",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null
-        }
-
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string },
-        })
-
-        if (!user || !user.password) {
-          return null
-        }
-
-        const isValid = await bcrypt.compare(
-          credentials.password as string,
-          user.password
-        )
-
-        if (!isValid) {
-          return null
-        }
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-        }
-      },
-    }),
-  ],
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id
-        token.role = user.role
-      }
-      return token
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string
-        session.user.role = token.role as string
-      }
-      return session
-    },
-  },
+  return { deal, project }
 })
 ```
 
-### TypeScript Augmentation
-
+### Pattern 4: Computed Fields via Prisma Queries
+**What:** Calculate totals/summaries at query time, not stored
+**When:** Project profit calculation
+**Example:**
 ```typescript
-// src/types/next-auth.d.ts
-import { DefaultSession, DefaultUser } from "next-auth"
-import { JWT, DefaultJWT } from "next-auth/jwt"
-
-declare module "next-auth" {
-  interface Session {
-    user: {
-      id: string
-      role: string
-    } & DefaultSession["user"]
+// Get project with computed profit
+const project = await prisma.project.findUnique({
+  where: { id },
+  include: {
+    costs: {
+      select: { amount: true }
+    }
   }
-
-  interface User extends DefaultUser {
-    role: string
-  }
-}
-
-declare module "next-auth/jwt" {
-  interface JWT extends DefaultJWT {
-    id: string
-    role: string
-  }
-}
-```
-
----
-
-## Build Order
-
-### Suggested Implementation Sequence
-
-#### Phase 1: Core Auth Setup (Foundation)
-1. Install dependencies: `npm install next-auth@beta @auth/prisma-adapter bcryptjs`
-2. Install dev deps: `npm install -D @types/bcryptjs`
-3. Add User, Account, Session, VerificationToken models to Prisma schema
-4. Run `npx prisma db push` to sync schema
-5. Create `src/auth.config.ts` (edge-compatible config)
-6. Create `src/auth.ts` (main config with Prisma)
-7. Create `src/app/api/auth/[...nextauth]/route.ts`
-8. Create TypeScript augmentation file
-
-#### Phase 2: Route Protection
-1. Create `src/middleware.ts`
-2. Update `src/app/(dashboard)/layout.tsx` with session check
-3. Create `src/app/(auth)/login/page.tsx` with login form
-4. Create `src/app/(auth)/layout.tsx` (minimal layout for auth pages)
-
-#### Phase 3: API Protection
-1. Update existing API routes to check session
-2. Create auth utility helpers if needed
-3. Test all protected routes
-
-#### Phase 4: Client Components
-1. Create `SessionProvider` wrapper
-2. Update root layout to include provider
-3. Update header/sidebar with user info
-4. Create user menu component
-
-#### Phase 5: Role-Based Access (Optional Enhancement)
-1. Add admin-only routes/pages
-2. Implement role checks in middleware
-3. Add role guards in components
-
----
-
-## Environment Variables
-
-```env
-# Auth.js Configuration
-AUTH_SECRET="generate-with-openssl-rand-base64-32"
-AUTH_URL="http://localhost:3000"  # Optional in v5, auto-detected
-
-# Optional: OAuth Providers (if adding later)
-# AUTH_GITHUB_ID="your-github-client-id"
-# AUTH_GITHUB_SECRET="your-github-client-secret"
-```
-
-Generate secret:
-```bash
-openssl rand -base64 32
-```
-
----
-
-## Security Considerations
-
-### Password Hashing
-
-```typescript
-// src/lib/auth/hash.ts
-import bcrypt from "bcryptjs"
-
-export async function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, 12)
-}
-
-export async function verifyPassword(
-  password: string,
-  hashedPassword: string
-): Promise<boolean> {
-  return bcrypt.compare(password, hashedPassword)
-}
-```
-
-### Input Validation with Zod
-
-```typescript
-// src/lib/auth/schemas.ts
-import { z } from "zod"
-
-export const signInSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
 })
 
-export const signUpSchema = signInSchema.extend({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-})
+const totalCosts = project.costs.reduce(
+  (sum, c) => sum + Number(c.amount),
+  0
+)
+const profit = Number(project.revenue) - totalCosts
 ```
 
----
+## Anti-Patterns to Avoid
+
+### Anti-Pattern 1: Storing Computed Values
+**What:** Storing `totalCosts` or `profit` in the Project table
+**Why bad:** Gets out of sync when costs added/removed/edited
+**Instead:** Calculate on read from costs relation
+
+### Anti-Pattern 2: Deep Nesting in API Responses
+**What:** Including full nested objects for all relations
+**Why bad:** Large payloads, over-fetching
+**Instead:** Include only needed fields, use separate endpoints for details
+
+### Anti-Pattern 3: Multiple Sources of Truth for Stage
+**What:** Storing stage in both Deal and Project
+**Why bad:** Can become inconsistent
+**Instead:** Project inherits from Deal only once at creation; subsequent status is independent
+
+### Anti-Pattern 4: Orphaned Projects
+**What:** Allowing Project deletion without cleaning up Deal/Potential references
+**Why bad:** Broken references, confusing UI state
+**Instead:** Use `onDelete: SetNull` or prevent deletion if source exists
+
+## Scalability Considerations
+
+| Concern | At Current (10s of deals) | At 100 deals | At 1000+ deals |
+|---------|---------------------------|--------------|----------------|
+| Pipeline board | Load all | Load all | Virtual scroll or pagination |
+| Project costs | Load all with project | Load all | Paginate costs table |
+| Dashboard stats | Query on load | Cache with revalidate | Background job + cache |
+| Receipt storage | Local filesystem | Local filesystem | Consider S3/R2 |
+
+For current scale (small team, internal tool), optimize later patterns are appropriate.
+
+## File Upload Strategy
+
+For receipt uploads, recommend local storage initially:
+
+```typescript
+// Store in: /public/uploads/receipts/[projectId]/[filename]
+// URL: /uploads/receipts/[projectId]/[filename]
+
+// Later migration path: S3/Cloudflare R2
+// - Change upload endpoint to use S3 SDK
+// - Store full S3 URL in receiptUrl
+// - No schema changes needed
+```
 
 ## Sources
 
-### Official Documentation (HIGH Confidence)
-- [Auth.js Prisma Adapter](https://authjs.dev/getting-started/adapters/prisma)
-- [Auth.js Route Protection](https://authjs.dev/getting-started/session-management/protecting)
-- [Auth.js Migration to v5](https://authjs.dev/getting-started/migrating-to-v5)
-- [Auth.js Role-Based Access Control](https://authjs.dev/guides/role-based-access-control)
-- [Auth.js Credentials Provider](https://authjs.dev/getting-started/authentication/credentials)
-- [Auth.js Session Strategies](https://authjs.dev/concepts/session-strategies)
+- [Prisma Data Model Documentation](https://www.prisma.io/docs/orm/prisma-schema/data-model)
+- [Sales Pipeline Management Best Practices](https://www.zendesk.com/blog/using-crm-sales-pipeline-management/)
+- [Project Cost Management Database Design](https://budibase.com/blog/tutorials/project-cost-management-software/)
+- [Project Management Data Model](https://vertabelo.com/blog/organize-your-time-and-resources-a-project-management-data-model/)
+- Existing codebase patterns: `src/app/api/initiatives/`, `prisma/schema.prisma`
 
-### Supplementary Resources (MEDIUM Confidence)
-- [Next.js Authentication Tutorial](https://nextjs.org/learn/dashboard-app/adding-authentication)
-- [Prisma Auth.js Integration Guide](https://www.prisma.io/docs/guides/authjs-nextjs)
+---
+
+*Architecture research: 2026-01-22*

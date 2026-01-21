@@ -1,459 +1,465 @@
-# Stack Research: NextAuth.js + Google OAuth
+# Stack Research: CRM Pipeline & Project Financials
 
-**Project:** SAAP 2026 v2 - Authentication Milestone
-**Researched:** 2026-01-21
+**Project:** SAAP 2026 v2 - v1.2 CRM & Project Financials Milestone
+**Researched:** 2026-01-22
 **Overall Confidence:** HIGH
 
 ## Executive Summary
 
-NextAuth.js v5 (Auth.js) is the recommended solution for adding Google OAuth to this Next.js 14 App Router project. The v5 release provides native App Router support, a unified `auth()` function, and edge compatibility. While v5 remains in beta (5.0.0-beta.30), it is production-ready and widely adopted. The existing Prisma 6.19.2 setup is compatible with the latest `@auth/prisma-adapter` 2.11.1.
+For v1.2 CRM & Project Financials, the existing stack (Next.js 14, Prisma, MariaDB, shadcn/ui) remains unchanged. New requirements are:
+
+1. **CRM Pipeline** - No new dependencies. Use existing `@dnd-kit` (already installed) for Kanban boards.
+2. **Project Financials** - Use `Decimal(12,2)` in Prisma for money fields. Consider `react-currency-input-field` for input formatting.
+3. **Receipt Uploads** - Use native Next.js Server Actions with local filesystem storage. Store files on Docker volume mounted to NAS.
+
+This milestone adds minimal new dependencies, leveraging what's already installed.
 
 ---
 
-## Recommended Stack
+## Recommended Stack Additions
 
-### Core Authentication
+### Required Packages
 
 | Package | Version | Purpose | Rationale |
 |---------|---------|---------|-----------|
-| `next-auth` | `^5.0.0-beta.30` | Authentication framework | Native App Router support, universal `auth()` function, edge-first design |
-| `@auth/prisma-adapter` | `^2.11.1` | Database adapter | Official adapter with Prisma 6 support (peer deps: `>=6`) |
+| `nanoid` | `^5.0.9` | Unique file naming | URL-friendly, 21 chars, collision-resistant. Better than UUID for filenames. |
+| `react-currency-input-field` | `^4.0.3` | Currency input formatting | 315K weekly downloads, ISO 4217 support, locale-aware. Perfect for cost inputs. |
 
-### Why v5 over v4
+### Optional But Recommended
 
-1. **Native App Router Support** - v4 claims App Router support but requires `pages/api/auth/[...nextauth].ts` workaround
-2. **Universal auth() Function** - Single function works in Server Components, Route Handlers, and Middleware
-3. **Edge Compatibility** - First-class support for Vercel Edge Runtime (important if migrating later)
-4. **Active Development** - v5 is the future; v4 receives only security patches
+| Package | Version | Purpose | Rationale |
+|---------|---------|---------|-----------|
+| `sharp` | `^0.33.5` | Image optimization for receipt thumbnails | Already used by Next.js Image component. Explicit install for Docker standalone mode. |
 
 ### Installation Command
 
 ```bash
-npm install next-auth@beta @auth/prisma-adapter
-```
-
-**Note:** Do NOT install `@next-auth/prisma-adapter` (deprecated v4 namespace).
-
----
-
-## Prisma Adapter Integration
-
-### Compatibility Status
-
-| Component | Version | Status |
-|-----------|---------|--------|
-| Prisma | 6.19.2 | Compatible |
-| @prisma/client | 6.19.2 | Compatible |
-| @auth/prisma-adapter | 2.11.1 | Compatible (peer: `>=6`) |
-
-**Previous Issue (Resolved):** An issue was reported in April 2025 where `@auth/prisma-adapter@2.9.0` failed with `@prisma/client@6.6.0`. The issue was closed as COMPLETED on May 14, 2025. Version 2.11.1 includes the fix.
-
-### Required Prisma Schema Additions
-
-Add these models to your existing `prisma/schema.prisma`:
-
-```prisma
-// ============================================================
-// Auth.js Models (add below existing models)
-// ============================================================
-
-enum UserRole {
-  ADMIN
-  EDITOR
-  VIEWER
-}
-
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
-  image         String?
-  role          UserRole  @default(VIEWER)
-
-  accounts      Account[]
-  sessions      Session[]
-
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  @@map("users")
-}
-
-model Account {
-  id                String  @id @default(cuid())
-  userId            String  @map("user_id")
-  type              String
-  provider          String
-  providerAccountId String  @map("provider_account_id")
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-  @@index([userId])
-  @@map("accounts")
-}
-
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique @map("session_token")
-  userId       String   @map("user_id")
-  expires      DateTime
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@map("sessions")
-}
-
-model VerificationToken {
-  identifier String
-  token      String
-  expires    DateTime
-
-  @@unique([identifier, token])
-  @@map("verification_tokens")
-}
-```
-
-**Key Notes for MySQL/MariaDB:**
-- Use `@db.Text` for token fields (can exceed VARCHAR(191) limit)
-- `@@map()` uses snake_case for table names (Auth.js convention)
-- Column names use snake_case via `@map()` for OAuth compatibility
-
----
-
-## Google Cloud Console Setup
-
-### Step 1: Create OAuth 2.0 Credentials
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select existing
-3. Navigate to **APIs & Services** > **Credentials**
-4. Click **Create Credentials** > **OAuth client ID**
-5. Select **Web application**
-
-### Step 2: Configure OAuth Consent Screen
-
-1. Navigate to **APIs & Services** > **OAuth consent screen**
-2. Select **Internal** (restricts to @talenta.com.my organization automatically)
-3. Fill in required fields:
-   - App name: `SAAP 2026`
-   - User support email: your email
-   - Developer contact: your email
-4. Add scopes: `email`, `profile`, `openid`
-
-**Important:** Selecting "Internal" means only users within your Google Workspace organization (@talenta.com.my) can authenticate. This is the simplest domain restriction method.
-
-### Step 3: Configure Authorized URIs
-
-**Authorized JavaScript origins:**
-```
-https://saap.motionvii.com
-http://localhost:3000
-```
-
-**Authorized redirect URIs:**
-```
-https://saap.motionvii.com/api/auth/callback/google
-http://localhost:3000/api/auth/callback/google
-```
-
-### Step 4: Copy Credentials
-
-Copy the **Client ID** and **Client Secret** for environment variables.
-
----
-
-## Environment Variables
-
-### Required Variables
-
-Add to `.env` (local) and Docker environment:
-
-```bash
-# Auth.js Configuration
-AUTH_SECRET="[generate with: npx auth secret]"
-AUTH_URL="https://saap.motionvii.com"  # Production
-# AUTH_URL="http://localhost:3000"     # Development
-
-# Google OAuth
-AUTH_GOOGLE_ID="your-google-client-id.apps.googleusercontent.com"
-AUTH_GOOGLE_SECRET="your-google-client-secret"
-
-# Existing
-DATABASE_URL="mysql://saap_user:password@localhost:3306/saap2026"
-```
-
-### Generate AUTH_SECRET
-
-```bash
-# Option 1: Use Auth.js CLI
-npx auth secret
-
-# Option 2: OpenSSL
-openssl rand -base64 32
-```
-
-### Variable Naming Convention
-
-Auth.js v5 uses the `AUTH_` prefix convention:
-- `AUTH_SECRET` - Required for encrypting cookies/tokens
-- `AUTH_URL` - Required in production (auto-detected in dev)
-- `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` - Provider credentials
-
----
-
-## File Structure
-
-```
-/
-├── auth.ts                           # Auth configuration
-├── auth.config.ts                    # Edge-compatible config (optional)
-├── middleware.ts                     # Route protection
-├── app/
-│   └── api/
-│       └── auth/
-│           └── [...nextauth]/
-│               └── route.ts          # Auth route handler
-├── lib/
-│   └── prisma.ts                     # Prisma client (existing)
-└── prisma/
-    └── schema.prisma                 # Add auth models
+npm install nanoid react-currency-input-field
+npm install sharp  # If generating receipt thumbnails
 ```
 
 ---
 
-## Configuration Files
+## Already Installed (Reuse)
 
-### auth.ts (Main Configuration)
+These packages in `package.json` cover most v1.2 needs:
+
+| Package | Version | Use for v1.2 |
+|---------|---------|--------------|
+| `@dnd-kit/core` | `^6.3.1` | Sales pipeline Kanban |
+| `@dnd-kit/sortable` | `^10.0.0` | Drag-and-drop deals between stages |
+| `@dnd-kit/utilities` | `^3.2.2` | DnD utilities |
+| `date-fns` | `^4.1.0` | Date formatting for project timelines |
+| `recharts` | `^3.6.0` | Pipeline/revenue dashboard charts |
+| `lucide-react` | `^0.562.0` | Icons for stages, costs, etc. |
+
+**Key insight:** The v1.0 Kanban board for initiatives uses `@dnd-kit`. The same patterns apply to sales pipeline stages. No new DnD library needed.
+
+---
+
+## File Upload Strategy
+
+### Recommendation: Native Server Actions + Local Filesystem
+
+**Why NOT UploadThing or cloud storage:**
+- NAS deployment (Synology DS925+) has ample local storage
+- No external service dependency or costs
+- Full control over file handling
+- Team of 3 doesn't need CDN delivery
+- Receipts are internal documents, not public assets
+
+### Architecture
+
+```
+1. Client: <form> with type="file" input
+2. Server Action: Receives FormData, writes to /uploads
+3. Database: Stores filepath reference, not binary
+4. Docker: Volume maps /app/uploads to NAS directory
+```
+
+### Server Action Pattern
 
 ```typescript
-import NextAuth from "next-auth"
-import Google from "next-auth/providers/google"
-import { PrismaAdapter } from "@auth/prisma-adapter"
+// app/actions/upload-receipt.ts
+"use server"
+
+import { writeFile, mkdir } from "fs/promises"
+import { join } from "path"
+import { nanoid } from "nanoid"
+import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
-  providers: [
-    Google({
-      clientId: process.env.AUTH_GOOGLE_ID,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET,
-    }),
-  ],
-  callbacks: {
-    async signIn({ account, profile }) {
-      // Restrict to @talenta.com.my domain
-      if (account?.provider === "google") {
-        return (
-          profile?.email_verified === true &&
-          profile?.email?.endsWith("@talenta.com.my")
-        )
-      }
-      return false
-    },
-    async session({ session, user }) {
-      // Include role in session
-      session.user.role = user.role
-      session.user.id = user.id
-      return session
-    },
-  },
-  pages: {
-    signIn: "/login",
-    error: "/login",
-  },
-})
+const UPLOAD_DIR = process.env.UPLOAD_DIR || "./uploads/receipts"
+const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "application/pdf"]
+
+export async function uploadReceipt(formData: FormData) {
+  const session = await auth()
+  if (!session?.user) throw new Error("Unauthorized")
+
+  const file = formData.get("file") as File
+  if (!file) throw new Error("No file provided")
+
+  // Validation
+  if (file.size > MAX_FILE_SIZE) throw new Error("File too large (max 10MB)")
+  if (!ALLOWED_TYPES.includes(file.type)) throw new Error("Invalid file type")
+
+  // Generate unique filename
+  const ext = file.name.split(".").pop()
+  const filename = `${nanoid()}.${ext}`
+  const filepath = join(UPLOAD_DIR, filename)
+
+  // Ensure directory exists
+  await mkdir(UPLOAD_DIR, { recursive: true })
+
+  // Write file
+  const buffer = Buffer.from(await file.arrayBuffer())
+  await writeFile(filepath, buffer)
+
+  return { filepath: `/uploads/receipts/${filename}`, filename }
+}
 ```
 
-### app/api/auth/[...nextauth]/route.ts
+### Docker Volume Configuration
 
-```typescript
-import { handlers } from "@/auth"
-export const { GET, POST } = handlers
+```yaml
+# docker-compose.yml
+services:
+  saap:
+    volumes:
+      - ./uploads:/app/uploads  # Persists across container restarts
+      - /volume1/docker/saap/uploads:/app/uploads  # NAS path on Synology
 ```
 
-### middleware.ts
+### Serving Static Files
 
+Next.js doesn't serve files outside `public/` by default. Options:
+
+**Option A: Symlink (Simple)**
+```bash
+# In container entrypoint
+ln -sf /app/uploads /app/public/uploads
+```
+
+**Option B: API Route (More Control)**
 ```typescript
+// app/api/uploads/[...path]/route.ts
+import { readFile } from "fs/promises"
+import { join } from "path"
 import { auth } from "@/auth"
-import { NextResponse } from "next/server"
 
-export default auth((req) => {
-  const isLoggedIn = !!req.auth
-  const isPublicRoute = req.nextUrl.pathname === "/login"
-
-  if (!isLoggedIn && !isPublicRoute) {
-    return NextResponse.redirect(new URL("/login", req.url))
+export async function GET(
+  request: Request,
+  { params }: { params: { path: string[] } }
+) {
+  const session = await auth()
+  if (!session?.user) {
+    return new Response("Unauthorized", { status: 401 })
   }
 
-  if (isLoggedIn && isPublicRoute) {
-    return NextResponse.redirect(new URL("/", req.url))
-  }
+  const filepath = join(process.cwd(), "uploads", ...params.path)
+  const file = await readFile(filepath)
 
-  return NextResponse.next()
-})
+  return new Response(file, {
+    headers: {
+      "Content-Type": getMimeType(filepath),
+      "Cache-Control": "private, max-age=31536000",
+    },
+  })
+}
+```
 
-export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+**Recommendation:** Use Option B (API Route) for auth-protected receipt access.
+
+---
+
+## Prisma Schema Patterns
+
+### Money Fields
+
+Use `Decimal` type, NOT `Float`. Never use floating-point for currency.
+
+```prisma
+// Example: Project cost breakdown
+model ProjectCost {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id])
+  category    CostCategory
+  description String   @db.VarChar(255)
+  amount      Decimal  @db.Decimal(12, 2)  // Up to 999,999,999,999.99
+  currency    String   @default("MYR") @db.VarChar(3)
+  receiptPath String?  @db.VarChar(500)    // File path reference
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([projectId])
+  @@index([category])
+}
+```
+
+**Why Decimal(12,2):**
+- Matches existing `resourcesFinancial` field in Initiative model
+- 12 digits total, 2 after decimal
+- Sufficient for project costs up to ~1 billion MYR
+
+### File Reference Pattern
+
+Store filepath, not binary blob:
+
+```prisma
+model Receipt {
+  id          String   @id @default(cuid())
+  costId      String   @unique
+  cost        ProjectCost @relation(fields: [costId], references: [id])
+  filename    String   @db.VarChar(255)  // Original filename for display
+  filepath    String   @db.VarChar(500)  // /uploads/receipts/abc123.pdf
+  mimeType    String   @db.VarChar(100)
+  fileSize    Int                        // Bytes
+  uploadedBy  String
+  user        User     @relation(fields: [uploadedBy], references: [id])
+
+  createdAt   DateTime @default(now())
+}
+```
+
+**Why NOT store blobs:**
+- Prisma recommends external storage for files >100KB
+- Database backups become huge
+- Query performance degrades
+- MariaDB `LONGBLOB` has 4GB limit but complicates everything
+
+### Pipeline Stage Enums
+
+```prisma
+enum PipelineStage {
+  LEAD
+  QUALIFIED
+  PROPOSAL
+  NEGOTIATION
+  WON
+  LOST
+}
+
+enum PotentialStage {
+  POTENTIAL
+  CONFIRMED
+  CANCELLED
 }
 ```
 
 ---
 
-## Role-Based Access Control (RBAC)
+## Currency Input Component
 
-### Three-Tier Role System
+### react-currency-input-field Usage
 
-| Role | Capabilities |
-|------|-------------|
-| ADMIN | Full access: manage users, settings, all CRUD operations |
-| EDITOR | Create/edit initiatives, comments, events |
-| VIEWER | Read-only access to dashboards and reports |
+```tsx
+import CurrencyInput from "react-currency-input-field"
 
-### Type Extensions
+<CurrencyInput
+  id="amount"
+  name="amount"
+  placeholder="0.00"
+  decimalsLimit={2}
+  prefix="RM "
+  intlConfig={{ locale: "en-MY", currency: "MYR" }}
+  onValueChange={(value) => setAmount(value)}
+  className="flex h-10 w-full rounded-md border..."
+/>
+```
 
-Create `types/next-auth.d.ts`:
+**Features:**
+- Locale-aware formatting (1,234.56 for Malaysia)
+- Prefix/suffix support (RM)
+- Decimal limits
+- Form integration
+
+### Alternative: Native Intl API (Zero Dependencies)
+
+If you want to avoid another dependency:
 
 ```typescript
-import { UserRole } from "@prisma/client"
-import "next-auth"
-
-declare module "next-auth" {
-  interface User {
-    role: UserRole
-  }
-
-  interface Session {
-    user: User & {
-      id: string
-      role: UserRole
-    }
-  }
+const formatCurrency = (value: number, locale = "en-MY", currency = "MYR") => {
+  return new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency,
+  }).format(value)
 }
 ```
 
-### Role Checking Utility
+Use `<input type="number" step="0.01">` with `onBlur` formatting.
 
-```typescript
-// lib/auth-utils.ts
-import { auth } from "@/auth"
-import { UserRole } from "@prisma/client"
+**Recommendation:** Use `react-currency-input-field` for better UX. It's well-maintained (315K weekly downloads) and handles edge cases.
 
-export async function requireRole(allowedRoles: UserRole[]) {
-  const session = await auth()
+---
 
-  if (!session?.user) {
-    throw new Error("Unauthorized")
-  }
+## Dropzone Component for Receipts
 
-  if (!allowedRoles.includes(session.user.role)) {
-    throw new Error("Forbidden")
-  }
+### Recommendation: shadcn-dropzone Pattern
 
-  return session
+The shadcn ecosystem has several dropzone components built on `react-dropzone`. Since the project already uses shadcn/ui, follow the same pattern:
+
+```tsx
+// components/ui/dropzone.tsx
+// Adapted from shadcn.io/components/forms/dropzone
+
+import { useDropzone } from "react-dropzone"
+import { cn } from "@/lib/utils"
+
+interface DropzoneProps {
+  onDrop: (files: File[]) => void
+  accept?: Record<string, string[]>
+  maxSize?: number
+}
+
+export function Dropzone({ onDrop, accept, maxSize }: DropzoneProps) {
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: accept ?? {
+      "image/*": [".jpeg", ".jpg", ".png", ".webp"],
+      "application/pdf": [".pdf"],
+    },
+    maxSize: maxSize ?? 10 * 1024 * 1024, // 10MB
+    multiple: false,
+  })
+
+  return (
+    <div
+      {...getRootProps()}
+      className={cn(
+        "border-2 border-dashed rounded-lg p-6 text-center cursor-pointer",
+        isDragActive ? "border-primary bg-primary/5" : "border-muted-foreground/25"
+      )}
+    >
+      <input {...getInputProps()} />
+      {isDragActive ? (
+        <p>Drop the file here...</p>
+      ) : (
+        <p>Drag & drop a receipt, or click to select</p>
+      )}
+    </div>
+  )
 }
 ```
+
+**Required dependency:**
+```bash
+npm install react-dropzone
+```
+
+However, since the project aims for minimal dependencies, consider starting with a native `<input type="file">` styled with shadcn, and adding dropzone later if needed.
+
+---
+
+## Sharp for Docker (If Using Image Optimization)
+
+If you generate receipt thumbnails or use `next/image` for receipts:
+
+### Installation for Docker Standalone
+
+```dockerfile
+# In Dockerfile, before COPY
+RUN npm install sharp --os=linux --cpu=x64
+
+# Set environment variable
+ENV NEXT_SHARP_PATH=/app/node_modules/sharp
+```
+
+### If Not Using Image Optimization
+
+Skip sharp. Receipts can be served as-is without thumbnails.
+
+**Recommendation:** Skip sharp for v1.2. Serve original receipt files. Add thumbnail generation later if needed.
 
 ---
 
 ## What NOT to Use
 
-### 1. next-auth v4 (Stable)
+### 1. UploadThing
 
-**Why not:** Despite being "stable," v4 has poor App Router support. It requires `pages/api/` route handler, documentation is outdated, and you'll fight against the framework.
+**Why not:** Adds external service dependency, costs money at scale, overkill for internal tool with 3 users. Native Server Actions + local storage is simpler and sufficient.
 
-### 2. @next-auth/prisma-adapter (v4 Namespace)
+### 2. Multer
 
-**Why not:** Deprecated. Use `@auth/prisma-adapter` instead. The old namespace won't receive updates.
+**Why not:** Multer doesn't work well with Next.js App Router. Native `formData.get("file")` works fine. Multer is for Express middleware.
 
-### 3. Google `hd` Parameter Alone
+### 3. Formidable
 
-**Why not:** The `hd` (hosted domain) parameter only filters the Google sign-in UI. Users can still manually enter other accounts. Always verify domain server-side in the `signIn` callback.
+**Why not:** Requires disabling Next.js bodyParser. More complexity than native approach. Only useful for streaming large files (not needed for receipts).
 
-### 4. Credentials Provider for Primary Auth
+### 4. AWS S3 / Cloudinary
 
-**Why not:** Credentials provider (email/password) bypasses OAuth benefits, requires password management, and has security footguns. Use Google OAuth as the sole provider for simplicity.
+**Why not:** External dependency, requires credentials management, network latency to cloud, costs money. NAS has plenty of storage.
 
-### 5. @sidebase/authjs-prisma-adapter
+### 5. PostgreSQL `@db.Money` Type
 
-**Why not for this project:** This is a workaround for custom Prisma output paths (common in Nuxt/monorepos). Since this project uses standard `@prisma/client` location, the official `@auth/prisma-adapter` works fine.
+**Why not:** The project uses MariaDB, but even if it were PostgreSQL, avoid `@db.Money`. It depends on locale settings and has rounding issues. Stick with `Decimal`.
 
-### 6. Database Sessions Without Reason
+### 6. Float for Currency
 
-**Why not:** JWT sessions are sufficient for most apps and don't require database queries on every request. Only use database sessions if you need session revocation or server-side session data.
+**Why not:** Floating-point arithmetic causes precision errors (`0.1 + 0.2 != 0.3`). Always use `Decimal` for money.
 
-**Note:** The PrismaAdapter uses database sessions by default. If you want JWT, explicitly set `session: { strategy: "jwt" }` in config.
+### 7. Storing Files in Database
+
+**Why not:** Prisma documentation explicitly recommends against storing large objects (files >100KB) in the database. Increases backup size, degrades query performance.
+
+### 8. UUID for Filenames
+
+**Why not:** UUID is 36 characters with dashes (not URL-friendly). NanoID is 21 characters, URL-safe, and collision-resistant.
+
+### 9. react-beautiful-dnd
+
+**Why not:** Deprecated, not maintained, doesn't work with React 18 strict mode. The project already uses `@dnd-kit` which is the modern replacement.
+
+### 10. New Kanban Library
+
+**Why not:** `@dnd-kit` is already installed and used for initiatives Kanban. Use the same library for sales pipeline consistency.
 
 ---
 
-## Session Strategy Decision
+## Summary: New Dependencies
 
-### Database Sessions (Default with Adapter)
+| Package | Required? | Notes |
+|---------|-----------|-------|
+| `nanoid` | Yes | File naming |
+| `react-currency-input-field` | Recommended | Currency input UX |
+| `react-dropzone` | Optional | Drag-and-drop upload UX (can use native input instead) |
+| `sharp` | No | Skip for v1.2, add later if thumbnails needed |
 
-**Pros:**
-- Session revocation (logout user across devices)
-- Server-side session data
-- User data always fresh from DB
-
-**Cons:**
-- Database query on every authenticated request
-- Slightly higher latency
-
-### JWT Sessions
-
-**Pros:**
-- No database query per request
-- Better performance
-- Works on edge
-
-**Cons:**
-- Cannot revoke sessions instantly
-- Token size limits
-
-**Recommendation for SAAP:** Use database sessions (default). The small team size (~3 users) means database overhead is negligible, and session revocation may be useful for admin control.
+**Total new packages:** 1-3 (minimal footprint)
 
 ---
 
 ## Migration Checklist
 
-1. [ ] Install packages: `npm install next-auth@beta @auth/prisma-adapter`
-2. [ ] Add auth models to `prisma/schema.prisma`
-3. [ ] Run `npx prisma db push` or `npx prisma migrate dev`
-4. [ ] Create Google OAuth credentials in Cloud Console
-5. [ ] Add environment variables
-6. [ ] Create `auth.ts` configuration
-7. [ ] Create route handler at `app/api/auth/[...nextauth]/route.ts`
-8. [ ] Create `middleware.ts` for route protection
-9. [ ] Create login page at `app/login/page.tsx`
-10. [ ] Add TypeScript declarations for session
-11. [ ] Test login flow end-to-end
+1. [ ] Install `nanoid` and `react-currency-input-field`
+2. [ ] Create `/uploads` directory with proper permissions
+3. [ ] Configure Docker volume for uploads persistence
+4. [ ] Add upload API route or Server Action
+5. [ ] Add Prisma models for Pipeline, Project, ProjectCost
+6. [ ] Create currency input component
+7. [ ] Create receipt upload component
+8. [ ] Test file upload end-to-end on NAS
 
 ---
 
 ## Sources
 
 ### HIGH Confidence (Official Documentation)
-- [Auth.js Installation Guide](https://authjs.dev/getting-started/installation)
-- [Auth.js Prisma Adapter](https://authjs.dev/getting-started/adapters/prisma)
-- [Auth.js Google Provider](https://authjs.dev/getting-started/providers/google)
-- [Auth.js Migration to v5](https://authjs.dev/getting-started/migrating-to-v5)
-- [Auth.js RBAC Guide](https://authjs.dev/guides/role-based-access-control)
+- [Next.js File Uploads: Server-Side Solutions](https://www.pronextjs.dev/next-js-file-uploads-server-side-solutions)
+- [Prisma: Avoid Storing BLOBs](https://www.prisma.io/docs/postgres/query-optimization/recommendations/storing-blob-in-database)
+- [Prisma: Decimal Type](https://github.com/prisma/prisma/discussions/10160)
+- [nanoid GitHub](https://github.com/ai/nanoid)
+- [@dnd-kit Documentation](https://dndkit.com/)
 
-### MEDIUM Confidence (Verified Issue Resolution)
-- [Prisma Adapter Issue #12899](https://github.com/nextauthjs/next-auth/issues/12899) - Closed as COMPLETED May 2025
-- [npm: next-auth versions](https://www.npmjs.com/package/next-auth?activeTab=versions)
-- [npm: @auth/prisma-adapter](https://www.npmjs.com/package/@auth/prisma-adapter)
+### MEDIUM Confidence (Verified Community)
+- [react-currency-input-field npm](https://www.npmjs.com/package/react-currency-input-field) - 315K weekly downloads
+- [shadcn.io Dropzone](https://www.shadcn.io/components/forms/dropzone)
+- [File Upload with Server Actions](https://akoskm.com/file-upload-with-nextjs-14-and-server-actions/)
+- [Building Kanban with dnd-kit](https://blog.chetanverma.com/how-to-create-an-awesome-kanban-board-using-dnd-kit)
+- [Sharp Docker Configuration](https://github.com/vercel/next.js/discussions/35296)
 
-### Version Verification (npm registry)
-- `next-auth@beta` resolves to `5.0.0-beta.30`
-- `@auth/prisma-adapter@latest` resolves to `2.11.1`
-- Peer dependency: `@prisma/client >=2.26.0 || >=3 || >=4 || >=5 || >=6`
+### LOW Confidence (Single Source - Verify Before Using)
+- Sharp version compatibility with Next.js 14 Docker may require testing
