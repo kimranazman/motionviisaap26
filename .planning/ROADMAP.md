@@ -68,7 +68,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 05-01-PLAN.md — Profile callback and admin seed script
+- [x] 05-01-PLAN.md — Profile callback and admin seed script
 
 #### Phase 6: Route Protection
 **Goal**: Unauthenticated and unauthorized users cannot access protected resources
@@ -123,8 +123,8 @@ Phases execute in numeric order. Decimal phases (if inserted) execute between in
 | 2. Header Features | v1.0 | 2/2 | Complete | 2026-01-20 |
 | 3. Kanban Quick Actions | v1.0 | 1/1 | Complete | 2026-01-20 |
 | 4. Auth Foundation | v1.1 | 4/4 | Complete | 2026-01-21 |
-| 5. Role Infrastructure | v1.1 | 0/1 | Ready | - |
-| 6. Route Protection | v1.1 | 0/? | Not started | - |
+| 5. Role Infrastructure | v1.1 | 1/1 | Complete | 2026-01-21 |
+| 6. Route Protection | v1.1 | 0/? | Ready | - |
 | 7. Admin User Management | v1.1 | 0/? | Not started | - |
 | 8. Role-Based UI | v1.1 | 0/? | Not started | - |
 

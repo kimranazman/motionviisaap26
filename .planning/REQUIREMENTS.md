@@ -17,9 +17,9 @@ Requirements for authentication milestone: Restrict access to authorized @talent
 
 ### Role Management
 
-- [ ] **ROLE-01**: New @talenta.com.my user is automatically created as Viewer
-- [ ] **ROLE-02**: User role (ADMIN, EDITOR, VIEWER) is stored in database
-- [ ] **ROLE-03**: Admin (khairul@talenta.com.my) is seeded on first run
+- [x] **ROLE-01**: New @talenta.com.my user is automatically created as Viewer
+- [x] **ROLE-02**: User role (ADMIN, EDITOR, VIEWER) is stored in database
+- [x] **ROLE-03**: Admin (khairul@talenta.com.my) is seeded on first run
 - [ ] **ROLE-04**: Admin can view list of all users with their roles
 - [ ] **ROLE-05**: Admin can change user role (promote/demote)
 - [ ] **ROLE-06**: Admin can remove user access
@@ -77,9 +77,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUTH-03 | Phase 4 | Complete |
 | AUTH-04 | Phase 4 | Complete |
 | AUTH-05 | Phase 4 | Complete |
-| ROLE-01 | Phase 5 | Pending |
-| ROLE-02 | Phase 5 | Pending |
-| ROLE-03 | Phase 5 | Pending |
+| ROLE-01 | Phase 5 | Complete |
+| ROLE-02 | Phase 5 | Complete |
+| ROLE-03 | Phase 5 | Complete |
 | ROLE-04 | Phase 7 | Pending |
 | ROLE-05 | Phase 7 | Pending |
 | ROLE-06 | Phase 7 | Pending |
@@ -100,4 +100,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-21*
-*Last updated: 2026-01-21 after roadmap creation*
+*Last updated: 2026-01-21 after Phase 5 completion*
