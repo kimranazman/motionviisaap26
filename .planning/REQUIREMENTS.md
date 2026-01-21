@@ -33,11 +33,11 @@ Requirements for authentication milestone: Restrict access to authorized @talent
 
 ### Role-Based UI
 
-- [ ] **UI-01**: Viewer cannot see edit controls (status dropdown, reassign, etc.)
-- [ ] **UI-02**: Viewer cannot see comment form
-- [ ] **UI-03**: Viewer cannot see Kanban quick action menu
-- [ ] **UI-04**: Editor and Admin see full edit controls
-- [ ] **UI-05**: Only Admin sees "Manage Users" link in navigation
+- [x] **UI-01**: Viewer cannot see edit controls (status dropdown, reassign, etc.)
+- [x] **UI-02**: Viewer CAN add comments (participation allowed)
+- [x] **UI-03**: Viewer cannot see Kanban quick action menu
+- [x] **UI-04**: Editor and Admin see full edit controls
+- [x] **UI-05**: Only Admin sees "Manage Users" link in navigation
 
 ## v2 Requirements
 
@@ -87,11 +87,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PROT-02 | Phase 6 | Complete |
 | PROT-03 | Phase 6 | Complete |
 | PROT-04 | Phase 6 | Complete |
-| UI-01 | Phase 8 | Pending |
-| UI-02 | Phase 8 | Pending |
-| UI-03 | Phase 8 | Pending |
-| UI-04 | Phase 8 | Pending |
-| UI-05 | Phase 8 | Pending |
+| UI-01 | Phase 8 | Complete |
+| UI-02 | Phase 8 | Complete |
+| UI-03 | Phase 8 | Complete |
+| UI-04 | Phase 8 | Complete |
+| UI-05 | Phase 8 | Complete |
 
 **Coverage:**
 - v1.1 requirements: 20 total
@@ -100,4 +100,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-21*
-*Last updated: 2026-01-21 after Phase 7 completion*
+*Last updated: 2026-01-21 after Phase 8 completion*

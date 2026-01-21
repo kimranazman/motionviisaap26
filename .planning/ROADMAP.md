@@ -3,7 +3,7 @@
 ## Milestones
 
 - [x] **v1.0 MVP** - Phases 1-3 (shipped 2026-01-20)
-- [ ] **v1.1 Authentication** - Phases 4-8 (in progress)
+- [x] **v1.1 Authentication** - Phases 4-8 (shipped 2026-01-21)
 
 ## Phases
 
@@ -35,7 +35,7 @@ Plans:
 
 </details>
 
-### v1.1 Authentication (In Progress)
+### v1.1 Authentication (Shipped 2026-01-21)
 
 **Milestone Goal:** Restrict access to authorized @talenta.com.my users with role-based permissions.
 
@@ -112,8 +112,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 08-01-PLAN.md — Permission utilities and Kanban role-based controls
-- [ ] 08-02-PLAN.md — Initiative detail role-based controls and permission dialog
+- [x] 08-01-PLAN.md — Permission utilities and Kanban role-based controls
+- [x] 08-02-PLAN.md — Initiative detail role-based controls and permission dialog
 
 ## Progress
 
@@ -129,7 +129,7 @@ Phases execute in numeric order. Decimal phases (if inserted) execute between in
 | 5. Role Infrastructure | v1.1 | 1/1 | Complete | 2026-01-21 |
 | 6. Route Protection | v1.1 | 2/2 | Complete | 2026-01-21 |
 | 7. Admin User Management | v1.1 | 2/2 | Complete | 2026-01-21 |
-| 8. Role-Based UI | v1.1 | 0/2 | Not started | - |
+| 8. Role-Based UI | v1.1 | 2/2 | Complete | 2026-01-21 |
 
 ---
 *Roadmap created: 2026-01-21*
