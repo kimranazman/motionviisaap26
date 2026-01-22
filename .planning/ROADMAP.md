@@ -59,11 +59,11 @@ Plans:
   2. User can add, view, edit, and delete contacts within a company
   3. Company list shows all companies with search/filter
   4. Contact appears in company context (not standalone)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 10-01: Company CRUD
-- [ ] 10-02: Contact CRUD
+- [ ] 10-01-PLAN.md - Company list, detail modal, inline editing, search/filter
+- [ ] 10-02-PLAN.md - Contact cards in company modal, CRUD, primary designation
 
 ### Phase 11: Sales Pipeline
 **Goal**: Users can track new business deals through stages
