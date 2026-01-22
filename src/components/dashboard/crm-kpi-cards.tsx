@@ -1,12 +1,13 @@
 'use client'
 
 import { Card, CardContent } from '@/components/ui/card'
-import { formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency } from '@/lib/utils'
 import {
   Target,
   TrendingUp,
   CheckCircle2,
   Briefcase,
+  DollarSign,
 } from 'lucide-react'
 
 interface CRMKPICardsProps {
@@ -14,9 +15,11 @@ interface CRMKPICardsProps {
   weightedForecast: number
   winRate: number
   dealCount: number
+  totalRevenue: number
+  profit: number
 }
 
-export function CRMKPICards({ openPipeline, weightedForecast, winRate, dealCount }: CRMKPICardsProps) {
+export function CRMKPICards({ openPipeline, weightedForecast, winRate, dealCount, totalRevenue, profit }: CRMKPICardsProps) {
   const kpis = [
     {
       title: 'Open Pipeline',
@@ -50,16 +53,32 @@ export function CRMKPICards({ openPipeline, weightedForecast, winRate, dealCount
       color: 'text-gray-600',
       bgColor: 'bg-gray-50',
     },
+    {
+      title: 'Revenue',
+      value: formatCurrency(totalRevenue),
+      subtitle: 'Completed projects',
+      icon: DollarSign,
+      color: 'text-green-600',
+      bgColor: 'bg-green-50',
+    },
+    {
+      title: 'Profit',
+      value: formatCurrency(profit),
+      subtitle: 'Revenue minus costs',
+      icon: TrendingUp,
+      color: profit >= 0 ? 'text-blue-600' : 'text-orange-600',
+      bgColor: profit >= 0 ? 'bg-blue-50' : 'bg-orange-50',
+    },
   ]
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {kpis.map((kpi) => (
         <Card key={kpi.title} className="border border-gray-200">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className={`rounded-lg p-3 ${kpi.bgColor}`}>
-                <kpi.icon className={`h-5 w-5 ${kpi.color}`} />
+              <div className={cn('rounded-lg p-3', kpi.bgColor)}>
+                <kpi.icon className={cn('h-5 w-5', kpi.color)} />
               </div>
               <div>
                 <p className="text-sm text-gray-500">{kpi.title}</p>
