@@ -1,6 +1,7 @@
 "use client"
 
 import { UserRole } from "@prisma/client"
+import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
@@ -48,9 +49,9 @@ export function UserList({ users, currentUserId }: UserListProps) {
           <TableHeader>
             <TableRow>
               <TableHead>User</TableHead>
-              <TableHead>Email</TableHead>
+              <TableHead className="hidden md:table-cell">Email</TableHead>
               <TableHead>Role</TableHead>
-              <TableHead>Joined</TableHead>
+              <TableHead className="hidden md:table-cell">Joined</TableHead>
               <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -76,10 +77,15 @@ export function UserList({ users, currentUserId }: UserListProps) {
                             </Badge>
                           )}
                         </p>
+                        {user.email && (
+                          <p className="text-sm text-muted-foreground md:hidden truncate">
+                            {user.email}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="text-muted-foreground">
+                  <TableCell className="hidden md:table-cell text-muted-foreground">
                     {user.email}
                   </TableCell>
                   <TableCell>
@@ -89,7 +95,7 @@ export function UserList({ users, currentUserId }: UserListProps) {
                       disabled={isCurrentUser}
                     />
                   </TableCell>
-                  <TableCell className="text-muted-foreground text-sm">
+                  <TableCell className="hidden md:table-cell text-muted-foreground text-sm">
                     {formatDistanceToNow(user.createdAt, { addSuffix: true })}
                   </TableCell>
                   <TableCell>
