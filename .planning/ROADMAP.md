@@ -45,10 +45,10 @@ See `.planning/milestones/v1.1-Authentication/` for archived plans.
   2. CostCategory seeded with Labor, Materials, Vendors, Travel, Software, Other
   3. Currency fields use Decimal(12,2) for precision
   4. Database migration runs without errors
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 09-01: Schema and migration
+- [ ] 09-01-PLAN.md - Add CRM and project financials schema to database
 
 ### Phase 10: Companies & Contacts
 **Goal**: Users can manage companies and their contacts
@@ -147,11 +147,11 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 9 → 10 → 11 → 12 → 13 → 14 → 15
+Phases execute in numeric order: 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 9. Foundation | v1.2 | 0/1 | Not started | - |
+| 9. Foundation | v1.2 | 0/1 | Planned | - |
 | 10. Companies & Contacts | v1.2 | 0/2 | Not started | - |
 | 11. Sales Pipeline | v1.2 | 0/2 | Not started | - |
 | 12. Potential Projects | v1.2 | 0/1 | Not started | - |
