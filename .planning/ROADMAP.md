@@ -138,11 +138,11 @@ Plans:
   3. Dashboard shows revenue summary (completed project revenues)
   4. Dashboard shows profit summary (total revenue minus total costs)
   5. Dashboard shows win rate (won deals / closed deals)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 15-01: Pipeline widgets
-- [ ] 15-02: Revenue and profit widgets
+- [ ] 15-01-PLAN.md - Pipeline widgets (stage chart, open pipeline, weighted forecast, win rate)
+- [ ] 15-02-PLAN.md - Revenue and profit widgets
 
 ## Progress
 
