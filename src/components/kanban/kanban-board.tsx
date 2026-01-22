@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import {
   DndContext,
@@ -182,6 +182,8 @@ export function KanbanBoard({ initialData }: KanbanBoardProps) {
 
   const [initiatives, setInitiatives] = useState(initialData)
   const [activeId, setActiveId] = useState<string | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [viewMode, setViewMode] = useState<ViewMode>('board')
   const [selectedInitiative, setSelectedInitiative] = useState<Initiative | null>(null)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
@@ -335,6 +337,7 @@ export function KanbanBoard({ initialData }: KanbanBoardProps) {
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string)
+    setIsDragging(true)
   }
 
   const handleDragOver = (event: DragOverEvent) => {
@@ -374,6 +377,7 @@ export function KanbanBoard({ initialData }: KanbanBoardProps) {
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event
     setActiveId(null)
+    setIsDragging(false)
 
     if (!over) return
 
@@ -499,16 +503,25 @@ export function KanbanBoard({ initialData }: KanbanBoardProps) {
           onDragStart={handleDragStart}
           onDragOver={handleDragOver}
           onDragEnd={handleDragEnd}
+          autoScroll={{
+            threshold: { x: 0.1, y: 0.1 },
+            acceleration: 5,
+            interval: 10,
+          }}
         >
-          <div className={cn(
-            "flex gap-4 pb-4 pl-1",
-            // Mobile: horizontal scroll with snap
-            "overflow-x-auto snap-x snap-mandatory scroll-pl-1",
-            // Smooth scrolling for iOS
-            "[&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch]",
-            // Desktop: standard min-width, no snap
-            "md:min-w-max md:snap-none md:pl-0 md:scroll-pl-0"
-          )}>
+          <div
+            ref={scrollContainerRef}
+            className={cn(
+              "flex gap-4 pb-4 pl-1",
+              // Mobile: horizontal scroll with snap (disabled during drag)
+              "overflow-x-auto scroll-pl-1",
+              !isDragging && "snap-x snap-mandatory",
+              // Smooth scrolling for iOS
+              "[&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch]",
+              // Desktop: standard min-width, no snap
+              "md:min-w-max md:snap-none md:pl-0 md:scroll-pl-0"
+            )}
+          >
             {COLUMNS.map(column => {
               const items = getColumnItems(column)
               return (

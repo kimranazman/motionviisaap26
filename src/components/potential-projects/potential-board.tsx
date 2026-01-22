@@ -57,12 +57,14 @@ export function PotentialBoard({ initialData }: PotentialBoardProps) {
 
   const [projects, setProjects] = useState(initialData)
   const [activeId, setActiveId] = useState<string | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [selectedProject, setSelectedProject] = useState<PotentialProject | null>(null)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
 
   // Track original stage before drag for reverting
   const originalStageRef = useRef<string | null>(null)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: { distance: 5 },
@@ -128,6 +130,7 @@ export function PotentialBoard({ initialData }: PotentialBoardProps) {
       originalStageRef.current = project.stage
     }
     setActiveId(projectId)
+    setIsDragging(true)
   }
 
   const handleCreateSuccess = (newProject: PotentialProject) => {
@@ -167,6 +170,7 @@ export function PotentialBoard({ initialData }: PotentialBoardProps) {
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event
     setActiveId(null)
+    setIsDragging(false)
 
     if (!over) {
       // Revert to original stage if dropped outside
@@ -300,16 +304,25 @@ export function PotentialBoard({ initialData }: PotentialBoardProps) {
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
+        autoScroll={{
+          threshold: { x: 0.1, y: 0.1 },
+          acceleration: 5,
+          interval: 10,
+        }}
       >
-        <div className={cn(
-          "flex gap-4 pb-4 pl-1",
-          // Mobile: horizontal scroll with snap
-          "overflow-x-auto snap-x snap-mandatory scroll-pl-1",
-          // Smooth scrolling for iOS
-          "[&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch]",
-          // Desktop: standard min-width, no snap
-          "md:min-w-max md:snap-none md:pl-0 md:scroll-pl-0"
-        )}>
+        <div
+          ref={scrollContainerRef}
+          className={cn(
+            "flex gap-4 pb-4 pl-1",
+            // Mobile: horizontal scroll with snap (disabled during drag)
+            "overflow-x-auto scroll-pl-1",
+            !isDragging && "snap-x snap-mandatory",
+            // Smooth scrolling for iOS
+            "[&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch]",
+            // Desktop: standard min-width, no snap
+            "md:min-w-max md:snap-none md:pl-0 md:scroll-pl-0"
+          )}
+        >
           {POTENTIAL_STAGES.map(stage => {
             const stageProjects = getStageProjects(stage.id)
             const totalValue = getStageTotalValue(stage.id)
