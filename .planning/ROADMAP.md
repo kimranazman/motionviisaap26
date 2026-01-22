@@ -102,6 +102,13 @@ Plans:
 
 **Dependencies:** Phase 16 (navigation foundation)
 
+**Plans:** 3 plans
+
+Plans:
+- [ ] 19-01-PLAN.md - Base UI components responsive (Dialog, Sheet, Input, Select, Calendar)
+- [ ] 19-02-PLAN.md - Forms mobile stacking (Initiative, Deal, Company, Contact)
+- [ ] 19-03-PLAN.md - Remaining forms mobile stacking (Project, Potential, Cost)
+
 **Requirements:**
 - FRM-01: Modals become full-screen on mobile
 - FRM-02: Form fields stack vertically on mobile
@@ -151,11 +158,11 @@ Plans:
 | 16 | Navigation & Layout Foundation | 5 | Complete |
 | 17 | Kanban Responsive | 6 | Complete |
 | 18 | Tables Responsive | 5 | Complete |
-| 19 | Forms & Modals Responsive | 6 | Pending |
+| 19 | Forms & Modals Responsive | 6 | In Progress |
 | 20 | Dashboard & Detail Pages | 10 | Pending |
 
 **Coverage:** 32/32 requirements mapped
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-23 (Phase 18 complete)*
+*Last updated: 2026-01-23 (Phase 19 planned)*
