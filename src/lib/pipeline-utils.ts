@@ -1,4 +1,20 @@
 // Pipeline stage configuration
+export const STAGE_PROBABILITY: Record<string, number> = {
+  LEAD: 0.10,
+  QUALIFIED: 0.25,
+  PROPOSAL: 0.50,
+  NEGOTIATION: 0.75,
+  WON: 1.00,
+  LOST: 0.00,
+}
+
+export const STAGE_CHART_COLORS: Record<string, string> = {
+  LEAD: '#9CA3AF',
+  QUALIFIED: '#60A5FA',
+  PROPOSAL: '#A78BFA',
+  NEGOTIATION: '#FBBF24',
+}
+
 export const STAGES = [
   { id: 'LEAD', title: 'Lead', colorDot: 'bg-gray-400' },
   { id: 'QUALIFIED', title: 'Qualified', colorDot: 'bg-blue-400' },

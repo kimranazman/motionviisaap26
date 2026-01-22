@@ -6,7 +6,10 @@ import { StatusChart } from '@/components/dashboard/status-chart'
 import { DepartmentChart } from '@/components/dashboard/department-chart'
 import { TeamWorkload } from '@/components/dashboard/team-workload'
 import { RecentInitiatives } from '@/components/dashboard/recent-initiatives'
+import { CRMKPICards } from '@/components/dashboard/crm-kpi-cards'
+import { PipelineStageChart } from '@/components/dashboard/pipeline-stage-chart'
 import prisma from '@/lib/prisma'
+import { STAGES, STAGE_PROBABILITY, STAGE_CHART_COLORS } from '@/lib/pipeline-utils'
 
 async function getDashboardData() {
   // Get total initiatives
@@ -108,8 +111,62 @@ async function getDashboardData() {
   }
 }
 
+async function getCRMDashboardData() {
+  // Pipeline by stage (open deals only)
+  const pipelineByStage = await prisma.deal.groupBy({
+    by: ['stage'],
+    _count: { _all: true },
+    _sum: { value: true },
+    where: { stage: { notIn: ['WON', 'LOST'] } }
+  })
+
+  // Total open pipeline
+  const openPipelineResult = await prisma.deal.aggregate({
+    where: { stage: { notIn: ['WON', 'LOST'] } },
+    _sum: { value: true },
+    _count: { _all: true }
+  })
+
+  // Win rate calculation
+  const closedDeals = await prisma.deal.count({
+    where: { stage: { in: ['WON', 'LOST'] } }
+  })
+  const wonDeals = await prisma.deal.count({
+    where: { stage: 'WON' }
+  })
+
+  // Calculate weighted forecast
+  const weightedValue = pipelineByStage.reduce((sum, item) => {
+    const value = Number(item._sum.value) || 0
+    const probability = STAGE_PROBABILITY[item.stage] || 0
+    return sum + (value * probability)
+  }, 0)
+
+  // Transform to ordered array
+  const stageData = STAGES.filter(s => !['WON', 'LOST'].includes(s.id)).map(stage => {
+    const found = pipelineByStage.find(m => m.stage === stage.id)
+    return {
+      id: stage.id,
+      name: stage.title,
+      count: found?._count._all ?? 0,
+      value: Number(found?._sum.value) || 0,
+      color: STAGE_CHART_COLORS[stage.id] || '#9CA3AF',
+    }
+  })
+
+  return {
+    stageData,
+    openPipeline: Number(openPipelineResult._sum.value) || 0,
+    dealCount: openPipelineResult._count._all,
+    weightedForecast: Math.round(weightedValue),
+    winRate: closedDeals > 0 ? Math.round((wonDeals / closedDeals) * 100) : 0,
+    closedDealsCount: closedDeals,
+  }
+}
+
 export default async function DashboardPage() {
   const data = await getDashboardData()
+  const crmData = await getCRMDashboardData()
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -132,6 +189,20 @@ export default async function DashboardPage() {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <TeamWorkload data={data.byPerson} total={data.stats.totalInitiatives} />
           <RecentInitiatives initiatives={data.recentInitiatives} />
+        </div>
+
+        {/* Sales & Revenue Section */}
+        <div className="border-t border-gray-200 pt-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Sales & Revenue</h2>
+          <CRMKPICards
+            openPipeline={crmData.openPipeline}
+            weightedForecast={crmData.weightedForecast}
+            winRate={crmData.winRate}
+            dealCount={crmData.dealCount}
+          />
+          <div className="mt-6">
+            <PipelineStageChart data={crmData.stageData} />
+          </div>
         </div>
       </div>
     </div>
