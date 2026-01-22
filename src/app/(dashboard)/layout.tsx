@@ -8,9 +8,10 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen">
       <Sidebar />
-      <main className="pl-64">
+      <main className="md:pl-64 pb-16 md:pb-0">
         {children}
       </main>
+      {/* Mobile bottom navigation - added in Task 3 */}
     </div>
   )
 }
