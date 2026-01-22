@@ -242,6 +242,13 @@ export function PotentialBoard({ initialData }: PotentialBoardProps) {
 
       if (!response.ok) {
         console.error('Failed to save reorder:', await response.text())
+      } else {
+        // Check if a project was created (potential moved to CONFIRMED)
+        const data = await response.json()
+        if (data.projectCreated) {
+          // TODO: Replace with sonner toast when available
+          console.log(`Project created: ${data.projectCreated.title}`)
+        }
       }
     } catch (error) {
       console.error('Failed to save reorder:', error)

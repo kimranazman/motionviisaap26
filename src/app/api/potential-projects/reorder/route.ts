@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
-import { PotentialStage } from '@prisma/client'
+import { PotentialStage, ProjectStatus } from '@prisma/client'
 import { requireEditor } from '@/lib/auth-utils'
 
 // PATCH /api/potential-projects/reorder - Reorder potential projects (for Kanban)
@@ -20,32 +20,76 @@ export async function PATCH(request: NextRequest) {
       )
     }
 
-    // Get current potential projects to check for stage changes
-    const projectIds = updates.map((u: { id: string }) => u.id)
-    const currentProjects = await prisma.potentialProject.findMany({
-      where: { id: { in: projectIds } },
-      select: { id: true, stage: true },
+    // Get current potential projects to check for stage changes and for project creation
+    const potentialIds = updates.map((u: { id: string }) => u.id)
+    const currentPotentials = await prisma.potentialProject.findMany({
+      where: { id: { in: potentialIds } },
+      select: {
+        id: true,
+        stage: true,
+        title: true,
+        description: true,
+        estimatedValue: true,
+        companyId: true,
+        contactId: true,
+        projectId: true,
+      },
     })
-    const currentStageMap = new Map(currentProjects.map(p => [p.id, p.stage]))
+    const currentPotentialMap = new Map(currentPotentials.map(p => [p.id, p]))
 
-    // Use transaction for batch update
-    await prisma.$transaction(
-      updates.map((update: { id: string; position: number; stage?: string }) => {
-        const currentStage = currentStageMap.get(update.id)
-        const stageIsChanging = update.stage && currentStage !== update.stage
+    // Track if a project was created
+    let projectCreated: { id: string; title: string } | undefined
 
-        return prisma.potentialProject.update({
-          where: { id: update.id },
-          data: {
-            position: update.position,
-            ...(update.stage && { stage: update.stage as PotentialStage }),
-            ...(stageIsChanging && { stageChangedAt: new Date() }),
-          },
-        })
-      })
-    )
+    // Use interactive transaction for sequential operations (project creation + potential update)
+    await prisma.$transaction(async (tx) => {
+      for (const update of updates as { id: string; position: number; stage?: string }[]) {
+        const currentPotential = currentPotentialMap.get(update.id)
+        if (!currentPotential) continue
 
-    return NextResponse.json({ success: true })
+        const stageIsChanging = update.stage && currentPotential.stage !== update.stage
+        const isMovingToConfirmed = update.stage === 'CONFIRMED' && currentPotential.stage !== 'CONFIRMED'
+        const needsProjectCreation = isMovingToConfirmed && !currentPotential.projectId
+
+        if (needsProjectCreation) {
+          // Create a new project linked to this potential
+          const project = await tx.project.create({
+            data: {
+              title: currentPotential.title,
+              description: currentPotential.description,
+              revenue: currentPotential.estimatedValue,
+              status: ProjectStatus.DRAFT,
+              companyId: currentPotential.companyId,
+              contactId: currentPotential.contactId,
+            },
+          })
+
+          // Update potential project with position, stage, and link to new project
+          await tx.potentialProject.update({
+            where: { id: update.id },
+            data: {
+              position: update.position,
+              stage: 'CONFIRMED',
+              stageChangedAt: new Date(),
+              projectId: project.id,
+            },
+          })
+
+          projectCreated = { id: project.id, title: project.title }
+        } else {
+          // Standard update (no project creation needed)
+          await tx.potentialProject.update({
+            where: { id: update.id },
+            data: {
+              position: update.position,
+              ...(update.stage && { stage: update.stage as PotentialStage }),
+              ...(stageIsChanging && { stageChangedAt: new Date() }),
+            },
+          })
+        }
+      }
+    })
+
+    return NextResponse.json({ success: true, projectCreated })
   } catch (error) {
     console.error('Error reordering potential projects:', error)
     return NextResponse.json(
