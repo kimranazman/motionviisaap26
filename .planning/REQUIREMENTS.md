@@ -9,11 +9,11 @@ Requirements for responsive/mobile web milestone. Each maps to roadmap phases.
 
 ### Navigation
 
-- [ ] **NAV-01**: Bottom navigation bar appears on mobile screens (<768px)
-- [ ] **NAV-02**: Bottom nav includes key links (Dashboard, Initiatives, CRM, Events)
-- [ ] **NAV-03**: Sidebar hidden on mobile, visible on tablet/desktop
-- [ ] **NAV-04**: Header adapts to mobile (search icon instead of full search bar)
-- [ ] **NAV-05**: User menu accessible on all screen sizes
+- [x] **NAV-01**: Bottom navigation bar appears on mobile screens (<768px)
+- [x] **NAV-02**: Bottom nav includes key links (Dashboard, Initiatives, CRM, Events)
+- [x] **NAV-03**: Sidebar hidden on mobile, visible on tablet/desktop
+- [x] **NAV-04**: Header adapts to mobile (search icon instead of full search bar)
+- [x] **NAV-05**: User menu accessible on all screen sizes
 
 ### Kanban Boards
 
@@ -75,11 +75,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| NAV-01 | Phase 16 | Pending |
-| NAV-02 | Phase 16 | Pending |
-| NAV-03 | Phase 16 | Pending |
-| NAV-04 | Phase 16 | Pending |
-| NAV-05 | Phase 16 | Pending |
+| NAV-01 | Phase 16 | Complete |
+| NAV-02 | Phase 16 | Complete |
+| NAV-03 | Phase 16 | Complete |
+| NAV-04 | Phase 16 | Complete |
+| NAV-05 | Phase 16 | Complete |
 | KAN-01 | Phase 17 | Pending |
 | KAN-02 | Phase 17 | Pending |
 | KAN-03 | Phase 17 | Pending |
@@ -115,4 +115,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-22*
-*Last updated: 2026-01-22 after roadmap creation*
+*Last updated: 2026-01-22 (Phase 16 complete)*

@@ -21,8 +21,8 @@ Transform SAAP from desktop-only to fully responsive across phone, tablet, and d
 **Plans:** 2 plans
 
 Plans:
-- [ ] 16-01-PLAN.md - Responsive layout foundation with bottom navigation
-- [ ] 16-02-PLAN.md - Mobile sidebar and responsive header
+- [x] 16-01-PLAN.md - Responsive layout foundation with bottom navigation
+- [x] 16-02-PLAN.md - Mobile sidebar and responsive header
 
 **Requirements:**
 - NAV-01: Bottom navigation bar appears on mobile screens (<768px)
@@ -134,7 +134,7 @@ Plans:
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| 16 | Navigation & Layout Foundation | 5 | Planned |
+| 16 | Navigation & Layout Foundation | 5 | Complete |
 | 17 | Kanban Responsive | 6 | Pending |
 | 18 | Tables Responsive | 5 | Pending |
 | 19 | Forms & Modals Responsive | 6 | Pending |
@@ -144,4 +144,4 @@ Plans:
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-22*
+*Last updated: 2026-01-22 (Phase 16 complete)*
