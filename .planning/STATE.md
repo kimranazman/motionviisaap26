@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Track sales pipeline, convert deals to projects, monitor costs and profit
-**Current focus:** Phase 14 - Project Costs (COMPLETE)
+**Current focus:** Phase 15 - Dashboard Widgets (In progress)
 
 ## Current Position
 
-Phase: 14 of 15 (Project Costs)
-Plan: 2 of 2 in current phase
-Status: Phase complete
-Last activity: 2026-01-22 — Completed 14-02-PLAN.md (Project Detail Integration)
+Phase: 15 of 15 (Dashboard Widgets)
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-01-22 — Completed 15-01-PLAN.md (Pipeline Widgets)
 
-Progress: v1.0 | v1.1 | v1.2 [█████████░] 79%
+Progress: v1.0 | v1.1 | v1.2 [██████████] 82%
 
 ## Milestone History
 
@@ -29,9 +29,9 @@ Progress: v1.0 | v1.1 | v1.2 [█████████░] 79%
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 27
+- Total plans completed: 28
 - Average duration: 4 min
-- Total execution time: 107 min
+- Total execution time: 112 min
 
 **By Phase (v1.0-v1.2):**
 
@@ -51,6 +51,7 @@ Progress: v1.0 | v1.1 | v1.2 [█████████░] 79%
 | 12-potential-projects | 1 | 6min | 6min |
 | 13-projects-conversion | 3 | 10min | 3.3min |
 | 14-project-costs | 2 | 7min | 3.5min |
+| 15-dashboard-widgets | 1 | 5min | 5min |
 
 ## Accumulated Context
 
@@ -73,6 +74,8 @@ Recent:
 - Decimal amounts converted to Number server-side before client response
 - Profit card shows blue (positive) or orange (negative) for visual status
 - Categories fetched on mount for cost form dropdown population
+- STAGE_PROBABILITY: Lead 10%, Qualified 25%, Proposal 50%, Negotiation 75%
+- Win rate calculated from closed deals only (Won + Lost)
 
 ### Pending Todos
 
@@ -85,5 +88,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 14-02-PLAN.md (Project Detail Integration)
-Resume: `/gsd:plan-phase 15` for Dashboard Widgets
+Stopped at: Completed 15-01-PLAN.md (Pipeline Widgets)
+Resume: `/gsd:execute-phase 15-02` for Revenue Widgets
