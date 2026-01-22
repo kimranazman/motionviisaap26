@@ -21,6 +21,36 @@ export async function GET(
             { name: 'asc' },
           ],
         },
+        deals: {
+          select: {
+            id: true,
+            title: true,
+            stage: true,
+            value: true,
+          },
+          orderBy: { createdAt: 'desc' },
+          take: 5,
+        },
+        potentials: {
+          select: {
+            id: true,
+            title: true,
+            stage: true,
+            estimatedValue: true,
+          },
+          orderBy: { createdAt: 'desc' },
+          take: 5,
+        },
+        projects: {
+          select: {
+            id: true,
+            title: true,
+            status: true,
+            revenue: true,
+          },
+          orderBy: { createdAt: 'desc' },
+          take: 5,
+        },
         _count: {
           select: { deals: true, projects: true, potentials: true },
         },
