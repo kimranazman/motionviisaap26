@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import {
   DndContext,
@@ -27,6 +27,9 @@ import { Button } from '@/components/ui/button'
 import { PipelineColumn } from './pipeline-column'
 import { PipelineCard } from './pipeline-card'
 import { DealFormModal } from './deal-form-modal'
+import { DealDetailSheet } from './deal-detail-sheet'
+import { LostReasonDialog } from './lost-reason-dialog'
+import { PipelineMetrics } from './pipeline-metrics'
 import { STAGES } from '@/lib/pipeline-utils'
 import { canEdit } from '@/lib/permissions'
 
@@ -36,9 +39,16 @@ interface Deal {
   description: string | null
   value: number | null
   stage: string
+  lostReason?: string | null
   position: number
   company: { id: string; name: string } | null
   contact: { id: string; name: string } | null
+}
+
+interface PendingLostDeal {
+  deal: Deal
+  originalStage: string
+  updates: { id: string; position: number; stage: string }[]
 }
 
 interface PipelineBoardProps {
@@ -54,6 +64,12 @@ export function PipelineBoard({ initialData }: PipelineBoardProps) {
   const [deals, setDeals] = useState(initialData)
   const [activeId, setActiveId] = useState<string | null>(null)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null)
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
+  const [pendingLostDeal, setPendingLostDeal] = useState<PendingLostDeal | null>(null)
+
+  // Track original stage before drag for reverting
+  const originalStageRef = useRef<string | null>(null)
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -107,7 +123,12 @@ export function PipelineBoard({ initialData }: PipelineBoardProps) {
   }
 
   const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(event.active.id as string)
+    const dealId = event.active.id as string
+    const deal = deals.find(d => d.id === dealId)
+    if (deal) {
+      originalStageRef.current = deal.stage
+    }
+    setActiveId(dealId)
   }
 
   const handleCreateSuccess = (newDeal: Deal) => {
@@ -148,13 +169,29 @@ export function PipelineBoard({ initialData }: PipelineBoardProps) {
     const { active, over } = event
     setActiveId(null)
 
-    if (!over) return
+    if (!over) {
+      // Revert to original stage if dropped outside
+      if (originalStageRef.current) {
+        setDeals(prev =>
+          prev.map(item =>
+            item.id === active.id
+              ? { ...item, stage: originalStageRef.current! }
+              : item
+          )
+        )
+      }
+      originalStageRef.current = null
+      return
+    }
 
-    const activeId = active.id as string
+    const draggedDealId = active.id as string
     const overId = over.id as string
 
-    const activeDeal = deals.find(d => d.id === activeId)
-    if (!activeDeal) return
+    const activeDeal = deals.find(d => d.id === draggedDealId)
+    if (!activeDeal) {
+      originalStageRef.current = null
+      return
+    }
 
     // Determine the final stage
     let finalStageId: string
@@ -175,7 +212,7 @@ export function PipelineBoard({ initialData }: PipelineBoardProps) {
 
     // If dropping on another item, reorder
     if (!STAGE_IDS.includes(overId)) {
-      const oldIndex = stageDeals.findIndex(d => d.id === activeId)
+      const oldIndex = stageDeals.findIndex(d => d.id === draggedDealId)
       const newIndex = stageDeals.findIndex(d => d.id === overId)
 
       if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
@@ -187,8 +224,20 @@ export function PipelineBoard({ initialData }: PipelineBoardProps) {
     const updates = newStageDeals.map((deal, index) => ({
       id: deal.id,
       position: index,
-      stage: deal.id === activeId ? finalStageId : deal.stage,
+      stage: deal.id === draggedDealId ? finalStageId : deal.stage,
     }))
+
+    // Check if moving to LOST stage
+    if (finalStageId === 'LOST' && originalStageRef.current !== 'LOST') {
+      // Set pending lost deal and don't complete the move yet
+      setPendingLostDeal({
+        deal: activeDeal,
+        originalStage: originalStageRef.current || activeDeal.stage,
+        updates,
+      })
+      originalStageRef.current = null
+      return
+    }
 
     // Update local state with final positions
     setDeals(prev => {
@@ -201,6 +250,8 @@ export function PipelineBoard({ initialData }: PipelineBoardProps) {
         return deal
       })
     })
+
+    originalStageRef.current = null
 
     // Persist to server
     try {
@@ -218,6 +269,82 @@ export function PipelineBoard({ initialData }: PipelineBoardProps) {
     }
   }
 
+  const handleLostConfirm = async (reason: string) => {
+    if (!pendingLostDeal) return
+
+    const { updates, deal } = pendingLostDeal
+
+    // Add lostReason to the update for the dragged deal
+    const updatesWithReason = updates.map(u => ({
+      ...u,
+      ...(u.id === deal.id ? { lostReason: reason } : {}),
+    }))
+
+    // Update local state
+    setDeals(prev => {
+      const updated = new Map(updatesWithReason.map(u => [u.id, u]))
+      return prev.map(d => {
+        const update = updated.get(d.id)
+        if (update) {
+          return {
+            ...d,
+            position: update.position,
+            stage: update.stage,
+            ...(d.id === deal.id ? { lostReason: reason } : {}),
+          }
+        }
+        return d
+      })
+    })
+
+    setPendingLostDeal(null)
+
+    // Persist to server with lostReason
+    try {
+      const response = await fetch('/api/deals/reorder', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ updates: updatesWithReason }),
+      })
+
+      if (!response.ok) {
+        console.error('Failed to save reorder:', await response.text())
+      }
+    } catch (error) {
+      console.error('Failed to save reorder:', error)
+    }
+  }
+
+  const handleLostCancel = () => {
+    if (!pendingLostDeal) return
+
+    // Revert the deal to its original stage
+    setDeals(prev =>
+      prev.map(d =>
+        d.id === pendingLostDeal.deal.id
+          ? { ...d, stage: pendingLostDeal.originalStage }
+          : d
+      )
+    )
+
+    setPendingLostDeal(null)
+  }
+
+  const handleCardClick = (deal: Deal) => {
+    setSelectedDeal(deal)
+    setIsSheetOpen(true)
+  }
+
+  const handleDealUpdate = (updatedDeal: Deal) => {
+    setDeals(prev =>
+      prev.map(d => (d.id === updatedDeal.id ? updatedDeal : d))
+    )
+  }
+
+  const handleDealDelete = (dealId: string) => {
+    setDeals(prev => prev.filter(d => d.id !== dealId))
+  }
+
   return (
     <>
       {/* Header with Add Deal button */}
@@ -231,6 +358,9 @@ export function PipelineBoard({ initialData }: PipelineBoardProps) {
         )}
       </div>
 
+      {/* Pipeline Metrics */}
+      <PipelineMetrics deals={deals} />
+
       <DndContext
         sensors={sensors}
         collisionDetection={collisionDetection}
@@ -239,51 +369,68 @@ export function PipelineBoard({ initialData }: PipelineBoardProps) {
         onDragEnd={handleDragEnd}
       >
         <div className="flex gap-4 min-w-max pb-4 overflow-x-auto">
-        {STAGES.map(stage => {
-          const stageDeals = getStageDeals(stage.id)
-          const totalValue = getStageTotalValue(stage.id)
-          return (
-            <PipelineColumn
-              key={stage.id}
-              id={stage.id}
-              title={stage.title}
-              colorDot={stage.colorDot}
-              count={stageDeals.length}
-              totalValue={totalValue}
-            >
-              <SortableContext
-                items={stageDeals.map(d => d.id)}
-                strategy={verticalListSortingStrategy}
+          {STAGES.map(stage => {
+            const stageDeals = getStageDeals(stage.id)
+            const totalValue = getStageTotalValue(stage.id)
+            return (
+              <PipelineColumn
+                key={stage.id}
+                id={stage.id}
+                title={stage.title}
+                colorDot={stage.colorDot}
+                count={stageDeals.length}
+                totalValue={totalValue}
               >
-                {stageDeals.map(deal => (
-                  <PipelineCard
-                    key={deal.id}
-                    deal={deal}
-                    canEdit={userCanEdit}
-                  />
-                ))}
-              </SortableContext>
-            </PipelineColumn>
-          )
-        })}
-      </div>
+                <SortableContext
+                  items={stageDeals.map(d => d.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {stageDeals.map(deal => (
+                    <PipelineCard
+                      key={deal.id}
+                      deal={deal}
+                      canEdit={userCanEdit}
+                      onClick={() => handleCardClick(deal)}
+                    />
+                  ))}
+                </SortableContext>
+              </PipelineColumn>
+            )
+          })}
+        </div>
 
-      <DragOverlay>
-        {activeId ? (
-          <PipelineCard
-            deal={getActiveItem()!}
-            isDragging
-            canEdit={userCanEdit}
-          />
-        ) : null}
-      </DragOverlay>
-    </DndContext>
+        <DragOverlay>
+          {activeId ? (
+            <PipelineCard
+              deal={getActiveItem()!}
+              isDragging
+              canEdit={userCanEdit}
+            />
+          ) : null}
+        </DragOverlay>
+      </DndContext>
 
       {/* Create Deal Modal */}
       <DealFormModal
         open={isCreateModalOpen}
         onOpenChange={setIsCreateModalOpen}
         onSuccess={handleCreateSuccess}
+      />
+
+      {/* Deal Detail Sheet */}
+      <DealDetailSheet
+        deal={selectedDeal}
+        open={isSheetOpen}
+        onOpenChange={setIsSheetOpen}
+        onUpdate={handleDealUpdate}
+        onDelete={handleDealDelete}
+      />
+
+      {/* Lost Reason Dialog */}
+      <LostReasonDialog
+        open={pendingLostDeal !== null}
+        onConfirm={handleLostConfirm}
+        onCancel={handleLostCancel}
       />
     </>
   )

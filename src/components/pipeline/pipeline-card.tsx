@@ -1,5 +1,6 @@
 'use client'
 
+import { useRef } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { cn, formatCurrency } from '@/lib/utils'
@@ -21,6 +22,7 @@ interface PipelineCardProps {
 }
 
 export function PipelineCard({ deal, onClick, isDragging, canEdit = true }: PipelineCardProps) {
+  const mouseDownPos = useRef<{ x: number; y: number } | null>(null)
   const {
     attributes,
     listeners,
@@ -40,13 +42,36 @@ export function PipelineCard({ deal, onClick, isDragging, canEdit = true }: Pipe
     transition,
   }
 
+  // Track mouse position to distinguish click from drag
+  const handleMouseDown = (e: React.MouseEvent) => {
+    mouseDownPos.current = { x: e.clientX, y: e.clientY }
+  }
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (!onClick) return
+
+    // Check if mouse moved significantly (was a drag, not a click)
+    if (mouseDownPos.current) {
+      const dx = Math.abs(e.clientX - mouseDownPos.current.x)
+      const dy = Math.abs(e.clientY - mouseDownPos.current.y)
+      if (dx > 5 || dy > 5) {
+        // It was a drag, not a click
+        mouseDownPos.current = null
+        return
+      }
+    }
+    mouseDownPos.current = null
+    onClick()
+  }
+
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...attributes}
       {...dragListeners}
-      onClick={onClick}
+      onMouseDown={handleMouseDown}
+      onClick={handleClick}
       className={cn(
         'group relative bg-white rounded-2xl border-0 shadow-apple',
         'hover:shadow-apple-hover hover:scale-[1.02]',
