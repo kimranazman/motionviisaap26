@@ -26,8 +26,15 @@ export function PotentialColumn({
     <div
       ref={setNodeRef}
       className={cn(
-        'w-80 shrink-0 rounded-2xl',
+        // Mobile: 75% viewport width to show adjacent column edges
+        'w-[75vw] min-w-[280px] max-w-[320px]',
+        // Desktop: fixed width
+        'md:w-80 md:min-w-0 md:max-w-none',
+        // Shared styles
+        'shrink-0 rounded-2xl',
         'bg-gray-50/50 backdrop-blur-sm',
+        // Snap alignment for scroll container
+        'snap-start',
         isOver && 'ring-2 ring-blue-400/50'
       )}
     >
