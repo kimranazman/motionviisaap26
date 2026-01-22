@@ -4,7 +4,14 @@ import { useRef } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { cn, formatCurrency } from '@/lib/utils'
-import { Building2, User } from 'lucide-react'
+import { Building2, User, MoreHorizontal, Eye } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 interface Deal {
   id: string
@@ -84,9 +91,48 @@ export function PipelineCard({ deal, onClick, isDragging, canEdit = true }: Pipe
     >
       {/* Card Content */}
       <div className="p-4">
-        {/* Title - Primary focus with touch target */}
-        <div className="text-sm font-medium text-gray-900 line-clamp-2 mb-3 min-h-[44px] flex items-start">
-          {deal.title}
+        {/* Header with title and quick actions */}
+        <div className="flex items-start justify-between gap-2 mb-3">
+          {/* Title - Primary focus */}
+          <div className="text-sm font-medium text-gray-900 line-clamp-2 flex-1 min-h-[44px] flex items-start">
+            {deal.title}
+          </div>
+
+          {/* Quick Actions - visible on mobile, hover on desktop */}
+          {canEdit && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className={cn(
+                    "h-8 w-8 -mr-2 -mt-1 shrink-0",
+                    "md:opacity-0 md:group-hover:opacity-100",
+                    "focus:opacity-100",
+                    "transition-opacity"
+                  )}
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                  }}
+                >
+                  <MoreHorizontal className="h-4 w-4 text-gray-500" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onClick?.()
+                  }}
+                  onPointerDown={(e) => e.stopPropagation()}
+                >
+                  <Eye className="h-4 w-4 mr-2" />
+                  View Details
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
 
         {/* Value */}

@@ -111,95 +111,103 @@ export function KanbanCard({ item, isDragging, onClick, onStatusChange, onReassi
         (isDragging || isSorting) && 'opacity-60 shadow-xl scale-105 rotate-1'
       )}
     >
-      {/* Quick Actions Menu - only for Editor/Admin */}
-      {canEdit && (
-        <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                size="icon"
-                variant="secondary"
-                className="h-7 w-7 rounded-full shadow-md bg-white hover:bg-gray-50"
-                onPointerDown={(e) => e.stopPropagation()}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <MoreHorizontal className="h-4 w-4 text-gray-600" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem
-                onClick={handleViewDetails}
-                onPointerDown={(e) => e.stopPropagation()}
-              >
-                <Eye className="h-4 w-4 mr-2" />
-                View Details
-              </DropdownMenuItem>
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger onPointerDown={(e) => e.stopPropagation()}>
-                  <RefreshCw className="h-4 w-4 mr-2" />
-                  Change Status
-                </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent>
-                  <DropdownMenuRadioGroup
-                    value={item.status}
-                    onValueChange={(value) => onStatusChange?.(item.id, value)}
-                  >
-                    {STATUS_OPTIONS.map((option) => (
-                      <DropdownMenuRadioItem
-                        key={option.value}
-                        value={option.value}
-                        onPointerDown={(e) => e.stopPropagation()}
-                      >
-                        <Badge className={cn('ml-2', getStatusColor(option.value))}>
-                          {option.label}
-                        </Badge>
-                      </DropdownMenuRadioItem>
-                    ))}
-                  </DropdownMenuRadioGroup>
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger onPointerDown={(e) => e.stopPropagation()}>
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  Reassign
-                </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent>
-                  <DropdownMenuRadioGroup
-                    value={item.personInCharge || ''}
-                    onValueChange={(value) => onReassign?.(item.id, value || null)}
-                  >
-                    <DropdownMenuRadioItem
-                      value=""
-                      onPointerDown={(e) => e.stopPropagation()}
-                    >
-                      Unassigned
-                    </DropdownMenuRadioItem>
-                    {TEAM_MEMBER_OPTIONS.map((option) => (
-                      <DropdownMenuRadioItem
-                        key={option.value}
-                        value={option.value}
-                        onPointerDown={(e) => e.stopPropagation()}
-                      >
-                        {option.label}
-                      </DropdownMenuRadioItem>
-                    ))}
-                  </DropdownMenuRadioGroup>
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      )}
-
       {/* Card Content */}
       <div className="p-4">
-        {/* Title - Primary focus with larger touch target */}
-        <div
-          className="text-sm font-medium text-gray-900 hover:text-blue-600 line-clamp-2 cursor-pointer mb-3 min-h-[44px] flex items-start"
-          onClick={handleViewDetails}
-          onPointerDown={(e) => e.stopPropagation()}
-        >
-          {item.title}
+        {/* Header with title and quick actions */}
+        <div className="flex items-start justify-between gap-2 mb-3">
+          {/* Title - Primary focus */}
+          <div
+            className="text-sm font-medium text-gray-900 hover:text-blue-600 line-clamp-2 cursor-pointer flex-1 min-h-[44px] flex items-start"
+            onClick={handleViewDetails}
+            onPointerDown={(e) => e.stopPropagation()}
+          >
+            {item.title}
+          </div>
+
+          {/* Quick Actions - visible on mobile, hover on desktop */}
+          {canEdit && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className={cn(
+                    "h-8 w-8 -mr-2 -mt-1 shrink-0",
+                    // Mobile: always visible
+                    // Desktop: visible on hover
+                    "md:opacity-0 md:group-hover:opacity-100",
+                    "focus:opacity-100",
+                    "transition-opacity"
+                  )}
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <MoreHorizontal className="h-4 w-4 text-gray-500" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem
+                  onClick={handleViewDetails}
+                  onPointerDown={(e) => e.stopPropagation()}
+                >
+                  <Eye className="h-4 w-4 mr-2" />
+                  View Details
+                </DropdownMenuItem>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger onPointerDown={(e) => e.stopPropagation()}>
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Change Status
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent>
+                    <DropdownMenuRadioGroup
+                      value={item.status}
+                      onValueChange={(value) => onStatusChange?.(item.id, value)}
+                    >
+                      {STATUS_OPTIONS.map((option) => (
+                        <DropdownMenuRadioItem
+                          key={option.value}
+                          value={option.value}
+                          onPointerDown={(e) => e.stopPropagation()}
+                        >
+                          <Badge className={cn('ml-2', getStatusColor(option.value))}>
+                            {option.label}
+                          </Badge>
+                        </DropdownMenuRadioItem>
+                      ))}
+                    </DropdownMenuRadioGroup>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger onPointerDown={(e) => e.stopPropagation()}>
+                    <UserPlus className="h-4 w-4 mr-2" />
+                    Reassign
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent>
+                    <DropdownMenuRadioGroup
+                      value={item.personInCharge || ''}
+                      onValueChange={(value) => onReassign?.(item.id, value || null)}
+                    >
+                      <DropdownMenuRadioItem
+                        value=""
+                        onPointerDown={(e) => e.stopPropagation()}
+                      >
+                        Unassigned
+                      </DropdownMenuRadioItem>
+                      {TEAM_MEMBER_OPTIONS.map((option) => (
+                        <DropdownMenuRadioItem
+                          key={option.value}
+                          value={option.value}
+                          onPointerDown={(e) => e.stopPropagation()}
+                        >
+                          {option.label}
+                        </DropdownMenuRadioItem>
+                      ))}
+                    </DropdownMenuRadioGroup>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
 
         {/* Footer - Secondary info */}
