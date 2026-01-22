@@ -30,6 +30,7 @@ interface PipelineCardProps {
 
 export function PipelineCard({ deal, onClick, isDragging, canEdit = true }: PipelineCardProps) {
   const mouseDownPos = useRef<{ x: number; y: number } | null>(null)
+  const touchStartRef = useRef<{ x: number; y: number; time: number } | null>(null)
   const {
     attributes,
     listeners,
@@ -49,6 +50,10 @@ export function PipelineCard({ deal, onClick, isDragging, canEdit = true }: Pipe
     transition,
   }
 
+  const openCard = () => {
+    if (onClick) onClick()
+  }
+
   // Track mouse position to distinguish click from drag
   const handleMouseDown = (e: React.MouseEvent) => {
     mouseDownPos.current = { x: e.clientX, y: e.clientY }
@@ -57,18 +62,54 @@ export function PipelineCard({ deal, onClick, isDragging, canEdit = true }: Pipe
   const handleClick = (e: React.MouseEvent) => {
     if (!onClick) return
 
+    // Don't open if interacting with controls
+    if ((e.target as HTMLElement).closest('button, [role="menu"]')) {
+      return
+    }
+
     // Check if mouse moved significantly (was a drag, not a click)
     if (mouseDownPos.current) {
       const dx = Math.abs(e.clientX - mouseDownPos.current.x)
       const dy = Math.abs(e.clientY - mouseDownPos.current.y)
       if (dx > 5 || dy > 5) {
-        // It was a drag, not a click
         mouseDownPos.current = null
         return
       }
     }
     mouseDownPos.current = null
     onClick()
+  }
+
+  // Track touch start for tap detection
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const touch = e.touches[0]
+    touchStartRef.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+      time: Date.now(),
+    }
+  }
+
+  // Detect tap on touch end
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!touchStartRef.current || !onClick) return
+
+    if ((e.target as HTMLElement).closest('button, [role="menu"]')) {
+      touchStartRef.current = null
+      return
+    }
+
+    const touch = e.changedTouches[0]
+    const dx = Math.abs(touch.clientX - touchStartRef.current.x)
+    const dy = Math.abs(touch.clientY - touchStartRef.current.y)
+    const duration = Date.now() - touchStartRef.current.time
+
+    if (duration < 200 && dx < 10 && dy < 10) {
+      e.preventDefault()
+      openCard()
+    }
+
+    touchStartRef.current = null
   }
 
   return (
@@ -79,6 +120,8 @@ export function PipelineCard({ deal, onClick, isDragging, canEdit = true }: Pipe
       {...dragListeners}
       onMouseDown={handleMouseDown}
       onClick={handleClick}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
       className={cn(
         'group relative bg-white rounded-2xl border-0 shadow-apple',
         'hover:shadow-apple-hover hover:scale-[1.02]',

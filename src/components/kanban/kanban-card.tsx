@@ -1,5 +1,6 @@
 'use client'
 
+import { useRef } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -62,6 +63,9 @@ const DEPARTMENT_BORDER_BOTTOM: Record<string, string> = {
 }
 
 export function KanbanCard({ item, isDragging, onClick, onStatusChange, onReassign, canEdit = true }: KanbanCardProps) {
+  // Track touch for tap detection (dnd-kit intercepts touch events)
+  const touchStartRef = useRef<{ x: number; y: number; time: number } | null>(null)
+
   const {
     attributes,
     listeners,
@@ -94,16 +98,54 @@ export function KanbanCard({ item, isDragging, onClick, onStatusChange, onReassi
     }
   }
 
-  const handleCardTap = (e: React.MouseEvent | React.TouchEvent) => {
-    // Don't open if user is interacting with dropdown or other controls
-    if ((e.target as HTMLElement).closest('button, [role="menu"]')) {
-      return
-    }
+  const openCard = () => {
     if (onClick) {
       onClick()
     } else {
       window.location.href = `/initiatives/${item.id}`
     }
+  }
+
+  // Track touch start for tap detection
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const touch = e.touches[0]
+    touchStartRef.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+      time: Date.now(),
+    }
+  }
+
+  // Detect tap on touch end (quick touch with minimal movement)
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!touchStartRef.current) return
+
+    // Don't open if interacting with controls
+    if ((e.target as HTMLElement).closest('button, [role="menu"]')) {
+      touchStartRef.current = null
+      return
+    }
+
+    const touch = e.changedTouches[0]
+    const dx = Math.abs(touch.clientX - touchStartRef.current.x)
+    const dy = Math.abs(touch.clientY - touchStartRef.current.y)
+    const duration = Date.now() - touchStartRef.current.time
+
+    // If quick tap (< 200ms) with minimal movement (< 10px), treat as tap
+    if (duration < 200 && dx < 10 && dy < 10) {
+      e.preventDefault()
+      openCard()
+    }
+
+    touchStartRef.current = null
+  }
+
+  const handleClick = (e: React.MouseEvent) => {
+    // Don't open if interacting with controls
+    if ((e.target as HTMLElement).closest('button, [role="menu"]')) {
+      return
+    }
+    openCard()
   }
 
   return (
@@ -112,7 +154,9 @@ export function KanbanCard({ item, isDragging, onClick, onStatusChange, onReassi
       style={style}
       {...attributes}
       {...dragListeners}
-      onClick={handleCardTap}
+      onClick={handleClick}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
       className={cn(
         'group relative bg-white rounded-2xl border-0 shadow-apple',
         'hover:shadow-apple-hover hover:scale-[1.02]',
