@@ -68,7 +68,14 @@ export function KanbanFilterBar({
   }
 
   return (
-    <div className="flex items-center gap-3 p-3 bg-white/70 backdrop-blur-xl border border-gray-200/50 rounded-2xl shadow-sm">
+    <div className={cn(
+      "flex items-center gap-3 p-3",
+      "bg-white/70 backdrop-blur-xl border border-gray-200/50 rounded-2xl shadow-sm",
+      // Mobile: horizontal scroll
+      "overflow-x-auto",
+      // Desktop: no scroll needed
+      "md:overflow-visible"
+    )}>
       {/* Search Input */}
       <div className="relative flex-1 max-w-xs">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -80,8 +87,8 @@ export function KanbanFilterBar({
         />
       </div>
 
-      {/* Separator */}
-      <div className="h-6 w-px bg-gray-200" />
+      {/* Separator - hidden on mobile */}
+      <div className="hidden md:block h-6 w-px bg-gray-200" />
 
       {/* Person Pills (iOS Segmented Control Style) */}
       <div className="flex items-center gap-1 p-1 bg-gray-100/80 rounded-xl">
@@ -120,8 +127,8 @@ export function KanbanFilterBar({
         ))}
       </div>
 
-      {/* Separator */}
-      <div className="h-6 w-px bg-gray-200" />
+      {/* Separator - hidden on mobile */}
+      <div className="hidden md:block h-6 w-px bg-gray-200" />
 
       {/* Key Result Dropdown */}
       <Select
@@ -141,8 +148,8 @@ export function KanbanFilterBar({
         </SelectContent>
       </Select>
 
-      {/* Separator */}
-      <div className="h-6 w-px bg-gray-200" />
+      {/* Separator - hidden on mobile */}
+      <div className="hidden md:block h-6 w-px bg-gray-200" />
 
       {/* Date Filter Dropdown */}
       <Select
