@@ -135,6 +135,21 @@ async function getCRMDashboardData() {
     where: { stage: 'WON' }
   })
 
+  // Revenue from completed projects
+  const revenueResult = await prisma.project.aggregate({
+    where: { status: 'COMPLETED' },
+    _sum: { revenue: true }
+  })
+
+  // Total costs from all projects
+  const costsResult = await prisma.cost.aggregate({
+    _sum: { amount: true }
+  })
+
+  const totalRevenue = Number(revenueResult._sum.revenue) || 0
+  const totalCosts = Number(costsResult._sum.amount) || 0
+  const profit = totalRevenue - totalCosts
+
   // Calculate weighted forecast
   const weightedValue = pipelineByStage.reduce((sum, item) => {
     const value = Number(item._sum.value) || 0
@@ -161,6 +176,9 @@ async function getCRMDashboardData() {
     weightedForecast: Math.round(weightedValue),
     winRate: closedDeals > 0 ? Math.round((wonDeals / closedDeals) * 100) : 0,
     closedDealsCount: closedDeals,
+    totalRevenue,
+    totalCosts,
+    profit,
   }
 }
 
@@ -199,6 +217,8 @@ export default async function DashboardPage() {
             weightedForecast={crmData.weightedForecast}
             winRate={crmData.winRate}
             dealCount={crmData.dealCount}
+            totalRevenue={crmData.totalRevenue}
+            profit={crmData.profit}
           />
           <div className="mt-6">
             <PipelineStageChart data={crmData.stageData} />
