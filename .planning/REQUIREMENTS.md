@@ -75,44 +75,44 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| NAV-01 | TBD | Pending |
-| NAV-02 | TBD | Pending |
-| NAV-03 | TBD | Pending |
-| NAV-04 | TBD | Pending |
-| NAV-05 | TBD | Pending |
-| KAN-01 | TBD | Pending |
-| KAN-02 | TBD | Pending |
-| KAN-03 | TBD | Pending |
-| KAN-04 | TBD | Pending |
-| KAN-05 | TBD | Pending |
-| KAN-06 | TBD | Pending |
-| TBL-01 | TBD | Pending |
-| TBL-02 | TBD | Pending |
-| TBL-03 | TBD | Pending |
-| TBL-04 | TBD | Pending |
-| TBL-05 | TBD | Pending |
-| FRM-01 | TBD | Pending |
-| FRM-02 | TBD | Pending |
-| FRM-03 | TBD | Pending |
-| FRM-04 | TBD | Pending |
-| FRM-05 | TBD | Pending |
-| FRM-06 | TBD | Pending |
-| DSH-01 | TBD | Pending |
-| DSH-02 | TBD | Pending |
-| DSH-03 | TBD | Pending |
-| DSH-04 | TBD | Pending |
-| DSH-05 | TBD | Pending |
-| DET-01 | TBD | Pending |
-| DET-02 | TBD | Pending |
-| DET-03 | TBD | Pending |
-| DET-04 | TBD | Pending |
-| DET-05 | TBD | Pending |
+| NAV-01 | Phase 16 | Pending |
+| NAV-02 | Phase 16 | Pending |
+| NAV-03 | Phase 16 | Pending |
+| NAV-04 | Phase 16 | Pending |
+| NAV-05 | Phase 16 | Pending |
+| KAN-01 | Phase 17 | Pending |
+| KAN-02 | Phase 17 | Pending |
+| KAN-03 | Phase 17 | Pending |
+| KAN-04 | Phase 17 | Pending |
+| KAN-05 | Phase 17 | Pending |
+| KAN-06 | Phase 17 | Pending |
+| TBL-01 | Phase 18 | Pending |
+| TBL-02 | Phase 18 | Pending |
+| TBL-03 | Phase 18 | Pending |
+| TBL-04 | Phase 18 | Pending |
+| TBL-05 | Phase 18 | Pending |
+| FRM-01 | Phase 19 | Pending |
+| FRM-02 | Phase 19 | Pending |
+| FRM-03 | Phase 19 | Pending |
+| FRM-04 | Phase 19 | Pending |
+| FRM-05 | Phase 19 | Pending |
+| FRM-06 | Phase 19 | Pending |
+| DSH-01 | Phase 20 | Pending |
+| DSH-02 | Phase 20 | Pending |
+| DSH-03 | Phase 20 | Pending |
+| DSH-04 | Phase 20 | Pending |
+| DSH-05 | Phase 20 | Pending |
+| DET-01 | Phase 20 | Pending |
+| DET-02 | Phase 20 | Pending |
+| DET-03 | Phase 20 | Pending |
+| DET-04 | Phase 20 | Pending |
+| DET-05 | Phase 20 | Pending |
 
 **Coverage:**
 - v1.2.1 requirements: 32 total
-- Mapped to phases: 0
-- Unmapped: 32
+- Mapped to phases: 32
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-22*
-*Last updated: 2026-01-22 after initial definition*
+*Last updated: 2026-01-22 after roadmap creation*

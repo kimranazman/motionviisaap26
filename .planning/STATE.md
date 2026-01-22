@@ -4,17 +4,17 @@
 
 See: .planning/PROJECT.md (updated 2026-01-22)
 
-**Core value:** Track initiatives, sales pipeline, convert deals to projects, monitor costs and profit
-**Current focus:** Planning next milestone
+**Core value:** Full editing workflow on any device - phone, tablet, or desktop
+**Current focus:** v1.2.1 Responsive / Mobile Web
 
 ## Current Position
 
-Phase: Milestone complete
-Plan: N/A
-Status: Ready for next milestone
-Last activity: 2026-01-22 — v1.2 milestone complete
+Phase: 16 - Navigation & Layout Foundation
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-01-22 - Roadmap created
 
-Progress: v1.0 | v1.1 | v1.2 [████████████████████████████████] 100%
+Progress: v1.2.1 [                                ] 0%
 
 ## Milestone History
 
@@ -23,6 +23,7 @@ Progress: v1.0 | v1.1 | v1.2 [████████████████�
 | v1.0 | MVP | 1-3 | 2026-01-20 |
 | v1.1 | Authentication | 4-8 | 2026-01-22 |
 | v1.2 | CRM & Project Financials | 9-15 | 2026-01-22 |
+| v1.2.1 | Responsive / Mobile Web | 16-20 | In Progress |
 
 **Archives:** `.planning/milestones/`
 
@@ -70,5 +71,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: v1.2 milestone complete
-Resume: `/gsd:new-milestone` to start next milestone
+Stopped at: Roadmap created for v1.2.1
+Resume: `/gsd:plan-phase 16` to start Navigation & Layout Foundation
