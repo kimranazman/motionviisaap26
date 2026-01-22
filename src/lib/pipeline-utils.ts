@@ -1,11 +1,16 @@
 // Pipeline stage configuration
 export const STAGE_PROBABILITY: Record<string, number> = {
+  // Deal stages
   LEAD: 0.10,
   QUALIFIED: 0.25,
   PROPOSAL: 0.50,
   NEGOTIATION: 0.75,
   WON: 1.00,
   LOST: 0.00,
+  // Potential project stages (repeat clients have higher close rates)
+  POTENTIAL: 0.60,
+  CONFIRMED: 1.00,
+  CANCELLED: 0.00,
 }
 
 export const STAGE_CHART_COLORS: Record<string, string> = {
@@ -13,6 +18,7 @@ export const STAGE_CHART_COLORS: Record<string, string> = {
   QUALIFIED: '#60A5FA',
   PROPOSAL: '#A78BFA',
   NEGOTIATION: '#FBBF24',
+  POTENTIAL: '#34D399', // Green for repeat client opportunities
 }
 
 export const STAGES = [

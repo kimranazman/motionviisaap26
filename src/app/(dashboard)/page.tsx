@@ -120,20 +120,49 @@ async function getCRMDashboardData() {
     where: { stage: { notIn: ['WON', 'LOST'] } }
   })
 
-  // Total open pipeline
-  const openPipelineResult = await prisma.deal.aggregate({
+  // Potential projects by stage (open only = POTENTIAL)
+  const potentialsByStage = await prisma.potentialProject.groupBy({
+    by: ['stage'],
+    _count: { _all: true },
+    _sum: { estimatedValue: true },
+    where: { stage: 'POTENTIAL' }
+  })
+
+  // Total open pipeline (deals)
+  const openDealsResult = await prisma.deal.aggregate({
     where: { stage: { notIn: ['WON', 'LOST'] } },
     _sum: { value: true },
     _count: { _all: true }
   })
 
-  // Win rate calculation
+  // Total open potential projects
+  const openPotentialsResult = await prisma.potentialProject.aggregate({
+    where: { stage: 'POTENTIAL' },
+    _sum: { estimatedValue: true },
+    _count: { _all: true }
+  })
+
+  // Combined open pipeline
+  const openPipelineValue = (Number(openDealsResult._sum.value) || 0) + (Number(openPotentialsResult._sum.estimatedValue) || 0)
+  const openPipelineCount = openDealsResult._count._all + openPotentialsResult._count._all
+
+  // Win rate calculation (deals + potential projects)
   const closedDeals = await prisma.deal.count({
     where: { stage: { in: ['WON', 'LOST'] } }
   })
   const wonDeals = await prisma.deal.count({
     where: { stage: 'WON' }
   })
+  const closedPotentials = await prisma.potentialProject.count({
+    where: { stage: { in: ['CONFIRMED', 'CANCELLED'] } }
+  })
+  const confirmedPotentials = await prisma.potentialProject.count({
+    where: { stage: 'CONFIRMED' }
+  })
+
+  // Combined win rate
+  const totalClosed = closedDeals + closedPotentials
+  const totalWon = wonDeals + confirmedPotentials
 
   // Revenue from completed projects
   const revenueResult = await prisma.project.aggregate({
@@ -150,15 +179,23 @@ async function getCRMDashboardData() {
   const totalCosts = Number(costsResult._sum.amount) || 0
   const profit = totalRevenue - totalCosts
 
-  // Calculate weighted forecast
-  const weightedValue = pipelineByStage.reduce((sum, item) => {
+  // Calculate weighted forecast (deals + potentials)
+  const dealWeightedValue = pipelineByStage.reduce((sum, item) => {
     const value = Number(item._sum.value) || 0
     const probability = STAGE_PROBABILITY[item.stage] || 0
     return sum + (value * probability)
   }, 0)
 
-  // Transform to ordered array
-  const stageData = STAGES.filter(s => !['WON', 'LOST'].includes(s.id)).map(stage => {
+  const potentialWeightedValue = potentialsByStage.reduce((sum, item) => {
+    const value = Number(item._sum.estimatedValue) || 0
+    const probability = STAGE_PROBABILITY[item.stage] || 0
+    return sum + (value * probability)
+  }, 0)
+
+  const weightedValue = dealWeightedValue + potentialWeightedValue
+
+  // Transform to ordered array (deals + potential)
+  const dealStageData = STAGES.filter(s => !['WON', 'LOST'].includes(s.id)).map(stage => {
     const found = pipelineByStage.find(m => m.stage === stage.id)
     return {
       id: stage.id,
@@ -169,13 +206,26 @@ async function getCRMDashboardData() {
     }
   })
 
+  // Add potential projects as a stage
+  const potentialStageData = potentialsByStage.find(p => p.stage === 'POTENTIAL')
+  const stageData = [
+    ...dealStageData,
+    {
+      id: 'POTENTIAL',
+      name: 'Potential (Repeat)',
+      count: potentialStageData?._count._all ?? 0,
+      value: Number(potentialStageData?._sum.estimatedValue) || 0,
+      color: STAGE_CHART_COLORS['POTENTIAL'] || '#34D399',
+    }
+  ]
+
   return {
     stageData,
-    openPipeline: Number(openPipelineResult._sum.value) || 0,
-    dealCount: openPipelineResult._count._all,
+    openPipeline: openPipelineValue,
+    dealCount: openPipelineCount,
     weightedForecast: Math.round(weightedValue),
-    winRate: closedDeals > 0 ? Math.round((wonDeals / closedDeals) * 100) : 0,
-    closedDealsCount: closedDeals,
+    winRate: totalClosed > 0 ? Math.round((totalWon / totalClosed) * 100) : 0,
+    closedDealsCount: totalClosed,
     totalRevenue,
     totalCosts,
     profit,
