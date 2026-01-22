@@ -14,6 +14,17 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 **Codebase:** ~17,500 LOC TypeScript
 **Tech stack:** Next.js 14, Prisma, MariaDB, Tailwind/shadcn, NextAuth.js
 
+## Current Milestone: v1.2.1 Responsive / Mobile Web
+
+**Goal:** Make SAAP fully usable with good UX across all device sizes — phone, tablet, and desktop.
+
+**Target features:**
+- Responsive Kanban boards (touch-friendly drag, proper column sizing)
+- Responsive data tables (mobile-friendly layouts, no horizontal overflow)
+- Responsive forms and modals (full-width on mobile, proper touch targets)
+- Thoughtful breakpoints (phone ~375px, tablet ~768px, desktop)
+- Full editing workflow on mobile (not just viewing)
+
 ## Requirements
 
 ### Validated
@@ -75,7 +86,15 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 <!-- Current scope. Building toward these. -->
 
-**v1.3 Enhancements (planned):**
+**v1.2.1 Responsive / Mobile Web:**
+- [ ] Kanban boards work on mobile (touch drag, column sizing, card readability)
+- [ ] Data tables are mobile-friendly (responsive layout, no overflow)
+- [ ] Forms and modals work on mobile (full-width, proper touch targets)
+- [ ] Navigation works on mobile (hamburger menu or responsive sidebar)
+- [ ] Dashboard is readable on mobile (stacked cards, proper sizing)
+- [ ] All breakpoints refined (phone, tablet, desktop)
+
+**v1.3 Enhancements (deferred):**
 - [ ] Receipt uploads for cost items
 - [ ] Expected close date on deals
 - [ ] Notes/activity log on deals
@@ -153,4 +172,4 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | Profit card blue/orange coloring | Blue positive, orange negative for visual status | ✓ Good |
 
 ---
-*Last updated: 2026-01-22 after v1.2 milestone shipped*
+*Last updated: 2026-01-22 after starting v1.2.1 milestone*
