@@ -27,7 +27,7 @@ See `.planning/milestones/v1.1-Authentication/` for archived plans.
 **Milestone Goal:** Add sales pipeline and project tracking with cost breakdowns to forecast revenue and calculate net profit.
 
 - [x] **Phase 9: Foundation** - Schema migration, Company/Contact entities, CostCategory seed
-- [ ] **Phase 10: Companies & Contacts** - Company and contact management pages
+- [x] **Phase 10: Companies & Contacts** - Company and contact management pages
 - [ ] **Phase 11: Sales Pipeline** - Deal Kanban board with stage transitions
 - [ ] **Phase 12: Potential Projects** - Repeat client pipeline Kanban
 - [ ] **Phase 13: Projects & Conversion** - Project entity with 3 entry points
@@ -62,8 +62,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 10-01-PLAN.md - Company list, detail modal, inline editing, search/filter
-- [ ] 10-02-PLAN.md - Contact cards in company modal, CRUD, primary designation
+- [x] 10-01-PLAN.md - Company list, detail modal, inline editing, search/filter
+- [x] 10-02-PLAN.md - Contact cards in company modal, CRUD, primary designation
 
 ### Phase 11: Sales Pipeline
 **Goal**: Users can track new business deals through stages
@@ -152,7 +152,7 @@ Phases execute in numeric order: 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 9. Foundation | v1.2 | 1/1 | Complete | 2026-01-22 |
-| 10. Companies & Contacts | v1.2 | 0/2 | Not started | - |
+| 10. Companies & Contacts | v1.2 | 2/2 | Complete | 2026-01-22 |
 | 11. Sales Pipeline | v1.2 | 0/2 | Not started | - |
 | 12. Potential Projects | v1.2 | 0/1 | Not started | - |
 | 13. Projects & Conversion | v1.2 | 0/3 | Not started | - |

@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Track sales pipeline, convert deals to projects, monitor costs and profit
-**Current focus:** Phase 10 - Companies & Contacts
+**Current focus:** Phase 10 - Companies & Contacts (COMPLETE)
 
 ## Current Position
 
 Phase: 10 of 15 (Companies & Contacts)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-01-22 — Completed 10-01-PLAN.md (Company Management)
+Plan: 2 of 2 in current phase
+Status: Phase complete
+Last activity: 2026-01-22 — Completed 10-02-PLAN.md (Contact Management)
 
-Progress: v1.0 | v1.1 | v1.2 [██░░░░░░░░] 21%
+Progress: v1.0 | v1.1 | v1.2 [███░░░░░░░] 29%
 
 ## Milestone History
 
@@ -29,9 +29,9 @@ Progress: v1.0 | v1.1 | v1.2 [██░░░░░░░░] 21%
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18
+- Total plans completed: 19
 - Average duration: 4 min
-- Total execution time: 74 min
+- Total execution time: 77 min
 
 **By Phase (v1.0-v1.2):**
 
@@ -46,7 +46,7 @@ Progress: v1.0 | v1.1 | v1.2 [██░░░░░░░░] 21%
 | 07-admin-user-management | 2 | 7min | 3.5min |
 | 08-role-based-ui | 2 | 7min | 3.5min |
 | 09-foundation | 1 | 5min | 5min |
-| 10-companies-contacts | 1 | 5min | 5min |
+| 10-companies-contacts | 2 | 8min | 4min |
 
 ## Accumulated Context
 
@@ -58,6 +58,8 @@ Recent:
 - Address as single Text field (not structured) for flexibility
 - Inline editing with blur-to-save pattern for immediate feel
 - Delete protection: check for linked records before allowing
+- First contact auto-becomes primary
+- Primary toggle uses Prisma transaction to prevent race conditions
 
 ### Pending Todos
 
@@ -70,5 +72,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 10-01-PLAN.md (Company Management)
-Resume: `/gsd:execute-phase 10` for Plan 02 (Contacts)
+Stopped at: Completed 10-02-PLAN.md (Contact Management) - Phase 10 complete
+Resume: `/gsd:plan-phase 11` for Sales Pipeline
