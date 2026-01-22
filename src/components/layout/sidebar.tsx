@@ -14,6 +14,7 @@ import {
   Ticket,
   Users,
   Building2,
+  Funnel,
 } from 'lucide-react'
 
 const navigation = [
@@ -79,6 +80,18 @@ export function Sidebar() {
         >
           <Building2 className="h-5 w-5" />
           Companies
+        </Link>
+        <Link
+          href="/pipeline"
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+            pathname.startsWith('/pipeline')
+              ? 'bg-gray-100 text-gray-900'
+              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+          )}
+        >
+          <Funnel className="h-5 w-5" />
+          Pipeline
         </Link>
 
         {/* Admin Section */}
