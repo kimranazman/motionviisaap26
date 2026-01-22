@@ -8,7 +8,8 @@ import {
   pointerWithin,
   rectIntersection,
   KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   DragStartEvent,
@@ -29,6 +30,7 @@ import { KanbanFilterBar, type DateFilter } from './kanban-filter-bar'
 import { KanbanSwimlaneView } from './kanban-swimlane-view'
 import { InitiativeDetailSheet } from './initiative-detail-sheet'
 import { canEdit } from '@/lib/permissions'
+import { cn } from '@/lib/utils'
 import { LayoutGrid, Users } from 'lucide-react'
 
 // Date filter helper functions
@@ -226,16 +228,22 @@ export function KanbanBoard({ initialData }: KanbanBoardProps) {
     })
   }, [initiatives, searchQuery, selectedPerson, selectedKeyResult, selectedDateFilter])
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 5,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  )
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: { distance: 5 },
+  })
+
+  const touchSensor = useSensor(TouchSensor, {
+    activationConstraint: {
+      delay: 250,     // 250ms hold before drag starts
+      tolerance: 5,   // 5px movement allowed during delay
+    },
+  })
+
+  const keyboardSensor = useSensor(KeyboardSensor, {
+    coordinateGetter: sortableKeyboardCoordinates,
+  })
+
+  const sensors = useSensors(mouseSensor, touchSensor, keyboardSensor)
 
   // Custom collision detection that prioritizes columns
   const collisionDetection: CollisionDetection = useCallback((args) => {
@@ -486,7 +494,13 @@ export function KanbanBoard({ initialData }: KanbanBoardProps) {
           onDragOver={handleDragOver}
           onDragEnd={handleDragEnd}
         >
-          <div className="flex gap-4 min-w-max pb-4">
+          <div className={cn(
+            "flex gap-4 pb-4",
+            // Mobile: horizontal scroll with snap
+            "overflow-x-auto snap-x snap-mandatory overscroll-x-contain",
+            // Desktop: standard min-width
+            "md:min-w-max md:snap-none"
+          )}>
             {COLUMNS.map(column => {
               const items = getColumnItems(column)
               return (
