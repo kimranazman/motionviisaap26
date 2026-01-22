@@ -75,11 +75,11 @@ Plans:
   3. User can drag deal between stages (Lead, Qualified, Proposal, Negotiation, Won, Lost)
   4. Moving deal to Lost prompts for reason
   5. Pipeline metrics show total value and deal count by stage
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 11-01: Deal model and Kanban board
-- [ ] 11-02: Deal CRUD and stage transitions
+- [ ] 11-01-PLAN.md - Pipeline Kanban board with deal API routes and drag-and-drop
+- [ ] 11-02-PLAN.md - Deal CRUD modals, Lost reason prompt, and pipeline metrics
 
 ### Phase 12: Potential Projects
 **Goal**: Users can track repeat client opportunities
