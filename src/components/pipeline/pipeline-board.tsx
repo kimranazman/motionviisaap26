@@ -22,8 +22,11 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
+import { Plus } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { PipelineColumn } from './pipeline-column'
 import { PipelineCard } from './pipeline-card'
+import { DealFormModal } from './deal-form-modal'
 import { STAGES } from '@/lib/pipeline-utils'
 import { canEdit } from '@/lib/permissions'
 
@@ -50,6 +53,7 @@ export function PipelineBoard({ initialData }: PipelineBoardProps) {
 
   const [deals, setDeals] = useState(initialData)
   const [activeId, setActiveId] = useState<string | null>(null)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -104,6 +108,10 @@ export function PipelineBoard({ initialData }: PipelineBoardProps) {
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string)
+  }
+
+  const handleCreateSuccess = (newDeal: Deal) => {
+    setDeals((prev) => [...prev, newDeal])
   }
 
   const handleDragOver = (event: DragOverEvent) => {
@@ -211,14 +219,26 @@ export function PipelineBoard({ initialData }: PipelineBoardProps) {
   }
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={collisionDetection}
-      onDragStart={handleDragStart}
-      onDragOver={handleDragOver}
-      onDragEnd={handleDragEnd}
-    >
-      <div className="flex gap-4 min-w-max pb-4 overflow-x-auto">
+    <>
+      {/* Header with Add Deal button */}
+      <div className="flex justify-between items-center mb-4">
+        <div /> {/* Spacer for alignment */}
+        {userCanEdit && (
+          <Button onClick={() => setIsCreateModalOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Deal
+          </Button>
+        )}
+      </div>
+
+      <DndContext
+        sensors={sensors}
+        collisionDetection={collisionDetection}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDragEnd={handleDragEnd}
+      >
+        <div className="flex gap-4 min-w-max pb-4 overflow-x-auto">
         {STAGES.map(stage => {
           const stageDeals = getStageDeals(stage.id)
           const totalValue = getStageTotalValue(stage.id)
@@ -258,5 +278,13 @@ export function PipelineBoard({ initialData }: PipelineBoardProps) {
         ) : null}
       </DragOverlay>
     </DndContext>
+
+      {/* Create Deal Modal */}
+      <DealFormModal
+        open={isCreateModalOpen}
+        onOpenChange={setIsCreateModalOpen}
+        onSuccess={handleCreateSuccess}
+      />
+    </>
   )
 }
