@@ -104,56 +104,56 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| COMP-01 | TBD | Pending |
-| COMP-02 | TBD | Pending |
-| COMP-03 | TBD | Pending |
-| COMP-04 | TBD | Pending |
-| COMP-05 | TBD | Pending |
-| CONT-01 | TBD | Pending |
-| CONT-02 | TBD | Pending |
-| CONT-03 | TBD | Pending |
-| CONT-04 | TBD | Pending |
-| PIPE-01 | TBD | Pending |
-| PIPE-02 | TBD | Pending |
-| PIPE-03 | TBD | Pending |
-| PIPE-04 | TBD | Pending |
-| PIPE-05 | TBD | Pending |
-| PIPE-06 | TBD | Pending |
-| PIPE-07 | TBD | Pending |
-| PIPE-08 | TBD | Pending |
-| PTNL-01 | TBD | Pending |
-| PTNL-02 | TBD | Pending |
-| PTNL-03 | TBD | Pending |
-| PTNL-04 | TBD | Pending |
-| PTNL-05 | TBD | Pending |
-| PTNL-06 | TBD | Pending |
-| PROJ-01 | TBD | Pending |
-| PROJ-02 | TBD | Pending |
-| PROJ-03 | TBD | Pending |
-| PROJ-04 | TBD | Pending |
-| PROJ-05 | TBD | Pending |
-| PROJ-06 | TBD | Pending |
-| PROJ-07 | TBD | Pending |
-| PROJ-08 | TBD | Pending |
-| PROJ-09 | TBD | Pending |
-| COST-01 | TBD | Pending |
-| COST-02 | TBD | Pending |
-| COST-03 | TBD | Pending |
-| COST-04 | TBD | Pending |
-| COST-05 | TBD | Pending |
-| COST-06 | TBD | Pending |
-| DASH-01 | TBD | Pending |
-| DASH-02 | TBD | Pending |
-| DASH-03 | TBD | Pending |
-| DASH-04 | TBD | Pending |
-| DASH-05 | TBD | Pending |
-| DASH-06 | TBD | Pending |
+| COMP-01 | Phase 10 | Pending |
+| COMP-02 | Phase 10 | Pending |
+| COMP-03 | Phase 10 | Pending |
+| COMP-04 | Phase 10 | Pending |
+| COMP-05 | Phase 13 | Pending |
+| CONT-01 | Phase 10 | Pending |
+| CONT-02 | Phase 10 | Pending |
+| CONT-03 | Phase 10 | Pending |
+| CONT-04 | Phase 10 | Pending |
+| PIPE-01 | Phase 11 | Pending |
+| PIPE-02 | Phase 11 | Pending |
+| PIPE-03 | Phase 11 | Pending |
+| PIPE-04 | Phase 11 | Pending |
+| PIPE-05 | Phase 11 | Pending |
+| PIPE-06 | Phase 13 | Pending |
+| PIPE-07 | Phase 11 | Pending |
+| PIPE-08 | Phase 11 | Pending |
+| PTNL-01 | Phase 12 | Pending |
+| PTNL-02 | Phase 12 | Pending |
+| PTNL-03 | Phase 12 | Pending |
+| PTNL-04 | Phase 12 | Pending |
+| PTNL-05 | Phase 12 | Pending |
+| PTNL-06 | Phase 13 | Pending |
+| PROJ-01 | Phase 13 | Pending |
+| PROJ-02 | Phase 13 | Pending |
+| PROJ-03 | Phase 13 | Pending |
+| PROJ-04 | Phase 13 | Pending |
+| PROJ-05 | Phase 13 | Pending |
+| PROJ-06 | Phase 13 | Pending |
+| PROJ-07 | Phase 13 | Pending |
+| PROJ-08 | Phase 13 | Pending |
+| PROJ-09 | Phase 14 | Pending |
+| COST-01 | Phase 14 | Pending |
+| COST-02 | Phase 14 | Pending |
+| COST-03 | Phase 14 | Pending |
+| COST-04 | Phase 14 | Pending |
+| COST-05 | Phase 14 | Pending |
+| COST-06 | Phase 14 | Pending |
+| DASH-01 | Phase 15 | Pending |
+| DASH-02 | Phase 15 | Pending |
+| DASH-03 | Phase 15 | Pending |
+| DASH-04 | Phase 15 | Pending |
+| DASH-05 | Phase 15 | Pending |
+| DASH-06 | Phase 15 | Pending |
 
 **Coverage:**
 - v1.2 requirements: 42 total
-- Mapped to phases: 0
-- Unmapped: 42
+- Mapped to phases: 42
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-22*
-*Last updated: 2026-01-22 after initial definition*
+*Last updated: 2026-01-22 after roadmap creation*

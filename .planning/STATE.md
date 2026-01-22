@@ -4,17 +4,17 @@
 
 See: .planning/PROJECT.md (updated 2026-01-22)
 
-**Core value:** Team can visualize and track initiative progress across multiple views with intuitive drag-and-drop — with secure access restricted to authorized @talenta.com.my users.
-**Current focus:** Planning next milestone
+**Core value:** Track sales pipeline, convert deals to projects, monitor costs and profit
+**Current focus:** Phase 9 - Foundation
 
 ## Current Position
 
-Phase: None (between milestones)
-Plan: N/A
-Status: Ready for next milestone
-Last activity: 2026-01-22 — v1.1 Authentication shipped
+Phase: 9 of 15 (Foundation)
+Plan: 0 of 1 in current phase
+Status: Ready to plan
+Last activity: 2026-01-22 — v1.2 roadmap created
 
-Progress: v1.0 ✓ | v1.1 ✓ | v1.2 ...
+Progress: v1.0 ✓ | v1.1 ✓ | v1.2 [░░░░░░░░░░] 0%
 
 ## Milestone History
 
@@ -22,6 +22,7 @@ Progress: v1.0 ✓ | v1.1 ✓ | v1.2 ...
 |---------|------|--------|---------|
 | v1.0 | MVP | 1-3 | 2026-01-20 |
 | v1.1 | Authentication | 4-8 | 2026-01-22 |
+| v1.2 | CRM & Project Financials | 9-15 | In progress |
 
 **Archives:** `.planning/milestones/`
 
@@ -32,7 +33,7 @@ Progress: v1.0 ✓ | v1.1 ✓ | v1.2 ...
 - Average duration: 4 min
 - Total execution time: 64 min
 
-**By Phase:**
+**By Phase (v1.0-v1.1):**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
@@ -62,5 +63,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: v1.1 milestone completed and archived
-Resume: `/gsd:new-milestone` to start next milestone
+Stopped at: v1.2 roadmap created with 7 phases
+Resume: `/gsd:plan-phase 9` to start Foundation phase
