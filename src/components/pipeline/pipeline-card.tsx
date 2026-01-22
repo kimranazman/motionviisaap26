@@ -84,8 +84,8 @@ export function PipelineCard({ deal, onClick, isDragging, canEdit = true }: Pipe
     >
       {/* Card Content */}
       <div className="p-4">
-        {/* Title - Primary focus */}
-        <div className="text-sm font-medium text-gray-900 line-clamp-2 mb-3">
+        {/* Title - Primary focus with touch target */}
+        <div className="text-sm font-medium text-gray-900 line-clamp-2 mb-3 min-h-[44px] flex items-start">
           {deal.title}
         </div>
 

@@ -193,9 +193,9 @@ export function KanbanCard({ item, isDragging, onClick, onStatusChange, onReassi
 
       {/* Card Content */}
       <div className="p-4">
-        {/* Title - Primary focus */}
+        {/* Title - Primary focus with larger touch target */}
         <div
-          className="text-sm font-medium text-gray-900 hover:text-blue-600 line-clamp-2 cursor-pointer mb-3"
+          className="text-sm font-medium text-gray-900 hover:text-blue-600 line-clamp-2 cursor-pointer mb-3 min-h-[44px] flex items-start"
           onClick={handleViewDetails}
           onPointerDown={(e) => e.stopPropagation()}
         >
