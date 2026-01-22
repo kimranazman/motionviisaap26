@@ -261,7 +261,9 @@ export function InitiativesList({ initialData }: InitiativesListProps) {
 
       {/* Summary */}
       <div className="text-sm text-gray-500">
-        Showing {filteredInitiatives.length} of {initiatives.length} initiatives
+        <span className="hidden sm:inline">Showing </span>
+        {filteredInitiatives.length} of {initiatives.length}
+        <span className="hidden sm:inline"> initiatives</span>
       </div>
     </div>
   )
