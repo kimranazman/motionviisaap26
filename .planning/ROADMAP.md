@@ -106,12 +106,12 @@ Plans:
   4. User can link project to a KRI (initiative) optionally
   5. Project detail shows source (deal, potential, or direct)
   6. Company detail page shows related deals, potentials, and projects
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 13-01: Project CRUD and direct creation
-- [ ] 13-02: Deal/Potential to Project conversion
-- [ ] 13-03: Company detail page with relations
+- [ ] 13-01-PLAN.md - Project CRUD and direct creation with KRI linking
+- [ ] 13-02-PLAN.md - Deal/Potential to Project auto-conversion on stage change
+- [ ] 13-03-PLAN.md - Company detail page with related deals, potentials, projects
 
 ### Phase 14: Project Costs
 **Goal**: Users can track project costs and see profit
