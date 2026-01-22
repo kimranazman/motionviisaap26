@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Track sales pipeline, convert deals to projects, monitor costs and profit
-**Current focus:** Phase 13 - Projects & Conversion (COMPLETE)
+**Current focus:** Phase 14 - Project Costs (IN PROGRESS)
 
 ## Current Position
 
-Phase: 13 of 15 (Projects & Conversion)
-Plan: 3 of 3 in current phase
-Status: Phase complete
-Last activity: 2026-01-22 — Completed 13-03-PLAN.md (Company Related Items)
+Phase: 14 of 15 (Project Costs)
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-01-22 — Completed 14-01-PLAN.md (Cost CRUD Infrastructure)
 
-Progress: v1.0 | v1.1 | v1.2 [███████░░░] 71%
+Progress: v1.0 | v1.1 | v1.2 [████████░░] 76%
 
 ## Milestone History
 
@@ -29,9 +29,9 @@ Progress: v1.0 | v1.1 | v1.2 [███████░░░] 71%
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 25
+- Total plans completed: 26
 - Average duration: 4 min
-- Total execution time: 100 min
+- Total execution time: 103 min
 
 **By Phase (v1.0-v1.2):**
 
@@ -50,6 +50,7 @@ Progress: v1.0 | v1.1 | v1.2 [███████░░░] 71%
 | 11-sales-pipeline | 2 | 7min | 3.5min |
 | 12-potential-projects | 1 | 6min | 6min |
 | 13-projects-conversion | 3 | 10min | 3.3min |
+| 14-project-costs | 1 | 3min | 3min |
 
 ## Accumulated Context
 
@@ -68,6 +69,8 @@ Recent:
 - InitiativeSelect uses debounced search via existing /api/initiatives/search
 - Interactive transaction for auto-conversion (project creation + source linking atomic)
 - Related items limited to 5 most recent with _count for totals
+- Cost category colors: Purple/Amber/Blue/Green/Cyan/Gray for 6 categories
+- Decimal amounts converted to Number server-side before client response
 
 ### Pending Todos
 
@@ -80,5 +83,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed Phase 13 (Projects & Conversion) - Goal verified ✓
-Resume: `/gsd:discuss-phase 14` for Project Costs
+Stopped at: Completed 14-01-PLAN.md (Cost CRUD Infrastructure)
+Resume: `/gsd:execute-phase 14-02` to integrate costs into project detail
