@@ -11,6 +11,7 @@
     "db:push": "prisma db push",
     "db:seed": "npx ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts",
     "db:seed:admin": "npx tsx prisma/seed-admin.ts",
+    "db:seed:categories": "npx tsx prisma/seed-cost-categories.ts",
     "db:studio": "prisma studio"
   },
   "prisma": {
