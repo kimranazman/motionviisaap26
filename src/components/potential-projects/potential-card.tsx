@@ -83,9 +83,8 @@ export function PotentialCard({ project, onClick, isDragging, canEdit = true }: 
         'group relative bg-white rounded-2xl border-0 shadow-apple',
         'hover:shadow-apple-hover hover:scale-[1.02]',
         'transition-all duration-200 ease-out',
-        canEdit && 'cursor-grab active:cursor-grabbing touch-none',
-        !canEdit && 'cursor-default',
-        onClick && 'cursor-pointer',
+        canEdit && 'cursor-grab active:cursor-grabbing',
+        !canEdit && 'cursor-pointer',
         (isDragging || isSorting) && 'opacity-60 shadow-xl scale-105 rotate-1'
       )}
     >

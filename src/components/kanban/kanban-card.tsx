@@ -94,18 +94,31 @@ export function KanbanCard({ item, isDragging, onClick, onStatusChange, onReassi
     }
   }
 
+  const handleCardTap = (e: React.MouseEvent | React.TouchEvent) => {
+    // Don't open if user is interacting with dropdown or other controls
+    if ((e.target as HTMLElement).closest('button, [role="menu"]')) {
+      return
+    }
+    if (onClick) {
+      onClick()
+    } else {
+      window.location.href = `/initiatives/${item.id}`
+    }
+  }
+
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...attributes}
       {...dragListeners}
+      onClick={handleCardTap}
       className={cn(
         'group relative bg-white rounded-2xl border-0 shadow-apple',
         'hover:shadow-apple-hover hover:scale-[1.02]',
         'transition-all duration-200 ease-out',
-        canEdit && 'cursor-grab active:cursor-grabbing touch-none',
-        !canEdit && 'cursor-default',
+        canEdit && 'cursor-grab active:cursor-grabbing',
+        !canEdit && 'cursor-pointer',
         'border-b-2',
         DEPARTMENT_BORDER_BOTTOM[item.department] || 'border-b-gray-300',
         (isDragging || isSorting) && 'opacity-60 shadow-xl scale-105 rotate-1'
@@ -117,9 +130,7 @@ export function KanbanCard({ item, isDragging, onClick, onStatusChange, onReassi
         <div className="flex items-start justify-between gap-2 mb-3">
           {/* Title - Primary focus */}
           <div
-            className="text-sm font-medium text-gray-900 hover:text-blue-600 line-clamp-2 cursor-pointer flex-1 min-h-[44px] flex items-start"
-            onClick={handleViewDetails}
-            onPointerDown={(e) => e.stopPropagation()}
+            className="text-sm font-medium text-gray-900 hover:text-blue-600 line-clamp-2 flex-1 min-h-[44px] flex items-start"
           >
             {item.title}
           </div>

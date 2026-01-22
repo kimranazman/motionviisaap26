@@ -391,11 +391,13 @@ export function PipelineBoard({ initialData }: PipelineBoardProps) {
         onDragEnd={handleDragEnd}
       >
         <div className={cn(
-          "flex gap-4 pb-4",
+          "flex gap-4 pb-4 pl-1",
           // Mobile: horizontal scroll with snap
-          "overflow-x-auto snap-x snap-mandatory overscroll-x-contain",
-          // Desktop: standard min-width
-          "md:min-w-max md:snap-none"
+          "overflow-x-auto snap-x snap-mandatory scroll-pl-1",
+          // Smooth scrolling for iOS
+          "[&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch]",
+          // Desktop: standard min-width, no snap
+          "md:min-w-max md:snap-none md:pl-0 md:scroll-pl-0"
         )}>
           {STAGES.map(stage => {
             const stageDeals = getStageDeals(stage.id)
