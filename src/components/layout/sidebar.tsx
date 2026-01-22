@@ -16,6 +16,7 @@ import {
   Building2,
   Funnel,
   FolderKanban,
+  Briefcase,
 } from 'lucide-react'
 
 const navigation = [
@@ -105,6 +106,18 @@ export function Sidebar() {
         >
           <FolderKanban className="h-5 w-5" />
           Potential Projects
+        </Link>
+        <Link
+          href="/projects"
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+            pathname.startsWith('/projects')
+              ? 'bg-gray-100 text-gray-900'
+              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+          )}
+        >
+          <Briefcase className="h-5 w-5" />
+          Projects
         </Link>
 
         {/* Admin Section */}
