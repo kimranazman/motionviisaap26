@@ -128,7 +128,8 @@ export function UserList({ users, currentUserId }: UserListProps) {
       </CardContent>
 
       <div className="px-4 py-3 border-t text-sm text-muted-foreground">
-        {users.length} user{users.length !== 1 ? "s" : ""} total
+        <span className="sm:hidden">{users.length}</span>
+        <span className="hidden sm:inline">{users.length} user{users.length !== 1 ? "s" : ""} total</span>
       </div>
     </Card>
   )
