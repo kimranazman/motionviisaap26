@@ -4,7 +4,7 @@ import { useRef } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { cn, formatCurrency } from '@/lib/utils'
-import { Building2, User, MoreHorizontal, Eye } from 'lucide-react'
+import { Building2, User, MoreHorizontal, Eye, GripVertical } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -117,22 +117,24 @@ export function PotentialCard({ project, onClick, isDragging, canEdit = true }: 
       ref={setNodeRef}
       style={style}
       {...attributes}
-      {...dragListeners}
-      onMouseDown={handleMouseDown}
-      onClick={handleClick}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
       className={cn(
         'group relative bg-white rounded-2xl border-0 shadow-apple',
         'hover:shadow-apple-hover hover:scale-[1.02]',
         'transition-all duration-200 ease-out',
-        canEdit && 'cursor-grab active:cursor-grabbing',
-        !canEdit && 'cursor-pointer',
         (isDragging || isSorting) && 'opacity-60 shadow-xl scale-105 rotate-1'
       )}
     >
-      {/* Card Content */}
-      <div className="p-4">
+      {/* Card Content - Tappable area */}
+      <div
+        className={cn(
+          "p-4 cursor-pointer",
+          canEdit && "pl-10 md:pl-4"
+        )}
+        onMouseDown={handleMouseDown}
+        onClick={handleClick}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
         {/* Header with title and quick actions */}
         <div className="flex items-start justify-between gap-2 mb-3">
           {/* Title - Primary focus */}
@@ -200,6 +202,23 @@ export function PotentialCard({ project, onClick, isDragging, canEdit = true }: 
           )}
         </div>
       </div>
+
+      {/* Drag Handle - visible on mobile, hover on desktop */}
+      {canEdit && (
+        <div
+          {...dragListeners}
+          className={cn(
+            "absolute left-0 top-0 bottom-0 w-8 flex items-center justify-center",
+            "cursor-grab active:cursor-grabbing touch-none",
+            "rounded-l-2xl",
+            "bg-gray-50/80 hover:bg-gray-100/80",
+            "md:opacity-0 md:group-hover:opacity-100",
+            "transition-opacity"
+          )}
+        >
+          <GripVertical className="h-4 w-4 text-gray-400" />
+        </div>
+      )}
     </div>
   )
 }

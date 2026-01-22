@@ -18,7 +18,7 @@ import {
   DropdownMenuRadioItem,
 } from '@/components/ui/dropdown-menu'
 import { cn, STATUS_OPTIONS, TEAM_MEMBER_OPTIONS, getStatusColor } from '@/lib/utils'
-import { MoreHorizontal, Eye, RefreshCw, UserPlus } from 'lucide-react'
+import { MoreHorizontal, Eye, RefreshCw, UserPlus, GripVertical } from 'lucide-react'
 
 interface Initiative {
   id: string
@@ -153,23 +153,26 @@ export function KanbanCard({ item, isDragging, onClick, onStatusChange, onReassi
       ref={setNodeRef}
       style={style}
       {...attributes}
-      {...dragListeners}
-      onClick={handleClick}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
       className={cn(
         'group relative bg-white rounded-2xl border-0 shadow-apple',
         'hover:shadow-apple-hover hover:scale-[1.02]',
         'transition-all duration-200 ease-out',
-        canEdit && 'cursor-grab active:cursor-grabbing',
-        !canEdit && 'cursor-pointer',
         'border-b-2',
         DEPARTMENT_BORDER_BOTTOM[item.department] || 'border-b-gray-300',
         (isDragging || isSorting) && 'opacity-60 shadow-xl scale-105 rotate-1'
       )}
     >
-      {/* Card Content */}
-      <div className="p-4">
+      {/* Card Content - Tappable area */}
+      <div
+        className={cn(
+          "p-4 cursor-pointer",
+          // Add left padding for drag handle on mobile
+          canEdit && "pl-10 md:pl-4"
+        )}
+        onClick={handleClick}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
         {/* Header with title and quick actions */}
         <div className="flex items-start justify-between gap-2 mb-3">
           {/* Title - Primary focus */}
@@ -299,6 +302,25 @@ export function KanbanCard({ item, isDragging, onClick, onStatusChange, onReassi
           )}
         </div>
       </div>
+
+      {/* Drag Handle - visible on mobile, hover on desktop */}
+      {canEdit && (
+        <div
+          {...dragListeners}
+          className={cn(
+            "absolute left-0 top-0 bottom-0 w-8 flex items-center justify-center",
+            "cursor-grab active:cursor-grabbing touch-none",
+            "rounded-l-2xl",
+            "bg-gray-50/80 hover:bg-gray-100/80",
+            // Mobile: always visible
+            // Desktop: visible on hover
+            "md:opacity-0 md:group-hover:opacity-100",
+            "transition-opacity"
+          )}
+        >
+          <GripVertical className="h-4 w-4 text-gray-400" />
+        </div>
+      )}
     </div>
   )
 }
