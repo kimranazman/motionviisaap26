@@ -49,16 +49,16 @@ Requirements for CRM & Project Financials. Each maps to roadmap phases.
 - [x] **PROJ-06**: User can delete project (with confirmation)
 - [x] **PROJ-07**: Project detail page shows source (deal, potential, or direct)
 - [x] **PROJ-08**: Project detail page shows linked KRI if present
-- [ ] **PROJ-09**: Project detail page shows cost breakdown and profit
+- [x] **PROJ-09**: Project detail page shows cost breakdown and profit
 
 ### Project Costs
 
-- [ ] **COST-01**: User can add cost item to project (description, amount, category, date)
-- [ ] **COST-02**: User can select cost category (Labor, Materials, Vendors, Travel, Software, Other)
-- [ ] **COST-03**: User can edit cost item
-- [ ] **COST-04**: User can delete cost item
-- [ ] **COST-05**: Project shows total costs (sum of all cost items)
-- [ ] **COST-06**: Project shows profit (revenue minus total costs)
+- [x] **COST-01**: User can add cost item to project (description, amount, category, date)
+- [x] **COST-02**: User can select cost category (Labor, Materials, Vendors, Travel, Software, Other)
+- [x] **COST-03**: User can edit cost item
+- [x] **COST-04**: User can delete cost item
+- [x] **COST-05**: Project shows total costs (sum of all cost items)
+- [x] **COST-06**: Project shows profit (revenue minus total costs)
 
 ### Dashboard Widgets
 
@@ -135,13 +135,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PROJ-06 | Phase 13 | Complete |
 | PROJ-07 | Phase 13 | Complete |
 | PROJ-08 | Phase 13 | Complete |
-| PROJ-09 | Phase 14 | Pending |
-| COST-01 | Phase 14 | Pending |
-| COST-02 | Phase 14 | Pending |
-| COST-03 | Phase 14 | Pending |
-| COST-04 | Phase 14 | Pending |
-| COST-05 | Phase 14 | Pending |
-| COST-06 | Phase 14 | Pending |
+| PROJ-09 | Phase 14 | Complete |
+| COST-01 | Phase 14 | Complete |
+| COST-02 | Phase 14 | Complete |
+| COST-03 | Phase 14 | Complete |
+| COST-04 | Phase 14 | Complete |
+| COST-05 | Phase 14 | Complete |
+| COST-06 | Phase 14 | Complete |
 | DASH-01 | Phase 15 | Pending |
 | DASH-02 | Phase 15 | Pending |
 | DASH-03 | Phase 15 | Pending |

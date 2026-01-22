@@ -86,4 +86,4 @@ None.
 
 Last session: 2026-01-22
 Stopped at: Completed 14-02-PLAN.md (Project Detail Integration)
-Resume: Phase 14 complete. Next: `/gsd:execute-phase 15` for Dashboard & Reports (if planned)
+Resume: `/gsd:plan-phase 15` for Dashboard Widgets
