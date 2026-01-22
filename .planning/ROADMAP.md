@@ -90,10 +90,10 @@ Plans:
   2. User can create potential project with company, contact, estimated value
   3. User can drag potential between stages
   4. User can edit and delete potential projects
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 12-01: PotentialProject Kanban and CRUD
+- [ ] 12-01-PLAN.md - PotentialProject Kanban board with CRUD and drag-and-drop
 
 ### Phase 13: Projects & Conversion
 **Goal**: Projects can be created from deals, potentials, or directly
@@ -154,7 +154,7 @@ Phases execute in numeric order: 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15
 | 9. Foundation | v1.2 | 1/1 | Complete | 2026-01-22 |
 | 10. Companies & Contacts | v1.2 | 2/2 | Complete | 2026-01-22 |
 | 11. Sales Pipeline | v1.2 | 2/2 | Complete | 2026-01-22 |
-| 12. Potential Projects | v1.2 | 0/1 | Not started | - |
+| 12. Potential Projects | v1.2 | 0/1 | Planned | - |
 | 13. Projects & Conversion | v1.2 | 0/3 | Not started | - |
 | 14. Project Costs | v1.2 | 0/2 | Not started | - |
 | 15. Dashboard Widgets | v1.2 | 0/2 | Not started | - |
