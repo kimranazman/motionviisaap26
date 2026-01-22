@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Track sales pipeline, convert deals to projects, monitor costs and profit
-**Current focus:** Phase 11 - Sales Pipeline (COMPLETE)
+**Current focus:** Phase 12 - Potential Projects (COMPLETE)
 
 ## Current Position
 
-Phase: 11 of 15 (Sales Pipeline)
-Plan: 2 of 2 in current phase
+Phase: 12 of 15 (Potential Projects)
+Plan: 1 of 1 in current phase
 Status: Phase complete
-Last activity: 2026-01-22 — Completed 11-02-PLAN.md (Deal Management)
+Last activity: 2026-01-22 — Completed 12-01-PLAN.md (Potential Projects Kanban)
 
-Progress: v1.0 | v1.1 | v1.2 [████░░░░░░] 43%
+Progress: v1.0 | v1.1 | v1.2 [█████░░░░░] 48%
 
 ## Milestone History
 
@@ -29,9 +29,9 @@ Progress: v1.0 | v1.1 | v1.2 [████░░░░░░] 43%
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 21
+- Total plans completed: 22
 - Average duration: 4 min
-- Total execution time: 84 min
+- Total execution time: 90 min
 
 **By Phase (v1.0-v1.2):**
 
@@ -48,6 +48,7 @@ Progress: v1.0 | v1.1 | v1.2 [████░░░░░░] 43%
 | 09-foundation | 1 | 5min | 5min |
 | 10-companies-contacts | 2 | 8min | 4min |
 | 11-sales-pipeline | 2 | 7min | 3.5min |
+| 12-potential-projects | 1 | 6min | 6min |
 
 ## Accumulated Context
 
@@ -60,6 +61,8 @@ Recent:
 - Lost reason capture uses AlertDialog modal on drag interception
 - Pipeline metrics show open pipeline (excludes Won/Lost) separately
 - Click vs drag distinguished via mouse position delta tracking
+- Reused CompanySelect/ContactSelect from pipeline for potential projects
+- Potential Projects "Open Pipeline" shows POTENTIAL stage only
 
 ### Pending Todos
 
@@ -72,5 +75,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 11-02-PLAN.md (Deal Management)
-Resume: `/gsd:plan-phase 12` for Potential Projects
+Stopped at: Completed 12-01-PLAN.md (Potential Projects Kanban)
+Resume: `/gsd:plan-phase 13` for Project Core
