@@ -1,0 +1,95 @@
+import { NextRequest, NextResponse } from 'next/server'
+import prisma from '@/lib/prisma'
+import { requireAuth, requireEditor } from '@/lib/auth-utils'
+import { PotentialStage } from '@prisma/client'
+
+// GET /api/potential-projects - List all potential projects with company and contact
+export async function GET(request: NextRequest) {
+  const { error } = await requireAuth()
+  if (error) return error
+
+  try {
+    const potentialProjects = await prisma.potentialProject.findMany({
+      include: {
+        company: {
+          select: { id: true, name: true },
+        },
+        contact: {
+          select: { id: true, name: true },
+        },
+      },
+      orderBy: [
+        { stage: 'asc' },
+        { position: 'asc' },
+      ],
+    })
+
+    return NextResponse.json(potentialProjects)
+  } catch (error) {
+    console.error('Error fetching potential projects:', error)
+    return NextResponse.json(
+      { error: 'Failed to fetch potential projects' },
+      { status: 500 }
+    )
+  }
+}
+
+// POST /api/potential-projects - Create new potential project
+export async function POST(request: NextRequest) {
+  const { error } = await requireEditor()
+  if (error) return error
+
+  try {
+    const body = await request.json()
+
+    // Validate required fields
+    if (!body.title || typeof body.title !== 'string' || !body.title.trim()) {
+      return NextResponse.json(
+        { error: 'Title is required' },
+        { status: 400 }
+      )
+    }
+
+    if (!body.companyId || typeof body.companyId !== 'string') {
+      return NextResponse.json(
+        { error: 'Company is required' },
+        { status: 400 }
+      )
+    }
+
+    // Get next position in POTENTIAL stage
+    const maxPosition = await prisma.potentialProject.aggregate({
+      where: { stage: PotentialStage.POTENTIAL },
+      _max: { position: true },
+    })
+    const nextPosition = (maxPosition._max.position ?? -1) + 1
+
+    const potentialProject = await prisma.potentialProject.create({
+      data: {
+        title: body.title.trim(),
+        description: body.description || null,
+        estimatedValue: body.estimatedValue ? parseFloat(body.estimatedValue) : null,
+        companyId: body.companyId,
+        contactId: body.contactId || null,
+        stage: PotentialStage.POTENTIAL,
+        position: nextPosition,
+      },
+      include: {
+        company: {
+          select: { id: true, name: true },
+        },
+        contact: {
+          select: { id: true, name: true },
+        },
+      },
+    })
+
+    return NextResponse.json(potentialProject, { status: 201 })
+  } catch (error) {
+    console.error('Error creating potential project:', error)
+    return NextResponse.json(
+      { error: 'Failed to create potential project' },
+      { status: 500 }
+    )
+  }
+}
