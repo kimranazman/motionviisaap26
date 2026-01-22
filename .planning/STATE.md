@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-22)
 ## Current Position
 
 Phase: 13 of 15 (Projects & Conversion)
-Plan: 2 of 2 in current phase
+Plan: 3 of 3 in current phase
 Status: Phase complete
-Last activity: 2026-01-22 — Completed 13-02-PLAN.md (Auto-Conversion)
+Last activity: 2026-01-22 — Completed 13-03-PLAN.md (Company Related Items)
 
-Progress: v1.0 | v1.1 | v1.2 [███████░░░] 65%
+Progress: v1.0 | v1.1 | v1.2 [███████░░░] 68%
 
 ## Milestone History
 
@@ -29,9 +29,9 @@ Progress: v1.0 | v1.1 | v1.2 [███████░░░] 65%
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 24
+- Total plans completed: 25
 - Average duration: 4 min
-- Total execution time: 98 min
+- Total execution time: 100 min
 
 **By Phase (v1.0-v1.2):**
 
@@ -49,7 +49,7 @@ Progress: v1.0 | v1.1 | v1.2 [███████░░░] 65%
 | 10-companies-contacts | 2 | 8min | 4min |
 | 11-sales-pipeline | 2 | 7min | 3.5min |
 | 12-potential-projects | 1 | 6min | 6min |
-| 13-projects-conversion | 2 | 8min | 4min |
+| 13-projects-conversion | 3 | 10min | 3.3min |
 
 ## Accumulated Context
 
@@ -67,6 +67,7 @@ Recent:
 - Projects use list view with status tabs (not Kanban) - lifecycle not pipeline
 - InitiativeSelect uses debounced search via existing /api/initiatives/search
 - Interactive transaction for auto-conversion (project creation + source linking atomic)
+- Related items limited to 5 most recent with _count for totals
 
 ### Pending Todos
 
@@ -79,5 +80,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 13-02-PLAN.md (Auto-Conversion) - Phase 13 complete
+Stopped at: Completed 13-03-PLAN.md (Company Related Items) - Phase 13 complete
 Resume: `/gsd:execute-phase` for Phase 14 or 15
