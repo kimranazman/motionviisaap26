@@ -30,7 +30,7 @@ See `.planning/milestones/v1.1-Authentication/` for archived plans.
 - [x] **Phase 10: Companies & Contacts** - Company and contact management pages
 - [x] **Phase 11: Sales Pipeline** - Deal Kanban board with stage transitions
 - [x] **Phase 12: Potential Projects** - Repeat client pipeline Kanban
-- [ ] **Phase 13: Projects & Conversion** - Project entity with 3 entry points
+- [x] **Phase 13: Projects & Conversion** - Project entity with 3 entry points
 - [ ] **Phase 14: Project Costs** - Cost tracking and profit calculation
 - [ ] **Phase 15: Dashboard Widgets** - Pipeline and revenue/profit dashboards
 
@@ -109,9 +109,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 13-01-PLAN.md - Project CRUD and direct creation with KRI linking
-- [ ] 13-02-PLAN.md - Deal/Potential to Project auto-conversion on stage change
-- [ ] 13-03-PLAN.md - Company detail page with related deals, potentials, projects
+- [x] 13-01-PLAN.md - Project CRUD and direct creation with KRI linking
+- [x] 13-02-PLAN.md - Deal/Potential to Project auto-conversion on stage change
+- [x] 13-03-PLAN.md - Company detail page with related deals, potentials, projects
 
 ### Phase 14: Project Costs
 **Goal**: Users can track project costs and see profit
@@ -155,7 +155,7 @@ Phases execute in numeric order: 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15
 | 10. Companies & Contacts | v1.2 | 2/2 | Complete | 2026-01-22 |
 | 11. Sales Pipeline | v1.2 | 2/2 | Complete | 2026-01-22 |
 | 12. Potential Projects | v1.2 | 1/1 | Complete | 2026-01-22 |
-| 13. Projects & Conversion | v1.2 | 0/3 | Not started | - |
+| 13. Projects & Conversion | v1.2 | 3/3 | Complete | 2026-01-22 |
 | 14. Project Costs | v1.2 | 0/2 | Not started | - |
 | 15. Dashboard Widgets | v1.2 | 0/2 | Not started | - |
 

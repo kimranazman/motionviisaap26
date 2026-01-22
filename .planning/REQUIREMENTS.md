@@ -17,7 +17,7 @@ Requirements for CRM & Project Financials. Each maps to roadmap phases.
 - [x] **CONT-02**: User can view contacts for a company
 - [x] **CONT-03**: User can edit contact details
 - [x] **CONT-04**: User can delete contact
-- [ ] **COMP-05**: Company detail page shows related deals, potentials, and projects
+- [x] **COMP-05**: Company detail page shows related deals, potentials, and projects
 
 ### Sales Pipeline
 
@@ -26,7 +26,7 @@ Requirements for CRM & Project Financials. Each maps to roadmap phases.
 - [x] **PIPE-03**: User can drag deal between stages (Lead, Qualified, Proposal, Negotiation, Won, Lost)
 - [x] **PIPE-04**: User can edit deal details
 - [x] **PIPE-05**: User can delete deal (with confirmation)
-- [ ] **PIPE-06**: When deal moves to Won, system auto-creates a Project linked to deal
+- [x] **PIPE-06**: When deal moves to Won, system auto-creates a Project linked to deal
 - [x] **PIPE-07**: When deal moves to Lost, user prompted for lost reason
 - [x] **PIPE-08**: User can view pipeline metrics (total value by stage, deal count)
 
@@ -37,18 +37,18 @@ Requirements for CRM & Project Financials. Each maps to roadmap phases.
 - [x] **PTNL-03**: User can drag potential between stages
 - [x] **PTNL-04**: User can edit potential project details
 - [x] **PTNL-05**: User can delete potential project (with confirmation)
-- [ ] **PTNL-06**: When potential moves to Confirmed, system auto-creates a Project linked to potential
+- [x] **PTNL-06**: When potential moves to Confirmed, system auto-creates a Project linked to potential
 
 ### Projects
 
-- [ ] **PROJ-01**: User can view list of all projects
-- [ ] **PROJ-02**: User can create project directly (without deal/potential)
-- [ ] **PROJ-03**: User can link project to a KRI (initiative) — optional
-- [ ] **PROJ-04**: User can edit project details (title, description, revenue, status)
-- [ ] **PROJ-05**: User can change project status (Draft, Active, Completed, Cancelled)
-- [ ] **PROJ-06**: User can delete project (with confirmation)
-- [ ] **PROJ-07**: Project detail page shows source (deal, potential, or direct)
-- [ ] **PROJ-08**: Project detail page shows linked KRI if present
+- [x] **PROJ-01**: User can view list of all projects
+- [x] **PROJ-02**: User can create project directly (without deal/potential)
+- [x] **PROJ-03**: User can link project to a KRI (initiative) — optional
+- [x] **PROJ-04**: User can edit project details (title, description, revenue, status)
+- [x] **PROJ-05**: User can change project status (Draft, Active, Completed, Cancelled)
+- [x] **PROJ-06**: User can delete project (with confirmation)
+- [x] **PROJ-07**: Project detail page shows source (deal, potential, or direct)
+- [x] **PROJ-08**: Project detail page shows linked KRI if present
 - [ ] **PROJ-09**: Project detail page shows cost breakdown and profit
 
 ### Project Costs
@@ -108,7 +108,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | COMP-02 | Phase 10 | Complete |
 | COMP-03 | Phase 10 | Complete |
 | COMP-04 | Phase 10 | Complete |
-| COMP-05 | Phase 13 | Pending |
+| COMP-05 | Phase 13 | Complete |
 | CONT-01 | Phase 10 | Complete |
 | CONT-02 | Phase 10 | Complete |
 | CONT-03 | Phase 10 | Complete |
@@ -118,7 +118,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PIPE-03 | Phase 11 | Complete |
 | PIPE-04 | Phase 11 | Complete |
 | PIPE-05 | Phase 11 | Complete |
-| PIPE-06 | Phase 13 | Pending |
+| PIPE-06 | Phase 13 | Complete |
 | PIPE-07 | Phase 11 | Complete |
 | PIPE-08 | Phase 11 | Complete |
 | PTNL-01 | Phase 12 | Complete |
@@ -126,15 +126,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PTNL-03 | Phase 12 | Complete |
 | PTNL-04 | Phase 12 | Complete |
 | PTNL-05 | Phase 12 | Complete |
-| PTNL-06 | Phase 13 | Pending |
-| PROJ-01 | Phase 13 | Pending |
-| PROJ-02 | Phase 13 | Pending |
-| PROJ-03 | Phase 13 | Pending |
-| PROJ-04 | Phase 13 | Pending |
-| PROJ-05 | Phase 13 | Pending |
-| PROJ-06 | Phase 13 | Pending |
-| PROJ-07 | Phase 13 | Pending |
-| PROJ-08 | Phase 13 | Pending |
+| PTNL-06 | Phase 13 | Complete |
+| PROJ-01 | Phase 13 | Complete |
+| PROJ-02 | Phase 13 | Complete |
+| PROJ-03 | Phase 13 | Complete |
+| PROJ-04 | Phase 13 | Complete |
+| PROJ-05 | Phase 13 | Complete |
+| PROJ-06 | Phase 13 | Complete |
+| PROJ-07 | Phase 13 | Complete |
+| PROJ-08 | Phase 13 | Complete |
 | PROJ-09 | Phase 14 | Pending |
 | COST-01 | Phase 14 | Pending |
 | COST-02 | Phase 14 | Pending |
