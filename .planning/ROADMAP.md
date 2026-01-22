@@ -28,7 +28,7 @@ See `.planning/milestones/v1.1-Authentication/` for archived plans.
 
 - [x] **Phase 9: Foundation** - Schema migration, Company/Contact entities, CostCategory seed
 - [x] **Phase 10: Companies & Contacts** - Company and contact management pages
-- [ ] **Phase 11: Sales Pipeline** - Deal Kanban board with stage transitions
+- [x] **Phase 11: Sales Pipeline** - Deal Kanban board with stage transitions
 - [ ] **Phase 12: Potential Projects** - Repeat client pipeline Kanban
 - [ ] **Phase 13: Projects & Conversion** - Project entity with 3 entry points
 - [ ] **Phase 14: Project Costs** - Cost tracking and profit calculation
@@ -78,8 +78,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 11-01-PLAN.md - Pipeline Kanban board with deal API routes and drag-and-drop
-- [ ] 11-02-PLAN.md - Deal CRUD modals, Lost reason prompt, and pipeline metrics
+- [x] 11-01-PLAN.md - Pipeline Kanban board with deal API routes and drag-and-drop
+- [x] 11-02-PLAN.md - Deal CRUD modals, Lost reason prompt, and pipeline metrics
 
 ### Phase 12: Potential Projects
 **Goal**: Users can track repeat client opportunities
@@ -153,7 +153,7 @@ Phases execute in numeric order: 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15
 |-------|-----------|----------------|--------|-----------|
 | 9. Foundation | v1.2 | 1/1 | Complete | 2026-01-22 |
 | 10. Companies & Contacts | v1.2 | 2/2 | Complete | 2026-01-22 |
-| 11. Sales Pipeline | v1.2 | 0/2 | Not started | - |
+| 11. Sales Pipeline | v1.2 | 2/2 | Complete | 2026-01-22 |
 | 12. Potential Projects | v1.2 | 0/1 | Not started | - |
 | 13. Projects & Conversion | v1.2 | 0/3 | Not started | - |
 | 14. Project Costs | v1.2 | 0/2 | Not started | - |

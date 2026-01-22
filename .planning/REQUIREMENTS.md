@@ -21,14 +21,14 @@ Requirements for CRM & Project Financials. Each maps to roadmap phases.
 
 ### Sales Pipeline
 
-- [ ] **PIPE-01**: User can view deals in Kanban board by stage
-- [ ] **PIPE-02**: User can create deal with title, description, value, company, and contact
-- [ ] **PIPE-03**: User can drag deal between stages (Lead, Qualified, Proposal, Negotiation, Won, Lost)
-- [ ] **PIPE-04**: User can edit deal details
-- [ ] **PIPE-05**: User can delete deal (with confirmation)
+- [x] **PIPE-01**: User can view deals in Kanban board by stage
+- [x] **PIPE-02**: User can create deal with title, description, value, company, and contact
+- [x] **PIPE-03**: User can drag deal between stages (Lead, Qualified, Proposal, Negotiation, Won, Lost)
+- [x] **PIPE-04**: User can edit deal details
+- [x] **PIPE-05**: User can delete deal (with confirmation)
 - [ ] **PIPE-06**: When deal moves to Won, system auto-creates a Project linked to deal
-- [ ] **PIPE-07**: When deal moves to Lost, user prompted for lost reason
-- [ ] **PIPE-08**: User can view pipeline metrics (total value by stage, deal count)
+- [x] **PIPE-07**: When deal moves to Lost, user prompted for lost reason
+- [x] **PIPE-08**: User can view pipeline metrics (total value by stage, deal count)
 
 ### Repeat Client Tracking
 
@@ -113,14 +113,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONT-02 | Phase 10 | Complete |
 | CONT-03 | Phase 10 | Complete |
 | CONT-04 | Phase 10 | Complete |
-| PIPE-01 | Phase 11 | Pending |
-| PIPE-02 | Phase 11 | Pending |
-| PIPE-03 | Phase 11 | Pending |
-| PIPE-04 | Phase 11 | Pending |
-| PIPE-05 | Phase 11 | Pending |
+| PIPE-01 | Phase 11 | Complete |
+| PIPE-02 | Phase 11 | Complete |
+| PIPE-03 | Phase 11 | Complete |
+| PIPE-04 | Phase 11 | Complete |
+| PIPE-05 | Phase 11 | Complete |
 | PIPE-06 | Phase 13 | Pending |
-| PIPE-07 | Phase 11 | Pending |
-| PIPE-08 | Phase 11 | Pending |
+| PIPE-07 | Phase 11 | Complete |
+| PIPE-08 | Phase 11 | Complete |
 | PTNL-01 | Phase 12 | Pending |
 | PTNL-02 | Phase 12 | Pending |
 | PTNL-03 | Phase 12 | Pending |
