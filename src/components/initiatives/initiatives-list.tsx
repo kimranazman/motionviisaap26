@@ -28,8 +28,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { InitiativeForm } from './initiative-form'
 import {
+  cn,
   formatStatus,
   formatDepartment,
   formatTeamMember,
@@ -38,7 +45,7 @@ import {
   STATUS_OPTIONS,
   DEPARTMENT_OPTIONS,
 } from '@/lib/utils'
-import { Plus, Search, Filter, Eye } from 'lucide-react'
+import { Plus, Search, Filter, Eye, MoreHorizontal } from 'lucide-react'
 
 interface Initiative {
   id: string
@@ -156,17 +163,19 @@ export function InitiativesList({ initialData }: InitiativesListProps) {
               <TableRow>
                 <TableHead className="w-12">#</TableHead>
                 <TableHead>Initiative</TableHead>
-                <TableHead className="w-24">Key Result</TableHead>
-                <TableHead className="w-28">Department</TableHead>
-                <TableHead className="w-28">Status</TableHead>
-                <TableHead className="w-24">Owner</TableHead>
-                <TableHead className="w-28">End Date</TableHead>
-                <TableHead className="w-20">Actions</TableHead>
+                <TableHead className="hidden md:table-cell w-24">Key Result</TableHead>
+                <TableHead className="hidden md:table-cell w-28">Department</TableHead>
+                <TableHead className="hidden md:table-cell w-28">Status</TableHead>
+                <TableHead className="hidden md:table-cell w-24">Owner</TableHead>
+                <TableHead className="hidden md:table-cell w-28">End Date</TableHead>
+                <TableHead className="w-16">
+                  <span className="sr-only">Actions</span>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredInitiatives.map((initiative) => (
-                <TableRow key={initiative.id}>
+                <TableRow key={initiative.id} className="group hover:bg-gray-50">
                   <TableCell className="text-gray-500">
                     {initiative.sequenceNumber}
                   </TableCell>
@@ -175,17 +184,23 @@ export function InitiativesList({ initialData }: InitiativesListProps) {
                       <p className="font-medium text-gray-900 truncate">
                         {initiative.title}
                       </p>
+                      <Badge
+                        variant="secondary"
+                        className={cn(getStatusColor(initiative.status), "md:hidden mt-1")}
+                      >
+                        {formatStatus(initiative.status)}
+                      </Badge>
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="hidden md:table-cell">
                     <Badge variant="outline">{initiative.keyResult}</Badge>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="hidden md:table-cell">
                     <span className="text-sm text-gray-600">
                       {formatDepartment(initiative.department)}
                     </span>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="hidden md:table-cell">
                     <Badge
                       variant="secondary"
                       className={getStatusColor(initiative.status)}
@@ -193,22 +208,41 @@ export function InitiativesList({ initialData }: InitiativesListProps) {
                       {formatStatus(initiative.status)}
                     </Badge>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="hidden md:table-cell">
                     <span className="text-sm text-gray-600">
                       {formatTeamMember(initiative.personInCharge)}
                     </span>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="hidden md:table-cell">
                     <span className="text-sm text-gray-500">
                       {formatDate(initiative.endDate)}
                     </span>
                   </TableCell>
                   <TableCell>
-                    <Button variant="ghost" size="icon" asChild>
-                      <Link href={`/initiatives/${initiative.id}`}>
-                        <Eye className="h-4 w-4" />
-                      </Link>
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className={cn(
+                            "h-8 w-8",
+                            "md:opacity-0 md:group-hover:opacity-100",
+                            "focus:opacity-100 transition-opacity"
+                          )}
+                        >
+                          <MoreHorizontal className="h-4 w-4" />
+                          <span className="sr-only">Actions</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem asChild>
+                          <Link href={`/initiatives/${initiative.id}`}>
+                            <Eye className="h-4 w-4 mr-2" />
+                            View Details
+                          </Link>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}
