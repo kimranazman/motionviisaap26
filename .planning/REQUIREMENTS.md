@@ -32,11 +32,11 @@ Requirements for CRM & Project Financials. Each maps to roadmap phases.
 
 ### Repeat Client Tracking
 
-- [ ] **PTNL-01**: User can view potential projects in Kanban board (Potential, Confirmed, Cancelled)
-- [ ] **PTNL-02**: User can create potential project with title, description, estimated value, company, and contact
-- [ ] **PTNL-03**: User can drag potential between stages
-- [ ] **PTNL-04**: User can edit potential project details
-- [ ] **PTNL-05**: User can delete potential project (with confirmation)
+- [x] **PTNL-01**: User can view potential projects in Kanban board (Potential, Confirmed, Cancelled)
+- [x] **PTNL-02**: User can create potential project with title, description, estimated value, company, and contact
+- [x] **PTNL-03**: User can drag potential between stages
+- [x] **PTNL-04**: User can edit potential project details
+- [x] **PTNL-05**: User can delete potential project (with confirmation)
 - [ ] **PTNL-06**: When potential moves to Confirmed, system auto-creates a Project linked to potential
 
 ### Projects
@@ -121,11 +121,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PIPE-06 | Phase 13 | Pending |
 | PIPE-07 | Phase 11 | Complete |
 | PIPE-08 | Phase 11 | Complete |
-| PTNL-01 | Phase 12 | Pending |
-| PTNL-02 | Phase 12 | Pending |
-| PTNL-03 | Phase 12 | Pending |
-| PTNL-04 | Phase 12 | Pending |
-| PTNL-05 | Phase 12 | Pending |
+| PTNL-01 | Phase 12 | Complete |
+| PTNL-02 | Phase 12 | Complete |
+| PTNL-03 | Phase 12 | Complete |
+| PTNL-04 | Phase 12 | Complete |
+| PTNL-05 | Phase 12 | Complete |
 | PTNL-06 | Phase 13 | Pending |
 | PROJ-01 | Phase 13 | Pending |
 | PROJ-02 | Phase 13 | Pending |

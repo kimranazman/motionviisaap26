@@ -29,7 +29,7 @@ See `.planning/milestones/v1.1-Authentication/` for archived plans.
 - [x] **Phase 9: Foundation** - Schema migration, Company/Contact entities, CostCategory seed
 - [x] **Phase 10: Companies & Contacts** - Company and contact management pages
 - [x] **Phase 11: Sales Pipeline** - Deal Kanban board with stage transitions
-- [ ] **Phase 12: Potential Projects** - Repeat client pipeline Kanban
+- [x] **Phase 12: Potential Projects** - Repeat client pipeline Kanban
 - [ ] **Phase 13: Projects & Conversion** - Project entity with 3 entry points
 - [ ] **Phase 14: Project Costs** - Cost tracking and profit calculation
 - [ ] **Phase 15: Dashboard Widgets** - Pipeline and revenue/profit dashboards
@@ -93,7 +93,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 12-01-PLAN.md - PotentialProject Kanban board with CRUD and drag-and-drop
+- [x] 12-01-PLAN.md - PotentialProject Kanban board with CRUD and drag-and-drop
 
 ### Phase 13: Projects & Conversion
 **Goal**: Projects can be created from deals, potentials, or directly
@@ -154,7 +154,7 @@ Phases execute in numeric order: 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15
 | 9. Foundation | v1.2 | 1/1 | Complete | 2026-01-22 |
 | 10. Companies & Contacts | v1.2 | 2/2 | Complete | 2026-01-22 |
 | 11. Sales Pipeline | v1.2 | 2/2 | Complete | 2026-01-22 |
-| 12. Potential Projects | v1.2 | 0/1 | Planned | - |
+| 12. Potential Projects | v1.2 | 1/1 | Complete | 2026-01-22 |
 | 13. Projects & Conversion | v1.2 | 0/3 | Not started | - |
 | 14. Project Costs | v1.2 | 0/2 | Not started | - |
 | 15. Dashboard Widgets | v1.2 | 0/2 | Not started | - |
