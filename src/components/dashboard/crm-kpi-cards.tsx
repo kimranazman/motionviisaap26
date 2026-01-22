@@ -1,0 +1,77 @@
+'use client'
+
+import { Card, CardContent } from '@/components/ui/card'
+import { formatCurrency } from '@/lib/utils'
+import {
+  Target,
+  TrendingUp,
+  CheckCircle2,
+  Briefcase,
+} from 'lucide-react'
+
+interface CRMKPICardsProps {
+  openPipeline: number
+  weightedForecast: number
+  winRate: number
+  dealCount: number
+}
+
+export function CRMKPICards({ openPipeline, weightedForecast, winRate, dealCount }: CRMKPICardsProps) {
+  const kpis = [
+    {
+      title: 'Open Pipeline',
+      value: formatCurrency(openPipeline),
+      subtitle: `${dealCount} deals`,
+      icon: Target,
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-50',
+    },
+    {
+      title: 'Weighted Forecast',
+      value: formatCurrency(weightedForecast),
+      subtitle: 'Probability-adjusted',
+      icon: TrendingUp,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-50',
+    },
+    {
+      title: 'Win Rate',
+      value: `${winRate}%`,
+      subtitle: 'Won vs closed',
+      icon: CheckCircle2,
+      color: 'text-green-600',
+      bgColor: 'bg-green-50',
+    },
+    {
+      title: 'Total Deals',
+      value: dealCount,
+      subtitle: 'In pipeline',
+      icon: Briefcase,
+      color: 'text-gray-600',
+      bgColor: 'bg-gray-50',
+    },
+  ]
+
+  return (
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {kpis.map((kpi) => (
+        <Card key={kpi.title} className="border border-gray-200">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className={`rounded-lg p-3 ${kpi.bgColor}`}>
+                <kpi.icon className={`h-5 w-5 ${kpi.color}`} />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">{kpi.title}</p>
+                <p className="text-2xl font-semibold text-gray-900">
+                  {kpi.value}
+                </p>
+                <p className="text-xs text-gray-400">{kpi.subtitle}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  )
+}
