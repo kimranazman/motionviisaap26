@@ -74,6 +74,13 @@ Plans:
 
 **Dependencies:** Phase 16 (navigation must work on mobile first)
 
+**Plans:** 3 plans
+
+Plans:
+- [ ] 18-01-PLAN.md - Companies table responsive with priority columns
+- [ ] 18-02-PLAN.md - Initiatives list table responsive with priority columns
+- [ ] 18-03-PLAN.md - Admin users table responsive with priority columns
+
 **Requirements:**
 - TBL-01: Tables show priority columns only on mobile
 - TBL-02: Secondary columns hidden on mobile, visible on tablet+
@@ -151,4 +158,4 @@ Plans:
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-23 (Phase 17 complete)*
+*Last updated: 2026-01-23 (Phase 18 planned)*
