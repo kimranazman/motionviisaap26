@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Track sales pipeline, convert deals to projects, monitor costs and profit
-**Current focus:** Phase 11 - Sales Pipeline (IN PROGRESS)
+**Current focus:** Phase 11 - Sales Pipeline (COMPLETE)
 
 ## Current Position
 
 Phase: 11 of 15 (Sales Pipeline)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-01-22 — Completed 11-01-PLAN.md (Pipeline Kanban Board)
+Plan: 2 of 2 in current phase
+Status: Phase complete
+Last activity: 2026-01-22 — Completed 11-02-PLAN.md (Deal Management)
 
-Progress: v1.0 | v1.1 | v1.2 [████░░░░░░] 30%
+Progress: v1.0 | v1.1 | v1.2 [████░░░░░░] 33%
 
 ## Milestone History
 
@@ -29,9 +29,9 @@ Progress: v1.0 | v1.1 | v1.2 [████░░░░░░] 30%
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 20
+- Total plans completed: 21
 - Average duration: 4 min
-- Total execution time: 80 min
+- Total execution time: 84 min
 
 **By Phase (v1.0-v1.2):**
 
@@ -47,7 +47,7 @@ Progress: v1.0 | v1.1 | v1.2 [████░░░░░░] 30%
 | 08-role-based-ui | 2 | 7min | 3.5min |
 | 09-foundation | 1 | 5min | 5min |
 | 10-companies-contacts | 2 | 8min | 4min |
-| 11-sales-pipeline | 1 | 3min | 3min |
+| 11-sales-pipeline | 2 | 7min | 3.5min |
 
 ## Accumulated Context
 
@@ -56,10 +56,10 @@ Progress: v1.0 | v1.1 | v1.2 [████░░░░░░] 30%
 Full decision log in PROJECT.md Key Decisions table.
 
 Recent:
-- STAGES constant in pipeline-utils.ts for centralized stage configuration
-- Column displays total value sum for quick pipeline valuation
-- Pipeline board simpler than initiatives Kanban (no filters, swimlanes)
-- stageChangedAt updated on stage changes for reporting
+- CompanySelect fetches on mount; ContactSelect receives contacts as prop
+- Lost reason capture uses AlertDialog modal on drag interception
+- Pipeline metrics show open pipeline (excludes Won/Lost) separately
+- Click vs drag distinguished via mouse position delta tracking
 
 ### Pending Todos
 
@@ -72,5 +72,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 11-01-PLAN.md (Pipeline Kanban Board)
-Resume: `/gsd:execute-phase .planning/phases/11-sales-pipeline/11-02-PLAN.md` for Deal Management
+Stopped at: Completed 11-02-PLAN.md (Deal Management)
+Resume: Phase 12 (Repeat Client Pipeline) or next phase in ROADMAP.md
