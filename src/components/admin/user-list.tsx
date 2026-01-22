@@ -59,7 +59,7 @@ export function UserList({ users, currentUserId }: UserListProps) {
             {users.map((user) => {
               const isCurrentUser = user.id === currentUserId
               return (
-                <TableRow key={user.id}>
+                <TableRow key={user.id} className="group hover:bg-muted/50">
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar className="h-8 w-8">
@@ -99,11 +99,18 @@ export function UserList({ users, currentUserId }: UserListProps) {
                     {formatDistanceToNow(user.createdAt, { addSuffix: true })}
                   </TableCell>
                   <TableCell>
-                    <DeleteUserButton
-                      userId={user.id}
-                      userEmail={user.email ?? "this user"}
-                      disabled={isCurrentUser}
-                    />
+                    <div
+                      className={cn(
+                        "md:opacity-0 md:group-hover:opacity-100",
+                        "focus-within:opacity-100 transition-opacity"
+                      )}
+                    >
+                      <DeleteUserButton
+                        userId={user.id}
+                        userEmail={user.email ?? "this user"}
+                        disabled={isCurrentUser}
+                      />
+                    </div>
                   </TableCell>
                 </TableRow>
               )
