@@ -4,6 +4,7 @@ import { requireAuth, requireEditor } from '@/lib/auth-utils'
 import { PotentialStage } from '@prisma/client'
 
 // GET /api/potential-projects - List all potential projects with company and contact
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(request: NextRequest) {
   const { error } = await requireAuth()
   if (error) return error
