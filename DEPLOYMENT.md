@@ -63,6 +63,12 @@ DATABASE_URL="mysql://saap_user:saap_password_2026@192.168.1.20:3307/saap2026" n
 
 # 5. Verify app is running
 curl -s -o /dev/null -w "%{http_code}" https://saap.motionvii.com
+
+# 6. Browser verification (using Claude Code + Edge)
+# Open Edge (logged in) and use Claude's browser automation to verify:
+# - New pages load correctly
+# - New features are accessible
+# - Forms and modals work as expected
 ```
 
 ### Manual SSH Deploy
