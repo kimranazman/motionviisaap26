@@ -145,8 +145,8 @@ export function CompanyList({ initialData }: CompanyListProps) {
     <div className="space-y-4">
       {/* Toolbar */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-1 items-center gap-4">
-          <div className="relative flex-1 max-w-sm">
+        <div className="flex flex-col sm:flex-row flex-1 items-stretch sm:items-center gap-3 sm:gap-4">
+          <div className="relative flex-1 sm:max-w-sm w-full">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <Input
               placeholder="Search companies..."
@@ -157,7 +157,7 @@ export function CompanyList({ initialData }: CompanyListProps) {
           </div>
 
           <Select value={industryFilter} onValueChange={setIndustryFilter}>
-            <SelectTrigger className="w-44">
+            <SelectTrigger className="w-full sm:w-44">
               <Filter className="mr-2 h-4 w-4" />
               <SelectValue placeholder="Industry" />
             </SelectTrigger>
@@ -174,7 +174,7 @@ export function CompanyList({ initialData }: CompanyListProps) {
 
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
           <DialogTrigger asChild>
-            <Button>
+            <Button className="w-full sm:w-auto">
               <Plus className="mr-2 h-4 w-4" />
               Add Company
             </Button>
