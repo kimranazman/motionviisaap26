@@ -4,7 +4,7 @@ import { requireAuth, requireEditor } from '@/lib/auth-utils'
 import { DealStage } from '@prisma/client'
 
 // GET /api/deals - List all deals with company and contact
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   const { error } = await requireAuth()
   if (error) return error
 
