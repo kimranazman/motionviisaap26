@@ -2,6 +2,8 @@ import { Header } from '@/components/layout/header'
 import { PipelineBoard } from '@/components/pipeline/pipeline-board'
 import prisma from '@/lib/prisma'
 
+export const dynamic = 'force-dynamic'
+
 export default async function PipelinePage() {
   const deals = await prisma.deal.findMany({
     include: {

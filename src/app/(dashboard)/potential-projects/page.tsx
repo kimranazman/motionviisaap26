@@ -2,6 +2,8 @@ import { Header } from '@/components/layout/header'
 import { PotentialBoard } from '@/components/potential-projects/potential-board'
 import prisma from '@/lib/prisma'
 
+export const dynamic = 'force-dynamic'
+
 export default async function PotentialProjectsPage() {
   const potentialProjects = await prisma.potentialProject.findMany({
     include: {
