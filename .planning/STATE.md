@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Track sales pipeline, convert deals to projects, monitor costs and profit
-**Current focus:** Phase 12 - Potential Projects (COMPLETE)
+**Current focus:** Phase 13 - Projects & Conversion (In Progress)
 
 ## Current Position
 
-Phase: 12 of 15 (Potential Projects)
-Plan: 1 of 1 in current phase
-Status: Phase complete
-Last activity: 2026-01-22 — Completed 12-01-PLAN.md (Potential Projects Kanban)
+Phase: 13 of 15 (Projects & Conversion)
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-01-22 — Completed 13-01-PLAN.md (Project Entity CRUD)
 
-Progress: v1.0 | v1.1 | v1.2 [█████░░░░░] 57%
+Progress: v1.0 | v1.1 | v1.2 [██████░░░░] 61%
 
 ## Milestone History
 
@@ -29,9 +29,9 @@ Progress: v1.0 | v1.1 | v1.2 [█████░░░░░] 57%
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 22
+- Total plans completed: 23
 - Average duration: 4 min
-- Total execution time: 90 min
+- Total execution time: 96 min
 
 **By Phase (v1.0-v1.2):**
 
@@ -49,6 +49,7 @@ Progress: v1.0 | v1.1 | v1.2 [█████░░░░░] 57%
 | 10-companies-contacts | 2 | 8min | 4min |
 | 11-sales-pipeline | 2 | 7min | 3.5min |
 | 12-potential-projects | 1 | 6min | 6min |
+| 13-projects-conversion | 1 | 6min | 6min |
 
 ## Accumulated Context
 
@@ -63,6 +64,8 @@ Recent:
 - Click vs drag distinguished via mouse position delta tracking
 - Reused CompanySelect/ContactSelect from pipeline for potential projects
 - Potential Projects "Open Pipeline" shows POTENTIAL stage only
+- Projects use list view with status tabs (not Kanban) - lifecycle not pipeline
+- InitiativeSelect uses debounced search via existing /api/initiatives/search
 
 ### Pending Todos
 
@@ -75,5 +78,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 12-01-PLAN.md (Potential Projects Kanban)
-Resume: `/gsd:discuss-phase 13` for Projects & Conversion
+Stopped at: Completed 13-01-PLAN.md (Project Entity CRUD)
+Resume: `/gsd:execute-phase` for 13-02-PLAN.md (Auto-Conversion)
