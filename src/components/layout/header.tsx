@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { HeaderSearch } from './header-search'
 import { NotificationBell } from './notification-bell'
+import { MobileSidebar } from './mobile-sidebar'
 import { SignOutButton } from '@/components/auth/sign-out-button'
 
 interface HeaderProps {
@@ -40,22 +41,36 @@ export function Header({ title, description }: HeaderProps) {
   }
 
   return (
-    <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-gray-200 bg-white px-6">
-      <div>
+    <header className="sticky top-0 z-40 flex h-14 md:h-16 items-center justify-between border-b border-gray-200 bg-white px-4 md:px-6">
+      {/* Mobile: Hamburger + Title */}
+      <div className="flex items-center gap-2 md:hidden">
+        <MobileSidebar />
+        <h1 className="text-lg font-semibold text-gray-900 truncate max-w-[200px]">{title}</h1>
+      </div>
+
+      {/* Desktop: Title + Description */}
+      <div className="hidden md:block">
         <h1 className="text-xl font-semibold text-gray-900">{title}</h1>
         {description && (
           <p className="text-sm text-gray-500">{description}</p>
         )}
       </div>
 
-      <div className="flex items-center gap-4">
-        {/* Search */}
-        <HeaderSearch />
+      <div className="flex items-center gap-2 md:gap-4">
+        {/* Mobile search icon */}
+        <div className="md:hidden">
+          <HeaderSearch mobile />
+        </div>
+
+        {/* Desktop search */}
+        <div className="hidden md:block">
+          <HeaderSearch />
+        </div>
 
         {/* Notifications */}
         <NotificationBell />
 
-        {/* User Menu */}
+        {/* User Menu - works on all sizes */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-8 w-8 rounded-full">
