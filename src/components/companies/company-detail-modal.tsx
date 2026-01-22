@@ -24,10 +24,14 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Trash2, Plus, UserPlus } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 import { CompanyInlineField } from './company-inline-field'
 import { IndustryCombobox } from './industry-combobox'
 import { ContactCard } from './contact-card'
 import { ContactForm } from './contact-form'
+import { formatDealStage, getStageColor } from '@/lib/pipeline-utils'
+import { formatPotentialStage, getPotentialStageColor } from '@/lib/potential-utils'
+import { formatProjectStatus, getProjectStatusColor } from '@/lib/project-utils'
 
 interface Contact {
   id: string
@@ -36,6 +40,27 @@ interface Contact {
   phone: string | null
   role: string | null
   isPrimary: boolean
+}
+
+interface RelatedDeal {
+  id: string
+  title: string
+  stage: string
+  value: number | null
+}
+
+interface RelatedPotential {
+  id: string
+  title: string
+  stage: string
+  estimatedValue: number | null
+}
+
+interface RelatedProject {
+  id: string
+  title: string
+  status: string
+  revenue: number | null
 }
 
 interface Company {
@@ -47,6 +72,9 @@ interface Company {
   phone: string | null
   notes: string | null
   contacts: Contact[]
+  deals: RelatedDeal[]
+  potentials: RelatedPotential[]
+  projects: RelatedProject[]
   _count: {
     deals: number
     projects: number
@@ -295,6 +323,130 @@ export function CompanyDetailModal({
                     ))}
                   </div>
                 )}
+              </div>
+
+              <Separator />
+
+              {/* Related Items Section */}
+              <div className="space-y-4">
+                <h3 className="font-medium text-gray-900">Related Items</h3>
+
+                {/* Deals */}
+                {company.deals.length > 0 && (
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium text-gray-500">
+                      Deals ({company._count.deals})
+                    </h4>
+                    <div className="space-y-1">
+                      {company.deals.map((deal) => (
+                        <div
+                          key={deal.id}
+                          className="flex items-center justify-between text-sm py-1"
+                        >
+                          <span className="truncate flex-1 mr-2">{deal.title}</span>
+                          <div className="flex items-center gap-2">
+                            {deal.value && (
+                              <span className="text-gray-500">
+                                RM {Number(deal.value).toLocaleString()}
+                              </span>
+                            )}
+                            <Badge variant="outline" className={getStageColor(deal.stage)}>
+                              {formatDealStage(deal.stage)}
+                            </Badge>
+                          </div>
+                        </div>
+                      ))}
+                      {company._count.deals > 5 && (
+                        <p className="text-xs text-muted-foreground">
+                          +{company._count.deals - 5} more deals
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Potentials */}
+                {company.potentials.length > 0 && (
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium text-gray-500">
+                      Potential Projects ({company._count.potentials})
+                    </h4>
+                    <div className="space-y-1">
+                      {company.potentials.map((potential) => (
+                        <div
+                          key={potential.id}
+                          className="flex items-center justify-between text-sm py-1"
+                        >
+                          <span className="truncate flex-1 mr-2">{potential.title}</span>
+                          <div className="flex items-center gap-2">
+                            {potential.estimatedValue && (
+                              <span className="text-gray-500">
+                                RM {Number(potential.estimatedValue).toLocaleString()}
+                              </span>
+                            )}
+                            <Badge
+                              variant="outline"
+                              className={getPotentialStageColor(potential.stage)}
+                            >
+                              {formatPotentialStage(potential.stage)}
+                            </Badge>
+                          </div>
+                        </div>
+                      ))}
+                      {company._count.potentials > 5 && (
+                        <p className="text-xs text-muted-foreground">
+                          +{company._count.potentials - 5} more potentials
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Projects */}
+                {company.projects.length > 0 && (
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium text-gray-500">
+                      Projects ({company._count.projects})
+                    </h4>
+                    <div className="space-y-1">
+                      {company.projects.map((project) => (
+                        <div
+                          key={project.id}
+                          className="flex items-center justify-between text-sm py-1"
+                        >
+                          <span className="truncate flex-1 mr-2">{project.title}</span>
+                          <div className="flex items-center gap-2">
+                            {project.revenue && (
+                              <span className="text-gray-500">
+                                RM {Number(project.revenue).toLocaleString()}
+                              </span>
+                            )}
+                            <Badge
+                              variant="outline"
+                              className={getProjectStatusColor(project.status)}
+                            >
+                              {formatProjectStatus(project.status)}
+                            </Badge>
+                          </div>
+                        </div>
+                      ))}
+                      {company._count.projects > 5 && (
+                        <p className="text-xs text-muted-foreground">
+                          +{company._count.projects - 5} more projects
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Empty state if no related items */}
+                {company.deals.length === 0 &&
+                  company.potentials.length === 0 &&
+                  company.projects.length === 0 && (
+                    <p className="text-sm text-muted-foreground">
+                      No deals, potentials, or projects yet.
+                    </p>
+                  )}
               </div>
             </div>
 
