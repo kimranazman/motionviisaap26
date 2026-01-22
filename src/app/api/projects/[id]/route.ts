@@ -31,6 +31,15 @@ export async function GET(
         initiative: {
           select: { id: true, title: true },
         },
+        costs: {
+          include: {
+            category: { select: { id: true, name: true } },
+          },
+          orderBy: [
+            { date: 'desc' },
+            { createdAt: 'desc' },
+          ],
+        },
       },
     })
 
@@ -41,7 +50,17 @@ export async function GET(
       )
     }
 
-    return NextResponse.json(project)
+    // Serialize response to convert Decimals to Numbers
+    const serialized = {
+      ...project,
+      revenue: project.revenue ? Number(project.revenue) : null,
+      costs: project.costs.map(cost => ({
+        ...cost,
+        amount: Number(cost.amount),
+      })),
+    }
+
+    return NextResponse.json(serialized)
   } catch (error) {
     console.error('Error fetching project:', error)
     return NextResponse.json(
