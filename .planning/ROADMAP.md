@@ -2,27 +2,27 @@
 
 ## Milestones
 
-- ✅ **v1.0 MVP** - Phases 1-3 (shipped 2026-01-20)
-- ✅ **v1.1 Authentication** - Phases 4-8 (shipped 2026-01-22)
-- 🚧 **v1.2 CRM & Project Financials** - Phases 9-15 (in progress)
+- **v1.0 MVP** - Phases 1-3 (shipped 2026-01-20)
+- **v1.1 Authentication** - Phases 4-8 (shipped 2026-01-22)
+- **v1.2 CRM & Project Financials** - Phases 9-15 (in progress)
 
 ## Phases
 
 <details>
-<summary>✅ v1.0 MVP (Phases 1-3) - SHIPPED 2026-01-20</summary>
+<summary>v1.0 MVP (Phases 1-3) - SHIPPED 2026-01-20</summary>
 
 See `.planning/milestones/v1.0-MVP/` for archived plans.
 
 </details>
 
 <details>
-<summary>✅ v1.1 Authentication (Phases 4-8) - SHIPPED 2026-01-22</summary>
+<summary>v1.1 Authentication (Phases 4-8) - SHIPPED 2026-01-22</summary>
 
 See `.planning/milestones/v1.1-Authentication/` for archived plans.
 
 </details>
 
-### 🚧 v1.2 CRM & Project Financials (In Progress)
+### v1.2 CRM & Project Financials (In Progress)
 
 **Milestone Goal:** Add sales pipeline and project tracking with cost breakdowns to forecast revenue and calculate net profit.
 
@@ -122,11 +122,11 @@ Plans:
   2. Cost categories available: Labor, Materials, Vendors, Travel, Software, Other
   3. User can edit and delete cost items
   4. Project detail shows total costs and profit (revenue minus costs)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 14-01: Cost item CRUD
-- [ ] 14-02: Profit calculation display
+- [ ] 14-01-PLAN.md - Cost CRUD infrastructure and reusable components
+- [ ] 14-02-PLAN.md - Integrate costs into project detail with profit calculation
 
 ### Phase 15: Dashboard Widgets
 **Goal**: Dashboard shows pipeline and financial summaries
@@ -156,7 +156,7 @@ Phases execute in numeric order: 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15
 | 11. Sales Pipeline | v1.2 | 2/2 | Complete | 2026-01-22 |
 | 12. Potential Projects | v1.2 | 1/1 | Complete | 2026-01-22 |
 | 13. Projects & Conversion | v1.2 | 3/3 | Complete | 2026-01-22 |
-| 14. Project Costs | v1.2 | 0/2 | Not started | - |
+| 14. Project Costs | v1.2 | 0/2 | Planned | - |
 | 15. Dashboard Widgets | v1.2 | 0/2 | Not started | - |
 
 ---
