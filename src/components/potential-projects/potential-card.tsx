@@ -120,7 +120,7 @@ export function PotentialCard({ project, onClick, isDragging, canEdit = true }: 
       className={cn(
         'group relative bg-white rounded-2xl border-0 shadow-apple',
         'hover:shadow-apple-hover hover:scale-[1.02]',
-        'transition-all duration-200 ease-out',
+        'transition-all duration-200 ease-out select-none',
         (isDragging || isSorting) && 'opacity-60 shadow-xl scale-105 rotate-1'
       )}
     >

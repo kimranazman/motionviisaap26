@@ -156,7 +156,7 @@ export function KanbanCard({ item, isDragging, onClick, onStatusChange, onReassi
       className={cn(
         'group relative bg-white rounded-2xl border-0 shadow-apple',
         'hover:shadow-apple-hover hover:scale-[1.02]',
-        'transition-all duration-200 ease-out',
+        'transition-all duration-200 ease-out select-none',
         'border-b-2',
         DEPARTMENT_BORDER_BOTTOM[item.department] || 'border-b-gray-300',
         (isDragging || isSorting) && 'opacity-60 shadow-xl scale-105 rotate-1'
