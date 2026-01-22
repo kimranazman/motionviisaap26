@@ -33,20 +33,39 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
-import { Loader2, Trash2, ArrowRight, Plus, Target } from 'lucide-react'
+import { Loader2, Trash2, ArrowRight, Plus, Target, DollarSign } from 'lucide-react'
 import { CompanySelect } from '@/components/pipeline/company-select'
 import { ContactSelect } from '@/components/pipeline/contact-select'
 import { InitiativeSelect } from './initiative-select'
+import { CostForm } from './cost-form'
+import { CostCard } from './cost-card'
+import { calculateTotalCosts, calculateProfit } from '@/lib/cost-utils'
+import { Card } from '@/components/ui/card'
 import {
   PROJECT_STATUSES,
   getProjectStatusColor,
   formatProjectStatus,
 } from '@/lib/project-utils'
-import { cn } from '@/lib/utils'
+import { cn, formatCurrency } from '@/lib/utils'
 
 interface Contact {
   id: string
   name: string
+}
+
+interface CostCategory {
+  id: string
+  name: string
+  description: string | null
+}
+
+interface Cost {
+  id: string
+  description: string
+  amount: number
+  date: string
+  categoryId: string
+  category: { id: string; name: string }
 }
 
 interface Project {
@@ -60,6 +79,7 @@ interface Project {
   initiative: { id: string; title: string } | null
   sourceDeal: { id: string; title: string } | null
   sourcePotential: { id: string; title: string } | null
+  costs?: Cost[]
 }
 
 interface ProjectDetailSheetProps {
@@ -89,6 +109,26 @@ export function ProjectDetailSheet({
   const [isDeleting, setIsDeleting] = useState(false)
   const [isLoadingContacts, setIsLoadingContacts] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [costs, setCosts] = useState<Cost[]>([])
+  const [categories, setCategories] = useState<CostCategory[]>([])
+  const [showAddCostForm, setShowAddCostForm] = useState(false)
+  const [editingCost, setEditingCost] = useState<Cost | null>(null)
+
+  // Fetch cost categories on mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('/api/cost-categories')
+        if (response.ok) {
+          const data = await response.json()
+          setCategories(data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch categories:', error)
+      }
+    }
+    fetchCategories()
+  }, [])
 
   // Initialize form when project changes
   useEffect(() => {
@@ -101,6 +141,9 @@ export function ProjectDetailSheet({
       setRevenue(project.revenue?.toString() || '')
       setDescription(project.description || '')
       setError(null)
+      setCosts(project.costs || [])
+      setShowAddCostForm(false)
+      setEditingCost(null)
 
       // Fetch contacts for selected company
       if (project.company?.id) {
@@ -210,7 +253,50 @@ export function ProjectDetailSheet({
     }
   }
 
+  // Cost management handlers
+  const handleCostAdded = async () => {
+    if (!project) return
+    try {
+      const response = await fetch(`/api/projects/${project.id}/costs`)
+      if (response.ok) {
+        const data = await response.json()
+        setCosts(data)
+      }
+    } catch (error) {
+      console.error('Failed to refresh costs:', error)
+    }
+    setShowAddCostForm(false)
+    setEditingCost(null)
+  }
+
+  const handleCostDeleted = async () => {
+    if (!project) return
+    try {
+      const response = await fetch(`/api/projects/${project.id}/costs`)
+      if (response.ok) {
+        const data = await response.json()
+        setCosts(data)
+      }
+    } catch (error) {
+      console.error('Failed to refresh costs:', error)
+    }
+  }
+
+  const handleEditCost = (cost: Cost) => {
+    setEditingCost(cost)
+    setShowAddCostForm(true)
+  }
+
+  const handleCancelCostForm = () => {
+    setShowAddCostForm(false)
+    setEditingCost(null)
+  }
+
   if (!project) return null
+
+  // Calculate financial totals
+  const totalCosts = calculateTotalCosts(costs)
+  const profit = calculateProfit(project.revenue, totalCosts)
 
   const hasChanges =
     title !== project.title ||
@@ -368,6 +454,109 @@ export function ProjectDetailSheet({
                 </div>
               </div>
             )}
+
+            <Separator />
+
+            {/* Financial Summary */}
+            <div className="space-y-3">
+              <Label className="text-muted-foreground">Financial Summary</Label>
+              <div className="grid grid-cols-3 gap-3">
+                <Card className="p-3 bg-green-50 border-green-200">
+                  <div className="text-xs text-green-600 font-medium">Revenue</div>
+                  <div className="text-lg font-semibold text-green-700">
+                    {formatCurrency(project.revenue)}
+                  </div>
+                </Card>
+                <Card className="p-3 bg-red-50 border-red-200">
+                  <div className="text-xs text-red-600 font-medium">Total Costs</div>
+                  <div className="text-lg font-semibold text-red-700">
+                    {formatCurrency(totalCosts)}
+                  </div>
+                </Card>
+                <Card className={cn(
+                  'p-3',
+                  profit >= 0 ? 'bg-blue-50 border-blue-200' : 'bg-orange-50 border-orange-200'
+                )}>
+                  <div className={cn(
+                    'text-xs font-medium',
+                    profit >= 0 ? 'text-blue-600' : 'text-orange-600'
+                  )}>
+                    Profit
+                  </div>
+                  <div className={cn(
+                    'text-lg font-semibold',
+                    profit >= 0 ? 'text-blue-700' : 'text-orange-700'
+                  )}>
+                    {formatCurrency(profit)}
+                  </div>
+                </Card>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Costs Section */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Label className="text-muted-foreground">Costs</Label>
+                  {costs.length > 0 && (
+                    <Badge variant="secondary" className="text-xs">
+                      {costs.length}
+                    </Badge>
+                  )}
+                </div>
+                {costs.length > 0 && !showAddCostForm && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowAddCostForm(true)}
+                  >
+                    <Plus className="mr-1 h-4 w-4" />
+                    Add Cost
+                  </Button>
+                )}
+              </div>
+
+              {/* Cost Form */}
+              {showAddCostForm && (
+                <CostForm
+                  projectId={project.id}
+                  cost={editingCost || undefined}
+                  categories={categories}
+                  onSuccess={handleCostAdded}
+                  onCancel={handleCancelCostForm}
+                />
+              )}
+
+              {/* Cost List or Empty State */}
+              {costs.length === 0 && !showAddCostForm ? (
+                <Card className="p-6 text-center">
+                  <DollarSign className="mx-auto h-8 w-8 text-gray-400 mb-2" />
+                  <p className="text-sm text-gray-500 mb-3">No costs recorded yet</p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowAddCostForm(true)}
+                  >
+                    <Plus className="mr-1 h-4 w-4" />
+                    Add your first cost
+                  </Button>
+                </Card>
+              ) : (
+                <div className="space-y-2">
+                  {costs.map((cost) => (
+                    <CostCard
+                      key={cost.id}
+                      cost={cost}
+                      projectId={project.id}
+                      onEdit={handleEditCost}
+                      onDelete={handleCostDeleted}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
 
             {/* Error message */}
             {error && (
