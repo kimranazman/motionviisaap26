@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -11,6 +11,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,9 +23,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
-import { Trash2 } from 'lucide-react'
+import { Trash2, Plus, UserPlus } from 'lucide-react'
 import { CompanyInlineField } from './company-inline-field'
 import { IndustryCombobox } from './industry-combobox'
+import { ContactCard } from './contact-card'
+import { ContactForm } from './contact-form'
 
 interface Contact {
   id: string
@@ -70,22 +73,31 @@ export function CompanyDetailModal({
   const [isLoading, setIsLoading] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
+  const [showAddForm, setShowAddForm] = useState(false)
+
+  const fetchCompany = useCallback(async () => {
+    if (!companyId) return
+
+    setIsLoading(true)
+    setCompany(null)
+
+    try {
+      const response = await fetch(`/api/companies/${companyId}`)
+      const data = await response.json()
+      setCompany(data)
+    } catch (error) {
+      console.error('Failed to fetch company:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [companyId])
 
   useEffect(() => {
     if (companyId && open) {
-      setIsLoading(true)
-      setCompany(null)
-      fetch(`/api/companies/${companyId}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setCompany(data)
-          setIsLoading(false)
-        })
-        .catch(() => {
-          setIsLoading(false)
-        })
+      fetchCompany()
+      setShowAddForm(false)
     }
-  }, [companyId, open])
+  }, [companyId, open, fetchCompany])
 
   const handleFieldSave = async (field: string, value: string) => {
     if (!company) return
@@ -127,6 +139,22 @@ export function CompanyDetailModal({
     } finally {
       setIsDeleting(false)
     }
+  }
+
+  const handleContactAdded = () => {
+    fetchCompany()
+    setShowAddForm(false)
+    onUpdated()
+  }
+
+  const handleContactUpdated = () => {
+    fetchCompany()
+    onUpdated()
+  }
+
+  const handleContactDeleted = () => {
+    fetchCompany()
+    onUpdated()
   }
 
   return (
@@ -208,10 +236,65 @@ export function CompanyDetailModal({
 
               {/* Contacts Section */}
               <div className="space-y-3">
-                <h3 className="font-medium text-gray-900">Contacts</h3>
-                <p className="text-sm text-gray-500">
-                  Contacts will be added in the next plan.
-                </p>
+                <div className="flex items-center justify-between">
+                  <h3 className="font-medium text-gray-900">
+                    Contacts
+                    {company.contacts.length > 0 && (
+                      <span className="ml-2 text-sm font-normal text-gray-500">
+                        ({company.contacts.length})
+                      </span>
+                    )}
+                  </h3>
+                  {company.contacts.length > 0 && !showAddForm && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowAddForm(true)}
+                    >
+                      <Plus className="mr-1 h-4 w-4" />
+                      Add Contact
+                    </Button>
+                  )}
+                </div>
+
+                {/* Add Contact Form */}
+                {showAddForm && (
+                  <ContactForm
+                    companyId={company.id}
+                    onSuccess={handleContactAdded}
+                    onCancel={() => setShowAddForm(false)}
+                  />
+                )}
+
+                {/* Contact Cards or Empty State */}
+                {company.contacts.length === 0 && !showAddForm ? (
+                  <Card className="p-6 text-center">
+                    <UserPlus className="mx-auto h-8 w-8 text-gray-400 mb-2" />
+                    <p className="text-sm text-gray-500 mb-3">
+                      No contacts yet
+                    </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowAddForm(true)}
+                    >
+                      <Plus className="mr-1 h-4 w-4" />
+                      Add your first contact
+                    </Button>
+                  </Card>
+                ) : (
+                  <div className="space-y-3">
+                    {company.contacts.map((contact) => (
+                      <ContactCard
+                        key={contact.id}
+                        contact={contact}
+                        companyId={company.id}
+                        onUpdate={handleContactUpdated}
+                        onDelete={handleContactDeleted}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -303,7 +386,8 @@ function CompanyDetailSkeleton() {
       {/* Contacts section */}
       <Skeleton className="h-5 w-20" />
       <div className="space-y-2">
-        <Skeleton className="h-20 w-full rounded-lg" />
+        <Skeleton className="h-24 w-full rounded-lg" />
+        <Skeleton className="h-24 w-full rounded-lg" />
       </div>
     </div>
   )
