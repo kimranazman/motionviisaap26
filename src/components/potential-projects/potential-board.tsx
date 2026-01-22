@@ -8,7 +8,8 @@ import {
   pointerWithin,
   rectIntersection,
   KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   DragStartEvent,
@@ -31,6 +32,7 @@ import { PotentialDetailSheet } from './potential-detail-sheet'
 import { PotentialMetrics } from './potential-metrics'
 import { POTENTIAL_STAGES } from '@/lib/potential-utils'
 import { canEdit } from '@/lib/permissions'
+import { cn } from '@/lib/utils'
 
 interface PotentialProject {
   id: string
@@ -62,16 +64,22 @@ export function PotentialBoard({ initialData }: PotentialBoardProps) {
   // Track original stage before drag for reverting
   const originalStageRef = useRef<string | null>(null)
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 5,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  )
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: { distance: 5 },
+  })
+
+  const touchSensor = useSensor(TouchSensor, {
+    activationConstraint: {
+      delay: 250,     // 250ms hold before drag starts
+      tolerance: 5,   // 5px movement allowed during delay
+    },
+  })
+
+  const keyboardSensor = useSensor(KeyboardSensor, {
+    coordinateGetter: sortableKeyboardCoordinates,
+  })
+
+  const sensors = useSensors(mouseSensor, touchSensor, keyboardSensor)
 
   // Custom collision detection that prioritizes columns
   const collisionDetection: CollisionDetection = useCallback((args) => {
@@ -293,7 +301,13 @@ export function PotentialBoard({ initialData }: PotentialBoardProps) {
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
       >
-        <div className="flex gap-4 min-w-max pb-4 overflow-x-auto">
+        <div className={cn(
+          "flex gap-4 pb-4",
+          // Mobile: horizontal scroll with snap
+          "overflow-x-auto snap-x snap-mandatory overscroll-x-contain",
+          // Desktop: standard min-width
+          "md:min-w-max md:snap-none"
+        )}>
           {POTENTIAL_STAGES.map(stage => {
             const stageProjects = getStageProjects(stage.id)
             const totalValue = getStageTotalValue(stage.id)
