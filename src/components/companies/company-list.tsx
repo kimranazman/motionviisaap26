@@ -367,7 +367,9 @@ export function CompanyList({ initialData }: CompanyListProps) {
       {/* Summary */}
       {filteredCompanies.length > 0 && (
         <div className="text-sm text-gray-500">
-          Showing {filteredCompanies.length} of {companies.length} companies
+          <span className="hidden sm:inline">Showing </span>
+          {filteredCompanies.length} of {companies.length}
+          <span className="hidden sm:inline"> companies</span>
         </div>
       )}
 
