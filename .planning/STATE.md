@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-01-22)
 
 **Core value:** Track sales pipeline, convert deals to projects, monitor costs and profit
-**Current focus:** Phase 15 - Dashboard Widgets (In progress)
+**Current focus:** v1.2 Milestone Complete
 
 ## Current Position
 
@@ -22,7 +22,7 @@ Progress: v1.0 | v1.1 | v1.2 [████████████████�
 |---------|------|--------|---------|
 | v1.0 | MVP | 1-3 | 2026-01-20 |
 | v1.1 | Authentication | 4-8 | 2026-01-22 |
-| v1.2 | CRM & Project Financials | 9-15 | In progress |
+| v1.2 | CRM & Project Financials | 9-15 | 2026-01-22 |
 
 **Archives:** `.planning/milestones/`
 
@@ -89,4 +89,4 @@ None.
 
 Last session: 2026-01-22
 Stopped at: Completed 15-02-PLAN.md (Revenue Widgets)
-Resume: v1.2 milestone complete - all 15 phases done
+Resume: `/gsd:audit-milestone` to verify milestone or `/gsd:complete-milestone` to archive

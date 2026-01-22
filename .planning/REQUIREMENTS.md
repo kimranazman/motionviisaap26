@@ -62,12 +62,12 @@ Requirements for CRM & Project Financials. Each maps to roadmap phases.
 
 ### Dashboard Widgets
 
-- [ ] **DASH-01**: Dashboard shows pipeline by stage (visual breakdown with values)
-- [ ] **DASH-02**: Dashboard shows pipeline total value (sum of open deals)
-- [ ] **DASH-03**: Dashboard shows revenue summary (sum of completed project revenues)
-- [ ] **DASH-04**: Dashboard shows profit summary (total revenue minus total costs)
-- [ ] **DASH-05**: Dashboard shows weighted pipeline value (probability × value per stage)
-- [ ] **DASH-06**: Dashboard shows win rate (won deals / closed deals)
+- [x] **DASH-01**: Dashboard shows pipeline by stage (visual breakdown with values)
+- [x] **DASH-02**: Dashboard shows pipeline total value (sum of open deals)
+- [x] **DASH-03**: Dashboard shows revenue summary (sum of completed project revenues)
+- [x] **DASH-04**: Dashboard shows profit summary (total revenue minus total costs)
+- [x] **DASH-05**: Dashboard shows weighted pipeline value (probability × value per stage)
+- [x] **DASH-06**: Dashboard shows win rate (won deals / closed deals)
 
 ## v1.3 Requirements
 
@@ -142,12 +142,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | COST-04 | Phase 14 | Complete |
 | COST-05 | Phase 14 | Complete |
 | COST-06 | Phase 14 | Complete |
-| DASH-01 | Phase 15 | Pending |
-| DASH-02 | Phase 15 | Pending |
-| DASH-03 | Phase 15 | Pending |
-| DASH-04 | Phase 15 | Pending |
-| DASH-05 | Phase 15 | Pending |
-| DASH-06 | Phase 15 | Pending |
+| DASH-01 | Phase 15 | Complete |
+| DASH-02 | Phase 15 | Complete |
+| DASH-03 | Phase 15 | Complete |
+| DASH-04 | Phase 15 | Complete |
+| DASH-05 | Phase 15 | Complete |
+| DASH-06 | Phase 15 | Complete |
 
 **Coverage:**
 - v1.2 requirements: 42 total

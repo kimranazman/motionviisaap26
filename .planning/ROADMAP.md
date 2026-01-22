@@ -32,7 +32,7 @@ See `.planning/milestones/v1.1-Authentication/` for archived plans.
 - [x] **Phase 12: Potential Projects** - Repeat client pipeline Kanban
 - [x] **Phase 13: Projects & Conversion** - Project entity with 3 entry points
 - [x] **Phase 14: Project Costs** - Cost tracking and profit calculation
-- [ ] **Phase 15: Dashboard Widgets** - Pipeline and revenue/profit dashboards
+- [x] **Phase 15: Dashboard Widgets** - Pipeline and revenue/profit dashboards
 
 ## Phase Details
 
@@ -141,8 +141,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 15-01-PLAN.md - Pipeline widgets (stage chart, open pipeline, weighted forecast, win rate)
-- [ ] 15-02-PLAN.md - Revenue and profit widgets
+- [x] 15-01-PLAN.md - Pipeline widgets (stage chart, open pipeline, weighted forecast, win rate)
+- [x] 15-02-PLAN.md - Revenue and profit widgets
 
 ## Progress
 
@@ -157,7 +157,7 @@ Phases execute in numeric order: 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15
 | 12. Potential Projects | v1.2 | 1/1 | Complete | 2026-01-22 |
 | 13. Projects & Conversion | v1.2 | 3/3 | Complete | 2026-01-22 |
 | 14. Project Costs | v1.2 | 2/2 | Complete | 2026-01-22 |
-| 15. Dashboard Widgets | v1.2 | 0/2 | Not started | - |
+| 15. Dashboard Widgets | v1.2 | 2/2 | Complete | 2026-01-22 |
 
 ---
 *Roadmap created: 2026-01-22*
