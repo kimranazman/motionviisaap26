@@ -9,14 +9,14 @@ Requirements for CRM & Project Financials. Each maps to roadmap phases.
 
 ### Company & Contacts
 
-- [ ] **COMP-01**: User can create company with name, industry, and notes
-- [ ] **COMP-02**: User can view list of all companies
-- [ ] **COMP-03**: User can edit company details
-- [ ] **COMP-04**: User can delete company (with confirmation)
-- [ ] **CONT-01**: User can add contact to a company (name, email, phone, role)
-- [ ] **CONT-02**: User can view contacts for a company
-- [ ] **CONT-03**: User can edit contact details
-- [ ] **CONT-04**: User can delete contact
+- [x] **COMP-01**: User can create company with name, industry, and notes
+- [x] **COMP-02**: User can view list of all companies
+- [x] **COMP-03**: User can edit company details
+- [x] **COMP-04**: User can delete company (with confirmation)
+- [x] **CONT-01**: User can add contact to a company (name, email, phone, role)
+- [x] **CONT-02**: User can view contacts for a company
+- [x] **CONT-03**: User can edit contact details
+- [x] **CONT-04**: User can delete contact
 - [ ] **COMP-05**: Company detail page shows related deals, potentials, and projects
 
 ### Sales Pipeline
@@ -104,15 +104,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| COMP-01 | Phase 10 | Pending |
-| COMP-02 | Phase 10 | Pending |
-| COMP-03 | Phase 10 | Pending |
-| COMP-04 | Phase 10 | Pending |
+| COMP-01 | Phase 10 | Complete |
+| COMP-02 | Phase 10 | Complete |
+| COMP-03 | Phase 10 | Complete |
+| COMP-04 | Phase 10 | Complete |
 | COMP-05 | Phase 13 | Pending |
-| CONT-01 | Phase 10 | Pending |
-| CONT-02 | Phase 10 | Pending |
-| CONT-03 | Phase 10 | Pending |
-| CONT-04 | Phase 10 | Pending |
+| CONT-01 | Phase 10 | Complete |
+| CONT-02 | Phase 10 | Complete |
+| CONT-03 | Phase 10 | Complete |
+| CONT-04 | Phase 10 | Complete |
 | PIPE-01 | Phase 11 | Pending |
 | PIPE-02 | Phase 11 | Pending |
 | PIPE-03 | Phase 11 | Pending |
