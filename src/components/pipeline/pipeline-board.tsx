@@ -263,6 +263,13 @@ export function PipelineBoard({ initialData }: PipelineBoardProps) {
 
       if (!response.ok) {
         console.error('Failed to save reorder:', await response.text())
+      } else {
+        // Check if a project was created (deal moved to WON)
+        const data = await response.json()
+        if (data.projectCreated) {
+          // TODO: Replace with sonner toast when available
+          console.log(`Project created: ${data.projectCreated.title}`)
+        }
       }
     } catch (error) {
       console.error('Failed to save reorder:', error)
@@ -309,6 +316,13 @@ export function PipelineBoard({ initialData }: PipelineBoardProps) {
 
       if (!response.ok) {
         console.error('Failed to save reorder:', await response.text())
+      } else {
+        // Check if a project was created (in case moving to other stages before lost)
+        const data = await response.json()
+        if (data.projectCreated) {
+          // TODO: Replace with sonner toast when available
+          console.log(`Project created: ${data.projectCreated.title}`)
+        }
       }
     } catch (error) {
       console.error('Failed to save reorder:', error)

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
-import { DealStage } from '@prisma/client'
+import { DealStage, ProjectStatus } from '@prisma/client'
 import { requireEditor } from '@/lib/auth-utils'
 
 // PATCH /api/deals/reorder - Reorder deals (for Kanban)
@@ -20,33 +20,77 @@ export async function PATCH(request: NextRequest) {
       )
     }
 
-    // Get current deals to check for stage changes
+    // Get current deals to check for stage changes and for project creation
     const dealIds = updates.map((u: { id: string }) => u.id)
     const currentDeals = await prisma.deal.findMany({
       where: { id: { in: dealIds } },
-      select: { id: true, stage: true },
+      select: {
+        id: true,
+        stage: true,
+        title: true,
+        value: true,
+        companyId: true,
+        contactId: true,
+        projectId: true,
+      },
     })
-    const currentStageMap = new Map(currentDeals.map(d => [d.id, d.stage]))
+    const currentDealMap = new Map(currentDeals.map(d => [d.id, d]))
 
-    // Use transaction for batch update
-    await prisma.$transaction(
-      updates.map((update: { id: string; position: number; stage?: string; lostReason?: string }) => {
-        const currentStage = currentStageMap.get(update.id)
-        const stageIsChanging = update.stage && currentStage !== update.stage
+    // Track if a project was created
+    let projectCreated: { id: string; title: string } | undefined
 
-        return prisma.deal.update({
-          where: { id: update.id },
-          data: {
-            position: update.position,
-            ...(update.stage && { stage: update.stage as DealStage }),
-            ...(update.lostReason !== undefined && { lostReason: update.lostReason || null }),
-            ...(stageIsChanging && { stageChangedAt: new Date() }),
-          },
-        })
-      })
-    )
+    // Use interactive transaction for sequential operations (project creation + deal update)
+    await prisma.$transaction(async (tx) => {
+      for (const update of updates as { id: string; position: number; stage?: string; lostReason?: string }[]) {
+        const currentDeal = currentDealMap.get(update.id)
+        if (!currentDeal) continue
 
-    return NextResponse.json({ success: true })
+        const stageIsChanging = update.stage && currentDeal.stage !== update.stage
+        const isMovingToWon = update.stage === 'WON' && currentDeal.stage !== 'WON'
+        const needsProjectCreation = isMovingToWon && !currentDeal.projectId
+
+        if (needsProjectCreation) {
+          // Create a new project linked to this deal
+          const project = await tx.project.create({
+            data: {
+              title: currentDeal.title,
+              description: null,
+              revenue: currentDeal.value,
+              status: ProjectStatus.DRAFT,
+              companyId: currentDeal.companyId,
+              contactId: currentDeal.contactId,
+            },
+          })
+
+          // Update deal with position, stage, and link to new project
+          await tx.deal.update({
+            where: { id: update.id },
+            data: {
+              position: update.position,
+              stage: 'WON',
+              stageChangedAt: new Date(),
+              projectId: project.id,
+              ...(update.lostReason !== undefined && { lostReason: update.lostReason || null }),
+            },
+          })
+
+          projectCreated = { id: project.id, title: project.title }
+        } else {
+          // Standard update (no project creation needed)
+          await tx.deal.update({
+            where: { id: update.id },
+            data: {
+              position: update.position,
+              ...(update.stage && { stage: update.stage as DealStage }),
+              ...(update.lostReason !== undefined && { lostReason: update.lostReason || null }),
+              ...(stageIsChanging && { stageChangedAt: new Date() }),
+            },
+          })
+        }
+      }
+    })
+
+    return NextResponse.json({ success: true, projectCreated })
   } catch (error) {
     console.error('Error reordering deals:', error)
     return NextResponse.json(
