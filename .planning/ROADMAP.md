@@ -48,9 +48,9 @@ Plans:
 **Plans:** 3 plans
 
 Plans:
-- [ ] 17-01-PLAN.md - Touch sensors and scroll containers for all boards
-- [ ] 17-02-PLAN.md - Responsive columns and touch-friendly cards
-- [ ] 17-03-PLAN.md - Mobile quick actions and responsive filter bar
+- [x] 17-01-PLAN.md - Touch sensors and scroll containers for all boards
+- [x] 17-02-PLAN.md - Responsive columns and touch-friendly cards
+- [x] 17-03-PLAN.md - Mobile quick actions and responsive filter bar
 
 **Requirements:**
 - KAN-01: Kanban columns scroll horizontally on mobile
@@ -142,8 +142,8 @@ Plans:
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
 | 16 | Navigation & Layout Foundation | 5 | Complete |
-| 17 | Kanban Responsive | 6 | Planned |
-| 18 | Tables Responsive | 5 | Pending |
+| 17 | Kanban Responsive | 6 | Complete |
+| 18 | Tables Responsive | 5 | Planned |
 | 19 | Forms & Modals Responsive | 6 | Pending |
 | 20 | Dashboard & Detail Pages | 10 | Pending |
 
@@ -151,4 +151,4 @@ Plans:
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-22 (Phase 17 planned)*
+*Last updated: 2026-01-23 (Phase 17 complete)*
