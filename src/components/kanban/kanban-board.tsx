@@ -453,7 +453,13 @@ export function KanbanBoard({ initialData }: KanbanBoardProps) {
   return (
     <div className="space-y-4">
       {/* Filter Bar and View Toggle */}
-      <div className="flex items-center justify-between gap-4">
+      <div className={cn(
+        "flex gap-4",
+        // Mobile: stack vertically
+        "flex-col",
+        // Desktop: horizontal row
+        "md:flex-row md:items-center md:justify-between"
+      )}>
         <KanbanFilterBar
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
@@ -466,11 +472,11 @@ export function KanbanBoard({ initialData }: KanbanBoardProps) {
           onDateFilterChange={setSelectedDateFilter}
         />
 
-        {/* View Toggle */}
+        {/* View Toggle - full width on mobile */}
         <Tabs
           value={viewMode}
           onValueChange={(v) => setViewMode(v as ViewMode)}
-          className="shrink-0"
+          className="shrink-0 w-full md:w-auto"
         >
           <TabsList className="bg-white/70 backdrop-blur-xl border border-gray-200/50">
             <TabsTrigger value="board" className="gap-1.5 data-[state=active]:bg-white">
