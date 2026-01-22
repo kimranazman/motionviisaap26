@@ -2,27 +2,17 @@
 
 ## What This Is
 
-Strategic Annual Action Plan (SAAP) application for Motionvii to track 2026 business initiatives. A visual planning tool with Kanban boards, Gantt timelines, and calendar views for a small team (Khairul, Azlan, Izyani) to manage strategic objectives, key results, and action items. Now with Google OAuth authentication and role-based access control.
+Strategic Annual Action Plan (SAAP) application for Motionvii to track 2026 business initiatives. A visual planning tool with Kanban boards, Gantt timelines, and calendar views for a small team (Khairul, Azlan, Izyani) to manage strategic objectives, key results, and action items. Includes Google OAuth authentication, role-based access control, and complete CRM with sales pipeline, project management, and financial tracking.
 
 ## Core Value
 
-Team can visualize and track initiative progress across multiple views (Kanban, timeline, calendar) and update status through intuitive drag-and-drop — with secure access restricted to authorized @talenta.com.my users.
-
-## Current Milestone: v1.2 CRM & Project Financials
-
-**Goal:** Add sales pipeline and project tracking with cost breakdowns to forecast revenue and calculate net profit.
-
-**Target features:**
-- Sales pipeline for new leads (Lead → Qualified → Proposal → Negotiation → Won/Lost)
-- Potential projects for repeat clients (Potential → Confirmed/Cancelled)
-- Projects entity (can link to KRIs or standalone, three entry points)
-- Project costs with category breakdowns and receipt uploads
-- Basic pipeline and revenue dashboard widgets
+Team can visualize and track initiative progress across multiple views (Kanban, timeline, calendar) and update status through intuitive drag-and-drop — with secure access restricted to authorized @talenta.com.my users. Full CRM enables tracking sales pipeline, converting deals to projects, and monitoring costs and profit.
 
 ## Current State
 
-**Version:** v1.2 CRM & Project Financials (in progress)
-**Previous:** v1.1 Authentication (shipped 2026-01-22)
+**Version:** v1.2 CRM & Project Financials (shipped 2026-01-22)
+**Codebase:** ~17,500 LOC TypeScript
+**Tech stack:** Next.js 14, Prisma, MariaDB, Tailwind/shadcn, NextAuth.js
 
 ## Requirements
 
@@ -31,19 +21,19 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 <!-- Shipped and confirmed working. -->
 
 **v1.0 MVP:**
-- ✓ Dashboard with KPI summary (total initiatives, status breakdown, progress) — existing
-- ✓ Kanban board with drag-and-drop status updates — existing
-- ✓ Gantt timeline view showing initiative durations — existing
-- ✓ Calendar view for date-based visualization — existing
-- ✓ Initiatives list with filtering and search — existing
-- ✓ Create/edit initiative via modal form — existing
-- ✓ Delete initiative with confirmation — existing
-- ✓ Comments on initiatives — existing
-- ✓ Events to attend tracking — existing
-- ✓ Initiative detail sheet (slide-out panel) — existing
-- ✓ Filter by person, status, date range — existing
-- ✓ NAS deployment with Docker — existing
-- ✓ Public access via Cloudflare tunnel (saap.motionvii.com) — existing
+- ✓ Dashboard with KPI summary (total initiatives, status breakdown, progress) — v1.0
+- ✓ Kanban board with drag-and-drop status updates — v1.0
+- ✓ Gantt timeline view showing initiative durations — v1.0
+- ✓ Calendar view for date-based visualization — v1.0
+- ✓ Initiatives list with filtering and search — v1.0
+- ✓ Create/edit initiative via modal form — v1.0
+- ✓ Delete initiative with confirmation — v1.0
+- ✓ Comments on initiatives — v1.0
+- ✓ Events to attend tracking — v1.0
+- ✓ Initiative detail sheet (slide-out panel) — v1.0
+- ✓ Filter by person, status, date range — v1.0
+- ✓ NAS deployment with Docker — v1.0
+- ✓ Public access via Cloudflare tunnel (saap.motionvii.com) — v1.0
 - ✓ Global search with debounced popover results — v1.0
 - ✓ Notification bell with badge count and grouped alerts — v1.0
 - ✓ Initiative detail page (/initiatives/[id]) with inline editing — v1.0
@@ -61,22 +51,36 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - ✓ Role-based UI (hide edit buttons for Viewers) — v1.1
 - ✓ Comments auto-assigned to logged-in user — v1.1
 
+**v1.2 CRM & Project Financials:**
+- ✓ Company management (create, edit, delete, search, filter by industry) — v1.2
+- ✓ Contact management with primary contact designation — v1.2
+- ✓ Sales pipeline Kanban (Lead → Qualified → Proposal → Negotiation → Won/Lost) — v1.2
+- ✓ Deal CRUD with company/contact linking — v1.2
+- ✓ Lost reason capture on deal stage change — v1.2
+- ✓ Pipeline metrics (open pipeline value, deal counts by stage) — v1.2
+- ✓ Potential projects Kanban (Potential → Confirmed/Cancelled) — v1.2
+- ✓ Auto-conversion: Deal Won → Project created — v1.2
+- ✓ Auto-conversion: Potential Confirmed → Project created — v1.2
+- ✓ Direct project creation (no pipeline required) — v1.2
+- ✓ Project KRI (initiative) linking — v1.2
+- ✓ Project status lifecycle (Draft, Active, Completed, Cancelled) — v1.2
+- ✓ Company detail shows related deals, potentials, projects — v1.2
+- ✓ Project cost tracking with categories (Labor, Materials, Vendors, Travel, Software, Other) — v1.2
+- ✓ Project profit calculation (revenue minus costs) — v1.2
+- ✓ Dashboard: Open Pipeline, Weighted Forecast, Win Rate, Total Deals — v1.2
+- ✓ Dashboard: Revenue and Profit summaries — v1.2
+- ✓ Pipeline Stage Chart visualization — v1.2
+
 ### Active
 
 <!-- Current scope. Building toward these. -->
 
-**v1.2 CRM & Project Financials:**
-- [ ] Sales pipeline with stages (Lead → Qualified → Proposal → Negotiation → Won/Lost)
-- [ ] Potential projects for repeat clients (Potential → Confirmed/Cancelled)
-- [ ] Pipeline/potential deals auto-create Projects when closed
-- [ ] Projects can link to KRIs (initiatives) or be standalone
-- [ ] Direct project creation (no pipeline, for internal/Talenta work)
-- [ ] Project revenue tracking (from deal value)
-- [ ] Project cost breakdowns by category (labor, materials, vendors, etc.)
+**v1.3 Enhancements (planned):**
 - [ ] Receipt uploads for cost items
-- [ ] Company and client PIC tracking on deals
-- [ ] Pipeline dashboard widget (deals by stage, forecasted value)
-- [ ] Revenue/profit dashboard widgets
+- [ ] Expected close date on deals
+- [ ] Notes/activity log on deals
+- [ ] Dashboard deal aging alerts
+- [ ] Toast notifications (Sonner) for user feedback
 
 ### Out of Scope
 
@@ -89,6 +93,16 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - Multiple OAuth providers — Google covers all @talenta.com.my users
 - Granular permissions — three-tier RBAC is sufficient for small team
 - Self-service role requests — admin manually promotes, keeps it simple
+- Complex lead scoring — 3-person team; manual review is fast enough
+- AI-powered forecasting — low deal volume; insufficient data for ML
+- Marketing automation — not a marketing tool; use external tools
+- Custom pipeline stages — fixed stages are clearer for small team
+- Multi-pipeline support — one business, one pipeline + potentials
+- Activity tracking/logging — overhead for small team; manual notes sufficient
+- Multi-currency support — MYR sufficient for current operations
+- Time tracking — separate feature domain; use external tools
+- Invoice generation — use external accounting software
+- Email integration — overkill for 3-person team
 
 ## Context
 
@@ -97,7 +111,7 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - Accessible at https://saap.motionvii.com (Cloudflare tunnel)
 - Data seeded from Excel file (MotionVii_SAAP_2026.xlsx)
 - 28 initiatives, 38 events currently in database
-- Authentication complete (v1.1) — Google OAuth with domain restriction
+- v1.2 shipped — CRM with pipeline, projects, costs, dashboard
 - Primary admin: khairul@talenta.com.my
 
 ## Infrastructure
@@ -130,6 +144,13 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | Three-tier RBAC | Admin > Editor > Viewer is enough for small team | ✓ Good |
 | Viewers can comment | Participation allowed, editing restricted | ✓ Good |
 | Fetch role on sign-in only | Edge runtime doesn't support Prisma | ✓ Good |
+| List view for projects (not Kanban) | Status is lifecycle not pipeline | ✓ Good |
+| CompanySelect fetches on mount | ContactSelect receives contacts as prop | ✓ Good |
+| Lost reason via AlertDialog | Modal intercepts drag completion | ✓ Good |
+| Interactive transaction for auto-conversion | Project + source linking atomic | ✓ Good |
+| STAGE_PROBABILITY constants | Lead 10%, Qualified 25%, Proposal 50%, Negotiation 75% | ✓ Good |
+| Win rate from closed deals only | Won / (Won + Lost) reflects true conversion | ✓ Good |
+| Profit card blue/orange coloring | Blue positive, orange negative for visual status | ✓ Good |
 
 ---
-*Last updated: 2026-01-22 after v1.2 milestone started*
+*Last updated: 2026-01-22 after v1.2 milestone shipped*

@@ -4,17 +4,17 @@
 
 See: .planning/PROJECT.md (updated 2026-01-22)
 
-**Core value:** Track sales pipeline, convert deals to projects, monitor costs and profit
-**Current focus:** v1.2 Milestone Complete
+**Core value:** Track initiatives, sales pipeline, convert deals to projects, monitor costs and profit
+**Current focus:** Planning next milestone
 
 ## Current Position
 
-Phase: 15 of 15 (Dashboard Widgets)
-Plan: 2 of 2 in current phase
-Status: Phase complete
-Last activity: 2026-01-22 — Completed 15-02-PLAN.md (Revenue Widgets)
+Phase: Milestone complete
+Plan: N/A
+Status: Ready for next milestone
+Last activity: 2026-01-22 — v1.2 milestone complete
 
-Progress: v1.0 | v1.1 | v1.2 [██████████████████████████████] 100%
+Progress: v1.0 | v1.1 | v1.2 [████████████████████████████████] 100%
 
 ## Milestone History
 
@@ -59,24 +59,6 @@ Progress: v1.0 | v1.1 | v1.2 [████████████████�
 
 Full decision log in PROJECT.md Key Decisions table.
 
-Recent:
-- CompanySelect fetches on mount; ContactSelect receives contacts as prop
-- Lost reason capture uses AlertDialog modal on drag interception
-- Pipeline metrics show open pipeline (excludes Won/Lost) separately
-- Click vs drag distinguished via mouse position delta tracking
-- Reused CompanySelect/ContactSelect from pipeline for potential projects
-- Potential Projects "Open Pipeline" shows POTENTIAL stage only
-- Projects use list view with status tabs (not Kanban) - lifecycle not pipeline
-- InitiativeSelect uses debounced search via existing /api/initiatives/search
-- Interactive transaction for auto-conversion (project creation + source linking atomic)
-- Related items limited to 5 most recent with _count for totals
-- Cost category colors: Purple/Amber/Blue/Green/Cyan/Gray for 6 categories
-- Decimal amounts converted to Number server-side before client response
-- Profit card shows blue (positive) or orange (negative) for visual status
-- Categories fetched on mount for cost form dropdown population
-- STAGE_PROBABILITY: Lead 10%, Qualified 25%, Proposal 50%, Negotiation 75%
-- Win rate calculated from closed deals only (Won + Lost)
-
 ### Pending Todos
 
 None.
@@ -88,5 +70,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-22
-Stopped at: Completed 15-02-PLAN.md (Revenue Widgets)
-Resume: `/gsd:audit-milestone` to verify milestone or `/gsd:complete-milestone` to archive
+Stopped at: v1.2 milestone complete
+Resume: `/gsd:new-milestone` to start next milestone

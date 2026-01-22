@@ -1,5 +1,83 @@
 # Milestone History
 
+## v1.2: CRM & Project Financials
+
+**Shipped:** 2026-01-22
+**Duration:** 1 day
+**Phases:** 7 (Phases 9-15)
+**Plans:** 13
+
+### Summary
+
+Added complete CRM system with sales pipeline, repeat client tracking, project management with three entry points, cost tracking with profit calculation, and dashboard widgets for pipeline and financial visibility.
+
+### Key Accomplishments
+
+- CRM database schema with Company, Contact, Deal, PotentialProject, Project, Cost models
+- Company/Contact management with inline editing and primary contact designation
+- Sales Pipeline Kanban with 6-stage drag-drop and Lost reason capture
+- Potential Projects Kanban for repeat client tracking (3 stages)
+- Projects with 3 entry points (direct, from Deal won, from Potential confirmed) and KRI linking
+- Project cost tracking with category breakdown and automatic profit calculation
+- Dashboard with 6 CRM KPI cards and Pipeline Stage Chart
+
+### Requirements Delivered
+
+| ID | Requirement |
+|----|-------------|
+| COMP-01 | User can create company with name, industry, and notes |
+| COMP-02 | User can view list of all companies |
+| COMP-03 | User can edit company details |
+| COMP-04 | User can delete company (with confirmation) |
+| COMP-05 | Company detail page shows related deals, potentials, and projects |
+| CONT-01 | User can add contact to a company |
+| CONT-02 | User can view contacts for a company |
+| CONT-03 | User can edit contact details |
+| CONT-04 | User can delete contact |
+| PIPE-01 | User can view deals in Kanban board by stage |
+| PIPE-02 | User can create deal with title, description, value, company, contact |
+| PIPE-03 | User can drag deal between stages |
+| PIPE-04 | User can edit deal details |
+| PIPE-05 | User can delete deal (with confirmation) |
+| PIPE-06 | When deal moves to Won, system auto-creates Project |
+| PIPE-07 | When deal moves to Lost, user prompted for reason |
+| PIPE-08 | User can view pipeline metrics |
+| PTNL-01 | User can view potential projects in Kanban board |
+| PTNL-02 | User can create potential project |
+| PTNL-03 | User can drag potential between stages |
+| PTNL-04 | User can edit potential project details |
+| PTNL-05 | User can delete potential project |
+| PTNL-06 | When potential moves to Confirmed, system auto-creates Project |
+| PROJ-01 | User can view list of all projects |
+| PROJ-02 | User can create project directly |
+| PROJ-03 | User can link project to a KRI (initiative) |
+| PROJ-04 | User can edit project details |
+| PROJ-05 | User can change project status |
+| PROJ-06 | User can delete project |
+| PROJ-07 | Project detail shows source (deal, potential, or direct) |
+| PROJ-08 | Project detail shows linked KRI if present |
+| PROJ-09 | Project detail shows cost breakdown and profit |
+| COST-01 | User can add cost item to project |
+| COST-02 | User can select cost category |
+| COST-03 | User can edit cost item |
+| COST-04 | User can delete cost item |
+| COST-05 | Project shows total costs |
+| COST-06 | Project shows profit (revenue minus costs) |
+| DASH-01 | Dashboard shows pipeline by stage |
+| DASH-02 | Dashboard shows pipeline total value |
+| DASH-03 | Dashboard shows revenue summary |
+| DASH-04 | Dashboard shows profit summary |
+| DASH-05 | Dashboard shows weighted pipeline value |
+| DASH-06 | Dashboard shows win rate |
+
+### Artifacts
+
+- Roadmap: `.planning/milestones/v1.2-ROADMAP.md`
+- Requirements: `.planning/milestones/v1.2-REQUIREMENTS.md`
+- Audit: `.planning/milestones/v1.2-MILESTONE-AUDIT.md`
+
+---
+
 ## v1.1: Authentication
 
 **Shipped:** 2026-01-22
