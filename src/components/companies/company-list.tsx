@@ -29,7 +29,14 @@ import {
   DialogFooter,
   DialogClose,
 } from '@/components/ui/dialog'
-import { Plus, Search, Filter, Building2 } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Plus, Search, Filter, Building2, MoreHorizontal, Eye } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { INDUSTRY_PRESETS } from '@/lib/industry-presets'
 import { CompanyDetailModal } from './company-detail-modal'
 
@@ -245,16 +252,19 @@ export function CompanyList({ initialData }: CompanyListProps) {
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
-                <TableHead className="w-32">Industry</TableHead>
-                <TableHead className="w-24 text-center">Contacts</TableHead>
-                <TableHead className="w-32">Added</TableHead>
+                <TableHead className="hidden md:table-cell w-32">Industry</TableHead>
+                <TableHead className="hidden md:table-cell w-24 text-center">Contacts</TableHead>
+                <TableHead className="hidden md:table-cell w-32">Added</TableHead>
+                <TableHead className="w-16">
+                  <span className="sr-only">Actions</span>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredCompanies.map((company) => (
                 <TableRow
                   key={company.id}
-                  className="cursor-pointer hover:bg-gray-50"
+                  className="group cursor-pointer hover:bg-gray-50"
                   onClick={() => handleRowClick(company.id)}
                 >
                   <TableCell>
@@ -271,30 +281,60 @@ export function CompanyList({ initialData }: CompanyListProps) {
                             {company.website}
                           </p>
                         )}
+                        {company.industry && (
+                          <p className="text-sm text-gray-500 md:hidden truncate">
+                            {company.industry}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="hidden md:table-cell">
                     <span className="text-sm text-gray-600">
                       {company.industry || '-'}
                     </span>
                   </TableCell>
-                  <TableCell className="text-center">
+                  <TableCell className="hidden md:table-cell text-center">
                     <span className="text-sm text-gray-600">
                       {company._count.contacts}
                     </span>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="hidden md:table-cell">
                     <span className="text-sm text-gray-500">
                       {formatDate(company.createdAt)}
                     </span>
+                  </TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className={cn(
+                            "h-8 w-8",
+                            "md:opacity-0 md:group-hover:opacity-100",
+                            "focus:opacity-100 transition-opacity"
+                          )}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <MoreHorizontal className="h-4 w-4" />
+                          <span className="sr-only">Actions</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleRowClick(company.id)}>
+                          <Eye className="h-4 w-4 mr-2" />
+                          View Details
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}
 
               {filteredCompanies.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center py-12">
+                  <TableCell colSpan={5} className="text-center py-12">
                     <div className="flex flex-col items-center gap-3">
                       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
                         <Building2 className="h-6 w-6 text-gray-400" />
