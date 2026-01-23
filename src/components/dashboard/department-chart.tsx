@@ -45,14 +45,17 @@ export function DepartmentChart({ data }: DepartmentChartProps) {
       <CardContent>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} layout="vertical" margin={{ left: 20 }}>
+            <BarChart data={chartData} layout="vertical" margin={{ left: 10, right: 10 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-              <XAxis type="number" tick={{ fontSize: 12 }} />
+              <XAxis type="number" tick={{ fontSize: 10 }} />
               <YAxis
                 dataKey="name"
                 type="category"
-                tick={{ fontSize: 12 }}
-                width={80}
+                tick={{ fontSize: 10 }}
+                width={70}
+                tickFormatter={(value: string) =>
+                  value.length > 12 ? value.slice(0, 10) + '...' : value
+                }
               />
               <Tooltip
                 contentStyle={{
