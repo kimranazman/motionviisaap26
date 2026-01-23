@@ -535,6 +535,9 @@ export function ProjectDetailSheet({
                       mode="single"
                       selected={startDate || undefined}
                       onSelect={(d) => setStartDate(d || null)}
+                      captionLayout="dropdown"
+                      startMonth={new Date(2020, 0)}
+                      endMonth={new Date(2035, 11)}
                     />
                   </PopoverContent>
                 </Popover>
@@ -566,6 +569,9 @@ export function ProjectDetailSheet({
                       mode="single"
                       selected={endDate || undefined}
                       onSelect={(d) => setEndDate(d || null)}
+                      captionLayout="dropdown"
+                      startMonth={new Date(2020, 0)}
+                      endMonth={new Date(2035, 11)}
                     />
                   </PopoverContent>
                 </Popover>
