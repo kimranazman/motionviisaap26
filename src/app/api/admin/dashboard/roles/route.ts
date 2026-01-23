@@ -11,7 +11,7 @@ import type { WidgetRoleRestrictions } from '@/types/dashboard'
  * Admin only
  */
 export async function GET() {
-  const { session, error } = await requireAdmin()
+  const { error } = await requireAdmin()
   if (error) return error
 
   try {
@@ -43,7 +43,7 @@ export async function GET() {
  * Admin only
  */
 export async function PUT(request: NextRequest) {
-  const { session, error } = await requireAdmin()
+  const { error } = await requireAdmin()
   if (error) return error
 
   try {
