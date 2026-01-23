@@ -52,7 +52,7 @@ export function WidgetWrapper({
           </Button>
         )}
       </CardHeader>
-      <CardContent className="flex-1 overflow-auto">{children}</CardContent>
+      <CardContent className="flex-1 overflow-hidden">{children}</CardContent>
     </Card>
   );
 }

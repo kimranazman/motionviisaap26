@@ -1,6 +1,5 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   BarChart,
   Bar,
@@ -36,45 +35,36 @@ export function DepartmentChart({ data }: DepartmentChartProps) {
   }))
 
   return (
-    <Card className="border border-gray-200">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base font-medium text-gray-900">
-          Initiatives by Department
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} layout="vertical" margin={{ left: 10, right: 10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-              <XAxis type="number" tick={{ fontSize: 10 }} />
-              <YAxis
-                dataKey="name"
-                type="category"
-                tick={{ fontSize: 10 }}
-                width={70}
-                tickFormatter={(value: string) =>
-                  value.length > 12 ? value.slice(0, 10) + '...' : value
-                }
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'white',
-                  border: '1px solid #E5E7EB',
-                  borderRadius: '8px',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                }}
-                formatter={(value) => [`${value} initiatives`, 'Count']}
-              />
-              <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-                {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="h-full w-full">
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={chartData} layout="vertical" margin={{ left: 0, right: 10, top: 5, bottom: 5 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+          <XAxis type="number" tick={{ fontSize: 10 }} />
+          <YAxis
+            dataKey="name"
+            type="category"
+            tick={{ fontSize: 10 }}
+            width={70}
+            tickFormatter={(value: string) =>
+              value.length > 10 ? value.slice(0, 8) + '...' : value
+            }
+          />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: 'white',
+              border: '1px solid #E5E7EB',
+              borderRadius: '8px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+            }}
+            formatter={(value) => [`${value} initiatives`, 'Count']}
+          />
+          <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+            {chartData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.color} />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
   )
 }

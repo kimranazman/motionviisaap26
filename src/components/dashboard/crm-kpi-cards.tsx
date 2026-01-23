@@ -6,7 +6,6 @@ import {
   Target,
   TrendingUp,
   CheckCircle2,
-  Briefcase,
   DollarSign,
 } from 'lucide-react'
 
@@ -22,7 +21,7 @@ interface CRMKPICardsProps {
 export function CRMKPICards({ openPipeline, weightedForecast, winRate, dealCount, totalRevenue, profit }: CRMKPICardsProps) {
   const kpis = [
     {
-      title: 'Open Pipeline',
+      title: 'Pipeline',
       value: formatCurrency(openPipeline),
       subtitle: `${dealCount} deals`,
       icon: Target,
@@ -30,9 +29,9 @@ export function CRMKPICards({ openPipeline, weightedForecast, winRate, dealCount
       bgColor: 'bg-blue-50',
     },
     {
-      title: 'Weighted Forecast',
+      title: 'Forecast',
       value: formatCurrency(weightedForecast),
-      subtitle: 'Probability-adjusted',
+      subtitle: 'Weighted',
       icon: TrendingUp,
       color: 'text-purple-600',
       bgColor: 'bg-purple-50',
@@ -46,17 +45,9 @@ export function CRMKPICards({ openPipeline, weightedForecast, winRate, dealCount
       bgColor: 'bg-green-50',
     },
     {
-      title: 'Total Deals',
-      value: dealCount,
-      subtitle: 'In pipeline',
-      icon: Briefcase,
-      color: 'text-gray-600',
-      bgColor: 'bg-gray-50',
-    },
-    {
       title: 'Revenue',
       value: formatCurrency(totalRevenue),
-      subtitle: 'Completed projects',
+      subtitle: 'Completed',
       icon: DollarSign,
       color: 'text-green-600',
       bgColor: 'bg-green-50',
@@ -64,7 +55,7 @@ export function CRMKPICards({ openPipeline, weightedForecast, winRate, dealCount
     {
       title: 'Profit',
       value: formatCurrency(profit),
-      subtitle: 'Revenue minus costs',
+      subtitle: 'Net',
       icon: TrendingUp,
       color: profit >= 0 ? 'text-blue-600' : 'text-orange-600',
       bgColor: profit >= 0 ? 'bg-blue-50' : 'bg-orange-50',
@@ -72,20 +63,19 @@ export function CRMKPICards({ openPipeline, weightedForecast, winRate, dealCount
   ]
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="h-full grid grid-cols-5 gap-3">
       {kpis.map((kpi) => (
         <Card key={kpi.title} className="border border-gray-200">
-          <CardContent className="p-4 md:p-6">
-            <div className="flex items-center gap-3 md:gap-4">
-              <div className={cn('rounded-lg p-2.5 md:p-3', kpi.bgColor)}>
-                <kpi.icon className={cn('h-4 w-4 md:h-5 md:w-5', kpi.color)} />
+          <CardContent className="p-3 h-full flex items-center">
+            <div className="flex items-center gap-2">
+              <div className={cn('rounded-md p-1.5 shrink-0', kpi.bgColor)}>
+                <kpi.icon className={cn('h-4 w-4', kpi.color)} />
               </div>
               <div className="min-w-0">
-                <p className="text-xs md:text-sm text-gray-500 truncate">{kpi.title}</p>
-                <p className="text-xl md:text-2xl font-semibold text-gray-900">
+                <p className="text-2xl font-semibold text-gray-900 leading-none">
                   {kpi.value}
                 </p>
-                <p className="text-xs text-gray-400">{kpi.subtitle}</p>
+                <p className="text-xs text-gray-500 truncate">{kpi.subtitle}</p>
               </div>
             </div>
           </CardContent>

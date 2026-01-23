@@ -1,6 +1,5 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Progress } from '@/components/ui/progress'
 import { formatTeamMember } from '@/lib/utils'
@@ -27,41 +26,32 @@ const TEAM_INITIALS: Record<string, string> = {
 
 export function TeamWorkload({ data, total }: TeamWorkloadProps) {
   return (
-    <Card className="border border-gray-200">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base font-medium text-gray-900">
-          Team Workload
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {data.map((item) => {
-            const person = item.person || 'UNASSIGNED'
-            const percentage = total > 0 ? Math.round((item.count / total) * 100) : 0
+    <div className="h-full flex flex-col justify-center space-y-3">
+      {data.map((item) => {
+        const person = item.person || 'UNASSIGNED'
+        const percentage = total > 0 ? Math.round((item.count / total) * 100) : 0
 
-            return (
-              <div key={person} className="flex items-center gap-4">
-                <Avatar className="h-10 w-10">
-                  <AvatarFallback className={TEAM_COLORS[person] || 'bg-gray-400'}>
-                    {TEAM_INITIALS[person] || '??'}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                  <div className="flex justify-between mb-1">
-                    <span className="text-sm font-medium text-gray-900">
-                      {formatTeamMember(item.person)}
-                    </span>
-                    <span className="text-sm text-gray-500">
-                      {item.count} initiatives
-                    </span>
-                  </div>
-                  <Progress value={percentage} className="h-2" />
-                </div>
+        return (
+          <div key={person} className="flex items-center gap-3">
+            <Avatar className="h-8 w-8">
+              <AvatarFallback className={TEAM_COLORS[person] || 'bg-gray-400'}>
+                {TEAM_INITIALS[person] || '??'}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <div className="flex justify-between mb-1">
+                <span className="text-sm font-medium text-gray-900 truncate">
+                  {formatTeamMember(item.person)}
+                </span>
+                <span className="text-xs text-gray-500 ml-2">
+                  {item.count}
+                </span>
               </div>
-            )
-          })}
-        </div>
-      </CardContent>
-    </Card>
+              <Progress value={percentage} className="h-1.5" />
+            </div>
+          </div>
+        )
+      })}
+    </div>
   )
 }
