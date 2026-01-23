@@ -53,11 +53,12 @@ Plans:
   3. User can view document list with category badges and filter by category
   4. User can download, preview (images inline, PDF in new tab), and delete documents
   5. User can set project start and end dates
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 22-01: TBD
-- [ ] 22-02: TBD
+- [ ] 22-01-PLAN.md — API routes & schema (document CRUD endpoints, project date fields, utils)
+- [ ] 22-02-PLAN.md — Upload & display components (react-dropzone, upload zone, document card/list, preview)
+- [ ] 22-03-PLAN.md — Integration (Documents section in ProjectDetailSheet, date pickers)
 
 ### Phase 23: Widget Registry & Roles
 **Goal**: Widget system foundation with role-based access control for dashboard
@@ -95,7 +96,7 @@ Plans:
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 21. Infrastructure & Schema | v1.3 | 2/2 | Complete | 2026-01-23 |
-| 22. Document Management | v1.3 | 0/TBD | Not started | - |
+| 22. Document Management | v1.3 | 0/3 | Not started | - |
 | 23. Widget Registry & Roles | v1.3 | 0/TBD | Not started | - |
 | 24. Dashboard Customization UI | v1.3 | 0/TBD | Not started | - |
 
