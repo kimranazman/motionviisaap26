@@ -13,6 +13,14 @@ export interface WidgetConfig {
   h: number;        // Height in grid units
 }
 
+/**
+ * Extended widget config with instance ID for react-grid-layout
+ * Allows duplicate widgets (same id, different i) for comparison views
+ */
+export interface LayoutWidgetConfig extends WidgetConfig {
+  i: string;        // Instance ID (uuid) for react-grid-layout
+}
+
 export interface DashboardLayout {
   widgets: WidgetConfig[];
 }
