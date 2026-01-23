@@ -10,29 +10,29 @@ Requirements for Document Management & Dashboard Customization milestone. Each m
 ### Document Management
 
 **Upload & Storage:**
-- [ ] **DOC-01**: User can upload documents to a project via drag-and-drop
-- [ ] **DOC-02**: User can upload documents via file picker (click fallback)
-- [ ] **DOC-03**: System validates file type (PDF, PNG, JPG only)
-- [ ] **DOC-04**: System validates file size (max 10MB)
-- [ ] **DOC-05**: User sees upload progress indicator during upload
-- [ ] **DOC-06**: Documents stored in folder by project (`/uploads/projects/{id}/`)
-- [ ] **DOC-07**: User can upload multiple files at once (bulk upload)
+- [x] **DOC-01**: User can upload documents to a project via drag-and-drop
+- [x] **DOC-02**: User can upload documents via file picker (click fallback)
+- [x] **DOC-03**: System validates file type (PDF, PNG, JPG only)
+- [x] **DOC-04**: System validates file size (max 10MB)
+- [x] **DOC-05**: User sees upload progress indicator during upload
+- [x] **DOC-06**: Documents stored in folder by project (`/uploads/projects/{id}/`)
+- [x] **DOC-07**: User can upload multiple files at once (bulk upload)
 
 **Document List & Actions:**
-- [ ] **DOC-08**: User can view list of documents attached to a project
-- [ ] **DOC-09**: User can download a document
-- [ ] **DOC-10**: User can delete a document (with confirmation)
-- [ ] **DOC-11**: User can preview images inline (thumbnail + modal)
-- [ ] **DOC-12**: User can preview PDF (opens in new tab)
+- [x] **DOC-08**: User can view list of documents attached to a project
+- [x] **DOC-09**: User can download a document
+- [x] **DOC-10**: User can delete a document (with confirmation)
+- [x] **DOC-11**: User can preview images inline (thumbnail + modal)
+- [x] **DOC-12**: User can preview PDF (opens in new tab)
 
 **Document Categorization:**
-- [ ] **DOC-13**: User can categorize document as RECEIPT, INVOICE, or OTHER
-- [ ] **DOC-14**: Document list shows category badge
-- [ ] **DOC-15**: User can filter documents by category
+- [x] **DOC-13**: User can categorize document as RECEIPT, INVOICE, or OTHER
+- [x] **DOC-14**: Document list shows category badge
+- [x] **DOC-15**: User can filter documents by category
 
 **Project Dates:**
-- [ ] **DOC-16**: Project has start date field (auto-filled from deal won date or manual)
-- [ ] **DOC-17**: Project has end date field (manual entry)
+- [x] **DOC-16**: Project has start date field (auto-filled from deal won date or manual)
+- [x] **DOC-17**: Project has end date field (manual entry)
 
 ### Dashboard Customization
 
@@ -104,23 +104,23 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INFRA-02 | Phase 21 | Complete |
 | INFRA-03 | Phase 21 | Complete |
 | INFRA-04 | Phase 21 | Complete |
-| DOC-01 | Phase 22 | Pending |
-| DOC-02 | Phase 22 | Pending |
-| DOC-03 | Phase 22 | Pending |
-| DOC-04 | Phase 22 | Pending |
-| DOC-05 | Phase 22 | Pending |
-| DOC-06 | Phase 22 | Pending |
-| DOC-07 | Phase 22 | Pending |
-| DOC-08 | Phase 22 | Pending |
-| DOC-09 | Phase 22 | Pending |
-| DOC-10 | Phase 22 | Pending |
-| DOC-11 | Phase 22 | Pending |
-| DOC-12 | Phase 22 | Pending |
-| DOC-13 | Phase 22 | Pending |
-| DOC-14 | Phase 22 | Pending |
-| DOC-15 | Phase 22 | Pending |
-| DOC-16 | Phase 22 | Pending |
-| DOC-17 | Phase 22 | Pending |
+| DOC-01 | Phase 22 | Complete |
+| DOC-02 | Phase 22 | Complete |
+| DOC-03 | Phase 22 | Complete |
+| DOC-04 | Phase 22 | Complete |
+| DOC-05 | Phase 22 | Complete |
+| DOC-06 | Phase 22 | Complete |
+| DOC-07 | Phase 22 | Complete |
+| DOC-08 | Phase 22 | Complete |
+| DOC-09 | Phase 22 | Complete |
+| DOC-10 | Phase 22 | Complete |
+| DOC-11 | Phase 22 | Complete |
+| DOC-12 | Phase 22 | Complete |
+| DOC-13 | Phase 22 | Complete |
+| DOC-14 | Phase 22 | Complete |
+| DOC-15 | Phase 22 | Complete |
+| DOC-16 | Phase 22 | Complete |
+| DOC-17 | Phase 22 | Complete |
 | DASH-01 | Phase 24 | Pending |
 | DASH-02 | Phase 24 | Pending |
 | DASH-03 | Phase 24 | Pending |
@@ -144,4 +144,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-23*
-*Last updated: 2026-01-23 after Phase 21 completion*
+*Last updated: 2026-01-23 after Phase 22 completion*

@@ -22,7 +22,7 @@ See `.planning/milestones/` for archived phase details.
 **Milestone Goal:** Enable project document management (receipts, invoices) with folder-based storage, plus customizable per-user dashboards with role-based widget restrictions.
 
 - [x] **Phase 21: Infrastructure & Schema** - Foundation config, Prisma models, Docker volume
-- [ ] **Phase 22: Document Management** - Upload, list, preview, categorization, project dates
+- [x] **Phase 22: Document Management** - Upload, list, preview, categorization, project dates
 - [ ] **Phase 23: Widget Registry & Roles** - Widget registry, role restrictions, admin defaults
 - [ ] **Phase 24: Dashboard Customization UI** - Widget bank, drag-drop, resize, persistence
 
@@ -56,9 +56,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 22-01-PLAN.md — API routes & schema (document CRUD endpoints, project date fields, utils)
-- [ ] 22-02-PLAN.md — Upload & display components (react-dropzone, upload zone, document card/list, preview)
-- [ ] 22-03-PLAN.md — Integration (Documents section in ProjectDetailSheet, date pickers)
+- [x] 22-01-PLAN.md — API routes & schema (document CRUD endpoints, project date fields, utils)
+- [x] 22-02-PLAN.md — Upload & display components (react-dropzone, upload zone, document card/list, preview)
+- [x] 22-03-PLAN.md — Integration (Documents section in ProjectDetailSheet, date pickers)
 
 ### Phase 23: Widget Registry & Roles
 **Goal**: Widget system foundation with role-based access control for dashboard
@@ -96,7 +96,7 @@ Plans:
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 21. Infrastructure & Schema | v1.3 | 2/2 | Complete | 2026-01-23 |
-| 22. Document Management | v1.3 | 0/3 | Not started | - |
+| 22. Document Management | v1.3 | 3/3 | Complete | 2026-01-23 |
 | 23. Widget Registry & Roles | v1.3 | 0/TBD | Not started | - |
 | 24. Dashboard Customization UI | v1.3 | 0/TBD | Not started | - |
 

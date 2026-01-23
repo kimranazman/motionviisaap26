@@ -80,4 +80,4 @@ None.
 
 Last session: 2026-01-23T09:27:15Z
 Stopped at: Completed 22-03-PLAN.md (Phase 22 complete)
-Resume: Next phase planning needed for Phase 23
+Resume: `/gsd:plan-phase 23` to begin Widget Registry & Roles phase
