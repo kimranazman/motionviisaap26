@@ -107,10 +107,35 @@ Plans:
   8. Manifest file generated per project for AI context
 **Plans**: TBD
 
+**Implementation Notes:**
+```
+Prompt & Context Structure for Claude Code Analysis:
+
+1. PROMPT TEMPLATES (store in .claude/prompts/)
+   ├── invoice-analysis.md    — How to extract invoice line items
+   ├── receipt-analysis.md    — How to extract receipt costs
+   └── categorization.md      — Rules for category matching/creation
+
+2. PROJECT MANIFEST (auto-generated in uploads/projects/{id}/)
+   └── manifest.json
+       ├── project context (title, company, dates, existing costs)
+       ├── document list (files + metadata)
+       └── existing categories (for AI to match against)
+
+3. OUTPUT SCHEMA (structured JSON for extracted data)
+   └── AI returns standardized format that app can import
+
+4. WORKFLOW
+   User uploads invoice → App generates manifest →
+   User runs Claude Code with prompt template →
+   Claude reads manifest + PDF → Returns structured JSON →
+   App imports and shows for user confirmation
+```
+
 Plans:
-- [ ] 25-01: TBD
-- [ ] 25-02: TBD
-- [ ] 25-03: TBD
+- [ ] 25-01: TBD (Prompt templates + manifest generation)
+- [ ] 25-02: TBD (Invoice analysis + revenue calculation)
+- [ ] 25-03: TBD (Receipt analysis + cost creation)
 
 ## Progress
 
