@@ -61,10 +61,10 @@ Requirements for Document Management & Dashboard Customization milestone. Each m
 
 ### Infrastructure
 
-- [ ] **INFRA-01**: Next.js body size limit configured for 10MB uploads
-- [ ] **INFRA-02**: Docker volume mount for `/uploads/` directory
-- [ ] **INFRA-03**: File serving API route with authentication
-- [ ] **INFRA-04**: Document, UserPreferences, AdminDefaults Prisma models
+- [x] **INFRA-01**: Next.js body size limit configured for 10MB uploads
+- [x] **INFRA-02**: Docker volume mount for `/uploads/` directory
+- [x] **INFRA-03**: File serving API route with authentication
+- [x] **INFRA-04**: Document, UserPreferences, AdminDefaults Prisma models
 
 ## v2 Requirements
 
@@ -100,10 +100,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INFRA-01 | Phase 21 | Pending |
-| INFRA-02 | Phase 21 | Pending |
-| INFRA-03 | Phase 21 | Pending |
-| INFRA-04 | Phase 21 | Pending |
+| INFRA-01 | Phase 21 | Complete |
+| INFRA-02 | Phase 21 | Complete |
+| INFRA-03 | Phase 21 | Complete |
+| INFRA-04 | Phase 21 | Complete |
 | DOC-01 | Phase 22 | Pending |
 | DOC-02 | Phase 22 | Pending |
 | DOC-03 | Phase 22 | Pending |
@@ -144,4 +144,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-23*
-*Last updated: 2026-01-23 after v1.3 roadmap creation*
+*Last updated: 2026-01-23 after Phase 21 completion*
