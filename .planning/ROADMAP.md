@@ -24,7 +24,7 @@ See `.planning/milestones/` for archived phase details.
 - [x] **Phase 21: Infrastructure & Schema** - Foundation config, Prisma models, Docker volume
 - [x] **Phase 22: Document Management** - Upload, list, preview, categorization, project dates
 - [x] **Phase 23: Widget Registry & Roles** - Widget registry, role restrictions, admin defaults
-- [ ] **Phase 24: Dashboard Customization UI** - Widget bank, drag-drop, resize, persistence
+- [x] **Phase 24: Dashboard Customization UI** - Widget bank, drag-drop, resize, persistence
 - [ ] **Phase 25: AI Document Intelligence** - Invoice/receipt parsing, revenue/cost extraction, auto-categorization
 
 ## Phase Details
@@ -91,11 +91,11 @@ Plans:
 **Plans**: 5 plans
 
 Plans:
-- [ ] 24-01-PLAN.md — Dependencies and infrastructure (react-grid-layout, sonner, user preferences API, layout utils)
-- [ ] 24-02-PLAN.md — Date range filter (date utilities, DateRangeFilter component with presets)
-- [ ] 24-03-PLAN.md — Dashboard grid (react-grid-layout grid, widget wrapper, layout hook with undo)
-- [ ] 24-04-PLAN.md — Widget bank (sidebar Sheet with categorized widgets, add functionality)
-- [ ] 24-05-PLAN.md — Dashboard integration (header controls, client component, page update, persistence)
+- [x] 24-01-PLAN.md — Dependencies and infrastructure (react-grid-layout, sonner, user preferences API, layout utils)
+- [x] 24-02-PLAN.md — Date range filter (date utilities, DateRangeFilter component with presets)
+- [x] 24-03-PLAN.md — Dashboard grid (react-grid-layout grid, widget wrapper, layout hook with undo)
+- [x] 24-04-PLAN.md — Widget bank (sidebar Sheet with categorized widgets, add functionality)
+- [x] 24-05-PLAN.md — Dashboard integration (header controls, client component, page update, persistence)
 
 ### Phase 25: AI Document Intelligence
 **Goal**: AI automatically extracts financial data from invoices and receipts, calculates revenue/costs, and categorizes line items
@@ -152,7 +152,7 @@ Plans:
 | 21. Infrastructure & Schema | v1.3 | 2/2 | Complete | 2026-01-23 |
 | 22. Document Management | v1.3 | 3/3 | Complete | 2026-01-23 |
 | 23. Widget Registry & Roles | v1.3 | 3/3 | Complete | 2026-01-23 |
-| 24. Dashboard Customization UI | v1.3 | 0/5 | Planned | - |
+| 24. Dashboard Customization UI | v1.3 | 5/5 | Complete | 2026-01-23 |
 | 25. AI Document Intelligence | v1.3 | 0/TBD | Not started | - |
 
 ---
