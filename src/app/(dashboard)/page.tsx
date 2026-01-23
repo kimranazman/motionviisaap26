@@ -1,5 +1,7 @@
 export const dynamic = 'force-dynamic'
 
+import { redirect } from 'next/navigation'
+import { auth } from '@/auth'
 import { Header } from '@/components/layout/header'
 import { KPICards } from '@/components/dashboard/kpi-cards'
 import { StatusChart } from '@/components/dashboard/status-chart'
@@ -10,6 +12,9 @@ import { CRMKPICards } from '@/components/dashboard/crm-kpi-cards'
 import { PipelineStageChart } from '@/components/dashboard/pipeline-stage-chart'
 import prisma from '@/lib/prisma'
 import { STAGES, STAGE_PROBABILITY, STAGE_CHART_COLORS } from '@/lib/pipeline-utils'
+import { filterWidgetsByRole } from '@/lib/widgets/permissions'
+import { getAdminDefaults } from '@/lib/widgets/defaults'
+import { WIDGET_IDS } from '@/lib/widgets/registry'
 
 async function getDashboardData() {
   // Get total initiatives
@@ -233,8 +238,29 @@ async function getCRMDashboardData() {
 }
 
 export default async function DashboardPage() {
+  // Get session for role-based filtering
+  const session = await auth()
+  if (!session) {
+    redirect('/login')
+  }
+
+  const userRole = session.user.role
+
+  // Get admin defaults for widget role restrictions
+  const adminDefaults = await getAdminDefaults()
+
+  // Filter visible widgets based on user role
+  const visibleWidgetIds = filterWidgetsByRole(WIDGET_IDS, userRole, adminDefaults.widgetRoles)
+
+  // Always fetch KRI data (all users can see these)
   const data = await getDashboardData()
-  const crmData = await getCRMDashboardData()
+
+  // Only fetch CRM data if at least one CRM widget is visible
+  const showCrmKpiCards = visibleWidgetIds.includes('crm-kpi-cards')
+  const showPipelineChart = visibleWidgetIds.includes('pipeline-stage-chart')
+  const shouldFetchCrmData = showCrmKpiCards || showPipelineChart
+
+  const crmData = shouldFetchCrmData ? await getCRMDashboardData() : null
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -245,35 +271,51 @@ export default async function DashboardPage() {
 
       <div className="p-4 md:p-6 space-y-6">
         {/* KPI Cards */}
-        <KPICards stats={data.stats} />
+        {visibleWidgetIds.includes('kpi-cards') && (
+          <KPICards stats={data.stats} />
+        )}
 
         {/* Charts Row */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <StatusChart data={data.byStatus} />
-          <DepartmentChart data={data.byDepartment} />
+          {visibleWidgetIds.includes('status-chart') && (
+            <StatusChart data={data.byStatus} />
+          )}
+          {visibleWidgetIds.includes('department-chart') && (
+            <DepartmentChart data={data.byDepartment} />
+          )}
         </div>
 
         {/* Bottom Row */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <TeamWorkload data={data.byPerson} total={data.stats.totalInitiatives} />
-          <RecentInitiatives initiatives={data.recentInitiatives} />
+          {visibleWidgetIds.includes('team-workload') && (
+            <TeamWorkload data={data.byPerson} total={data.stats.totalInitiatives} />
+          )}
+          {visibleWidgetIds.includes('recent-initiatives') && (
+            <RecentInitiatives initiatives={data.recentInitiatives} />
+          )}
         </div>
 
-        {/* Sales & Revenue Section */}
-        <div className="border-t border-gray-200 pt-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Sales & Revenue</h2>
-          <CRMKPICards
-            openPipeline={crmData.openPipeline}
-            weightedForecast={crmData.weightedForecast}
-            winRate={crmData.winRate}
-            dealCount={crmData.dealCount}
-            totalRevenue={crmData.totalRevenue}
-            profit={crmData.profit}
-          />
-          <div className="mt-6">
-            <PipelineStageChart data={crmData.stageData} />
+        {/* Sales & Revenue Section - only show if at least one CRM widget is visible */}
+        {crmData && (showCrmKpiCards || showPipelineChart) && (
+          <div className="border-t border-gray-200 pt-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Sales & Revenue</h2>
+            {showCrmKpiCards && (
+              <CRMKPICards
+                openPipeline={crmData.openPipeline}
+                weightedForecast={crmData.weightedForecast}
+                winRate={crmData.winRate}
+                dealCount={crmData.dealCount}
+                totalRevenue={crmData.totalRevenue}
+                profit={crmData.profit}
+              />
+            )}
+            {showPipelineChart && (
+              <div className="mt-6">
+                <PipelineStageChart data={crmData.stageData} />
+              </div>
+            )}
           </div>
-        </div>
+        )}
       </div>
     </div>
   )
