@@ -33,7 +33,7 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
-import { Loader2, Trash2, ArrowRight, Plus, Target, DollarSign, CalendarIcon } from 'lucide-react'
+import { Loader2, Trash2, ArrowRight, Plus, Target, DollarSign, CalendarIcon, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { CompanySelect } from '@/components/pipeline/company-select'
 import { ContactSelect } from '@/components/pipeline/contact-select'
 import { InitiativeSelect } from './initiative-select'
@@ -111,6 +111,130 @@ interface ProjectDetailSheetProps {
   onOpenChange: (open: boolean) => void
   onUpdate: (project: Project) => void
   onDelete: (projectId: string) => void
+}
+
+// Financials Summary sub-component
+interface FinancialsSummaryProps {
+  revenue: number | null
+  totalCosts: number
+  profit: number
+  costsCount: number
+}
+
+function FinancialsSummary({ revenue, totalCosts, profit, costsCount }: FinancialsSummaryProps) {
+  const revenueValue = revenue ?? 0
+  const hasNoData = revenueValue === 0 && totalCosts === 0
+
+  // Calculate margin percentage
+  const margin = revenueValue > 0
+    ? Math.round(((revenueValue - totalCosts) / revenueValue) * 100)
+    : 0
+
+  // Determine profit/loss status
+  const isProfitable = profit > 0
+  const isBreakEven = profit === 0
+  const isLoss = profit < 0
+
+  // Get icon based on profit status
+  const ProfitIcon = isProfitable ? TrendingUp : isLoss ? TrendingDown : Minus
+
+  if (hasNoData) {
+    return (
+      <div className="space-y-3">
+        <Label className="text-muted-foreground">Financials Summary</Label>
+        <Card className="p-6 text-center border-dashed">
+          <DollarSign className="mx-auto h-8 w-8 text-gray-400 mb-2" />
+          <p className="text-sm text-gray-500">No financial data yet</p>
+          <p className="text-xs text-gray-400 mt-1">
+            Import invoices and receipts to see summary
+          </p>
+        </Card>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-3">
+      <Label className="text-muted-foreground">Financials Summary</Label>
+
+      {/* Revenue and Costs cards */}
+      <div className="grid grid-cols-2 gap-3">
+        <Card className="p-3 bg-green-50 border-green-200">
+          <div className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4 text-green-600" />
+            <div className="text-xs text-green-600 font-medium">Revenue</div>
+          </div>
+          <div className="text-lg font-semibold text-green-700 mt-1">
+            {formatCurrency(revenueValue)}
+          </div>
+          <div className="text-xs text-green-600/70 mt-0.5">
+            {revenueValue > 0 ? 'From invoices' : 'No invoices yet'}
+          </div>
+        </Card>
+
+        <Card className="p-3 bg-red-50 border-red-200">
+          <div className="flex items-center gap-2">
+            <TrendingDown className="h-4 w-4 text-red-600" />
+            <div className="text-xs text-red-600 font-medium">Total Costs</div>
+          </div>
+          <div className="text-lg font-semibold text-red-700 mt-1">
+            {formatCurrency(totalCosts)}
+          </div>
+          <div className="text-xs text-red-600/70 mt-0.5">
+            From {costsCount} expense{costsCount !== 1 ? 's' : ''}
+          </div>
+        </Card>
+      </div>
+
+      {/* Profit/Loss card - full width */}
+      <Card className={cn(
+        'p-3',
+        isProfitable && 'bg-green-100 border-green-200',
+        isLoss && 'bg-red-100 border-red-200',
+        isBreakEven && 'bg-gray-100 border-gray-200'
+      )}>
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              <ProfitIcon className={cn(
+                'h-4 w-4',
+                isProfitable && 'text-green-700',
+                isLoss && 'text-red-700',
+                isBreakEven && 'text-gray-600'
+              )} />
+              <div className={cn(
+                'text-xs font-medium',
+                isProfitable && 'text-green-700',
+                isLoss && 'text-red-700',
+                isBreakEven && 'text-gray-600'
+              )}>
+                {isProfitable ? 'Profit' : isLoss ? 'Loss' : 'Break-even'}
+              </div>
+            </div>
+            <div className={cn(
+              'text-xl font-bold mt-1',
+              isProfitable && 'text-green-800',
+              isLoss && 'text-red-800',
+              isBreakEven && 'text-gray-700'
+            )}>
+              {formatCurrency(Math.abs(profit))}
+            </div>
+          </div>
+          {revenueValue > 0 && (
+            <div className={cn(
+              'text-right',
+              isProfitable && 'text-green-700',
+              isLoss && 'text-red-700',
+              isBreakEven && 'text-gray-600'
+            )}>
+              <div className="text-xs font-medium">Margin</div>
+              <div className="text-lg font-semibold">{margin}%</div>
+            </div>
+          )}
+        </div>
+      </Card>
+    </div>
+  )
 }
 
 export function ProjectDetailSheet({
@@ -687,41 +811,13 @@ export function ProjectDetailSheet({
 
             <Separator />
 
-            {/* Financial Summary */}
-            <div className="space-y-3">
-              <Label className="text-muted-foreground">Financial Summary</Label>
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-                <Card className="p-3 bg-green-50 border-green-200">
-                  <div className="text-xs text-green-600 font-medium">Revenue</div>
-                  <div className="text-lg font-semibold text-green-700">
-                    {formatCurrency(project.revenue)}
-                  </div>
-                </Card>
-                <Card className="p-3 bg-red-50 border-red-200">
-                  <div className="text-xs text-red-600 font-medium">Total Costs</div>
-                  <div className="text-lg font-semibold text-red-700">
-                    {formatCurrency(totalCosts)}
-                  </div>
-                </Card>
-                <Card className={cn(
-                  'p-3',
-                  profit >= 0 ? 'bg-blue-50 border-blue-200' : 'bg-orange-50 border-orange-200'
-                )}>
-                  <div className={cn(
-                    'text-xs font-medium',
-                    profit >= 0 ? 'text-blue-600' : 'text-orange-600'
-                  )}>
-                    Profit
-                  </div>
-                  <div className={cn(
-                    'text-lg font-semibold',
-                    profit >= 0 ? 'text-blue-700' : 'text-orange-700'
-                  )}>
-                    {formatCurrency(profit)}
-                  </div>
-                </Card>
-              </div>
-            </div>
+            {/* Financials Summary */}
+            <FinancialsSummary
+              revenue={project.revenue}
+              totalCosts={totalCosts}
+              profit={profit}
+              costsCount={costs.length}
+            />
 
             <Separator />
 
