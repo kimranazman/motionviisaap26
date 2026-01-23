@@ -23,7 +23,6 @@ import { formatCurrency } from '@/lib/utils'
 import {
   type InvoiceLineItem,
   type ReceiptItem,
-  type ConfidenceLevel,
 } from '@/types/ai-extraction'
 
 interface CostCategory {
