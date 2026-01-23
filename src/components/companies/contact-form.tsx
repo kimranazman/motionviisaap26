@@ -71,7 +71,7 @@ export function ContactForm({ companyId, onSuccess, onCancel }: ContactFormProps
           <p className="text-sm text-red-600">{error}</p>
         )}
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <div className="space-y-1.5">
             <Label htmlFor="name" className="text-xs">
               Name <span className="text-red-500">*</span>
@@ -127,17 +127,18 @@ export function ContactForm({ companyId, onSuccess, onCancel }: ContactFormProps
           </div>
         </div>
 
-        <div className="flex justify-end gap-2 pt-2">
+        <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={onCancel}
             disabled={isSubmitting}
+            className="w-full sm:w-auto"
           >
             Cancel
           </Button>
-          <Button type="submit" size="sm" disabled={isSubmitting}>
+          <Button type="submit" size="sm" disabled={isSubmitting} className="w-full sm:w-auto">
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
