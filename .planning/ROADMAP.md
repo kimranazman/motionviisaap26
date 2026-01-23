@@ -37,10 +37,11 @@ See `.planning/milestones/` for archived phase details.
   2. Docker container persists files to NAS `/uploads/` directory across restarts
   3. Authenticated API route serves files from `/uploads/` with proper access control
   4. Prisma schema includes Document, UserPreferences, AdminDefaults models
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 21-01: TBD
+- [ ] 21-01-PLAN.md — Infrastructure config (Next.js body size, Docker volume mount)
+- [ ] 21-02-PLAN.md — Schema & file serving (Prisma models, file API route, types)
 
 ### Phase 22: Document Management
 **Goal**: Users can upload, view, and manage documents attached to projects
@@ -93,7 +94,7 @@ Plans:
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 21. Infrastructure & Schema | v1.3 | 0/TBD | Not started | - |
+| 21. Infrastructure & Schema | v1.3 | 0/2 | Planned | - |
 | 22. Document Management | v1.3 | 0/TBD | Not started | - |
 | 23. Widget Registry & Roles | v1.3 | 0/TBD | Not started | - |
 | 24. Dashboard Customization UI | v1.3 | 0/TBD | Not started | - |
