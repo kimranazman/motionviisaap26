@@ -42,15 +42,15 @@ export function StatusChart({ data }: StatusChartProps) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-64">
+        <div className="h-64 md:h-72">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={chartData}
                 cx="50%"
-                cy="50%"
-                innerRadius={50}
-                outerRadius={80}
+                cy="45%"
+                innerRadius={35}
+                outerRadius={60}
                 paddingAngle={2}
                 dataKey="value"
               >
@@ -68,9 +68,13 @@ export function StatusChart({ data }: StatusChartProps) {
               />
               <Legend
                 verticalAlign="bottom"
-                height={36}
+                height={48}
+                iconSize={8}
+                wrapperStyle={{
+                  paddingTop: '12px',
+                }}
                 formatter={(value) => (
-                  <span className="text-xs text-gray-600">{value}</span>
+                  <span className="text-xs text-gray-600 ml-1">{value}</span>
                 )}
               />
             </PieChart>
