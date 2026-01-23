@@ -21,9 +21,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         },
       },
       profile(profile) {
-        // Don't override id - let PrismaAdapter generate CUID
-        // profile.sub is stored in Account.providerAccountId for linking
         return {
+          id: profile.sub, // Required by Auth.js for account linking
           name: profile.name,
           email: profile.email,
           image: profile.picture,
@@ -47,15 +46,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user, trigger }) {
       // Only fetch role on sign-in or explicit update (Node.js runtime)
       // Don't fetch on every request - Edge runtime doesn't support Prisma
-      if (user) {
-        token.id = user.id!
-        // Fetch role from database on sign-in
+      if (user && user.email) {
+        // Look up database user by email to get the correct CUID
+        // (user.id from profile callback is Google sub, not database ID)
         const dbUser = await prisma.user.findUnique({
-          where: { id: user.id! },
-          select: { role: true },
+          where: { email: user.email },
+          select: { id: true, role: true },
         })
-        token.role = dbUser?.role ?? "VIEWER"
-        console.log("[AUTH JWT] Sign-in - fetched role:", token.role)
+        if (dbUser) {
+          token.id = dbUser.id // Use database CUID, not Google sub
+          token.role = dbUser.role
+          console.log("[AUTH JWT] Sign-in - user:", dbUser.id, "role:", dbUser.role)
+        } else {
+          // Fallback for edge case where user doesn't exist yet
+          token.id = user.id!
+          token.role = "VIEWER"
+          console.log("[AUTH JWT] Sign-in - new user, fallback ID")
+        }
       }
       // Handle session update trigger (e.g., after role change)
       if (trigger === "update" && token.id) {
