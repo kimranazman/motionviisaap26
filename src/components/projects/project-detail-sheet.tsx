@@ -51,7 +51,7 @@ import {
   formatProjectStatus,
 } from '@/lib/project-utils'
 import { cn, formatCurrency } from '@/lib/utils'
-import { Calendar } from '@/components/ui/calendar'
+import { DatePickerCalendar } from '@/components/ui/date-picker-with-presets'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { format } from 'date-fns'
 
@@ -402,7 +402,11 @@ export function ProjectDetailSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-lg p-0 flex flex-col">
+      <SheetContent
+        className="w-full sm:max-w-lg p-0 flex flex-col"
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => e.preventDefault()}
+      >
         <SheetHeader className="p-6 pb-4 border-b">
           <div className="flex items-center gap-3">
             <Badge className={cn('shrink-0', getProjectStatusColor(project.status))}>
@@ -531,13 +535,11 @@ export function ProjectDetailSheet({
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
+                    <DatePickerCalendar
                       selected={startDate || undefined}
                       onSelect={(d) => setStartDate(d || null)}
-                      captionLayout="dropdown"
-                      startMonth={new Date(2020, 0)}
-                      endMonth={new Date(2035, 11)}
+                      fromYear={2020}
+                      toYear={2035}
                     />
                   </PopoverContent>
                 </Popover>
@@ -565,13 +567,11 @@ export function ProjectDetailSheet({
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
+                    <DatePickerCalendar
                       selected={endDate || undefined}
                       onSelect={(d) => setEndDate(d || null)}
-                      captionLayout="dropdown"
-                      startMonth={new Date(2020, 0)}
-                      endMonth={new Date(2035, 11)}
+                      fromYear={2020}
+                      toYear={2035}
                     />
                   </PopoverContent>
                 </Popover>
