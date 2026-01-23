@@ -101,7 +101,7 @@ export function InitiativeForm({ initiative, onSuccess }: InitiativeFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Row 1: Objective & Key Result */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Objective</label>
           <Select
@@ -137,7 +137,7 @@ export function InitiativeForm({ initiative, onSuccess }: InitiativeFormProps) {
       </div>
 
       {/* Row 2: Department & Status */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Department</label>
           <Select
@@ -195,7 +195,7 @@ export function InitiativeForm({ initiative, onSuccess }: InitiativeFormProps) {
       </div>
 
       {/* Row 4: Dates */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Start Date</label>
           <Popover>
@@ -203,7 +203,7 @@ export function InitiativeForm({ initiative, onSuccess }: InitiativeFormProps) {
               <Button
                 variant="outline"
                 className={cn(
-                  'w-full justify-start text-left font-normal',
+                  'w-full justify-start text-left font-normal h-11 md:h-10',
                   !formData.startDate && 'text-muted-foreground'
                 )}
               >
@@ -234,7 +234,7 @@ export function InitiativeForm({ initiative, onSuccess }: InitiativeFormProps) {
               <Button
                 variant="outline"
                 className={cn(
-                  'w-full justify-start text-left font-normal',
+                  'w-full justify-start text-left font-normal h-11 md:h-10',
                   !formData.endDate && 'text-muted-foreground'
                 )}
               >
@@ -260,7 +260,7 @@ export function InitiativeForm({ initiative, onSuccess }: InitiativeFormProps) {
       </div>
 
       {/* Row 5: Person In Charge & Accountable */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">
             Person In Charge
@@ -335,7 +335,7 @@ export function InitiativeForm({ initiative, onSuccess }: InitiativeFormProps) {
       </div>
 
       {/* Row 8: Resources */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">
             Resources (Financial)
