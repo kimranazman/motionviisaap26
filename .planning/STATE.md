@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 ## Current Position
 
 Phase: 25 - AI Document Intelligence (5 of 5 in v1.3)
-Plan: 3 of 5 in current phase (plans 01, 02, and 03 complete)
+Plan: 4 of 5 in current phase (plans 01, 02, 03, and 04 complete)
 Status: In progress
-Last activity: 2026-01-24 - Completed 25-03-PLAN.md (AI Import API)
+Last activity: 2026-01-24 - Completed 25-04-PLAN.md (Review Sheet UI)
 
-Progress: v1.3 [██████████████████████████████░░] ~88% (4/5 phases, 3/5 plans in phase 25)
+Progress: v1.3 [███████████████████████████████░] ~94% (4/5 phases, 4/5 plans in phase 25)
 
 ## Milestone History
 
@@ -31,9 +31,9 @@ Progress: v1.3 [█████████████████████�
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 57
+- Total plans completed: 58
 - Average duration: 4.1 min
-- Total execution time: 234 min
+- Total execution time: 239 min
 
 **By Phase (v1.0-v1.3):**
 
@@ -63,7 +63,7 @@ Progress: v1.3 [█████████████████████�
 | 22-document-management | 3 | 28min | 9.3min |
 | 23-widget-registry-roles | 3 | 10min | 3.3min |
 | 24-dashboard-customization-ui | 5 | 21min | 4.2min |
-| 25-ai-document-intelligence | 3 | 11min | 3.7min |
+| 25-ai-document-intelligence | 4 | 16min | 4min |
 
 ## Accumulated Context
 
@@ -88,6 +88,11 @@ Recent (Phase 25-03):
 - Case-insensitive category matching to avoid duplicates
 - Pending API includes ready-to-run Claude command for bulk analysis
 
+Recent (Phase 25-04):
+- High and Medium confidence items auto-selected for import by default
+- Receipt category selection shows 'Create new' option when AI suggests new category
+- Document preview embedded for images, external link for PDFs
+
 ### Pending Todos
 
 None.
@@ -98,6 +103,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-23T22:09:44Z
-Stopped at: Completed 25-03-PLAN.md (AI Import API)
-Resume: Execute 25-04-PLAN.md for Review Sheet UI
+Last session: 2026-01-23T22:16:15Z
+Stopped at: Completed 25-04-PLAN.md (Review Sheet UI)
+Resume: Execute 25-05-PLAN.md for Integration
