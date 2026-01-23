@@ -53,18 +53,25 @@ export function PipelineStageChart({ data }: PipelineStageChartProps) {
       <CardContent>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} layout="vertical" margin={{ left: 20 }}>
+            <BarChart data={data} layout="vertical" margin={{ left: 10, right: 10 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
               <XAxis
                 type="number"
-                tick={{ fontSize: 12 }}
-                tickFormatter={(value) => formatCurrency(value)}
+                tick={{ fontSize: 10 }}
+                tickFormatter={(value) => {
+                  if (value >= 1000000) return `${(value/1000000).toFixed(0)}M`
+                  if (value >= 1000) return `${(value/1000).toFixed(0)}K`
+                  return formatCurrency(value)
+                }}
               />
               <YAxis
                 dataKey="name"
                 type="category"
-                tick={{ fontSize: 12 }}
-                width={80}
+                tick={{ fontSize: 10 }}
+                width={70}
+                tickFormatter={(value: string) =>
+                  value.length > 12 ? value.slice(0, 10) + '...' : value
+                }
               />
               <Tooltip content={<CustomTooltip />} />
               <Bar dataKey="value" radius={[0, 4, 4, 0]}>
