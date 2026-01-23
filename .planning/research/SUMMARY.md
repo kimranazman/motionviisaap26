@@ -1,217 +1,270 @@
 # Project Research Summary
 
-**Project:** SAAP 2026 v2 - v1.2 CRM & Project Financials
-**Domain:** Sales Pipeline CRM + Project Cost Tracking
-**Researched:** 2026-01-22
-**Confidence:** HIGH
+**Project:** SAAP 2026 v2 - v1.3 Document Management & Dashboard Customization
+**Domain:** Document Management, Customizable Dashboards
+**Researched:** 2026-01-23
+**Confidence:** HIGH (verified across multiple official sources and industry patterns)
+
+---
 
 ## Executive Summary
 
-v1.2 adds a sales pipeline CRM and project financials tracking to the existing SAAP platform. Research indicates this is a well-understood domain with established patterns. For a 3-person internal team with high-ticket, low-volume deals, the recommended approach is a simplified 5-stage Kanban pipeline (Lead > Qualified > Proposal > Negotiation > Won/Lost) that auto-converts won deals to Projects. The existing stack (Next.js 14, Prisma, MariaDB, shadcn/ui) handles everything with minimal additions: `nanoid` for file naming and `react-currency-input-field` for UX. The already-installed `@dnd-kit` library covers Kanban functionality.
+The v1.3 milestone adds two complementary features to SAAP: document uploads attached to projects (receipts, invoices) and customizable per-user dashboards with role-based widget restrictions. Research confirms both features follow well-established patterns with strong library support. The recommended approach uses **filesystem storage** with database metadata for documents (leveraging the existing NAS deployment) and **react-grid-layout** for dashboard customization with **JSON-based layout persistence** per user.
 
-The architecture centers on a **unified Deal entity with source tracking** rather than separate pipelines for new vs. repeat clients. Projects have three entry points (pipeline deals, repeat client potentials, direct creation) and optionally link to KRIs. Costs are tracked as line items with file-based receipt storage (not database BLOBs). Profit is calculated on-read as revenue minus costs.
+The primary technical risks center on Docker/NAS deployment configuration rather than feature complexity. The 1MB default body limit for Server Actions must be increased before any upload implementation, and Docker volume mounts require careful UID matching to prevent file permission issues. Dashboard customization benefits from the existing `@dnd-kit` library already installed, though `react-grid-layout` is recommended specifically for its built-in resize handles and responsive breakpoints essential for dashboard widgets.
 
-The critical risks are: (1) floating-point currency errors -- use `Decimal(12,2)` in Prisma and currency.js in application code; (2) missing audit trails for financial changes -- log all modifications with user attribution; (3) invalid pipeline stage transitions -- implement state machine validation; (4) lost deal context on project conversion -- maintain bidirectional relationships; (5) receipt storage bloating the database -- store files on filesystem, paths in database. All pitfalls have clear mitigation patterns documented.
+The most critical pitfalls to avoid are: (1) storing files in the database instead of filesystem, (2) trusting client-side MIME types without server-side validation, (3) enforcing widget visibility only on the client side, and (4) not versioning the layout JSON schema for future migrations. Following the phased approach below and addressing infrastructure concerns in Phase 1 will prevent these issues.
+
+---
 
 ## Key Findings
 
 ### Recommended Stack
 
-The existing stack requires only 1-2 new packages. The v1.0 infrastructure already includes `@dnd-kit` for Kanban boards (used in initiatives), `recharts` for dashboards, and `date-fns` for date handling.
+From STACK.md - specific packages with versions:
 
-**New packages to install:**
-- `nanoid` (^5.0.9): URL-safe unique file naming for receipts -- 21 chars, collision-resistant
-- `react-currency-input-field` (^4.0.3): Currency input formatting -- locale-aware, ISO 4217 support
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `sharp` | ^0.33.x | Image processing for receipt thumbnails; Next.js recommended |
+| `file-type` | ^19.x | Server-side MIME validation from file bytes (security) |
+| `react-grid-layout` | ^2.2.x | Dashboard widget grid with drag, drop, and resize |
+| `react-resizable` | ^3.1.x | Resize handles (peer dependency of react-grid-layout) |
 
 **Already installed (reuse):**
-- `@dnd-kit/core`, `@dnd-kit/sortable`: Sales pipeline Kanban
-- `recharts`: Pipeline/revenue dashboard charts
-- `date-fns`: Date formatting for timelines
+- `@dnd-kit/core` ^6.3.1 - Keep for Kanban; NOT for dashboard grid
+- `@radix-ui/react-dialog` - Upload modal, file preview
+- `@radix-ui/react-progress` - Upload progress indicator
+- `date-fns` ^4.1.0 - File path date formatting
+- `lucide-react` - File type icons
 
-**What NOT to use:**
-- UploadThing/S3/Cloudinary: Overkill for 3-user internal tool on NAS
-- Multer/Formidable: Native Server Actions handle uploads fine
-- Float for currency: Precision errors; use Decimal
-- react-beautiful-dnd: Deprecated; `@dnd-kit` is already installed
+**Do NOT use:**
+- `multer`, `formidable` - Next.js 14 native FormData is sufficient
+- `mime-types` - Extension-based only; use `file-type` for content validation
+- Cloud SDKs (S3) - Overkill for NAS local storage
 
 ### Expected Features
 
-**Must have (table stakes):**
-- Visual pipeline Kanban (Lead > Qualified > Proposal > Negotiation > Won/Lost)
-- Deal value tracking with currency input
-- Deal-to-project auto-conversion on Won status
-- Company and client PIC tracking
-- Repeat client potential projects (Potential > Confirmed/Cancelled)
-- Project entity with three entry points
-- Cost line items with categories (Labor, Materials, Vendors, Travel, Software, Other)
-- Receipt uploads with file storage
-- Profit calculation (revenue - costs)
-- Pipeline and revenue dashboard widgets
+From FEATURES.md - prioritized feature list:
 
-**Should have (build in v1.2):**
-- Weighted pipeline value (probability * deal value)
-- Deal notes/activity log
-- Expected close date on deals
-- Lost deal reason tracking
+**Must Have (Table Stakes):**
+- Drag-and-drop upload with click fallback
+- File type validation (PDF, PNG, JPG only)
+- File size limit (10MB)
+- Upload progress indicator
+- Document list per project
+- Download and delete functionality
+- Widget bank/selector for dashboard
+- Add/remove widgets
+- Drag-and-drop widget positioning
+- Widget resize capability
+- Layout persistence per user
+- Reset to default button
+- Admin default layout
+- Responsive dashboard behavior
 
-**Defer (v2+):**
-- Cost vs budget comparison
-- Time tracking
-- Invoice generation
-- Multi-currency support
-- Win rate analytics
-- Sales cycle analysis
+**Should Have (Differentiators):**
+- File preview/thumbnail for images
+- Document type categorization (RECEIPT, INVOICE, OTHER)
+- Role-based widget restrictions
+- Date range filter for all dashboard widgets
+- Bulk upload support
+
+**Defer to v2+:**
+- AI value extraction from receipts
+- OCR text extraction
+- Document search
+- Multiple saved layouts per user
+- Real-time data updates (WebSocket)
 
 ### Architecture Approach
 
-The architecture extends the existing Next.js App Router patterns with new domain models. Client is the foundational entity linking to Deals, PotentialProjects, and Projects. A Deal represents new business pipeline opportunities; PotentialProject handles repeat client work. Both can convert to Projects, which can also be created directly (standalone) or linked to KRIs. Costs are tracked as line items belonging to Projects, with CostCategory as a lookup table.
+From ARCHITECTURE.md - major components and data flow:
 
-**Major components:**
-1. **Client** -- Company/contact information, repeat client flag
-2. **Deal** -- New business pipeline with 5 stages, value, probability
-3. **PotentialProject** -- Repeat client pipeline with 3 stages
-4. **Project** -- Actual work; three entry points; revenue tracking
-5. **Cost** -- Line items with category, amount, receipt path
-6. **CostCategory** -- Seeded lookup (Labor, Materials, Vendors, Travel, Software, Other)
+**Document Management:**
+```
+Client (Form) --> Server Action --> Filesystem (/uploads/) --> Database (Metadata)
+```
+- Store files at `/uploads/projects/{projectId}/documents/{uuid}-{filename}`
+- Database stores: filename, storagePath, mimeType, sizeBytes, uploadedById
+- API route serves files with authentication check
+- Cascade delete removes files when document record deleted
 
-**Data flow:**
-- Deal (Won) --> auto-creates Project with revenue from deal value
-- PotentialProject (Confirmed) --> auto-creates Project
-- Direct creation --> Project without deal/potential link
-- All Projects --> Costs with optional receipts
+**Dashboard Customization:**
+```
+Page Load --> Get UserPreferences --> Filter by Role --> Render Widgets
+User Drag --> @dnd-kit / RGL --> Debounce --> Save to DB
+```
+- Widget registry defines all widgets with `minRole` requirement
+- Layout stored as JSON in `UserPreferences.dashboardLayout`
+- Server-side role filtering before returning visible widgets
+- Admin default layout in `AdminDefaults` table
+
+**New Prisma Models:**
+1. `Document` - File metadata linked to Project
+2. `UserPreferences` - Dashboard layout JSON + other settings
+3. `AdminDefaults` - System-wide default configurations
 
 ### Critical Pitfalls
 
-1. **Floating-point currency calculations** -- Use `Decimal(12,2)` in Prisma schema, `currency.js` or integer cents in application code. Never use JavaScript `Number` for money math.
+From PITFALLS.md - top 5 pitfalls with prevention:
 
-2. **Missing audit trail for financial changes** -- Create DealHistory/CostHistory models to log who changed what and when. Use Prisma transactions to ensure audit entries are created atomically.
+| # | Pitfall | Prevention |
+|---|---------|------------|
+| 1 | **Server Action 1MB body limit** | Configure `bodySizeLimit: '10mb'` in next.config.mjs BEFORE any upload code |
+| 2 | **Docker volume file persistence** | Mount NAS directory to `/app/uploads` in docker-compose; files inside container are ephemeral |
+| 3 | **MIME type spoofing** | Use `file-type` package to validate actual file bytes, not just extension |
+| 4 | **Client-only role checks for widgets** | Server-side filtering of widget list and data endpoints by role |
+| 5 | **Layout JSON schema drift** | Include `version` field in layout JSON from day one for migration support |
 
-3. **Pipeline stage transitions without validation** -- Implement state machine pattern with `VALID_TRANSITIONS` map. Prevent invalid moves like Lead > Won (skipping qualification).
+**Docker/NAS Specific:**
+- Container UID must match NAS user UID (typically 1000)
+- Backup strategy required for `/uploads/` directory
+- API route needed to serve files (not served from /public)
 
-4. **Deal-to-project conversion data loss** -- Maintain bidirectional relationship (Deal.projectId, Project.sourceDealId). Copy client PIC, proposal notes, agreed terms at conversion.
-
-5. **Receipt storage in database BLOB** -- Store files on filesystem (`/uploads/receipts/`), store path in database. Configure Docker volume for NAS persistence. Use API route with auth for serving files.
+---
 
 ## Implications for Roadmap
 
-Based on research, suggested phase structure:
+### Suggested Phases
 
-### Phase 1: Foundation (Schema & Core Entities)
-**Rationale:** All subsequent work depends on data models. Establish money-handling patterns before any financial data is stored.
-**Delivers:** Prisma schema migration, Client entity, CostCategory seeded data
-**Addresses:** Company tracking, cost categories
-**Avoids:** Floating-point currency errors, pipeline confusion (single Deal entity with source)
-**Research needed:** None -- standard Prisma patterns
+Based on dependencies identified in architecture research:
 
-### Phase 2: Sales Pipeline
-**Rationale:** Deals are the primary entry point for projects and revenue tracking. Pipeline must work before conversion flow.
-**Delivers:** Deal model, Pipeline Kanban board, stage validation, deal form
-**Addresses:** Visual pipeline, deal stages, deal value tracking
-**Avoids:** Invalid stage transitions (implement state machine), lost deal reasons (require on close)
-**Uses:** @dnd-kit (already installed), react-currency-input-field (new)
-**Research needed:** None -- @dnd-kit patterns from v1.0 initiatives Kanban
+**Phase 1: Infrastructure & Schema (1-2 days)**
+- Configure `bodySizeLimit` in next.config.mjs
+- Add `Document`, `UserPreferences`, `AdminDefaults` models to Prisma
+- Update docker-compose.nas.yml with upload volume mount
+- Create upload directory structure on NAS
+- Set up file serving API route skeleton
+- Run migration
 
-### Phase 3: Repeat Client Pipeline
-**Rationale:** Similar to Phase 2 but simpler flow. Can share UI patterns.
-**Delivers:** PotentialProject model, Potential board, conversion flow
-**Addresses:** Potential projects list, repeat client tracking
-**Implements:** Same Kanban patterns as Phase 2
-**Research needed:** None -- direct reuse of Phase 2 patterns
+*Rationale:* All subsequent work depends on schema and storage being configured correctly. Prevents the most critical pitfalls (body limit, file persistence).
 
-### Phase 4: Projects & Conversion
-**Rationale:** Depends on Deal and PotentialProject to be complete. Projects are where value is delivered.
-**Delivers:** Project model, three creation flows (from deal, from potential, direct), KRI linking
-**Addresses:** Project entity, deal-to-project conversion, initiative linking
-**Avoids:** Deal context loss (maintain bidirectional links), orphaned projects
-**Research needed:** None -- standard CRUD with optional relations
+*Pitfalls to avoid:* #1 (body limit), #2 (Docker volume), #5 (schema design)
 
-### Phase 5: Cost Tracking & Receipts
-**Rationale:** Costs depend on Projects existing. Receipt upload is isolated feature.
-**Delivers:** Cost model, cost form, receipt upload, profit calculation
-**Addresses:** Cost line items, categories, receipt uploads, profit
-**Avoids:** Database BLOB storage (use filesystem), missing indirect costs (include labor category)
-**Uses:** nanoid (new), Server Actions for upload
-**Research needed:** Low -- file upload patterns documented in STACK.md
+**Phase 2: Document Management (3-4 days)**
+- Implement upload Server Action with validation
+- Build document-list component for project detail
+- Build document-upload component with drag-drop
+- Implement file download API with auth check
+- Implement document deletion with file cleanup
+- Add Documents tab to project detail page
 
-### Phase 6: Dashboard & Polish
-**Rationale:** Dashboard depends on all data being in place. Polish after core features work.
-**Delivers:** Pipeline widget, revenue/profit summary, weighted forecast
-**Addresses:** Pipeline metrics, revenue summary, profit summary
-**Avoids:** Stale dashboard data (implement caching), unrealistic forecasts (use probability weighting)
-**Research needed:** None -- recharts already used in v1.0
+*Rationale:* Simpler feature that establishes Server Action patterns. Complete before dashboard to reduce parallel complexity.
 
-### Phase Ordering Rationale
+*Pitfalls to avoid:* #3 (MIME validation), #6 (orphaned files)
 
-- **Dependencies flow downward:** Client > Deal/Potential > Project > Cost. Building in this order avoids rework.
-- **Early value delivery:** Phase 2 (Pipeline) delivers usable functionality for deal tracking even before cost features.
-- **Kanban reuse:** Phase 2 establishes Kanban patterns that Phase 3 reuses directly.
-- **Conversion after entities:** Deal-to-Project conversion in Phase 4 requires both entities to exist.
-- **File upload isolation:** Receipt uploads in Phase 5 are self-contained; can be tested independently.
-- **Dashboard last:** Aggregation widgets need data to aggregate.
+**Phase 3: Widget Registry & Role System (1-2 days)**
+- Create widget-registry.ts with all existing widgets
+- Define WidgetDefinition interface with minRole
+- Implement `canAccessWidget()` role checks
+- Create `getAvailableWidgets()` server function
+- Define TypeScript types for dashboard layout
+- Seed AdminDefaults with default layout
+
+*Rationale:* Registry is foundation for dashboard customization. Role system must be server-side from the start.
+
+*Pitfalls to avoid:* #4 (client-only role checks), #12 (no admin default)
+
+**Phase 4: Dashboard Customization UI (3-4 days)**
+- Install react-grid-layout and react-resizable
+- Import required CSS files
+- Create customizable-dashboard.tsx container
+- Create widget-wrapper.tsx (draggable/resizable)
+- Create widget-picker.tsx modal
+- Implement layout save Server Action with debounce
+- Replace existing dashboard with customizable version
+- Add reset-to-default functionality
+
+*Rationale:* Depends on widget registry and role system being complete.
+
+*Pitfalls to avoid:* #7 (RGL width), #8 (race conditions), #9 (CSS imports), #10 (responsive breakpoints)
+
+**Phase 5: Polish & Testing (1-2 days)**
+- Add loading states and error handling
+- Implement optimistic updates for drag-drop
+- Add document preview modal for images/PDFs
+- Test all role combinations (ADMIN, EDITOR, VIEWER)
+- Mobile responsive testing
+- Verify backup strategy is working
+
+*Rationale:* Integration testing and edge cases after core features complete.
 
 ### Research Flags
 
-**Phases with standard patterns (skip research-phase):**
-- **Phase 1 (Foundation):** Standard Prisma schema design, well-documented
-- **Phase 2 (Pipeline):** @dnd-kit patterns exist in v1.0 codebase
-- **Phase 3 (Potential):** Direct reuse of Phase 2
-- **Phase 4 (Projects):** Standard CRUD with relations
-- **Phase 6 (Dashboard):** recharts patterns exist in v1.0
+| Phase | Needs Research? | Notes |
+|-------|-----------------|-------|
+| Phase 1 | NO | Standard Prisma/Docker patterns |
+| Phase 2 | NO | Well-documented Next.js upload patterns |
+| Phase 3 | NO | Standard React patterns |
+| Phase 4 | MAYBE | react-grid-layout v2 API if issues arise |
+| Phase 5 | NO | Testing/polish phase |
 
-**Phases that may need light research during execution:**
-- **Phase 5 (Receipts):** File upload edge cases (large files, file type validation) may need testing. Patterns documented in STACK.md should suffice.
+**Standard patterns (skip research):** All phases follow established patterns from official documentation. The research files provide sufficient detail for implementation.
+
+---
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | Minimal additions to existing stack; packages well-documented |
-| Features | HIGH | CRM and cost tracking are mature domains with clear patterns |
-| Architecture | HIGH | Builds on existing codebase patterns; ERD is straightforward |
-| Pitfalls | HIGH | Financial and CRM pitfalls well-documented in industry literature |
+| Stack Selection | HIGH | Packages verified via npm; versions confirmed compatible with React 18/Node 20 |
+| Document Upload | HIGH | Next.js 14 native FormData well-documented; existing receiptPath pattern in codebase |
+| File Security | HIGH | file-type package is standard solution; patterns from official docs |
+| Dashboard Layout | HIGH | react-grid-layout is industry standard for dashboards; TypeScript-native v2 |
+| Role Restrictions | HIGH | Extends existing permissions.ts pattern in codebase |
+| Layout Persistence | HIGH | JSON in Prisma is proven pattern; MariaDB supports it |
+| Docker/NAS | MEDIUM | Specific to deployment environment; verify UID configuration |
+| Widget Registry | HIGH | Standard React pattern with no external dependencies |
 
-**Overall confidence:** HIGH
+**Overall Confidence: HIGH**
 
-### Gaps to Address
+Research sources include official Next.js documentation, npm package documentation, GitHub discussions, and industry case studies. All recommended packages have significant download counts and active maintenance.
 
-- **Audit trail implementation:** Research recommends it, but adds schema complexity. Consider deferring to v1.3 if timeline is tight. At minimum, track deal value changes.
-- **Stage history tracking:** Nice-to-have for sales velocity metrics. Can defer full implementation but include `stageChangedAt` field on Deal.
-- **Receipt file serving:** API route with auth is recommended, but symlink approach is simpler. Decide during Phase 5 based on security requirements.
+---
 
 ## Open Questions
 
-1. **Should Potential Projects be a separate entity or merged into Deal with source flag?**
-   - Research suggests single Deal entity with `source: REPEAT_CLIENT` is cleaner
-   - But separate entity keeps repeat client flow simpler for the UI
-   - Recommendation: Keep separate for v1.2, consider merging in future refactor
+Questions requiring user decision during implementation:
 
-2. **How much audit trail is needed for v1.2?**
-   - Full history tables add complexity
-   - Minimum viable: `updatedAt`, `updatedBy` on financial fields
-   - Recommendation: Start with basic tracking, add history tables if needed
+1. **Document preview scope:** Support inline PDF/image preview in modal, or download-only?
+   - Recommendation: Image preview in modal; PDF opens in new tab (simpler)
 
-3. **Should weighted pipeline use per-deal probability or per-stage default?**
-   - Per-deal allows customization but adds friction
-   - Per-stage is simpler and more consistent
-   - Recommendation: Start with per-stage defaults, allow per-deal override
+2. **Widget data caching:** Cache dashboard widget data or fetch fresh on each render?
+   - Recommendation: Fetch fresh initially; add caching if performance issues arise
+
+3. **Layout migration strategy:** When new widgets are added in future versions, auto-add to user layouts?
+   - Recommendation: Add to end of layout with visible=true; user can remove
+
+4. **Mobile dashboard customization:** Allow drag-drop on mobile or lock layout?
+   - Recommendation: Lock layout on mobile (xs/xxs breakpoints); show view-only
+
+5. **File size limit:** 10MB suggested; adjust based on typical receipt/invoice sizes?
+   - Recommendation: Start with 10MB; increase if users report issues
+
+---
 
 ## Sources
 
-### Primary (HIGH confidence)
-- Prisma documentation: Decimal types, relations, indexes
-- @dnd-kit documentation: Kanban implementation patterns
-- Existing codebase: `src/app/api/initiatives/`, `prisma/schema.prisma`
+**File Upload & Storage:**
+- Next.js serverActions Config: https://nextjs.org/docs/app/api-reference/config/next-config-js/serverActions
+- File Upload with Next.js 14 and Server Actions: https://akoskm.com/file-upload-with-nextjs-14-and-server-actions/
+- file-type npm: https://www.npmjs.com/package/file-type
+- sharp npm: https://www.npmjs.com/package/sharp
 
-### Secondary (MEDIUM confidence)
-- [monday.com Pipeline Stages](https://monday.com/blog/crm-and-sales/sales-pipeline-stages/) -- Stage definitions
-- [Scoro Project Cost Tracking](https://www.scoro.com/blog/project-cost-tracking/) -- Cost categories
-- [eWay-CRM Deal Conversion](https://www.eway-crm.com/resources/how-to-use-eway-crm/convert-deals-companies-contacts-projects/) -- Conversion patterns
-- [currency.js](https://currency.js.org/) -- Money handling in JavaScript
-- [Honeybadger Currency Guide](https://www.honeybadger.io/blog/currency-money-calculations-in-javascript/) -- Floating-point pitfalls
+**Dashboard Customization:**
+- react-grid-layout GitHub: https://github.com/react-grid-layout/react-grid-layout
+- Building Dashboard Widgets with React Grid Layout: https://www.antstack.com/blog/building-customizable-dashboard-widgets-using-react-grid-layout/
+- ilert: Why React-Grid-Layout for Dashboards: https://www.ilert.com/blog/building-interactive-dashboards-why-react-grid-layout-was-our-best-choice
 
-### Tertiary (LOW confidence)
-- Community patterns for Next.js file uploads -- verify during Phase 5 implementation
+**Docker/Deployment:**
+- Docker Volumes Documentation: https://docs.docker.com/engine/storage/volumes/
+- Next.js Deploying Documentation: https://nextjs.org/docs/app/getting-started/deploying
+
+**Role-Based Access:**
+- Permit.io React RBAC: https://www.permit.io/blog/implementing-react-rbac-authorization
+- Working with JSON fields (Prisma): https://www.prisma.io/docs/orm/prisma-client/special-fields-and-types/working-with-json-fields
 
 ---
-*Research completed: 2026-01-22*
+
+*Research completed: 2026-01-23*
 *Ready for roadmap: yes*

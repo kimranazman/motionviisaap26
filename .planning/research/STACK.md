@@ -1,465 +1,301 @@
-# Stack Research: CRM Pipeline & Project Financials
+# Stack Research: Document Management & Customizable Dashboard
 
-**Project:** SAAP 2026 v2 - v1.2 CRM & Project Financials Milestone
-**Researched:** 2026-01-22
-**Overall Confidence:** HIGH
+**Project:** SAAP v1.3 - Document Management & Dashboard Widgets
+**Researched:** 2026-01-23
+**Confidence:** HIGH (packages verified via official sources)
 
 ## Executive Summary
 
-For v1.2 CRM & Project Financials, the existing stack (Next.js 14, Prisma, MariaDB, shadcn/ui) remains unchanged. New requirements are:
+For adding document uploads and customizable dashboards to SAAP, the recommended approach is:
 
-1. **CRM Pipeline** - No new dependencies. Use existing `@dnd-kit` (already installed) for Kanban boards.
-2. **Project Financials** - Use `Decimal(12,2)` in Prisma for money fields. Consider `react-currency-input-field` for input formatting.
-3. **Receipt Uploads** - Use native Next.js Server Actions with local filesystem storage. Store files on Docker volume mounted to NAS.
+1. **File Uploads**: Use Next.js 14 native `FormData` API (no extra libraries needed for basic uploads). Add `sharp` for image optimization and `file-type` for secure MIME validation.
 
-This milestone adds minimal new dependencies, leveraging what's already installed.
+2. **Dashboard Widgets**: Use `react-grid-layout` v2 - purpose-built for dashboards with drag-drop and resize. Leverage existing `@dnd-kit` for non-grid drag operations only.
 
 ---
 
-## Recommended Stack Additions
+## Recommended Packages
 
-### Required Packages
-
-| Package | Version | Purpose | Rationale |
-|---------|---------|---------|-----------|
-| `nanoid` | `^5.0.9` | Unique file naming | URL-friendly, 21 chars, collision-resistant. Better than UUID for filenames. |
-| `react-currency-input-field` | `^4.0.3` | Currency input formatting | 315K weekly downloads, ISO 4217 support, locale-aware. Perfect for cost inputs. |
-
-### Optional But Recommended
+### File Upload & Document Management
 
 | Package | Version | Purpose | Rationale |
 |---------|---------|---------|-----------|
-| `sharp` | `^0.33.5` | Image optimization for receipt thumbnails | Already used by Next.js Image component. Explicit install for Docker standalone mode. |
+| `sharp` | ^0.33.x | Image processing/thumbnails | Next.js recommended; 4-5x faster than ImageMagick; generates receipt thumbnails |
+| `file-type` | ^19.x | MIME type detection from binary | Security: validates actual file content, not just extension; prevents malicious uploads |
 
-### Installation Command
+**Why no multer/formidable?**
 
-```bash
-npm install nanoid react-currency-input-field
-npm install sharp  # If generating receipt thumbnails
+Next.js 14 App Router has native `FormData` support via `req.formData()`. No middleware needed:
+```typescript
+// Next.js 14 native approach
+export async function POST(request: Request) {
+  const formData = await request.formData()
+  const file = formData.get('file') as File
+  const buffer = Buffer.from(await file.arrayBuffer())
+  // Write to filesystem or process
+}
 ```
+
+**Installation:**
+```bash
+npm install sharp file-type
+```
+
+### Dashboard Grid Layout
+
+| Package | Version | Purpose | Rationale |
+|---------|---------|---------|-----------|
+| `react-grid-layout` | ^2.2.x | Dashboard widget grid | Built-in drag+resize; TypeScript native; React 18 hooks; no additional DnD library needed for grid |
+| `react-resizable` | ^3.1.x | Resize handles (peer dep) | Required by react-grid-layout; provides resize functionality |
+
+**Why react-grid-layout over extending @dnd-kit?**
+
+- `@dnd-kit` (already installed) is excellent for Kanban/list operations
+- `react-grid-layout` is purpose-built for dashboards with:
+  - Built-in resize handles
+  - Responsive breakpoints (auto-adapt to mobile)
+  - Grid snapping and compaction
+  - Layout persistence API (save/restore positions)
+- Using @dnd-kit for dashboard would require implementing all grid/resize logic manually
+
+**Installation:**
+```bash
+npm install react-grid-layout react-resizable
+```
+
+**CSS Import Required:**
+```typescript
+// In your layout or component
+import 'react-grid-layout/css/styles.css'
+import 'react-resizable/css/styles.css'
+```
+
+### Utility Packages (Already Available)
+
+| Package | Purpose | Notes |
+|---------|---------|-------|
+| `crypto.randomUUID()` | Unique file names | Built into Node.js 18+, no package needed |
+| `date-fns` | Date formatting for file paths | Already installed (v4.1.0) |
 
 ---
 
 ## Already Installed (Reuse)
 
-These packages in `package.json` cover most v1.2 needs:
-
-| Package | Version | Use for v1.2 |
-|---------|---------|--------------|
-| `@dnd-kit/core` | `^6.3.1` | Sales pipeline Kanban |
-| `@dnd-kit/sortable` | `^10.0.0` | Drag-and-drop deals between stages |
-| `@dnd-kit/utilities` | `^3.2.2` | DnD utilities |
-| `date-fns` | `^4.1.0` | Date formatting for project timelines |
-| `recharts` | `^3.6.0` | Pipeline/revenue dashboard charts |
-| `lucide-react` | `^0.562.0` | Icons for stages, costs, etc. |
-
-**Key insight:** The v1.0 Kanban board for initiatives uses `@dnd-kit`. The same patterns apply to sales pipeline stages. No new DnD library needed.
-
----
-
-## File Upload Strategy
-
-### Recommendation: Native Server Actions + Local Filesystem
-
-**Why NOT UploadThing or cloud storage:**
-- NAS deployment (Synology DS925+) has ample local storage
-- No external service dependency or costs
-- Full control over file handling
-- Team of 3 doesn't need CDN delivery
-- Receipts are internal documents, not public assets
-
-### Architecture
-
-```
-1. Client: <form> with type="file" input
-2. Server Action: Receives FormData, writes to /uploads
-3. Database: Stores filepath reference, not binary
-4. Docker: Volume maps /app/uploads to NAS directory
-```
-
-### Server Action Pattern
-
-```typescript
-// app/actions/upload-receipt.ts
-"use server"
-
-import { writeFile, mkdir } from "fs/promises"
-import { join } from "path"
-import { nanoid } from "nanoid"
-import { auth } from "@/auth"
-import { prisma } from "@/lib/prisma"
-
-const UPLOAD_DIR = process.env.UPLOAD_DIR || "./uploads/receipts"
-const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
-const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "application/pdf"]
-
-export async function uploadReceipt(formData: FormData) {
-  const session = await auth()
-  if (!session?.user) throw new Error("Unauthorized")
-
-  const file = formData.get("file") as File
-  if (!file) throw new Error("No file provided")
-
-  // Validation
-  if (file.size > MAX_FILE_SIZE) throw new Error("File too large (max 10MB)")
-  if (!ALLOWED_TYPES.includes(file.type)) throw new Error("Invalid file type")
-
-  // Generate unique filename
-  const ext = file.name.split(".").pop()
-  const filename = `${nanoid()}.${ext}`
-  const filepath = join(UPLOAD_DIR, filename)
-
-  // Ensure directory exists
-  await mkdir(UPLOAD_DIR, { recursive: true })
-
-  // Write file
-  const buffer = Buffer.from(await file.arrayBuffer())
-  await writeFile(filepath, buffer)
-
-  return { filepath: `/uploads/receipts/${filename}`, filename }
-}
-```
-
-### Docker Volume Configuration
-
-```yaml
-# docker-compose.yml
-services:
-  saap:
-    volumes:
-      - ./uploads:/app/uploads  # Persists across container restarts
-      - /volume1/docker/saap/uploads:/app/uploads  # NAS path on Synology
-```
-
-### Serving Static Files
-
-Next.js doesn't serve files outside `public/` by default. Options:
-
-**Option A: Symlink (Simple)**
-```bash
-# In container entrypoint
-ln -sf /app/uploads /app/public/uploads
-```
-
-**Option B: API Route (More Control)**
-```typescript
-// app/api/uploads/[...path]/route.ts
-import { readFile } from "fs/promises"
-import { join } from "path"
-import { auth } from "@/auth"
-
-export async function GET(
-  request: Request,
-  { params }: { params: { path: string[] } }
-) {
-  const session = await auth()
-  if (!session?.user) {
-    return new Response("Unauthorized", { status: 401 })
-  }
-
-  const filepath = join(process.cwd(), "uploads", ...params.path)
-  const file = await readFile(filepath)
-
-  return new Response(file, {
-    headers: {
-      "Content-Type": getMimeType(filepath),
-      "Cache-Control": "private, max-age=31536000",
-    },
-  })
-}
-```
-
-**Recommendation:** Use Option B (API Route) for auth-protected receipt access.
-
----
-
-## Prisma Schema Patterns
-
-### Money Fields
-
-Use `Decimal` type, NOT `Float`. Never use floating-point for currency.
-
-```prisma
-// Example: Project cost breakdown
-model ProjectCost {
-  id          String   @id @default(cuid())
-  projectId   String
-  project     Project  @relation(fields: [projectId], references: [id])
-  category    CostCategory
-  description String   @db.VarChar(255)
-  amount      Decimal  @db.Decimal(12, 2)  // Up to 999,999,999,999.99
-  currency    String   @default("MYR") @db.VarChar(3)
-  receiptPath String?  @db.VarChar(500)    // File path reference
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@index([projectId])
-  @@index([category])
-}
-```
-
-**Why Decimal(12,2):**
-- Matches existing `resourcesFinancial` field in Initiative model
-- 12 digits total, 2 after decimal
-- Sufficient for project costs up to ~1 billion MYR
-
-### File Reference Pattern
-
-Store filepath, not binary blob:
-
-```prisma
-model Receipt {
-  id          String   @id @default(cuid())
-  costId      String   @unique
-  cost        ProjectCost @relation(fields: [costId], references: [id])
-  filename    String   @db.VarChar(255)  // Original filename for display
-  filepath    String   @db.VarChar(500)  // /uploads/receipts/abc123.pdf
-  mimeType    String   @db.VarChar(100)
-  fileSize    Int                        // Bytes
-  uploadedBy  String
-  user        User     @relation(fields: [uploadedBy], references: [id])
-
-  createdAt   DateTime @default(now())
-}
-```
-
-**Why NOT store blobs:**
-- Prisma recommends external storage for files >100KB
-- Database backups become huge
-- Query performance degrades
-- MariaDB `LONGBLOB` has 4GB limit but complicates everything
-
-### Pipeline Stage Enums
-
-```prisma
-enum PipelineStage {
-  LEAD
-  QUALIFIED
-  PROPOSAL
-  NEGOTIATION
-  WON
-  LOST
-}
-
-enum PotentialStage {
-  POTENTIAL
-  CONFIRMED
-  CANCELLED
-}
-```
-
----
-
-## Currency Input Component
-
-### react-currency-input-field Usage
-
-```tsx
-import CurrencyInput from "react-currency-input-field"
-
-<CurrencyInput
-  id="amount"
-  name="amount"
-  placeholder="0.00"
-  decimalsLimit={2}
-  prefix="RM "
-  intlConfig={{ locale: "en-MY", currency: "MYR" }}
-  onValueChange={(value) => setAmount(value)}
-  className="flex h-10 w-full rounded-md border..."
-/>
-```
-
-**Features:**
-- Locale-aware formatting (1,234.56 for Malaysia)
-- Prefix/suffix support (RM)
-- Decimal limits
-- Form integration
-
-### Alternative: Native Intl API (Zero Dependencies)
-
-If you want to avoid another dependency:
-
-```typescript
-const formatCurrency = (value: number, locale = "en-MY", currency = "MYR") => {
-  return new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency,
-  }).format(value)
-}
-```
-
-Use `<input type="number" step="0.01">` with `onBlur` formatting.
-
-**Recommendation:** Use `react-currency-input-field` for better UX. It's well-maintained (315K weekly downloads) and handles edge cases.
-
----
-
-## Dropzone Component for Receipts
-
-### Recommendation: shadcn-dropzone Pattern
-
-The shadcn ecosystem has several dropzone components built on `react-dropzone`. Since the project already uses shadcn/ui, follow the same pattern:
-
-```tsx
-// components/ui/dropzone.tsx
-// Adapted from shadcn.io/components/forms/dropzone
-
-import { useDropzone } from "react-dropzone"
-import { cn } from "@/lib/utils"
-
-interface DropzoneProps {
-  onDrop: (files: File[]) => void
-  accept?: Record<string, string[]>
-  maxSize?: number
-}
-
-export function Dropzone({ onDrop, accept, maxSize }: DropzoneProps) {
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: accept ?? {
-      "image/*": [".jpeg", ".jpg", ".png", ".webp"],
-      "application/pdf": [".pdf"],
-    },
-    maxSize: maxSize ?? 10 * 1024 * 1024, // 10MB
-    multiple: false,
-  })
-
-  return (
-    <div
-      {...getRootProps()}
-      className={cn(
-        "border-2 border-dashed rounded-lg p-6 text-center cursor-pointer",
-        isDragActive ? "border-primary bg-primary/5" : "border-muted-foreground/25"
-      )}
-    >
-      <input {...getInputProps()} />
-      {isDragActive ? (
-        <p>Drop the file here...</p>
-      ) : (
-        <p>Drag & drop a receipt, or click to select</p>
-      )}
-    </div>
-  )
-}
-```
-
-**Required dependency:**
-```bash
-npm install react-dropzone
-```
-
-However, since the project aims for minimal dependencies, consider starting with a native `<input type="file">` styled with shadcn, and adding dropzone later if needed.
-
----
-
-## Sharp for Docker (If Using Image Optimization)
-
-If you generate receipt thumbnails or use `next/image` for receipts:
-
-### Installation for Docker Standalone
-
-```dockerfile
-# In Dockerfile, before COPY
-RUN npm install sharp --os=linux --cpu=x64
-
-# Set environment variable
-ENV NEXT_SHARP_PATH=/app/node_modules/sharp
-```
-
-### If Not Using Image Optimization
-
-Skip sharp. Receipts can be served as-is without thumbnails.
-
-**Recommendation:** Skip sharp for v1.2. Serve original receipt files. Add thumbnail generation later if needed.
+These packages in the current stack can be leveraged for v1.3:
+
+| Package | Current Version | Reuse For |
+|---------|-----------------|-----------|
+| `@dnd-kit/core` | ^6.3.1 | NOT for dashboard grid (use react-grid-layout instead); keep for Kanban boards |
+| `@dnd-kit/sortable` | ^10.0.0 | Existing Kanban functionality |
+| `date-fns` | ^4.1.0 | File path date formatting (`/uploads/2026/01/`) |
+| `lucide-react` | ^0.562.0 | File type icons (FileText, Image, File, etc.) |
+| `@radix-ui/react-dialog` | ^1.1.15 | Upload modal, file preview modal |
+| `@radix-ui/react-dropdown-menu` | ^2.1.16 | File actions (download, delete, rename) |
+| `@radix-ui/react-progress` | ^1.1.8 | Upload progress indicator |
+| `recharts` | ^3.6.0 | Dashboard chart widgets |
+| `nanoid` | (if installed from v1.2) | Unique file naming (alternative to crypto.randomUUID) |
 
 ---
 
 ## What NOT to Use
 
-### 1. UploadThing
+### File Upload Alternatives
 
-**Why not:** Adds external service dependency, costs money at scale, overkill for internal tool with 3 users. Native Server Actions + local storage is simpler and sufficient.
+| Package | Why Not |
+|---------|---------|
+| `multer` | Express middleware; doesn't work well with Next.js App Router; requires disabling body parser |
+| `formidable` | Extra dependency when native FormData works; callback-based API is dated |
+| `busboy` | Low-level; requires manual stream handling; FormData is simpler |
+| Cloud SDKs (S3, etc.) | Over-engineered for NAS local storage; adds external dependency |
 
-### 2. Multer
+### Dashboard Grid Alternatives
 
-**Why not:** Multer doesn't work well with Next.js App Router. Native `formData.get("file")` works fine. Multer is for Express middleware.
+| Package | Why Not |
+|---------|---------|
+| Extend `@dnd-kit` for grid | Requires building grid snapping, resize, responsive breakpoints from scratch |
+| `gridstack.js` | jQuery dependency; not React-native |
+| `react-dnd` | Older API; react-grid-layout uses it internally anyway |
+| `react-beautiful-dnd` | Deprecated; Atlassian discontinued maintenance |
 
-### 3. Formidable
+### File Validation Alternatives
 
-**Why not:** Requires disabling Next.js bodyParser. More complexity than native approach. Only useful for streaming large files (not needed for receipts).
-
-### 4. AWS S3 / Cloudinary
-
-**Why not:** External dependency, requires credentials management, network latency to cloud, costs money. NAS has plenty of storage.
-
-### 5. PostgreSQL `@db.Money` Type
-
-**Why not:** The project uses MariaDB, but even if it were PostgreSQL, avoid `@db.Money`. It depends on locale settings and has rounding issues. Stick with `Decimal`.
-
-### 6. Float for Currency
-
-**Why not:** Floating-point arithmetic causes precision errors (`0.1 + 0.2 != 0.3`). Always use `Decimal` for money.
-
-### 7. Storing Files in Database
-
-**Why not:** Prisma documentation explicitly recommends against storing large objects (files >100KB) in the database. Increases backup size, degrades query performance.
-
-### 8. UUID for Filenames
-
-**Why not:** UUID is 36 characters with dashes (not URL-friendly). NanoID is 21 characters, URL-safe, and collision-resistant.
-
-### 9. react-beautiful-dnd
-
-**Why not:** Deprecated, not maintained, doesn't work with React 18 strict mode. The project already uses `@dnd-kit` which is the modern replacement.
-
-### 10. New Kanban Library
-
-**Why not:** `@dnd-kit` is already installed and used for initiatives Kanban. Use the same library for sales pipeline consistency.
+| Package | Why Not |
+|---------|---------|
+| `mime-types` | Only checks file extension, not actual content; security risk |
+| `mime` | Same issue; extension-based, not content-based |
 
 ---
 
-## Summary: New Dependencies
+## Integration Notes
 
-| Package | Required? | Notes |
-|---------|-----------|-------|
-| `nanoid` | Yes | File naming |
-| `react-currency-input-field` | Recommended | Currency input UX |
-| `react-dropzone` | Optional | Drag-and-drop upload UX (can use native input instead) |
-| `sharp` | No | Skip for v1.2, add later if thumbnails needed |
+### File Storage Strategy
 
-**Total new packages:** 1-3 (minimal footprint)
+Given NAS deployment at `/volume1/Motionvii/saap2026v2/`:
+
+```
+/volume1/Motionvii/saap2026v2/
+  uploads/
+    projects/
+      {projectId}/
+        {year}/{month}/
+          {uuid}-{originalName}.{ext}
+    thumbnails/
+      {projectId}/
+        {uuid}-thumb.webp
+```
+
+**Docker Volume Mount Required:**
+```yaml
+# docker-compose.nas.yml - add to app service
+volumes:
+  - /volume1/Motionvii/saap2026v2/uploads:/app/uploads
+```
+
+### Prisma Schema Additions
+
+**Document model:**
+```prisma
+model Document {
+  id          String    @id @default(cuid())
+  projectId   String    @map("project_id")
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  filename    String    @db.VarChar(255)  // Original filename
+  filepath    String    @db.VarChar(500)  // /uploads/projects/{id}/...
+  mimeType    String    @db.VarChar(100)
+  fileSize    Int                         // Bytes
+  category    String?   @db.VarChar(50)   // receipt, invoice, contract, etc.
+
+  uploadedBy  String    @map("uploaded_by")
+  user        User      @relation(fields: [uploadedBy], references: [id])
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([projectId])
+  @@index([category])
+  @@map("documents")
+}
+```
+
+**Dashboard layout model:**
+```prisma
+model UserDashboardLayout {
+  id        String   @id @default(cuid())
+  userId    String   @unique @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  layout    Json     // Stores react-grid-layout positions
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user_dashboard_layouts")
+}
+```
+
+### Widget Role Restrictions
+
+Use existing role infrastructure:
+```typescript
+// Widget visibility by role
+const WIDGET_PERMISSIONS = {
+  'revenue-chart': ['ADMIN', 'EDITOR'],
+  'cost-summary': ['ADMIN', 'EDITOR'],
+  'project-status': ['ADMIN', 'EDITOR', 'VIEWER'],
+  'recent-activity': ['ADMIN', 'EDITOR', 'VIEWER'],
+  'deals-pipeline': ['ADMIN', 'EDITOR'],
+  'upcoming-events': ['ADMIN', 'EDITOR', 'VIEWER'],
+} as const
+```
+
+### react-grid-layout v2 API
+
+v2 uses TypeScript-native hooks:
+```typescript
+import { ResponsiveGridLayout } from 'react-grid-layout'
+import 'react-grid-layout/css/styles.css'
+import 'react-resizable/css/styles.css'
+
+// Layout definition
+const layouts = {
+  lg: [
+    { i: 'revenue-chart', x: 0, y: 0, w: 6, h: 4 },
+    { i: 'cost-summary', x: 6, y: 0, w: 6, h: 4 },
+    { i: 'project-status', x: 0, y: 4, w: 4, h: 3 },
+  ],
+  md: [...],
+  sm: [...],
+}
+
+// Component usage
+<ResponsiveGridLayout
+  layouts={layouts}
+  breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480 }}
+  cols={{ lg: 12, md: 10, sm: 6, xs: 4 }}
+  onLayoutChange={(layout, layouts) => saveToDatabase(layouts)}
+  draggableHandle=".widget-header"
+  isResizable={true}
+  isDraggable={true}
+>
+  {widgets.map(widget => (
+    <div key={widget.id}>
+      <WidgetComponent widget={widget} />
+    </div>
+  ))}
+</ResponsiveGridLayout>
+```
 
 ---
 
-## Migration Checklist
+## Package Summary
 
-1. [ ] Install `nanoid` and `react-currency-input-field`
-2. [ ] Create `/uploads` directory with proper permissions
-3. [ ] Configure Docker volume for uploads persistence
-4. [ ] Add upload API route or Server Action
-5. [ ] Add Prisma models for Pipeline, Project, ProjectCost
-6. [ ] Create currency input component
-7. [ ] Create receipt upload component
-8. [ ] Test file upload end-to-end on NAS
+### New Dependencies (4 packages)
+
+```bash
+npm install sharp file-type react-grid-layout react-resizable
+```
+
+### TypeScript Types
+
+- `sharp`: Bundled types (no @types needed)
+- `file-type`: Bundled types (ESM package)
+- `react-grid-layout` v2: Bundled types (no @types/react-grid-layout needed)
+- `react-resizable` v3: Bundled types (no @types needed)
+
+### Peer Dependencies Met
+
+All new packages are compatible with:
+- React 18 (current)
+- Node.js 20 (current)
+- TypeScript 5 (current)
+
+---
+
+## File Upload Security Checklist
+
+1. **Validate MIME type from content** (use `file-type`, not extension)
+2. **Limit file size** (10MB max recommended for receipts/invoices)
+3. **Generate unique filenames** (use `crypto.randomUUID()`)
+4. **Sanitize original filename** (strip path separators, special chars)
+5. **Store outside web root** (serve via API route with auth check)
+6. **Scan for malware** (optional: integrate ClamAV for enterprise)
 
 ---
 
 ## Sources
 
-### HIGH Confidence (Official Documentation)
-- [Next.js File Uploads: Server-Side Solutions](https://www.pronextjs.dev/next-js-file-uploads-server-side-solutions)
-- [Prisma: Avoid Storing BLOBs](https://www.prisma.io/docs/postgres/query-optimization/recommendations/storing-blob-in-database)
-- [Prisma: Decimal Type](https://github.com/prisma/prisma/discussions/10160)
-- [nanoid GitHub](https://github.com/ai/nanoid)
-- [@dnd-kit Documentation](https://dndkit.com/)
+**File Upload:**
+- [Next.js 14 App Router Native FormData](https://medium.com/@mrrabbilhasan/file-upload-in-next-js-14-app-router-most-simple-clean-way-5ed4c90fde39)
+- [file-type npm](https://www.npmjs.com/package/file-type)
+- [sharp npm](https://www.npmjs.com/package/sharp)
+- [Next.js sharp recommendation](https://nextjs.org/docs/messages/install-sharp)
 
-### MEDIUM Confidence (Verified Community)
-- [react-currency-input-field npm](https://www.npmjs.com/package/react-currency-input-field) - 315K weekly downloads
-- [shadcn.io Dropzone](https://www.shadcn.io/components/forms/dropzone)
-- [File Upload with Server Actions](https://akoskm.com/file-upload-with-nextjs-14-and-server-actions/)
-- [Building Kanban with dnd-kit](https://blog.chetanverma.com/how-to-create-an-awesome-kanban-board-using-dnd-kit)
-- [Sharp Docker Configuration](https://github.com/vercel/next.js/discussions/35296)
+**Dashboard Grid:**
+- [react-grid-layout GitHub](https://github.com/react-grid-layout/react-grid-layout)
+- [react-grid-layout npm](https://www.npmjs.com/package/react-grid-layout)
+- [react-resizable npm](https://www.npmjs.com/package/react-resizable)
+- [Building Dashboard Widgets with React Grid Layout](https://www.antstack.com/blog/building-customizable-dashboard-widgets-using-react-grid-layout/)
+- [Why React-Grid-Layout for Dashboards (ilert case study)](https://www.ilert.com/blog/building-interactive-dashboards-why-react-grid-layout-was-our-best-choice)
 
-### LOW Confidence (Single Source - Verify Before Using)
-- Sharp version compatibility with Next.js 14 Docker may require testing
+**Comparisons:**
+- [dnd-kit vs react-grid-layout discussion](https://github.com/clauderic/dnd-kit/discussions/1560)
+- [npm trends: dnd-kit vs react-grid-layout](https://npmtrends.com/@dnd-kit/core-vs-react-dnd-vs-react-grid-layout)

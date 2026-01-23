@@ -18,15 +18,15 @@ This milestone extends the existing Next.js 14 App Router architecture with new 
 | Deal             |     | (auto-created    |     | (optional link)  |
 | PotentialProject |---->|  or standalone)  |     |                  |
 +------------------+     +--------+---------+     +------------------+
-                                  |
-                                  v
-                         +------------------+
-                         |   Project Costs  |
-                         |------------------|
-                         | Cost             |
-                         | CostCategory     |
-                         | Receipt (upload) |
-                         +------------------+
+                                 |
+                                 v
+                        +------------------+
+                        |   Project Costs  |
+                        |------------------|
+                        | Cost             |
+                        | CostCategory     |
+                        | Receipt (upload) |
+                        +------------------+
 ```
 
 ### Data Model Relationships (ERD)
@@ -65,8 +65,8 @@ This milestone extends the existing Next.js 14 App Router architecture with new 
          |                  | createdAt          |                 |
          |                  | updatedAt          |                 |
          +------------------| (repeat clients)   |                 |
-                            +--------------------+                 |
-                                                                   |
+                           +--------------------+                 |
+                                                                  |
 +-------------------+       +--------------------+                  |
 |   CostCategory    |       |        Cost        |                  |
 |-------------------|       |--------------------|                  |
@@ -76,12 +76,12 @@ This milestone extends the existing Next.js 14 App Router architecture with new 
 | color?            |       | description        |
 | position          |       | amount             |
 +-------------------+       | date               |
-                            | receiptUrl?        |
-                            | receiptFilename?   |
-                            | notes?             |
-                            | createdAt          |
-                            | updatedAt          |
-                            +--------------------+
+                           | receiptUrl?        |
+                           | receiptFilename?   |
+                           | notes?             |
+                           | createdAt          |
+                           | updatedAt          |
+                           +--------------------+
 ```
 
 ### Component Boundaries
@@ -604,4 +604,755 @@ For receipt uploads, recommend local storage initially:
 
 ---
 
-*Architecture research: 2026-01-22*
+# Architecture Research: Document Management & Customizable Dashboard (v1.3)
+
+**Project:** SAAP 2026 v1.3
+**Researched:** 2026-01-23
+**Overall Confidence:** HIGH
+
+## Executive Summary
+
+This section outlines the architecture for integrating document management and customizable dashboards into the existing SAAP application. The research recommends:
+
+1. **Document Management:** Filesystem storage at `/uploads/` organized by project ID, with metadata tracked in MariaDB. Server Actions for upload handling with security validation.
+
+2. **Dashboard Customization:** JSON-based layout persistence in a new `UserPreferences` table, using the existing `@dnd-kit` library for widget drag-and-drop (no need for `react-grid-layout` given no resize requirement).
+
+3. **Role Restrictions:** Permission checks embedded in widget registry with server-side validation of visible widgets.
+
+---
+
+## Document Management Architecture
+
+### Storage Approach: Filesystem with Database Metadata
+
+**Recommendation:** Store files on filesystem at `/uploads/`, store metadata in database.
+
+**Rationale:**
+- NAS deployment makes filesystem storage natural and performant
+- Database stores metadata (path, name, size, uploadedBy, uploadedAt)
+- Existing `Cost.receiptPath` field already follows this pattern
+- Cloud storage (S3) would add unnecessary complexity for NAS deployment
+
+**References:**
+- [Next.js File Uploads: Server-Side Solutions](https://www.pronextjs.dev/next-js-file-uploads-server-side-solutions)
+- [File Upload with Next.js 14 and Server Actions](https://akoskm.com/file-upload-with-nextjs-14-and-server-actions/)
+
+### Folder Structure
+
+```
+/uploads/
+  /projects/
+    /{projectId}/
+      /documents/
+        {uuid}-{original-filename}.pdf
+        {uuid}-{original-filename}.xlsx
+      /receipts/
+        {uuid}-{original-filename}.jpg
+```
+
+**Key decisions:**
+- **UUID prefix:** Prevents filename collisions, enables deduplication
+- **Preserve original filename:** Better UX when downloading
+- **Project-scoped:** Natural organization, easy permission checks
+- **Separate receipts subfolder:** Aligns with existing `Cost.receiptPath` pattern
+
+### Schema Additions
+
+```prisma
+model Document {
+  id            String    @id @default(cuid())
+  filename      String    @db.VarChar(255)    // Original filename
+  storagePath   String    @db.VarChar(500)    // Full path on filesystem
+  mimeType      String    @db.VarChar(100)
+  sizeBytes     Int
+  description   String?   @db.Text
+
+  projectId     String    @map("project_id")
+  project       Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  uploadedById  String    @map("uploaded_by_id")
+  uploadedBy    User      @relation(fields: [uploadedById], references: [id])
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([projectId])
+  @@index([uploadedById])
+  @@map("documents")
+}
+
+// Update existing Project model
+model Project {
+  // ... existing fields ...
+  documents     Document[]
+}
+
+// Update existing User model
+model User {
+  // ... existing fields ...
+  documents     Document[]
+}
+```
+
+### API Routes
+
+| Route | Method | Purpose |
+|-------|--------|---------|
+| `/api/projects/[id]/documents` | GET | List documents for project |
+| `/api/projects/[id]/documents` | POST | Upload new document (Server Action) |
+| `/api/projects/[id]/documents/[docId]` | GET | Download document |
+| `/api/projects/[id]/documents/[docId]` | DELETE | Delete document |
+
+### Server Action for Upload
+
+```typescript
+// src/lib/actions/document-actions.ts
+"use server";
+
+import { auth } from "@/auth";
+import { canEdit } from "@/lib/permissions";
+import prisma from "@/lib/prisma";
+import { writeFile, mkdir } from "fs/promises";
+import { join } from "path";
+import { v4 as uuid } from "uuid";
+
+const UPLOAD_BASE = process.env.UPLOAD_PATH || "/uploads";
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const ALLOWED_TYPES = [
+  "application/pdf",
+  "image/jpeg",
+  "image/png",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "application/vnd.ms-excel",
+];
+
+export async function uploadDocument(formData: FormData) {
+  // 1. Auth check
+  const session = await auth();
+  if (!session?.user?.id || !canEdit(session.user.role)) {
+    return { error: "Unauthorized" };
+  }
+
+  // 2. Extract and validate file
+  const file = formData.get("file") as File;
+  const projectId = formData.get("projectId") as string;
+  const description = formData.get("description") as string | null;
+
+  if (!file || file.size === 0) {
+    return { error: "No file provided" };
+  }
+
+  if (file.size > MAX_FILE_SIZE) {
+    return { error: "File too large (max 10MB)" };
+  }
+
+  if (!ALLOWED_TYPES.includes(file.type)) {
+    return { error: "File type not allowed" };
+  }
+
+  // 3. Verify project exists and user has access
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+  });
+
+  if (!project) {
+    return { error: "Project not found" };
+  }
+
+  // 4. Generate storage path
+  const fileId = uuid();
+  const safeFilename = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+  const storagePath = join(
+    UPLOAD_BASE,
+    "projects",
+    projectId,
+    "documents",
+    `${fileId}-${safeFilename}`
+  );
+
+  // 5. Write file to filesystem
+  const bytes = await file.arrayBuffer();
+  const buffer = Buffer.from(bytes);
+
+  // Ensure directory exists
+  const dir = join(UPLOAD_BASE, "projects", projectId, "documents");
+  await mkdir(dir, { recursive: true });
+
+  await writeFile(storagePath, buffer);
+
+  // 6. Create database record
+  const document = await prisma.document.create({
+    data: {
+      filename: file.name,
+      storagePath,
+      mimeType: file.type,
+      sizeBytes: file.size,
+      description,
+      projectId,
+      uploadedById: session.user.id,
+    },
+  });
+
+  return { success: true, document };
+}
+```
+
+### Security Considerations
+
+| Concern | Mitigation |
+|---------|------------|
+| Path traversal | UUID-based paths, sanitize filenames |
+| File type validation | Check MIME type server-side, not just extension |
+| Size limits | Enforce in Server Action (10MB default) |
+| Access control | Verify project membership before download |
+| Virus scanning | Consider ClamAV integration for production |
+
+**References:**
+- [Handling File Uploads in Next.js Best Practices and Security](https://moldstud.com/articles/p-handling-file-uploads-in-nextjs-best-practices-and-security-considerations)
+- [Shield Your Data: How to Manage Private Files in Next.js](https://prateekbadjatya.medium.com/shield-your-data-how-to-manage-private-files-in-next-js-applications-5895c9093b1c)
+
+---
+
+## Dashboard Customization Architecture
+
+### Widget Registry Pattern
+
+A central registry defines available widgets with their metadata and role requirements.
+
+```typescript
+// src/lib/dashboard/widget-registry.ts
+import { UserRole } from "@prisma/client";
+
+export interface WidgetDefinition {
+  id: string;
+  name: string;
+  description: string;
+  component: string;  // Component path for dynamic import
+  defaultSize: "small" | "medium" | "large" | "full";
+  minRole: UserRole;  // Minimum role required to see widget
+  category: "kpi" | "chart" | "list" | "crm";
+}
+
+export const WIDGET_REGISTRY: WidgetDefinition[] = [
+  {
+    id: "kpi-initiatives",
+    name: "Initiative KPIs",
+    description: "Total, completed, at-risk initiatives",
+    component: "@/components/dashboard/kpi-cards",
+    defaultSize: "full",
+    minRole: "VIEWER",
+    category: "kpi",
+  },
+  {
+    id: "kpi-revenue",
+    name: "Revenue Progress",
+    description: "Revenue vs target progress bar",
+    component: "@/components/dashboard/revenue-progress",
+    defaultSize: "full",
+    minRole: "VIEWER",
+    category: "kpi",
+  },
+  {
+    id: "chart-status",
+    name: "Status Distribution",
+    description: "Pie chart of initiative statuses",
+    component: "@/components/dashboard/status-chart",
+    defaultSize: "medium",
+    minRole: "VIEWER",
+    category: "chart",
+  },
+  {
+    id: "chart-department",
+    name: "Department Distribution",
+    description: "Bar chart by department",
+    component: "@/components/dashboard/department-chart",
+    defaultSize: "medium",
+    minRole: "VIEWER",
+    category: "chart",
+  },
+  {
+    id: "list-recent",
+    name: "Recent Initiatives",
+    description: "Latest updated initiatives",
+    component: "@/components/dashboard/recent-initiatives",
+    defaultSize: "medium",
+    minRole: "VIEWER",
+    category: "list",
+  },
+  {
+    id: "chart-workload",
+    name: "Team Workload",
+    description: "Initiatives per team member",
+    component: "@/components/dashboard/team-workload",
+    defaultSize: "medium",
+    minRole: "VIEWER",
+    category: "chart",
+  },
+  {
+    id: "crm-kpis",
+    name: "Sales KPIs",
+    description: "Pipeline, forecast, win rate",
+    component: "@/components/dashboard/crm-kpi-cards",
+    defaultSize: "full",
+    minRole: "EDITOR",  // Only EDITOR+ see sales data
+    category: "crm",
+  },
+  {
+    id: "crm-pipeline",
+    name: "Pipeline Stages",
+    description: "Deal stages funnel chart",
+    component: "@/components/dashboard/pipeline-stage-chart",
+    defaultSize: "large",
+    minRole: "EDITOR",  // Only EDITOR+ see sales data
+    category: "crm",
+  },
+];
+
+// Role hierarchy for comparison
+const ROLE_HIERARCHY: Record<UserRole, number> = {
+  VIEWER: 1,
+  EDITOR: 2,
+  ADMIN: 3,
+};
+
+export function canAccessWidget(
+  widget: WidgetDefinition,
+  userRole: UserRole
+): boolean {
+  return ROLE_HIERARCHY[userRole] >= ROLE_HIERARCHY[widget.minRole];
+}
+
+export function getAvailableWidgets(userRole: UserRole): WidgetDefinition[] {
+  return WIDGET_REGISTRY.filter((w) => canAccessWidget(w, userRole));
+}
+```
+
+### Layout Persistence Schema
+
+```prisma
+model UserPreferences {
+  id            String    @id @default(cuid())
+  userId        String    @unique @map("user_id")
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Dashboard layout stored as JSON
+  // Example: [{ widgetId: "kpi-initiatives", order: 0, visible: true }]
+  dashboardLayout Json?   @db.Text  // MariaDB: JSON is alias for LONGTEXT
+
+  // Future: other preferences
+  // theme         String?   @default("light")
+  // timezone      String?
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("user_preferences")
+}
+
+// Update User model
+model User {
+  // ... existing fields ...
+  preferences   UserPreferences?
+}
+```
+
+**MariaDB JSON Note:** MariaDB's `Json` type is an alias for `LONGTEXT` with a `JSON_VALID` check constraint. This works fine for storing structured data but returns strings (not objects) - parse in application code.
+
+**Reference:** [MariaDB JSON Data Type](https://mariadb.com/docs/server/reference/data-types/string-data-types/json)
+
+### Layout TypeScript Types
+
+```typescript
+// src/types/dashboard.ts
+export interface WidgetLayoutItem {
+  widgetId: string;
+  order: number;
+  visible: boolean;
+}
+
+export type DashboardLayout = WidgetLayoutItem[];
+
+// Default layout for new users (filtered by role at runtime)
+export const DEFAULT_LAYOUT: DashboardLayout = [
+  { widgetId: "kpi-initiatives", order: 0, visible: true },
+  { widgetId: "kpi-revenue", order: 1, visible: true },
+  { widgetId: "chart-status", order: 2, visible: true },
+  { widgetId: "chart-department", order: 3, visible: true },
+  { widgetId: "chart-workload", order: 4, visible: true },
+  { widgetId: "list-recent", order: 5, visible: true },
+  { widgetId: "crm-kpis", order: 6, visible: true },
+  { widgetId: "crm-pipeline", order: 7, visible: true },
+];
+```
+
+### Default vs User Layouts
+
+```
+Flow:
+1. User visits dashboard
+2. Fetch UserPreferences.dashboardLayout from DB
+3. If null, use DEFAULT_LAYOUT
+4. Filter layout by user's role (remove widgets they can't access)
+5. Render widgets in order
+```
+
+**Server-side layout resolution:**
+
+```typescript
+// src/lib/dashboard/get-dashboard-layout.ts
+import { auth } from "@/auth";
+import prisma from "@/lib/prisma";
+import { getAvailableWidgets, WIDGET_REGISTRY } from "./widget-registry";
+import { DEFAULT_LAYOUT, DashboardLayout } from "@/types/dashboard";
+
+export async function getDashboardLayout(): Promise<DashboardLayout> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return [];
+  }
+
+  const userRole = session.user.role;
+  const availableWidgets = getAvailableWidgets(userRole);
+  const availableIds = new Set(availableWidgets.map((w) => w.id));
+
+  // Fetch user preferences
+  const prefs = await prisma.userPreferences.findUnique({
+    where: { userId: session.user.id },
+  });
+
+  // Parse stored layout or use default
+  let layout: DashboardLayout;
+  if (prefs?.dashboardLayout) {
+    // MariaDB returns JSON as string - parse it
+    layout = typeof prefs.dashboardLayout === "string"
+      ? JSON.parse(prefs.dashboardLayout)
+      : prefs.dashboardLayout;
+  } else {
+    layout = DEFAULT_LAYOUT;
+  }
+
+  // Filter to only widgets user can access
+  return layout.filter((item) => availableIds.has(item.widgetId));
+}
+```
+
+### Role Restrictions Implementation
+
+| Role | Accessible Widgets |
+|------|-------------------|
+| VIEWER | Initiative KPIs, Revenue Progress, Status Chart, Department Chart, Workload, Recent |
+| EDITOR | All VIEWER widgets + Sales KPIs, Pipeline Stages |
+| ADMIN | All widgets |
+
+**Enforcement points:**
+
+1. **Widget Registry:** `minRole` property defines minimum role
+2. **Server-side filter:** `getDashboardLayout()` filters by role before returning
+3. **Client-side guard:** Double-check role before rendering (defense in depth)
+4. **API protection:** Dashboard data APIs check role before returning sensitive data
+
+---
+
+## Data Flow
+
+### Document Upload Flow
+
+```
++-----------+     +--------------+     +----------------+     +-------------+
+|   Client  |---->| Server Action|---->|   Filesystem   |---->|  Database   |
+|  (Form)   |     |  (Validate)  |     |  (/uploads/)   |     | (Metadata)  |
++-----------+     +--------------+     +----------------+     +-------------+
+       |                 |                    |                     |
+       |  FormData       |  Auth + Type check |  Write file         |  Create Document
+       |  + file         |  + Size check      |  to project folder  |  record
+```
+
+### Document Download Flow
+
+```
++-----------+     +--------------+     +----------------+     +-------------+
+|   Client  |---->|  API Route   |---->|   Database     |---->| Filesystem  |
+|  (Link)   |     | (Auth check) |     |  (Get path)    |     |  (Stream)   |
++-----------+     +--------------+     +----------------+     +-------------+
+       |                 |                    |                     |
+       |  GET /api/...   |  Verify role +     |  Lookup Document    |  Stream file
+       |  /documents/[id]|  project access    |  get storagePath    |  to response
+```
+
+### Dashboard Render Flow
+
+```
++-----------+     +--------------+     +----------------+     +-------------+
+| Dashboard |---->| Get Layout   |---->| Filter by Role |---->|   Render    |
+| Page(SSR) |     |  (Server)    |     | (Widget Reg)   |     |  Widgets    |
++-----------+     +--------------+     +----------------+     +-------------+
+       |                 |                    |                     |
+       |  Page load      |  Query prefs +     |  Remove widgets     |  Map layout
+       |                 |  default layout    |  user can't see     |  to components
+```
+
+### Dashboard Customization Flow
+
+```
++-----------+     +--------------+     +----------------+
+|   Client  |---->|  @dnd-kit    |---->| Server Action  |
+|(Drag/Drop)|     |  (Reorder)   |     | (Save Layout)  |
++-----------+     +--------------+     +----------------+
+       |                 |                    |
+       |  Drag widget    |  Update local      |  Persist to
+       |  to new position|  state + optimistic|  UserPreferences
+```
+
+---
+
+## Component Boundaries
+
+### Document Management Components
+
+```
+src/
+  components/
+    documents/
+      document-list.tsx        # List documents for a project
+      document-upload.tsx      # Upload form (uses Server Action)
+      document-card.tsx        # Single document with download/delete
+      document-preview.tsx     # Preview modal (images, PDFs)
+  lib/
+    actions/
+      document-actions.ts      # Server Actions: upload, delete
+  app/
+    api/
+      projects/
+        [id]/
+          documents/
+            route.ts           # GET list
+            [docId]/
+              route.ts         # GET download, DELETE
+```
+
+### Dashboard Customization Components
+
+```
+src/
+  components/
+    dashboard/
+      customizable-dashboard.tsx  # Main container with @dnd-kit
+      widget-wrapper.tsx          # Draggable widget container
+      widget-picker.tsx           # Modal to add/remove widgets
+      # Existing widgets remain unchanged:
+      kpi-cards.tsx
+      status-chart.tsx
+      department-chart.tsx
+      team-workload.tsx
+      recent-initiatives.tsx
+      crm-kpi-cards.tsx
+      pipeline-stage-chart.tsx
+  lib/
+    dashboard/
+      widget-registry.ts          # Widget definitions + role checks
+      get-dashboard-layout.ts     # Server-side layout resolution
+    actions/
+      dashboard-actions.ts        # Server Action: save layout
+  types/
+    dashboard.ts                  # Layout types
+```
+
+### Integration Points
+
+| New Component | Integrates With |
+|---------------|-----------------|
+| `document-list.tsx` | Project detail page (new tab) |
+| `customizable-dashboard.tsx` | Replaces current dashboard page.tsx content |
+| `widget-registry.ts` | `permissions.ts` role checks |
+| `UserPreferences` model | `User` model (1:1 relation) |
+
+---
+
+## Suggested Build Order (v1.3)
+
+Based on dependencies and complexity, here is the recommended phase structure:
+
+### Phase 1: Database & Core Infrastructure
+
+**Duration:** 1-2 days
+
+1. Add `Document` model to Prisma schema
+2. Add `UserPreferences` model to Prisma schema
+3. Update `User` and `Project` relations
+4. Run migration
+5. Create document storage directory structure
+
+**Dependencies:** None (foundation for everything else)
+
+### Phase 2: Document Management
+
+**Duration:** 3-4 days
+
+1. Create document Server Actions (upload, delete)
+2. Build API route for download streaming
+3. Create `document-list.tsx` component
+4. Create `document-upload.tsx` with drag-drop zone
+5. Create `document-card.tsx` with preview/download
+6. Integrate into project detail page
+
+**Dependencies:** Phase 1 (schema must exist)
+
+**Why before dashboard:** Simpler feature, establishes Server Action patterns
+
+### Phase 3: Widget Registry & Role Filtering
+
+**Duration:** 1-2 days
+
+1. Create `widget-registry.ts` with all existing widgets
+2. Implement `canAccessWidget()` role checks
+3. Create `get-dashboard-layout.ts` server function
+4. Define TypeScript types for layout
+
+**Dependencies:** Phase 1 (UserPreferences schema)
+
+**Why this order:** Registry is foundation for dashboard customization
+
+### Phase 4: Dashboard Customization UI
+
+**Duration:** 3-4 days
+
+1. Create `customizable-dashboard.tsx` with @dnd-kit
+2. Create `widget-wrapper.tsx` (draggable container)
+3. Create `widget-picker.tsx` (add/remove modal)
+4. Create Server Action to save layout
+5. Replace existing dashboard with customizable version
+6. Test role-based widget visibility
+
+**Dependencies:** Phase 3 (widget registry must exist)
+
+### Phase 5: Polish & Testing
+
+**Duration:** 1-2 days
+
+1. Add loading states and error handling
+2. Implement optimistic updates for drag-drop
+3. Add document preview for images/PDFs
+4. Test all role combinations
+5. Mobile responsiveness for customization UI
+
+**Dependencies:** Phases 2-4 complete
+
+---
+
+## Technology Decisions
+
+### Use @dnd-kit for Dashboard (Not react-grid-layout)
+
+**Recommendation:** Continue using `@dnd-kit` already in the project.
+
+**Rationale:**
+- Already installed and used for Kanban boards
+- No resize requirement for widgets (just reorder)
+- Smaller bundle size than react-grid-layout
+- Consistent DX across the codebase
+- Better mobile/touch support
+
+**When to reconsider:** If widget resizing becomes a requirement, evaluate `react-grid-layout`.
+
+**Reference:** [Interactive Dashboards: Why React-Grid-Layout Was Our Best Choice](https://www.ilert.com/blog/building-interactive-dashboards-why-react-grid-layout-was-our-best-choice)
+
+### Use JSON Column for Layout (Not Normalized Tables)
+
+**Recommendation:** Store layout as JSON in `UserPreferences.dashboardLayout`.
+
+**Rationale:**
+- Layout is read-as-whole, written-as-whole (no partial updates)
+- Schema flexibility for future additions
+- Simpler queries (single read vs joins)
+- MariaDB JSON type works fine (LONGTEXT with validation)
+
+**Tradeoff:** Can't query "which users have widget X visible" easily. Acceptable for this use case.
+
+**Reference:** [Working with JSON fields | Prisma Documentation](https://www.prisma.io/docs/orm/prisma-client/special-fields-and-types/working-with-json-fields)
+
+### Use Server Actions for Uploads (Not API Routes)
+
+**Recommendation:** Server Actions for document uploads.
+
+**Rationale:**
+- Simpler code (no separate API route)
+- Progressive enhancement (works without JS)
+- Type-safe with TypeScript
+- Natural integration with forms
+- Existing pattern in codebase
+
+**Reference:** [File Upload with Next.js 14 and Server Actions](https://akoskm.com/file-upload-with-nextjs-14-and-server-actions/)
+
+---
+
+## Anti-Patterns to Avoid
+
+### Document Management
+
+| Anti-Pattern | Why Bad | Instead |
+|--------------|---------|---------|
+| Store files in `/public` | Publicly accessible, no auth | Use `/uploads/` outside webroot |
+| Trust client MIME type | Can be spoofed | Validate on server, check magic bytes |
+| Store full path in DB | Breaks if storage moves | Store relative path, configure base |
+| No file size limit | DoS risk | Enforce max size server-side |
+
+### Dashboard Customization
+
+| Anti-Pattern | Why Bad | Instead |
+|--------------|---------|---------|
+| Client-only role checks | Can be bypassed | Server-side validation |
+| Store layout per-session | Lost on logout | Persist to database |
+| Load all widget data upfront | Slow for hidden widgets | Lazy load visible only |
+| No default layout | Blank dashboard for new users | Sensible defaults |
+
+---
+
+## Sources
+
+### File Upload & Storage
+- [File Upload with Next.js 14 and Server Actions | Akos Komuves](https://akoskm.com/file-upload-with-nextjs-14-and-server-actions/)
+- [Next.js File Uploads: Server-Side Solutions | ProNextJS](https://www.pronextjs.dev/next-js-file-uploads-server-side-solutions)
+- [Handling File Uploads in Next.js Best Practices and Security | MoldStud](https://moldstud.com/articles/p-handling-file-uploads-in-nextjs-best-practices-and-security-considerations)
+- [Shield Your Data: How to Manage Private Files in Next.js | Medium](https://prateekbadjatya.medium.com/shield-your-data-how-to-manage-private-files-in-next-js-applications-5895c9093b1c)
+
+### Dashboard Customization
+- [Building Customizable Dashboard Widgets Using React Grid Layout | AntStack](https://www.antstack.com/blog/building-customizable-dashboard-widgets-using-react-grid-layout/)
+- [Interactive Dashboards: Why React-Grid-Layout Was Our Best Choice | ilert](https://www.ilert.com/blog/building-interactive-dashboards-why-react-grid-layout-was-our-best-choice)
+- [Top 5 Drag-and-Drop Libraries for React | Puck](https://puckeditor.com/blog/top-5-drag-and-drop-libraries-for-react)
+- [Can DND do the react-grid-layout showcase? | GitHub Discussion](https://github.com/clauderic/dnd-kit/discussions/1560)
+
+### Role-Based Access Control
+- [Implementing Role Based Access Control (RBAC) in React | Permit.io](https://www.permit.io/blog/implementing-react-rbac-authorization)
+- [Authorization | React-admin Documentation](https://marmelab.com/react-admin/Permissions.html)
+
+### Prisma & Database
+- [Working with JSON fields | Prisma Documentation](https://www.prisma.io/docs/orm/prisma-client/special-fields-and-types/working-with-json-fields)
+- [MariaDB JSON Data Type | Documentation](https://mariadb.com/docs/server/reference/data-types/string-data-types/json)
+- [prisma-json-types-generator | npm](https://www.npmjs.com/package/prisma-json-types-generator)
+
+---
+
+## Confidence Assessment
+
+| Area | Confidence | Rationale |
+|------|------------|-----------|
+| Document Storage | HIGH | Follows existing receiptPath pattern, well-documented approach |
+| Upload Security | HIGH | Standard practices from official sources |
+| Dashboard Layout | HIGH | JSON persistence is proven pattern, @dnd-kit already in use |
+| Role Restrictions | HIGH | Extends existing permissions.ts pattern |
+| MariaDB JSON | MEDIUM | Works but is LONGTEXT alias - parse in app code |
+| Widget Registry | HIGH | Standard React pattern, no external deps |
+
+---
+
+## Open Questions for Implementation
+
+1. **Document preview:** Support inline PDF/image preview or download-only?
+2. **Widget data caching:** Cache dashboard data or fetch fresh on each render?
+3. **Layout migration:** How to handle layout when new widgets are added? (Auto-add to end?)
+4. **Mobile dashboard:** Allow customization on mobile or fixed layout?
+
+---
+
+*Architecture research for v1.3: 2026-01-23*

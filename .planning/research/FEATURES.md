@@ -337,3 +337,273 @@ CostItem
 | Data Model | MEDIUM | Standard patterns; may need adjustment during implementation |
 | Pipeline Stages | HIGH | Industry-standard 5-stage pipeline for B2B |
 | Cost Categories | MEDIUM | Common categories; may add/adjust based on actual usage |
+
+---
+---
+
+# Feature Landscape: Document Management & Dashboard Customization
+
+**Domain:** Document uploads + customizable dashboards for internal team
+**Context:** SAAP v1.3 milestone features
+**Researched:** 2026-01-23
+**Confidence:** HIGH (based on industry patterns + web research)
+
+## Context
+
+This research addresses v1.3 milestone features:
+- Document management: receipts/invoices attached to projects
+- Customizable dashboards: per-user layouts with role-based restrictions
+- Existing infrastructure: Projects with cost tracking, fixed dashboard with KPI cards
+
+---
+
+## Document Management
+
+### Table Stakes
+
+Must-have features users expect for document uploads attached to projects.
+
+| Feature | Why Expected | Complexity | Notes |
+|---------|--------------|------------|-------|
+| **Drag-and-drop upload** | Standard UX pattern; users expect to drag files from desktop | Medium | Use react-dropzone or similar; visual drop zone with dashed border |
+| **Click to upload fallback** | Accessibility requirement; not everyone can drag-drop | Low | Standard file input with styled button |
+| **File type validation** | Prevent errors; only accept relevant document types | Low | Allow PDF, PNG, JPG, JPEG; reject executables |
+| **File size limit** | Prevent storage abuse; protect server resources | Low | Suggest 10MB limit for receipts/invoices |
+| **Upload progress indicator** | User feedback during upload; prevents duplicate uploads | Medium | Progress bar or percentage indicator |
+| **File preview/thumbnail** | Quick visual confirmation of uploaded file | Medium | Image thumbnails for images; PDF icon for PDFs |
+| **Download original file** | Users need to retrieve uploaded documents | Low | Direct download link |
+| **Delete document** | Remove incorrect uploads | Low | With confirmation dialog |
+| **Document list per project** | See all documents for a project in one place | Low | Table or card layout |
+| **File metadata display** | Show filename, size, upload date, uploader | Low | Essential for audit trail |
+| **Document type categorization** | Distinguish receipts from invoices | Low | Simple enum: RECEIPT, INVOICE, OTHER |
+
+### Differentiators
+
+Nice-to-have features that add value but are not expected.
+
+| Feature | Value Proposition | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| **AI value extraction** | Auto-extract amounts from receipts/invoices | High | Claude Code integration; extract vendor, amount, date |
+| **Folder organization** | Group documents by type or date | Medium | Already planned; folder structure by project |
+| **Bulk upload** | Upload multiple files at once | Medium | Select multiple files; batch processing |
+| **Document search** | Find documents by filename or extracted content | Medium | Full-text search across document metadata |
+| **Version history** | Track document replacements | High | Store previous versions; overkill for small team |
+| **OCR text extraction** | Search within document content | High | Requires external OCR service; expensive |
+| **Expiry/retention dates** | Auto-archive or flag expired documents | Medium | Useful for compliance but not critical |
+| **Document annotations** | Add notes to specific parts of document | High | Complex UI; not needed for receipts |
+| **Sharing links** | Share document externally | Medium | Generate public/private links; security concern |
+| **Mobile camera upload** | Snap photo directly from mobile | Medium | Good UX but web app already responsive |
+
+### Anti-Features
+
+Features to explicitly NOT build. Common mistakes in this domain.
+
+| Anti-Feature | Why Avoid | What to Do Instead |
+|--------------|-----------|-------------------|
+| **Full document management system** | Overkill for 3-person team; scope creep | Simple attachment model linked to projects |
+| **Complex folder hierarchies** | Hard to maintain; users get lost | Flat structure: one folder per project |
+| **Document editing in-app** | Massive scope; use external tools | Download, edit externally, re-upload |
+| **E-signatures** | Completely separate product domain | Out of scope; use DocuSign if needed |
+| **Document approval workflows** | Overkill for small team | Simple upload = done |
+| **Automated invoice parsing** | High complexity, low ROI for 3 users | Manual entry with optional AI assist |
+| **Cloud storage sync (Dropbox, etc.)** | Adds complexity; NAS is sufficient | Direct upload to NAS storage |
+| **Document collaboration** | Real-time editing is separate domain | Not needed for receipts/invoices |
+| **Complex access controls per document** | Role-based at project level is sufficient | Inherit project-level permissions |
+| **Watermarking** | Not needed for internal tool | Unnecessary complexity |
+
+---
+
+## Customizable Dashboard
+
+### Table Stakes
+
+Must-have features users expect for dashboard customization.
+
+| Feature | Why Expected | Complexity | Notes |
+|---------|--------------|------------|-------|
+| **Widget bank/selector** | Users need to see available widgets | Medium | Panel showing all available widgets with previews |
+| **Add/remove widgets** | Core customization capability | Medium | Click to add; X to remove |
+| **Widget drag-and-drop positioning** | Intuitive rearrangement | Medium | Use react-grid-layout library |
+| **Widget resize (standard sizes)** | Different widgets need different space | Medium | Small, medium, large presets; not pixel-perfect |
+| **Layout persistence** | Changes should survive page refresh | Medium | Save to database per user |
+| **Reset to default** | Undo customizations; safety net for experimentation | Low | One-click restore to admin default |
+| **Admin default layout** | New users start with sensible dashboard | Medium | Admin can define starter layout |
+| **Responsive behavior** | Dashboard works on mobile | High | Columns collapse on smaller screens |
+
+### Differentiators
+
+Nice-to-have features that add value but are not expected.
+
+| Feature | Value Proposition | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| **Role-based widget restrictions** | Control which roles see which widgets | Medium | Already planned; Admin restricts Viewer widgets |
+| **Date range filter for dashboard** | Filter all widgets by time period | Medium | Already planned; global date picker |
+| **Save multiple layouts** | Switch between different dashboard views | High | Multiple named layouts per user |
+| **Share layout with team** | Propagate good layouts | Medium | Copy layout to other users |
+| **Widget-specific date ranges** | Different time windows per widget | High | Complex UX; global filter is simpler |
+| **Dashboard themes** | Light/dark mode toggle | Medium | Already have Tailwind dark mode support |
+| **Export dashboard as PDF/image** | Share dashboard snapshot | Medium | Screenshot functionality |
+| **Dashboard scheduling** | Auto-email dashboard summary | High | Background jobs; email integration |
+| **Real-time data updates** | Live refresh without page reload | High | WebSocket or polling; adds complexity |
+| **Widget animations** | Smooth transitions when data changes | Low | CSS transitions; subtle polish |
+
+### Anti-Features
+
+Features to explicitly NOT build. Common mistakes in this domain.
+
+| Anti-Feature | Why Avoid | What to Do Instead |
+|--------------|-----------|-------------------|
+| **Pixel-perfect positioning** | Complex; users don't need it | Grid-based snapping (12-column grid) |
+| **Custom widget creation** | Massive scope; users become developers | Fixed set of pre-built widgets |
+| **Complex visualization builder** | Separate BI product territory | Pre-designed chart widgets |
+| **Drag from widget bank directly to canvas** | Technically complex | Add button inserts at next position |
+| **Infinite canvas scrolling** | Confusing UX; no natural boundaries | Fixed dashboard area; scroll content inside widgets |
+| **Widget-to-widget data linking** | Complex state management | Widgets are independent |
+| **Undo/redo history** | High complexity for little value | Reset to default is sufficient |
+| **Collaborative editing** | Real-time sync between users | Not needed; each user has own layout |
+| **Multiple dashboard pages** | Scope creep; one dashboard is sufficient | Single customizable dashboard |
+| **Granular widget permissions** | Role-based restrictions are enough | Don't need per-widget, per-user permissions |
+
+---
+
+## Feature Dependencies (v1.3)
+
+```
+Document Management:
+  File upload API ----------------------> Document model in Prisma
+  Document model -----------------------> Project relation
+  Project detail page -----------------> Documents tab/section
+  Upload component --------------------> File validation
+  Download endpoint -------------------> File storage on NAS
+
+Dashboard Customization:
+  Layout persistence ------------------> UserDashboardLayout model
+  Widget bank -------------------------> Widget registry (config)
+  React Grid Layout ------------------> Dashboard component
+  Role restrictions ------------------> Widget visibility config
+  Admin default ----------------------> System default layout
+  Reset to default -------------------> Fetch admin layout, save as user layout
+  Date filter ------------------------> All KPI/chart data fetching
+```
+
+---
+
+## MVP Recommendation (v1.3)
+
+### Document Management MVP
+
+**Build first (Phase 1):**
+1. Document model with project relation (RECEIPT, INVOICE types)
+2. Drag-drop upload with click fallback
+3. File validation (types + size)
+4. Document list on project detail
+5. Download and delete functionality
+6. Folder storage by project on NAS
+
+**Defer to later:**
+- AI value extraction (Phase 2 enhancement)
+- Bulk upload (nice-to-have)
+- Document search (if volume grows)
+
+### Dashboard Customization MVP
+
+**Build first (Phase 1):**
+1. UserDashboardLayout model in Prisma
+2. Widget registry with existing widgets
+3. React Grid Layout integration
+4. Add/remove widgets functionality
+5. Drag-and-drop positioning
+6. Layout save/load per user
+7. Reset to default button
+8. Admin default layout configuration
+
+**Defer to later:**
+- Role-based widget restrictions (Phase 2)
+- Date range filter (Phase 2)
+- Widget resize (Phase 2 enhancement)
+- Dark mode toggle (minor polish)
+
+---
+
+## Existing Widgets to Include
+
+Based on current dashboard (`src/app/(dashboard)/page.tsx`):
+
+| Widget | Data Source | Current Size | Priority |
+|--------|-------------|--------------|----------|
+| KPI Cards (4 metrics) | Initiative stats | Full width | HIGH |
+| Revenue Progress | Initiative calculations | Full width | HIGH |
+| Status Chart | Initiative groupBy | Half width | HIGH |
+| Department Chart | Initiative groupBy | Half width | HIGH |
+| Team Workload | Initiative groupBy | Half width | MEDIUM |
+| Recent Initiatives | Initiative findMany | Half width | MEDIUM |
+| CRM KPI Cards (6 metrics) | Deal + Project stats | Full width | HIGH |
+| Pipeline Stage Chart | Deal groupBy | Full width | HIGH |
+
+### Potential New Widgets
+
+| Widget | Data Source | Value | Priority |
+|--------|-------------|-------|----------|
+| Upcoming Deadlines List | Initiative where endDate | Quick action visibility | MEDIUM |
+| Project Costs Summary | Cost aggregate | Financial oversight | LOW |
+| Document Upload Activity | Document recent | Activity feed | LOW |
+| Quick Add Button | N/A | Convenience | LOW |
+
+---
+
+## Technology Recommendations (v1.3)
+
+### Document Upload
+
+- **react-dropzone**: Well-maintained, lightweight drag-drop library
+- **NAS storage**: Store files on Synology NAS via mounted volume
+- **Prisma Document model**: Link to Project with type enum
+- **No external storage**: Keep it simple; NAS is sufficient
+
+### Dashboard Customization
+
+- **react-grid-layout**: Industry standard for widget layouts
+  - Draggable and resizable
+  - Responsive breakpoints
+  - Layout serialization
+- **Prisma UserDashboardLayout**: Store layout JSON per user
+- **Widget registry**: TypeScript config mapping widget IDs to components
+
+---
+
+## Sources (v1.3)
+
+### Document Management
+- [Klippa Invoice Management](https://www.klippa.com/en/blog/information/invoice-management-software/)
+- [DocuWare Invoice Processing](https://start.docuware.com/blog/document-management/document-management-for-invoice-processing-a-beginners-guide)
+- [SparkReceipt Features](https://sparkreceipt.com/features/receipt-organizer/)
+- [Uploadcare File Uploader UX](https://uploadcare.com/blog/file-uploader-ux-best-practices/)
+- [LogRocket Drag-Drop Patterns](https://blog.logrocket.com/ux-design/drag-and-drop-ui-examples/)
+- [Filestack Upload UI Guide](https://blog.filestack.com/building-modern-drag-and-drop-upload-ui/)
+- [Access Corp File Management Mistakes](https://www.accesscorp.com/blog/common-file-management-mistakes-and-how-to-avoid-them/)
+
+### Dashboard Customization
+- [Justinmind Dashboard Design](https://www.justinmind.com/ui-design/dashboard-design-best-practices-ux)
+- [Medium: Admin Dashboard Best Practices 2025](https://medium.com/@CarlosSmith24/admin-dashboard-ui-ux-best-practices-for-2025-8bdc6090c57d)
+- [BricxLabs Dashboard Design Principles](https://bricxlabs.com/blogs/tips-for-dashboard-design)
+- [UITop Dashboard Trends](https://uitop.design/blog/design/top-dashboard-design-trends/)
+- [React Grid Layout GitHub](https://github.com/react-grid-layout/react-grid-layout)
+- [AntStack React Grid Layout Tutorial](https://www.antstack.com/blog/building-customizable-dashboard-widgets-using-react-grid-layout/)
+- [ilert: Why React Grid Layout](https://www.ilert.com/blog/building-interactive-dashboards-why-react-grid-layout-was-our-best-choice)
+
+---
+
+## Confidence Assessment (v1.3)
+
+| Area | Confidence | Reason |
+|------|------------|--------|
+| Document Table Stakes | HIGH | Well-established file upload patterns |
+| Document Anti-Features | HIGH | Clear scope boundaries for small team |
+| Dashboard Table Stakes | HIGH | Industry-standard customization patterns |
+| Dashboard Anti-Features | HIGH | Strong consensus on avoiding complexity |
+| Technology Stack | HIGH | react-grid-layout is proven; NAS storage is existing |
+| Widget Registry | MEDIUM | Implementation details may need adjustment |
+
+---
+
+*Research completed: 2026-01-23*
