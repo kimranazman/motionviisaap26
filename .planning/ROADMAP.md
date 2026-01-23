@@ -134,7 +134,7 @@ Plans:
 **Plans:** 3 plans
 
 Plans:
-- [ ] 20-01-PLAN.md - Dashboard KPI cards and page responsive padding
+- [x] 20-01-PLAN.md - Dashboard KPI cards and page responsive padding
 - [ ] 20-02-PLAN.md - Dashboard charts responsive (legends, axis labels)
 - [ ] 20-03-PLAN.md - Detail pages responsive (initiative, company, tabs, inline edit)
 
