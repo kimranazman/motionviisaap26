@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 ## Current Position
 
 Phase: 25 - AI Document Intelligence (5 of 5 in v1.3)
-Plan: 2 of 5 in current phase
+Plan: 2 of 5 in current phase (plans 01 and 02 complete)
 Status: In progress
-Last activity: 2026-01-24 - Completed 25-02-PLAN.md (Prompt Templates)
+Last activity: 2026-01-24 - Completed 25-01-PLAN.md (Schema & Infrastructure) and 25-02-PLAN.md (Prompt Templates)
 
 Progress: v1.3 [█████████████████████████████░░░] ~84% (4/5 phases, 2/5 plans in phase 25)
 
@@ -71,6 +71,11 @@ Progress: v1.3 [█████████████████████�
 
 Full decision log in PROJECT.md Key Decisions table.
 
+Recent (Phase 25-01):
+- DocumentAIStatus enum: PENDING, ANALYZED, IMPORTED, FAILED for tracking document analysis state
+- Manifest stored at UPLOADS_DIR/projects/{id}/manifest.json for Claude Code access
+- Last 20 costs included in manifest for context
+
 Recent (Phase 25-02):
 - Prompts stored in .claude/prompts/ for version control and easy Claude Code access
 - Three-tier confidence levels (HIGH/MEDIUM/LOW) for AI extraction certainty
@@ -87,6 +92,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-23T22:02:25Z
-Stopped at: Completed 25-02-PLAN.md (Prompt Templates)
-Resume: Execute 25-03-PLAN.md for manifest generation infrastructure
+Last session: 2026-01-23T22:02:57Z
+Stopped at: Completed 25-01-PLAN.md (Schema & Infrastructure)
+Resume: Execute 25-03-PLAN.md for AI Import API
