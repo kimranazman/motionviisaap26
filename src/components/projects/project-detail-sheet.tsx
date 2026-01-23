@@ -33,12 +33,16 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
-import { Loader2, Trash2, ArrowRight, Plus, Target, DollarSign, CalendarIcon } from 'lucide-react'
+import { Loader2, Trash2, ArrowRight, Plus, Target, DollarSign, CalendarIcon, FileText } from 'lucide-react'
 import { CompanySelect } from '@/components/pipeline/company-select'
 import { ContactSelect } from '@/components/pipeline/contact-select'
 import { InitiativeSelect } from './initiative-select'
 import { CostForm } from './cost-form'
 import { CostCard } from './cost-card'
+import { DocumentUploadZone } from './document-upload-zone'
+import { DocumentList } from './document-list'
+import { ImagePreviewDialog } from './image-preview-dialog'
+import { type DocumentCategory } from '@/lib/document-utils'
 import { calculateTotalCosts, calculateProfit } from '@/lib/cost-utils'
 import { Card } from '@/components/ui/card'
 import {
@@ -69,6 +73,16 @@ interface Cost {
   date: string
   categoryId: string
   category: { id: string; name: string }
+}
+
+interface Document {
+  id: string
+  filename: string
+  storagePath: string
+  mimeType: string
+  size: number
+  category: DocumentCategory
+  createdAt: string
 }
 
 interface Project {
@@ -120,6 +134,10 @@ export function ProjectDetailSheet({
   const [editingCost, setEditingCost] = useState<Cost | null>(null)
   const [startDate, setStartDate] = useState<Date | null>(null)
   const [endDate, setEndDate] = useState<Date | null>(null)
+  const [documents, setDocuments] = useState<Document[]>([])
+  const [showUploadZone, setShowUploadZone] = useState(false)
+  const [previewDocument, setPreviewDocument] = useState<Document | null>(null)
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false)
 
   // Fetch cost categories on mount
   useEffect(() => {
@@ -163,12 +181,35 @@ export function ProjectDetailSheet({
       }
       setEndDate(project.endDate ? new Date(project.endDate) : null)
 
+      // Reset document state
+      setDocuments([])
+      setShowUploadZone(false)
+      setPreviewDocument(null)
+      setIsPreviewOpen(false)
+
       // Fetch contacts for selected company
       if (project.company?.id) {
         fetchContacts(project.company.id)
       }
     }
   }, [project, open])
+
+  // Fetch documents when project changes
+  useEffect(() => {
+    const fetchDocuments = async () => {
+      if (!project || !open) return
+      try {
+        const response = await fetch(`/api/projects/${project.id}/documents`)
+        if (response.ok) {
+          const data = await response.json()
+          setDocuments(data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch documents:', error)
+      }
+    }
+    fetchDocuments()
+  }, [project?.id, open])
 
   const fetchContacts = async (compId: string) => {
     setIsLoadingContacts(true)
@@ -310,6 +351,25 @@ export function ProjectDetailSheet({
   const handleCancelCostForm = () => {
     setShowAddCostForm(false)
     setEditingCost(null)
+  }
+
+  // Document management handlers
+  const handleDocumentsRefresh = async () => {
+    if (!project) return
+    try {
+      const response = await fetch(`/api/projects/${project.id}/documents`)
+      if (response.ok) {
+        const data = await response.json()
+        setDocuments(data)
+      }
+    } catch (error) {
+      console.error('Failed to refresh documents:', error)
+    }
+  }
+
+  const handlePreviewDocument = (doc: Document) => {
+    setPreviewDocument(doc)
+    setIsPreviewOpen(true)
   }
 
   if (!project) return null
@@ -651,12 +711,87 @@ export function ProjectDetailSheet({
               )}
             </div>
 
+            <Separator />
+
+            {/* Documents Section */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Label className="text-muted-foreground">Documents</Label>
+                  {documents.length > 0 && (
+                    <Badge variant="secondary" className="text-xs">
+                      {documents.length}
+                    </Badge>
+                  )}
+                </div>
+                {documents.length > 0 && !showUploadZone && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowUploadZone(true)}
+                  >
+                    <Plus className="mr-1 h-4 w-4" />
+                    Upload
+                  </Button>
+                )}
+              </div>
+
+              {/* Upload Zone */}
+              {showUploadZone && (
+                <div className="space-y-2">
+                  <DocumentUploadZone
+                    projectId={project.id}
+                    onUploadComplete={handleDocumentsRefresh}
+                  />
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowUploadZone(false)}
+                    className="w-full"
+                  >
+                    Hide upload zone
+                  </Button>
+                </div>
+              )}
+
+              {/* Document List or Empty State */}
+              {documents.length === 0 && !showUploadZone ? (
+                <Card className="p-6 text-center">
+                  <FileText className="mx-auto h-8 w-8 text-gray-400 mb-2" />
+                  <p className="text-sm text-gray-500 mb-3">No documents attached yet</p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowUploadZone(true)}
+                  >
+                    <Plus className="mr-1 h-4 w-4" />
+                    Upload your first document
+                  </Button>
+                </Card>
+              ) : documents.length > 0 && (
+                <DocumentList
+                  documents={documents}
+                  projectId={project.id}
+                  onPreview={handlePreviewDocument}
+                  onDocumentChange={handleDocumentsRefresh}
+                />
+              )}
+            </div>
+
             {/* Error message */}
             {error && (
               <p className="text-sm text-red-500">{error}</p>
             )}
           </div>
         </ScrollArea>
+
+        {/* Image Preview Dialog */}
+        <ImagePreviewDialog
+          document={previewDocument}
+          projectId={project.id}
+          open={isPreviewOpen}
+          onOpenChange={setIsPreviewOpen}
+        />
 
         <SheetFooter className="p-4 border-t flex-col sm:flex-row gap-2 sm:gap-0 justify-between sm:justify-between">
           <AlertDialog>
