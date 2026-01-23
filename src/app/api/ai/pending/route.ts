@@ -88,7 +88,8 @@ export async function GET() {
 
     // Check for manifest.json existence for each project
     const projects: ProjectPendingSummary[] = []
-    for (const [, summary] of projectMap) {
+    const projectSummaries = Array.from(projectMap.values())
+    for (const summary of projectSummaries) {
       const manifestPath = path.join(
         UPLOADS_DIR,
         'projects',

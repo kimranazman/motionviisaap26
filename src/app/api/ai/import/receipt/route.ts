@@ -127,17 +127,18 @@ export async function POST(request: NextRequest) {
         if (categoryCache.has(normalizedName)) {
           finalCategoryId = categoryCache.get(normalizedName)!
         } else {
-          // Look for existing category (case-insensitive)
-          const existingCategory = await prisma.costCategory.findFirst({
-            where: {
-              name: {
-                equals: item.suggestedCategory,
-                mode: 'insensitive',
-              },
-              isActive: true,
-            },
+          // Look for existing category (case-insensitive search)
+          // Fetch all active categories and do case-insensitive comparison in JS
+          // since MySQL with Prisma doesn't support mode: 'insensitive' filter
+          const activeCategories = await prisma.costCategory.findMany({
+            where: { isActive: true },
             select: { id: true, name: true },
           })
+
+          const existingCategory = activeCategories.find(
+            (cat) =>
+              cat.name.toLowerCase() === item.suggestedCategory!.toLowerCase()
+          )
 
           if (existingCategory) {
             finalCategoryId = existingCategory.id
