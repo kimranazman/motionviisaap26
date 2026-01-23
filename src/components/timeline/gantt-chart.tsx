@@ -98,11 +98,11 @@ export function GanttChart({ initiatives }: GanttChartProps) {
     <TooltipProvider>
       <div className="space-y-4">
         {/* Controls */}
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">Group by:</span>
+            <span className="text-sm text-gray-600 shrink-0">Group by:</span>
             <Select value={groupBy} onValueChange={(v) => setGroupBy(v as 'department' | 'objective')}>
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-full sm:w-40">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -113,9 +113,9 @@ export function GanttChart({ initiatives }: GanttChartProps) {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">Filter:</span>
+            <span className="text-sm text-gray-600 shrink-0">Filter:</span>
             <Select value={filterDepartment} onValueChange={setFilterDepartment}>
-              <SelectTrigger className="w-40">
+              <SelectTrigger className="w-full sm:w-40">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -131,29 +131,30 @@ export function GanttChart({ initiatives }: GanttChartProps) {
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-4 text-xs">
-          <span className="text-gray-600">Departments:</span>
+        <div className="flex items-center gap-4 text-xs overflow-x-auto pb-1">
+          <span className="text-gray-600 shrink-0">Departments:</span>
           {DEPARTMENT_OPTIONS.map(dept => (
-            <div key={dept.value} className="flex items-center gap-1">
+            <div key={dept.value} className="flex items-center gap-1 shrink-0">
               <div className={`w-3 h-3 rounded ${getDepartmentColor(dept.value)}`} />
               <span>{dept.label}</span>
             </div>
           ))}
         </div>
 
-        {/* Chart */}
+        {/* Chart - horizontally scrollable on mobile */}
         <Card className="border border-gray-200 overflow-hidden">
-          <CardContent className="p-0">
+          <div className="overflow-x-auto">
+          <CardContent className="p-0 min-w-[900px]">
             {/* Header with months */}
             <div className="flex border-b border-gray-200 bg-gray-50">
-              <div className="w-80 shrink-0 px-4 py-3 font-medium text-sm text-gray-700 border-r border-gray-200">
+              <div className="w-64 md:w-80 shrink-0 px-3 md:px-4 py-3 font-medium text-sm text-gray-700 border-r border-gray-200">
                 Initiative
               </div>
-              <div className="flex-1 grid grid-cols-12">
+              <div className="flex-1 grid grid-cols-12 min-w-[600px]">
                 {MONTHS.map((month, index) => (
                   <div
                     key={month}
-                    className={`px-2 py-3 text-center text-xs font-medium text-gray-600 ${
+                    className={`px-1 md:px-2 py-3 text-center text-xs font-medium text-gray-600 ${
                       index < 11 ? 'border-r border-gray-200' : ''
                     }`}
                   >
@@ -169,7 +170,7 @@ export function GanttChart({ initiatives }: GanttChartProps) {
                 <div key={groupKey}>
                   {/* Group Header */}
                   <div className="flex bg-gray-50 border-b border-gray-200">
-                    <div className="w-80 shrink-0 px-4 py-2 font-medium text-sm text-gray-700 border-r border-gray-200">
+                    <div className="w-64 md:w-80 shrink-0 px-3 md:px-4 py-2 font-medium text-sm text-gray-700 border-r border-gray-200">
                       {groupBy === 'department'
                         ? formatDepartment(groupKey)
                         : groupKey === 'OBJ1_SCALE_EVENTS'
@@ -177,23 +178,23 @@ export function GanttChart({ initiatives }: GanttChartProps) {
                           : 'Obj 2: Build AI Training'}
                       <span className="ml-2 text-gray-400">({items.length})</span>
                     </div>
-                    <div className="flex-1" />
+                    <div className="flex-1 min-w-[600px]" />
                   </div>
 
                   {/* Group Items */}
                   {items.map((initiative) => (
                     <div key={initiative.id} className="flex hover:bg-gray-50">
                       {/* Initiative Name */}
-                      <div className="w-80 shrink-0 px-4 py-3 border-r border-gray-200">
+                      <div className="w-64 md:w-80 shrink-0 px-3 md:px-4 py-3 border-r border-gray-200">
                         <Link
                           href={`/initiatives/${initiative.id}`}
                           className="block hover:underline"
                         >
                           <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="text-[10px]">
+                            <Badge variant="outline" className="text-[10px] shrink-0">
                               {initiative.keyResult}
                             </Badge>
-                            <span className="text-sm text-gray-900 truncate max-w-[220px]">
+                            <span className="text-sm text-gray-900 truncate max-w-[160px] md:max-w-[220px]">
                               {initiative.title}
                             </span>
                           </div>
@@ -201,7 +202,7 @@ export function GanttChart({ initiatives }: GanttChartProps) {
                       </div>
 
                       {/* Timeline Bar */}
-                      <div className="flex-1 relative py-2">
+                      <div className="flex-1 relative py-2 min-w-[600px]">
                         {/* Month grid lines */}
                         <div className="absolute inset-0 grid grid-cols-12">
                           {MONTHS.map((_, index) => (
@@ -253,6 +254,7 @@ export function GanttChart({ initiatives }: GanttChartProps) {
               )}
             </div>
           </CardContent>
+          </div>
         </Card>
       </div>
     </TooltipProvider>

@@ -41,7 +41,11 @@ export default async function TimelinePage() {
         description="Gantt chart view of all initiatives"
       />
 
-      <div className="p-6">
+      <div className="p-4 md:p-6">
+        {/* Mobile scroll hint */}
+        <p className="text-xs text-gray-500 mb-3 md:hidden">
+          ← Scroll horizontally to see timeline →
+        </p>
         <GanttChart initiatives={initiatives} />
       </div>
     </div>
