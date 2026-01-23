@@ -135,8 +135,8 @@ Plans:
 
 Plans:
 - [x] 20-01-PLAN.md - Dashboard KPI cards and page responsive padding
-- [ ] 20-02-PLAN.md - Dashboard charts responsive (legends, axis labels)
-- [ ] 20-03-PLAN.md - Detail pages responsive (initiative, company, tabs, inline edit)
+- [x] 20-02-PLAN.md - Dashboard charts responsive (legends, axis labels)
+- [x] 20-03-PLAN.md - Detail pages responsive (initiative, company, tabs, inline edit)
 
 **Requirements:**
 - DSH-01: KPI cards stack vertically on mobile (1 column)
@@ -166,10 +166,10 @@ Plans:
 | 17 | Kanban Responsive | 6 | Complete |
 | 18 | Tables Responsive | 5 | Complete |
 | 19 | Forms & Modals Responsive | 6 | Complete |
-| 20 | Dashboard & Detail Pages | 10 | Pending |
+| 20 | Dashboard & Detail Pages | 10 | Complete |
 
 **Coverage:** 32/32 requirements mapped
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-23 (Phase 20 planned)*
+*Last updated: 2026-01-23 (Phase 20 complete - milestone complete)*

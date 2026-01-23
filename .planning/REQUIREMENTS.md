@@ -17,45 +17,45 @@ Requirements for responsive/mobile web milestone. Each maps to roadmap phases.
 
 ### Kanban Boards
 
-- [ ] **KAN-01**: Kanban columns scroll horizontally on mobile
-- [ ] **KAN-02**: Column edges visible to indicate more columns exist
-- [ ] **KAN-03**: Cards touch-friendly with adequate tap targets
-- [ ] **KAN-04**: Drag-and-drop works on touch devices
-- [ ] **KAN-05**: Quick actions menu accessible on mobile
-- [ ] **KAN-06**: Applies to all 3 Kanban boards (Initiatives, Pipeline, Potentials)
+- [x] **KAN-01**: Kanban columns scroll horizontally on mobile
+- [x] **KAN-02**: Column edges visible to indicate more columns exist
+- [x] **KAN-03**: Cards touch-friendly with adequate tap targets
+- [x] **KAN-04**: Drag-and-drop works on touch devices
+- [x] **KAN-05**: Quick actions menu accessible on mobile
+- [x] **KAN-06**: Applies to all 3 Kanban boards (Initiatives, Pipeline, Potentials)
 
 ### Data Tables
 
-- [ ] **TBL-01**: Tables show priority columns only on mobile
-- [ ] **TBL-02**: Secondary columns hidden on mobile, visible on tablet+
-- [ ] **TBL-03**: Action buttons remain accessible on mobile
-- [ ] **TBL-04**: Filter/search controls work on mobile
-- [ ] **TBL-05**: Applies to all tables (Companies, Contacts, Projects, Costs, Initiatives list)
+- [x] **TBL-01**: Tables show priority columns only on mobile
+- [x] **TBL-02**: Secondary columns hidden on mobile, visible on tablet+
+- [x] **TBL-03**: Action buttons remain accessible on mobile
+- [x] **TBL-04**: Filter/search controls work on mobile
+- [x] **TBL-05**: Applies to all tables (Companies, Contacts, Projects, Costs, Initiatives list)
 
 ### Forms & Modals
 
-- [ ] **FRM-01**: Modals become full-screen on mobile
-- [ ] **FRM-02**: Form fields stack vertically on mobile
-- [ ] **FRM-03**: Input fields have adequate touch target size
-- [ ] **FRM-04**: Date pickers work on mobile
-- [ ] **FRM-05**: Select dropdowns work on mobile
-- [ ] **FRM-06**: Detail sheets (slide-out panels) full-width on mobile
+- [x] **FRM-01**: Modals become full-screen on mobile
+- [x] **FRM-02**: Form fields stack vertically on mobile
+- [x] **FRM-03**: Input fields have adequate touch target size
+- [x] **FRM-04**: Date pickers work on mobile
+- [x] **FRM-05**: Select dropdowns work on mobile
+- [x] **FRM-06**: Detail sheets (slide-out panels) full-width on mobile
 
 ### Dashboard
 
-- [ ] **DSH-01**: KPI cards stack vertically on mobile (1 column)
-- [ ] **DSH-02**: KPI cards show 2 columns on tablet
-- [ ] **DSH-03**: Pipeline stage chart readable on mobile
-- [ ] **DSH-04**: Chart legends don't overflow
-- [ ] **DSH-05**: Filter controls work on mobile
+- [x] **DSH-01**: KPI cards stack vertically on mobile (1 column)
+- [x] **DSH-02**: KPI cards show 2 columns on tablet
+- [x] **DSH-03**: Pipeline stage chart readable on mobile
+- [x] **DSH-04**: Chart legends don't overflow
+- [x] **DSH-05**: Filter controls work on mobile
 
 ### Detail Pages
 
-- [ ] **DET-01**: Initiative detail page responsive layout
-- [ ] **DET-02**: Company detail page responsive layout
-- [ ] **DET-03**: Tabs/sections stack appropriately on mobile
-- [ ] **DET-04**: Inline editing works on mobile
-- [ ] **DET-05**: Comments section readable on mobile
+- [x] **DET-01**: Initiative detail page responsive layout
+- [x] **DET-02**: Company detail page responsive layout
+- [x] **DET-03**: Tabs/sections stack appropriately on mobile
+- [x] **DET-04**: Inline editing works on mobile
+- [x] **DET-05**: Comments section readable on mobile
 
 ## Out of Scope
 
@@ -80,33 +80,33 @@ Which phases cover which requirements. Updated during roadmap creation.
 | NAV-03 | Phase 16 | Complete |
 | NAV-04 | Phase 16 | Complete |
 | NAV-05 | Phase 16 | Complete |
-| KAN-01 | Phase 17 | Pending |
-| KAN-02 | Phase 17 | Pending |
-| KAN-03 | Phase 17 | Pending |
-| KAN-04 | Phase 17 | Pending |
-| KAN-05 | Phase 17 | Pending |
-| KAN-06 | Phase 17 | Pending |
-| TBL-01 | Phase 18 | Pending |
-| TBL-02 | Phase 18 | Pending |
-| TBL-03 | Phase 18 | Pending |
-| TBL-04 | Phase 18 | Pending |
-| TBL-05 | Phase 18 | Pending |
-| FRM-01 | Phase 19 | Pending |
-| FRM-02 | Phase 19 | Pending |
-| FRM-03 | Phase 19 | Pending |
-| FRM-04 | Phase 19 | Pending |
-| FRM-05 | Phase 19 | Pending |
-| FRM-06 | Phase 19 | Pending |
-| DSH-01 | Phase 20 | Pending |
-| DSH-02 | Phase 20 | Pending |
-| DSH-03 | Phase 20 | Pending |
-| DSH-04 | Phase 20 | Pending |
-| DSH-05 | Phase 20 | Pending |
-| DET-01 | Phase 20 | Pending |
-| DET-02 | Phase 20 | Pending |
-| DET-03 | Phase 20 | Pending |
-| DET-04 | Phase 20 | Pending |
-| DET-05 | Phase 20 | Pending |
+| KAN-01 | Phase 17 | Complete |
+| KAN-02 | Phase 17 | Complete |
+| KAN-03 | Phase 17 | Complete |
+| KAN-04 | Phase 17 | Complete |
+| KAN-05 | Phase 17 | Complete |
+| KAN-06 | Phase 17 | Complete |
+| TBL-01 | Phase 18 | Complete |
+| TBL-02 | Phase 18 | Complete |
+| TBL-03 | Phase 18 | Complete |
+| TBL-04 | Phase 18 | Complete |
+| TBL-05 | Phase 18 | Complete |
+| FRM-01 | Phase 19 | Complete |
+| FRM-02 | Phase 19 | Complete |
+| FRM-03 | Phase 19 | Complete |
+| FRM-04 | Phase 19 | Complete |
+| FRM-05 | Phase 19 | Complete |
+| FRM-06 | Phase 19 | Complete |
+| DSH-01 | Phase 20 | Complete |
+| DSH-02 | Phase 20 | Complete |
+| DSH-03 | Phase 20 | Complete |
+| DSH-04 | Phase 20 | Complete |
+| DSH-05 | Phase 20 | Complete |
+| DET-01 | Phase 20 | Complete |
+| DET-02 | Phase 20 | Complete |
+| DET-03 | Phase 20 | Complete |
+| DET-04 | Phase 20 | Complete |
+| DET-05 | Phase 20 | Complete |
 
 **Coverage:**
 - v1.2.1 requirements: 32 total
@@ -115,4 +115,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-22*
-*Last updated: 2026-01-22 (Phase 16 complete)*
+*Last updated: 2026-01-23 (All phases complete)*
