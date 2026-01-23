@@ -243,7 +243,7 @@ export default async function DashboardPage() {
         description="Strategic Annual Action Plan 2026"
       />
 
-      <div className="p-6 space-y-6">
+      <div className="p-4 md:p-6 space-y-6">
         {/* KPI Cards */}
         <KPICards stats={data.stats} />
 
