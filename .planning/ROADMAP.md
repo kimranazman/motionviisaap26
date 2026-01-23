@@ -131,6 +131,13 @@ Plans:
 
 **Dependencies:** Phase 16-19 (all responsive foundations in place)
 
+**Plans:** 3 plans
+
+Plans:
+- [ ] 20-01-PLAN.md - Dashboard KPI cards and page responsive padding
+- [ ] 20-02-PLAN.md - Dashboard charts responsive (legends, axis labels)
+- [ ] 20-03-PLAN.md - Detail pages responsive (initiative, company, tabs, inline edit)
+
 **Requirements:**
 - DSH-01: KPI cards stack vertically on mobile (1 column)
 - DSH-02: KPI cards show 2 columns on tablet
@@ -165,4 +172,4 @@ Plans:
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-23 (Phase 19 complete)*
+*Last updated: 2026-01-23 (Phase 20 planned)*
