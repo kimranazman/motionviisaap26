@@ -198,6 +198,14 @@ enum DocumentCategory {
   OTHER
 }
 
+// Document AI analysis status (v1.3 - AI Document Intelligence)
+enum DocumentAIStatus {
+  PENDING      // Document uploaded but not yet analyzed by AI
+  ANALYZED     // AI has extracted data, awaiting user review
+  IMPORTED     // User confirmed and data imported to costs/revenue
+  FAILED       // AI analysis failed (unparseable document)
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -468,6 +476,10 @@ model Document {
   size          Int              // File size in bytes
   category      DocumentCategory @default(OTHER)
 
+  // AI Document Intelligence (v1.3 - Phase 25)
+  aiStatus      DocumentAIStatus @default(PENDING) @map("ai_status")
+  aiAnalyzedAt  DateTime?        @map("ai_analyzed_at")
+
   uploadedById  String           @map("uploaded_by_id")
   uploadedBy    User             @relation(fields: [uploadedById], references: [id])
 
@@ -476,6 +488,7 @@ model Document {
 
   @@index([projectId])
   @@index([category])
+  @@index([aiStatus])
   @@map("documents")
 }
 
