@@ -254,7 +254,7 @@ export function InitiativeDetailSheet({
         <ScrollArea className="flex-1">
           <div className="p-6 space-y-6">
             {/* Quick Info Grid */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {/* Status - Editable only for Editor/Admin */}
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
