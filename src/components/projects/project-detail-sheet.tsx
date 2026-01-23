@@ -33,14 +33,13 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
-import { Loader2, Trash2, ArrowRight, Plus, Target, DollarSign, CalendarIcon, FileText } from 'lucide-react'
+import { Loader2, Trash2, ArrowRight, Plus, Target, DollarSign, CalendarIcon } from 'lucide-react'
 import { CompanySelect } from '@/components/pipeline/company-select'
 import { ContactSelect } from '@/components/pipeline/contact-select'
 import { InitiativeSelect } from './initiative-select'
 import { CostForm } from './cost-form'
 import { CostCard } from './cost-card'
-import { DocumentUploadZone } from './document-upload-zone'
-import { DocumentList } from './document-list'
+import { DocumentsSection } from './documents-section'
 import { ImagePreviewDialog } from './image-preview-dialog'
 import { type DocumentCategory } from '@/lib/document-utils'
 import { calculateTotalCosts, calculateProfit } from '@/lib/cost-utils'
@@ -135,7 +134,6 @@ export function ProjectDetailSheet({
   const [startDate, setStartDate] = useState<Date | null>(null)
   const [endDate, setEndDate] = useState<Date | null>(null)
   const [documents, setDocuments] = useState<Document[]>([])
-  const [showUploadZone, setShowUploadZone] = useState(false)
   const [previewDocument, setPreviewDocument] = useState<Document | null>(null)
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
 
@@ -183,7 +181,6 @@ export function ProjectDetailSheet({
 
       // Reset document state
       setDocuments([])
-      setShowUploadZone(false)
       setPreviewDocument(null)
       setIsPreviewOpen(false)
 
@@ -720,69 +717,12 @@ export function ProjectDetailSheet({
             <Separator />
 
             {/* Documents Section */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Label className="text-muted-foreground">Documents</Label>
-                  {documents.length > 0 && (
-                    <Badge variant="secondary" className="text-xs">
-                      {documents.length}
-                    </Badge>
-                  )}
-                </div>
-                {documents.length > 0 && !showUploadZone && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowUploadZone(true)}
-                  >
-                    <Plus className="mr-1 h-4 w-4" />
-                    Upload
-                  </Button>
-                )}
-              </div>
-
-              {/* Upload Zone */}
-              {showUploadZone && (
-                <div className="space-y-2">
-                  <DocumentUploadZone
-                    projectId={project.id}
-                    onUploadComplete={handleDocumentsRefresh}
-                  />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowUploadZone(false)}
-                    className="w-full"
-                  >
-                    Hide upload zone
-                  </Button>
-                </div>
-              )}
-
-              {/* Document List or Empty State */}
-              {documents.length === 0 && !showUploadZone ? (
-                <Card className="p-6 text-center">
-                  <FileText className="mx-auto h-8 w-8 text-gray-400 mb-2" />
-                  <p className="text-sm text-gray-500 mb-3">No documents attached yet</p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowUploadZone(true)}
-                  >
-                    <Plus className="mr-1 h-4 w-4" />
-                    Upload your first document
-                  </Button>
-                </Card>
-              ) : documents.length > 0 && (
-                <DocumentList
-                  documents={documents}
-                  projectId={project.id}
-                  onPreview={handlePreviewDocument}
-                  onDocumentChange={handleDocumentsRefresh}
-                />
-              )}
-            </div>
+            <DocumentsSection
+              projectId={project.id}
+              documents={documents}
+              onPreview={handlePreviewDocument}
+              onDocumentsChange={handleDocumentsRefresh}
+            />
 
             {/* Error message */}
             {error && (
