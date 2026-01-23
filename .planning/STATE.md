@@ -110,6 +110,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-24T02:38:00Z
-Stopped at: Completed 25-05-PLAN.md (Integration) - Phase 25 and v1.3 milestone complete
-Resume: None - milestone complete. Ready for next milestone planning.
+Last session: 2026-01-24
+Stopped at: Phase 25 verified, milestone v1.3 complete
+Resume: `/gsd:audit-milestone` to verify requirements and cross-phase integration

@@ -6,7 +6,7 @@
 - [x] **v1.1 Authentication** - Phases 4-8 (shipped 2026-01-22)
 - [x] **v1.2 CRM & Project Financials** - Phases 9-15 (shipped 2026-01-22)
 - [x] **v1.2.1 Responsive / Mobile Web** - Phases 16-20 (shipped 2026-01-23)
-- [ ] **v1.3 Document Management & Dashboard Customization** - Phases 21-25 (in progress)
+- [x] **v1.3 Document Management & Dashboard Customization** - Phases 21-25 (shipped 2026-01-24)
 
 ## Phases
 
@@ -25,7 +25,7 @@ See `.planning/milestones/` for archived phase details.
 - [x] **Phase 22: Document Management** - Upload, list, preview, categorization, project dates
 - [x] **Phase 23: Widget Registry & Roles** - Widget registry, role restrictions, admin defaults
 - [x] **Phase 24: Dashboard Customization UI** - Widget bank, drag-drop, resize, persistence
-- [ ] **Phase 25: AI Document Intelligence** - Invoice/receipt parsing, revenue/cost extraction, auto-categorization
+- [x] **Phase 25: AI Document Intelligence** - Invoice/receipt parsing, revenue/cost extraction, auto-categorization
 
 ## Phase Details
 
@@ -113,11 +113,11 @@ Plans:
 **Plans**: 5 plans
 
 Plans:
-- [ ] 25-01-PLAN.md — Schema & manifest infrastructure (aiStatus field, types, manifest generation)
-- [ ] 25-02-PLAN.md — Prompt templates (invoice/receipt/bulk analysis prompts for Claude Code)
-- [ ] 25-03-PLAN.md — AI import API routes (invoice import, receipt import, pending query)
-- [ ] 25-04-PLAN.md — Review UI components (AIReviewSheet, ExtractionTable, ConfidenceBadge)
-- [ ] 25-05-PLAN.md — Integration (AI status badges, dashboard widget, auto-manifest on upload)
+- [x] 25-01-PLAN.md — Schema & manifest infrastructure (aiStatus field, types, manifest generation)
+- [x] 25-02-PLAN.md — Prompt templates (invoice/receipt/bulk analysis prompts for Claude Code)
+- [x] 25-03-PLAN.md — AI import API routes (invoice import, receipt import, pending query)
+- [x] 25-04-PLAN.md — Review UI components (AIReviewSheet, ExtractionTable, ConfidenceBadge)
+- [x] 25-05-PLAN.md — Integration (AI status badges, dashboard widget, auto-manifest on upload)
 
 ## Progress
 
@@ -127,7 +127,7 @@ Plans:
 | 22. Document Management | v1.3 | 3/3 | Complete | 2026-01-23 |
 | 23. Widget Registry & Roles | v1.3 | 3/3 | Complete | 2026-01-23 |
 | 24. Dashboard Customization UI | v1.3 | 5/5 | Complete | 2026-01-23 |
-| 25. AI Document Intelligence | v1.3 | 0/5 | Not started | - |
+| 25. AI Document Intelligence | v1.3 | 5/5 | Complete | 2026-01-24 |
 
 ---
 *Roadmap created: 2026-01-23*

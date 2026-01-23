@@ -69,18 +69,18 @@ Requirements for Document Management & Dashboard Customization milestone. Each m
 ### AI Document Intelligence
 
 **Invoice Processing (Revenue):**
-- [ ] **AI-01**: AI parses uploaded invoices and extracts line items (description, quantity, unit price, amount)
-- [ ] **AI-02**: Invoice totals auto-calculate project revenue
-- [ ] **AI-03**: User can review and confirm AI-extracted invoice data
+- [x] **AI-01**: AI parses uploaded invoices and extracts line items (description, quantity, unit price, amount)
+- [x] **AI-02**: Invoice totals auto-calculate project revenue
+- [x] **AI-03**: User can review and confirm AI-extracted invoice data
 
 **Receipt Processing (Costs):**
-- [ ] **AI-04**: AI parses uploaded receipts and extracts items with amounts
-- [ ] **AI-05**: Receipt items auto-create cost entries linked to project
-- [ ] **AI-06**: AI suggests existing cost categories or creates new ones
+- [x] **AI-04**: AI parses uploaded receipts and extracts items with amounts
+- [x] **AI-05**: Receipt items auto-create cost entries linked to project
+- [x] **AI-06**: AI suggests existing cost categories or creates new ones
 
 **Integration & Context:**
-- [ ] **AI-07**: Manifest file generated per project folder for AI context
-- [ ] **AI-08**: Project financials show AI-calculated revenue vs manual costs
+- [x] **AI-07**: Manifest file generated per project folder for AI context
+- [x] **AI-08**: Project financials show AI-calculated revenue vs manual costs
 
 ## v2 Requirements
 
@@ -146,14 +146,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DASH-13 | Phase 24 | Complete |
 | DASH-14 | Phase 24 | Complete |
 | DASH-15 | Phase 24 | Complete |
-| AI-01 | Phase 25 | Pending |
-| AI-02 | Phase 25 | Pending |
-| AI-03 | Phase 25 | Pending |
-| AI-04 | Phase 25 | Pending |
-| AI-05 | Phase 25 | Pending |
-| AI-06 | Phase 25 | Pending |
-| AI-07 | Phase 25 | Pending |
-| AI-08 | Phase 25 | Pending |
+| AI-01 | Phase 25 | Complete |
+| AI-02 | Phase 25 | Complete |
+| AI-03 | Phase 25 | Complete |
+| AI-04 | Phase 25 | Complete |
+| AI-05 | Phase 25 | Complete |
+| AI-06 | Phase 25 | Complete |
+| AI-07 | Phase 25 | Complete |
+| AI-08 | Phase 25 | Complete |
 
 **Coverage:**
 - v1.3 requirements: 44 total
@@ -162,4 +162,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-23*
-*Last updated: 2026-01-23 after Phase 24 completion*
+*Last updated: 2026-01-24 after Phase 25 completion (v1.3 complete)*
