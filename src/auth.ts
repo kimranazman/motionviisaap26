@@ -21,8 +21,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         },
       },
       profile(profile) {
+        // Don't override id - let PrismaAdapter generate CUID
+        // profile.sub is stored in Account.providerAccountId for linking
         return {
-          id: profile.sub,
           name: profile.name,
           email: profile.email,
           image: profile.picture,
