@@ -57,7 +57,7 @@ export function CompanyInlineField({
   }
 
   const baseClassName = cn(
-    'w-full bg-transparent border-0 rounded px-2 py-1 -mx-2 -my-1',
+    'w-full bg-transparent border-0 rounded px-2 py-2 -mx-2 min-h-[44px]',
     'focus:border focus:border-input focus:ring-1 focus:ring-ring focus:bg-background',
     'hover:bg-muted/50 transition-colors',
     'disabled:opacity-50 disabled:cursor-not-allowed',
