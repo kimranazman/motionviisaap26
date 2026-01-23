@@ -112,7 +112,7 @@ export function CostForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 p-4 border rounded-lg bg-gray-50">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {/* Description */}
         <div className="col-span-2 space-y-2">
           <Label htmlFor="cost-description">
@@ -171,7 +171,7 @@ export function CostForm({
                 type="button"
                 variant="outline"
                 className={cn(
-                  'w-full justify-start text-left font-normal',
+                  'w-full justify-start text-left font-normal h-11 md:h-10',
                   !date && 'text-muted-foreground'
                 )}
               >
@@ -195,11 +195,11 @@ export function CostForm({
       {error && <p className="text-sm text-red-500">{error}</p>}
 
       {/* Actions */}
-      <div className="flex justify-end gap-2">
-        <Button type="button" variant="ghost" onClick={onCancel}>
+      <div className="flex flex-col sm:flex-row justify-end gap-2">
+        <Button type="button" variant="ghost" onClick={onCancel} className="w-full sm:w-auto">
           Cancel
         </Button>
-        <Button type="submit" disabled={isSubmitting}>
+        <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {cost ? 'Update' : 'Add'} Cost
         </Button>

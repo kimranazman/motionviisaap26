@@ -460,7 +460,7 @@ export function ProjectDetailSheet({
             {/* Financial Summary */}
             <div className="space-y-3">
               <Label className="text-muted-foreground">Financial Summary</Label>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
                 <Card className="p-3 bg-green-50 border-green-200">
                   <div className="text-xs text-green-600 font-medium">Revenue</div>
                   <div className="text-lg font-semibold text-green-700">
@@ -565,12 +565,12 @@ export function ProjectDetailSheet({
           </div>
         </ScrollArea>
 
-        <SheetFooter className="p-4 border-t flex-row justify-between sm:justify-between">
+        <SheetFooter className="p-4 border-t flex-col sm:flex-row gap-2 sm:gap-0 justify-between sm:justify-between">
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button
                 variant="ghost"
-                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                className="text-red-600 hover:text-red-700 hover:bg-red-50 w-full sm:w-auto"
                 disabled={isDeleting}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
@@ -601,6 +601,7 @@ export function ProjectDetailSheet({
           <Button
             onClick={handleSave}
             disabled={isSaving || !hasChanges}
+            className="w-full sm:w-auto"
           >
             {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Save Changes
