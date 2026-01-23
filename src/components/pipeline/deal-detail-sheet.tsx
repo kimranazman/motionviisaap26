@@ -346,6 +346,7 @@ export function DealDetailSheet({
           <Button
             onClick={handleSave}
             disabled={isSaving || !hasChanges}
+            className="w-full sm:w-auto"
           >
             {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Save Changes
