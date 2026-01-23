@@ -226,8 +226,8 @@ export function InitiativeDetail({ initiative }: InitiativeDetailProps) {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b">
-        <div className="max-w-4xl mx-auto px-6 py-4">
-          <div className="flex items-center gap-4">
+        <div className="max-w-4xl mx-auto px-4 md:px-6 py-4">
+          <div className="flex items-center gap-3 md:gap-4">
             <Button
               variant="ghost"
               size="icon"
@@ -254,7 +254,7 @@ export function InitiativeDetail({ initiative }: InitiativeDetailProps) {
       </div>
 
       {/* Content */}
-      <div className="max-w-4xl mx-auto px-6 py-6 space-y-6">
+      <div className="max-w-4xl mx-auto px-4 md:px-6 py-6 space-y-6">
         {/* Details Card */}
         <Card>
           <CardHeader>
@@ -264,7 +264,7 @@ export function InitiativeDetail({ initiative }: InitiativeDetailProps) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
               {/* Status - Editable only for Editor/Admin */}
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
@@ -429,7 +429,7 @@ export function InitiativeDetail({ initiative }: InitiativeDetailProps) {
           <CardContent className="space-y-4">
             {/* New Comment Input */}
             <div className="space-y-2">
-              <div className="flex gap-3">
+              <div className="flex gap-2 md:gap-3">
                 <Avatar className="h-8 w-8 shrink-0">
                   {session?.user?.image ? (
                     <img src={session.user.image} alt={session?.user?.name || ''} className="h-8 w-8 rounded-full" />
@@ -451,10 +451,11 @@ export function InitiativeDetail({ initiative }: InitiativeDetailProps) {
                   }}
                 />
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-xs text-gray-400">Cmd + Enter to submit</span>
+              <div className="flex justify-between items-center flex-wrap gap-2">
+                <span className="text-xs text-gray-400 hidden sm:block">Cmd + Enter to submit</span>
                 <Button
                   size="sm"
+                  className="w-full sm:w-auto"
                   onClick={handleSubmitComment}
                   disabled={!newComment.trim() || isSubmittingComment}
                 >
@@ -482,9 +483,9 @@ export function InitiativeDetail({ initiative }: InitiativeDetailProps) {
                     key={comment.id}
                     className="group bg-gray-50 rounded-lg p-3 space-y-2"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Avatar className="h-6 w-6">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <Avatar className="h-6 w-6 shrink-0">
                           {comment.user?.image ? (
                             <img src={comment.user.image} alt={comment.user.name || ''} className="h-6 w-6 rounded-full" />
                           ) : (
@@ -493,12 +494,12 @@ export function InitiativeDetail({ initiative }: InitiativeDetailProps) {
                             </AvatarFallback>
                           )}
                         </Avatar>
-                        <span className="text-sm font-medium">
+                        <span className="text-sm font-medium truncate">
                           {comment.user?.name || comment.user?.email || 'Unknown'}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-400 flex items-center gap-1">
+                        <span className="text-xs text-gray-400 shrink-0 flex items-center gap-1">
                           <Clock className="h-3 w-3" />
                           {formatCommentTime(comment.createdAt)}
                         </span>
@@ -514,7 +515,7 @@ export function InitiativeDetail({ initiative }: InitiativeDetailProps) {
                         )}
                       </div>
                     </div>
-                    <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                    <p className="text-sm text-gray-700 whitespace-pre-wrap break-words">
                       {comment.content}
                     </p>
                   </div>
