@@ -40,7 +40,7 @@ See `.planning/milestones/` for archived phase details.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 21-01-PLAN.md — Infrastructure config (Next.js body size, Docker volume mount)
+- [x] 21-01-PLAN.md — Infrastructure config (Next.js body size, Docker volume mount)
 - [ ] 21-02-PLAN.md — Schema & file serving (Prisma models, file API route, types)
 
 ### Phase 22: Document Management
@@ -94,7 +94,7 @@ Plans:
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 21. Infrastructure & Schema | v1.3 | 0/2 | Planned | - |
+| 21. Infrastructure & Schema | v1.3 | 1/2 | In progress | - |
 | 22. Document Management | v1.3 | 0/TBD | Not started | - |
 | 23. Widget Registry & Roles | v1.3 | 0/TBD | Not started | - |
 | 24. Dashboard Customization UI | v1.3 | 0/TBD | Not started | - |
