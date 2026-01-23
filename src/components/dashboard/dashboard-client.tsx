@@ -153,9 +153,9 @@ export function DashboardClient({
     });
   }, []);
 
-  // Widget renderer
-  const renderWidget = useCallback(
-    (widgetId: string, instanceId: string) => {
+  // Widget renderer (instanceId reserved for future per-instance date filtering)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const renderWidget = useCallback((widgetId: string, instanceId: string) => {
       switch (widgetId) {
         case 'kpi-cards':
           return <KPICards stats={dashboardData.stats} />;

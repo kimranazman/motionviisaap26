@@ -2,19 +2,13 @@ export const dynamic = 'force-dynamic'
 
 import { redirect } from 'next/navigation'
 import { auth } from '@/auth'
-import { Header } from '@/components/layout/header'
-import { KPICards } from '@/components/dashboard/kpi-cards'
-import { StatusChart } from '@/components/dashboard/status-chart'
-import { DepartmentChart } from '@/components/dashboard/department-chart'
-import { TeamWorkload } from '@/components/dashboard/team-workload'
-import { RecentInitiatives } from '@/components/dashboard/recent-initiatives'
-import { CRMKPICards } from '@/components/dashboard/crm-kpi-cards'
-import { PipelineStageChart } from '@/components/dashboard/pipeline-stage-chart'
+import { DashboardClient } from '@/components/dashboard/dashboard-client'
+import { getAdminDefaults, DEFAULT_DASHBOARD_LAYOUT } from '@/lib/widgets/defaults'
 import prisma from '@/lib/prisma'
 import { STAGES, STAGE_PROBABILITY, STAGE_CHART_COLORS } from '@/lib/pipeline-utils'
 import { filterWidgetsByRole } from '@/lib/widgets/permissions'
-import { getAdminDefaults } from '@/lib/widgets/defaults'
 import { WIDGET_IDS } from '@/lib/widgets/registry'
+import type { DashboardLayout, LayoutWidgetConfig, DateFilter } from '@/types/dashboard'
 
 async function getDashboardData() {
   // Get total initiatives
@@ -237,6 +231,17 @@ async function getCRMDashboardData() {
   }
 }
 
+async function getUserPreferences(userId: string) {
+  const prefs = await prisma.userPreferences.findUnique({
+    where: { userId },
+  })
+
+  return {
+    dashboardLayout: prefs?.dashboardLayout as DashboardLayout | null,
+    dateFilter: prefs?.dateFilter as DateFilter | null,
+  }
+}
+
 export default async function DashboardPage() {
   // Get session for role-based filtering
   const session = await auth()
@@ -252,71 +257,45 @@ export default async function DashboardPage() {
   // Filter visible widgets based on user role
   const visibleWidgetIds = filterWidgetsByRole(WIDGET_IDS, userRole, adminDefaults.widgetRoles)
 
-  // Always fetch KRI data (all users can see these)
+  // Get user preferences
+  const userPrefs = await getUserPreferences(session.user.id)
+
+  // Use user layout or default, filtering by role
+  let userLayout = userPrefs.dashboardLayout?.widgets || DEFAULT_DASHBOARD_LAYOUT.widgets
+
+  // Filter user's layout to only include widgets they can see
+  userLayout = userLayout.filter(w => visibleWidgetIds.includes(w.id))
+
+  // Convert to LayoutWidgetConfig (add instance IDs if missing)
+  const initialLayout: LayoutWidgetConfig[] = userLayout.map((w, index) => ({
+    ...w,
+    i: (w as LayoutWidgetConfig).i || `widget-${index}-${w.id}`,
+  }))
+
+  // Get default layout for reset
+  const defaultLayout: LayoutWidgetConfig[] = DEFAULT_DASHBOARD_LAYOUT.widgets
+    .filter(w => visibleWidgetIds.includes(w.id))
+    .map((w, index) => ({
+      ...w,
+      i: `default-${index}-${w.id}`,
+    }))
+
+  // Always fetch KRI data
   const data = await getDashboardData()
 
   // Only fetch CRM data if at least one CRM widget is visible
-  const showCrmKpiCards = visibleWidgetIds.includes('crm-kpi-cards')
-  const showPipelineChart = visibleWidgetIds.includes('pipeline-stage-chart')
-  const shouldFetchCrmData = showCrmKpiCards || showPipelineChart
-
+  const shouldFetchCrmData = visibleWidgetIds.includes('crm-kpi-cards') ||
+    visibleWidgetIds.includes('pipeline-stage-chart')
   const crmData = shouldFetchCrmData ? await getCRMDashboardData() : null
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header
-        title="Dashboard"
-        description="Strategic Annual Action Plan 2026"
-      />
-
-      <div className="p-4 md:p-6 space-y-6">
-        {/* KPI Cards */}
-        {visibleWidgetIds.includes('kpi-cards') && (
-          <KPICards stats={data.stats} />
-        )}
-
-        {/* Charts Row */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          {visibleWidgetIds.includes('status-chart') && (
-            <StatusChart data={data.byStatus} />
-          )}
-          {visibleWidgetIds.includes('department-chart') && (
-            <DepartmentChart data={data.byDepartment} />
-          )}
-        </div>
-
-        {/* Bottom Row */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          {visibleWidgetIds.includes('team-workload') && (
-            <TeamWorkload data={data.byPerson} total={data.stats.totalInitiatives} />
-          )}
-          {visibleWidgetIds.includes('recent-initiatives') && (
-            <RecentInitiatives initiatives={data.recentInitiatives} />
-          )}
-        </div>
-
-        {/* Sales & Revenue Section - only show if at least one CRM widget is visible */}
-        {crmData && (showCrmKpiCards || showPipelineChart) && (
-          <div className="border-t border-gray-200 pt-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Sales & Revenue</h2>
-            {showCrmKpiCards && (
-              <CRMKPICards
-                openPipeline={crmData.openPipeline}
-                weightedForecast={crmData.weightedForecast}
-                winRate={crmData.winRate}
-                dealCount={crmData.dealCount}
-                totalRevenue={crmData.totalRevenue}
-                profit={crmData.profit}
-              />
-            )}
-            {showPipelineChart && (
-              <div className="mt-6">
-                <PipelineStageChart data={crmData.stageData} />
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
+    <DashboardClient
+      initialLayout={initialLayout}
+      initialDateFilter={userPrefs.dateFilter}
+      defaultLayout={defaultLayout}
+      visibleWidgetIds={visibleWidgetIds}
+      dashboardData={data}
+      crmData={crmData}
+    />
   )
 }
