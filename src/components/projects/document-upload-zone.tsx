@@ -116,6 +116,7 @@ export function DocumentUploadZone({ projectId, onUploadComplete }: DocumentUplo
     },
     maxSize: MAX_FILE_SIZE,
     multiple: true,
+    noDragEventsBubbling: true,
   })
 
   const clearCompleted = () => {
@@ -124,8 +125,19 @@ export function DocumentUploadZone({ projectId, onUploadComplete }: DocumentUplo
 
   const hasCompleted = files.some(f => f.status === 'complete')
 
+  // Prevent browser default drag behavior on container (needed for portaled components)
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }
+
   return (
-    <div className="space-y-4">
+    <div
+      className="space-y-4"
+      onDragOver={handleDragOver}
+      onDragEnter={handleDragOver}
+      onDrop={(e) => e.preventDefault()}
+    >
       {/* Category selector */}
       <div className="flex items-center gap-2">
         <span className="text-sm text-muted-foreground">Upload as:</span>
