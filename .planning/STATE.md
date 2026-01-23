@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 ## Current Position
 
 Phase: 25 - AI Document Intelligence (5 of 5 in v1.3)
-Plan: 2 of 5 in current phase (plans 01 and 02 complete)
+Plan: 3 of 5 in current phase (plans 01, 02, and 03 complete)
 Status: In progress
-Last activity: 2026-01-24 - Completed 25-01-PLAN.md (Schema & Infrastructure) and 25-02-PLAN.md (Prompt Templates)
+Last activity: 2026-01-24 - Completed 25-03-PLAN.md (AI Import API)
 
-Progress: v1.3 [█████████████████████████████░░░] ~84% (4/5 phases, 2/5 plans in phase 25)
+Progress: v1.3 [██████████████████████████████░░] ~88% (4/5 phases, 3/5 plans in phase 25)
 
 ## Milestone History
 
@@ -31,9 +31,9 @@ Progress: v1.3 [█████████████████████�
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 56
+- Total plans completed: 57
 - Average duration: 4.1 min
-- Total execution time: 229 min
+- Total execution time: 234 min
 
 **By Phase (v1.0-v1.3):**
 
@@ -63,7 +63,7 @@ Progress: v1.3 [█████████████████████�
 | 22-document-management | 3 | 28min | 9.3min |
 | 23-widget-registry-roles | 3 | 10min | 3.3min |
 | 24-dashboard-customization-ui | 5 | 21min | 4.2min |
-| 25-ai-document-intelligence | 1 | 3min | 3min |
+| 25-ai-document-intelligence | 3 | 11min | 3.7min |
 
 ## Accumulated Context
 
@@ -82,6 +82,12 @@ Recent (Phase 25-02):
 - Category matching rules embedded in receipt prompt
 - AIAnalysisResult saves to ai-results.json per project folder
 
+Recent (Phase 25-03):
+- Invoice import adds extraction.total to existing revenue (additive, not replacement)
+- Receipt import creates new categories when categoryId is null but suggestedCategory provided
+- Case-insensitive category matching to avoid duplicates
+- Pending API includes ready-to-run Claude command for bulk analysis
+
 ### Pending Todos
 
 None.
@@ -92,6 +98,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-23T22:02:57Z
-Stopped at: Completed 25-01-PLAN.md (Schema & Infrastructure)
-Resume: Execute 25-03-PLAN.md for AI Import API
+Last session: 2026-01-23T22:09:44Z
+Stopped at: Completed 25-03-PLAN.md (AI Import API)
+Resume: Execute 25-04-PLAN.md for Review Sheet UI
