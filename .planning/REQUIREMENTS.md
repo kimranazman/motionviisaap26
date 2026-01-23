@@ -49,9 +49,9 @@ Requirements for Document Management & Dashboard Customization milestone. Each m
 - [ ] **DASH-08**: User can reset dashboard to admin default
 
 **Admin Controls:**
-- [ ] **DASH-09**: Admin can set default layout (new users inherit this)
-- [ ] **DASH-10**: Admin can restrict widgets by role (e.g., Viewers can't see revenue)
-- [ ] **DASH-11**: Role restrictions enforced server-side
+- [x] **DASH-09**: Admin can set default layout (new users inherit this)
+- [x] **DASH-10**: Admin can restrict widgets by role (e.g., Viewers can't see revenue)
+- [x] **DASH-11**: Role restrictions enforced server-side
 
 **Responsive & Filtering:**
 - [ ] **DASH-12**: Dashboard is responsive across breakpoints

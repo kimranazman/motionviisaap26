@@ -23,7 +23,7 @@ See `.planning/milestones/` for archived phase details.
 
 - [x] **Phase 21: Infrastructure & Schema** - Foundation config, Prisma models, Docker volume
 - [x] **Phase 22: Document Management** - Upload, list, preview, categorization, project dates
-- [ ] **Phase 23: Widget Registry & Roles** - Widget registry, role restrictions, admin defaults
+- [x] **Phase 23: Widget Registry & Roles** - Widget registry, role restrictions, admin defaults
 - [ ] **Phase 24: Dashboard Customization UI** - Widget bank, drag-drop, resize, persistence
 - [ ] **Phase 25: AI Document Intelligence** - Invoice/receipt parsing, revenue/cost extraction, auto-categorization
 
@@ -73,9 +73,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 23-01-PLAN.md — Widget registry & types (WidgetDefinition, WIDGET_REGISTRY with 7 widgets)
-- [ ] 23-02-PLAN.md — Permission & defaults utilities (canViewWidget, filterWidgetsByRole, getAdminDefaults)
-- [ ] 23-03-PLAN.md — Admin API & dashboard filtering (layout/roles endpoints, server-side widget filtering)
+- [x] 23-01-PLAN.md — Widget registry & types (WidgetDefinition, WIDGET_REGISTRY with 7 widgets)
+- [x] 23-02-PLAN.md — Permission & defaults utilities (canViewWidget, filterWidgetsByRole, getAdminDefaults)
+- [x] 23-03-PLAN.md — Admin API & dashboard filtering (layout/roles endpoints, server-side widget filtering)
 
 ### Phase 24: Dashboard Customization UI
 **Goal**: Users can customize their dashboard layout with drag-drop, resize, and persistence
@@ -148,7 +148,7 @@ Plans:
 |-------|-----------|----------------|--------|-----------|
 | 21. Infrastructure & Schema | v1.3 | 2/2 | Complete | 2026-01-23 |
 | 22. Document Management | v1.3 | 3/3 | Complete | 2026-01-23 |
-| 23. Widget Registry & Roles | v1.3 | 0/3 | Not started | - |
+| 23. Widget Registry & Roles | v1.3 | 3/3 | Complete | 2026-01-23 |
 | 24. Dashboard Customization UI | v1.3 | 0/TBD | Not started | - |
 | 25. AI Document Intelligence | v1.3 | 0/TBD | Not started | - |
 
