@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { DocumentCard } from './document-card'
 import { cn } from '@/lib/utils'
-import { type DocumentCategory } from '@/lib/document-utils'
+import { type DocumentCategory, type DocumentAIStatus } from '@/lib/document-utils'
 
 interface Document {
   id: string
@@ -13,6 +13,8 @@ interface Document {
   size: number
   category: DocumentCategory
   createdAt: string
+  aiStatus?: DocumentAIStatus
+  aiAnalyzedAt?: string | null
 }
 
 interface DocumentListProps {
@@ -20,6 +22,7 @@ interface DocumentListProps {
   projectId: string
   onPreview: (document: Document) => void
   onDocumentChange: () => void
+  onReview?: (document: Document) => void
 }
 
 const CATEGORY_TABS = [
@@ -36,6 +39,7 @@ export function DocumentList({
   projectId,
   onPreview,
   onDocumentChange,
+  onReview,
 }: DocumentListProps) {
   const [selectedCategory, setSelectedCategory] = useState<FilterCategory>('ALL')
 
@@ -90,6 +94,7 @@ export function DocumentList({
               onPreview={onPreview}
               onCategoryChange={handleCategoryChange}
               onDelete={onDocumentChange}
+              onReview={onReview}
             />
           ))}
         </div>

@@ -40,3 +40,28 @@ export const ALLOWED_MIME_TYPES = [
 
 // Maximum file size in bytes (10MB)
 export const MAX_FILE_SIZE = 10 * 1024 * 1024
+
+// Document AI status type
+export type DocumentAIStatus = 'PENDING' | 'ANALYZED' | 'IMPORTED' | 'FAILED'
+
+// AI status colors for badges
+export function getAIStatusColor(status: DocumentAIStatus): string {
+  const colors: Record<DocumentAIStatus, string> = {
+    PENDING: 'bg-yellow-100 text-yellow-700 border-yellow-200',
+    ANALYZED: 'bg-blue-100 text-blue-700 border-blue-200',
+    IMPORTED: 'bg-green-100 text-green-700 border-green-200',
+    FAILED: 'bg-red-100 text-red-700 border-red-200',
+  }
+  return colors[status] || colors.PENDING
+}
+
+// Format AI status for display
+export function formatAIStatus(status: DocumentAIStatus): string {
+  const labels: Record<DocumentAIStatus, string> = {
+    PENDING: 'Pending',
+    ANALYZED: 'Analyzed',
+    IMPORTED: 'Imported',
+    FAILED: 'Failed',
+  }
+  return labels[status] || 'Unknown'
+}

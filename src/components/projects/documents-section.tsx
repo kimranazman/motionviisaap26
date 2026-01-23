@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import { MAX_FILE_SIZE, DOCUMENT_CATEGORIES, type DocumentCategory } from '@/lib/document-utils'
+import { MAX_FILE_SIZE, DOCUMENT_CATEGORIES, type DocumentCategory, type DocumentAIStatus } from '@/lib/document-utils'
 import {
   Select,
   SelectContent,
@@ -34,6 +34,8 @@ interface Document {
   size: number
   category: DocumentCategory
   createdAt: string
+  aiStatus?: DocumentAIStatus
+  aiAnalyzedAt?: string | null
 }
 
 interface DocumentsSectionProps {
@@ -41,6 +43,7 @@ interface DocumentsSectionProps {
   documents: Document[]
   onPreview: (doc: Document) => void
   onDocumentsChange: () => void
+  onReview?: (doc: Document) => void
 }
 
 export function DocumentsSection({
@@ -48,6 +51,7 @@ export function DocumentsSection({
   documents,
   onPreview,
   onDocumentsChange,
+  onReview,
 }: DocumentsSectionProps) {
   const [files, setFiles] = useState<FileWithProgress[]>([])
   const [defaultCategory, setDefaultCategory] = useState<DocumentCategory>('OTHER')
@@ -217,6 +221,7 @@ export function DocumentsSection({
               projectId={projectId}
               onPreview={onPreview}
               onDocumentChange={onDocumentsChange}
+              onReview={onReview}
             />
           )}
 

@@ -21,9 +21,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
-import { FileText, ImageIcon, Download, Trash2, Eye } from 'lucide-react'
+import { FileText, ImageIcon, Download, Trash2, Eye, Sparkles } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
-import { formatFileSize, getCategoryColor, isPreviewable, DOCUMENT_CATEGORIES, type DocumentCategory } from '@/lib/document-utils'
+import { formatFileSize, getCategoryColor, getAIStatusColor, formatAIStatus, isPreviewable, DOCUMENT_CATEGORIES, type DocumentCategory, type DocumentAIStatus } from '@/lib/document-utils'
 
 interface Document {
   id: string
@@ -33,6 +33,8 @@ interface Document {
   size: number
   category: DocumentCategory
   createdAt: string
+  aiStatus?: DocumentAIStatus
+  aiAnalyzedAt?: string | null
 }
 
 interface DocumentCardProps {
@@ -41,6 +43,7 @@ interface DocumentCardProps {
   onPreview: (document: Document) => void
   onCategoryChange: () => void
   onDelete: () => void
+  onReview?: (document: Document) => void
 }
 
 export function DocumentCard({
@@ -49,6 +52,7 @@ export function DocumentCard({
   onPreview,
   onCategoryChange,
   onDelete,
+  onReview,
 }: DocumentCardProps) {
   const [isDeleting, setIsDeleting] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
@@ -120,6 +124,11 @@ export function DocumentCard({
             <Badge variant="outline" className={getCategoryColor(document.category)}>
               {document.category}
             </Badge>
+            {document.aiStatus && (
+              <Badge variant="outline" className={getAIStatusColor(document.aiStatus)}>
+                {formatAIStatus(document.aiStatus)}
+              </Badge>
+            )}
           </div>
           <div className="text-sm text-gray-500 mt-0.5">
             {formatFileSize(document.size)} - {formatDate(document.createdAt)}
@@ -145,6 +154,19 @@ export function DocumentCard({
             ))}
           </SelectContent>
         </Select>
+
+        {/* Review - only for ANALYZED invoices/receipts */}
+        {onReview && document.aiStatus === 'ANALYZED' && (document.category === 'INVOICE' || document.category === 'RECEIPT') && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-10 w-10 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+            onClick={() => onReview(document)}
+            title="Review AI extraction"
+          >
+            <Sparkles className="h-4 w-4" />
+          </Button>
+        )}
 
         {/* Preview */}
         <Button

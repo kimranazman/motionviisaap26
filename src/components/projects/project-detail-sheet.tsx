@@ -41,7 +41,10 @@ import { CostForm } from './cost-form'
 import { CostCard } from './cost-card'
 import { DocumentsSection } from './documents-section'
 import { ImagePreviewDialog } from './image-preview-dialog'
-import { type DocumentCategory } from '@/lib/document-utils'
+import { AIReviewSheet } from '@/components/ai/ai-review-sheet'
+import { type DocumentCategory, type DocumentAIStatus } from '@/lib/document-utils'
+import { toast } from 'sonner'
+import { InvoiceExtraction, ReceiptExtraction, AIAnalysisResult } from '@/types/ai-extraction'
 import { calculateTotalCosts, calculateProfit } from '@/lib/cost-utils'
 import { Card } from '@/components/ui/card'
 import {
@@ -82,6 +85,8 @@ interface Document {
   size: number
   category: DocumentCategory
   createdAt: string
+  aiStatus?: DocumentAIStatus
+  aiAnalyzedAt?: string | null
 }
 
 interface Project {
@@ -137,6 +142,11 @@ export function ProjectDetailSheet({
   const [previewDocument, setPreviewDocument] = useState<Document | null>(null)
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
 
+  // AI Review state
+  const [reviewDocument, setReviewDocument] = useState<Document | null>(null)
+  const [reviewExtraction, setReviewExtraction] = useState<InvoiceExtraction | ReceiptExtraction | null>(null)
+  const [isReviewSheetOpen, setIsReviewSheetOpen] = useState(false)
+
   // Fetch cost categories on mount
   useEffect(() => {
     const fetchCategories = async () => {
@@ -183,6 +193,11 @@ export function ProjectDetailSheet({
       setDocuments([])
       setPreviewDocument(null)
       setIsPreviewOpen(false)
+
+      // Reset review state
+      setReviewDocument(null)
+      setReviewExtraction(null)
+      setIsReviewSheetOpen(false)
 
       // Fetch contacts for selected company
       if (project.company?.id) {
@@ -367,6 +382,65 @@ export function ProjectDetailSheet({
   const handlePreviewDocument = (doc: Document) => {
     setPreviewDocument(doc)
     setIsPreviewOpen(true)
+  }
+
+  // AI Review handler - load AI results and open review sheet
+  const handleReviewDocument = async (doc: Document) => {
+    if (!project) return
+
+    try {
+      const response = await fetch(`/api/projects/${project.id}/ai-results`)
+      if (!response.ok) {
+        const data = await response.json()
+        toast.error('Failed to load AI results', {
+          description: data.message || data.error || 'Unknown error',
+        })
+        return
+      }
+
+      const results: AIAnalysisResult = await response.json()
+
+      // Find extraction matching the document
+      let extraction: InvoiceExtraction | ReceiptExtraction | null = null
+
+      if (doc.category === 'INVOICE') {
+        extraction = results.invoices.find((inv) => inv.documentId === doc.id) || null
+      } else if (doc.category === 'RECEIPT') {
+        extraction = results.receipts.find((rec) => rec.documentId === doc.id) || null
+      }
+
+      if (!extraction) {
+        toast.error('AI extraction not found', {
+          description: 'No AI analysis data found for this document',
+        })
+        return
+      }
+
+      setReviewDocument(doc)
+      setReviewExtraction(extraction)
+      setIsReviewSheetOpen(true)
+    } catch (error) {
+      console.error('Failed to load AI results:', error)
+      toast.error('Failed to load AI results')
+    }
+  }
+
+  // Handle import complete - refresh documents and costs
+  const handleImportComplete = async () => {
+    // Refresh documents to update AI status
+    await handleDocumentsRefresh()
+    // Refresh costs (for receipt imports)
+    if (project) {
+      try {
+        const response = await fetch(`/api/projects/${project.id}/costs`)
+        if (response.ok) {
+          const data = await response.json()
+          setCosts(data)
+        }
+      } catch (error) {
+        console.error('Failed to refresh costs:', error)
+      }
+    }
   }
 
   if (!project) return null
@@ -722,6 +796,7 @@ export function ProjectDetailSheet({
               documents={documents}
               onPreview={handlePreviewDocument}
               onDocumentsChange={handleDocumentsRefresh}
+              onReview={handleReviewDocument}
             />
 
             {/* Error message */}
@@ -738,6 +813,19 @@ export function ProjectDetailSheet({
           open={isPreviewOpen}
           onOpenChange={setIsPreviewOpen}
         />
+
+        {/* AI Review Sheet */}
+        {reviewDocument && reviewExtraction && (
+          <AIReviewSheet
+            open={isReviewSheetOpen}
+            onOpenChange={setIsReviewSheetOpen}
+            projectId={project.id}
+            document={reviewDocument}
+            extraction={reviewExtraction}
+            categories={categories}
+            onImportComplete={handleImportComplete}
+          />
+        )}
 
         <SheetFooter className="p-4 border-t flex-col sm:flex-row gap-2 sm:gap-0 justify-between sm:justify-between">
           <AlertDialog>
