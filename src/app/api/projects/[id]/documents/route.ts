@@ -5,6 +5,7 @@ import { writeFile, mkdir, unlink } from 'fs/promises'
 import path from 'path'
 import { randomUUID } from 'crypto'
 import { ALLOWED_MIME_TYPES, MAX_FILE_SIZE } from '@/lib/document-utils'
+import { generateProjectManifest } from '@/lib/manifest-utils'
 
 const UPLOADS_DIR = process.env.UPLOADS_DIR || '/app/uploads'
 
@@ -118,6 +119,11 @@ export async function POST(
         include: {
           uploadedBy: { select: { id: true, name: true } },
         },
+      })
+
+      // Generate manifest async (don't block upload response)
+      generateProjectManifest(projectId).catch((err) => {
+        console.error('Failed to generate manifest after upload:', err)
       })
 
       return NextResponse.json(document, { status: 201 })

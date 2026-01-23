@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma'
 import { requireEditor } from '@/lib/auth-utils'
 import { unlink } from 'fs/promises'
 import path from 'path'
+import { generateProjectManifest } from '@/lib/manifest-utils'
 
 const UPLOADS_DIR = process.env.UPLOADS_DIR || '/app/uploads'
 
@@ -40,6 +41,11 @@ export async function DELETE(
 
     // Delete database record
     await prisma.document.delete({ where: { id: documentId } })
+
+    // Regenerate manifest async (don't block delete response)
+    generateProjectManifest(projectId).catch((err) => {
+      console.error('Failed to regenerate manifest after delete:', err)
+    })
 
     return NextResponse.json({ success: true })
   } catch (error) {
@@ -93,6 +99,11 @@ export async function PATCH(
       include: {
         uploadedBy: { select: { id: true, name: true } },
       },
+    })
+
+    // Regenerate manifest async (category affects document grouping)
+    generateProjectManifest(projectId).catch((err) => {
+      console.error('Failed to regenerate manifest after category change:', err)
     })
 
     return NextResponse.json(document)
