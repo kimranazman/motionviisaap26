@@ -191,6 +191,13 @@ enum ProjectStatus {
   CANCELLED
 }
 
+// Document categories for project files (v1.3)
+enum DocumentCategory {
+  RECEIPT
+  INVOICE
+  OTHER
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -202,6 +209,8 @@ model User {
   accounts      Account[]
   sessions      Session[]
   comments      Comment[]
+  documents     Document[]
+  preferences   UserPreferences?
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -388,6 +397,7 @@ model Project {
   initiative      Initiative?     @relation(fields: [initiativeId], references: [id])
 
   costs           Cost[]
+  documents       Document[]
 
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
@@ -438,4 +448,59 @@ model Cost {
   @@index([categoryId])
   @@index([date])
   @@map("costs")
+}
+
+// ============================================================
+// Document Management & Dashboard Customization (v1.3)
+// ============================================================
+
+// Document (file attached to a project)
+model Document {
+  id            String           @id @default(cuid())
+  projectId     String           @map("project_id")
+  project       Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  filename      String           @db.VarChar(255)  // Original filename for display
+  storagePath   String           @db.VarChar(500)  // Relative path: projects/{id}/{uuid}.ext
+  mimeType      String           @db.VarChar(100)
+  size          Int              // File size in bytes
+  category      DocumentCategory @default(OTHER)
+
+  uploadedById  String           @map("uploaded_by_id")
+  uploadedBy    User             @relation(fields: [uploadedById], references: [id])
+
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  @@index([projectId])
+  @@index([category])
+  @@map("documents")
+}
+
+// UserPreferences (one-to-one with User for dashboard/filter settings)
+model UserPreferences {
+  id              String   @id @default(cuid())
+  userId          String   @unique @map("user_id")
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  dashboardLayout Json?    @db.Json
+  dateFilter      Json?    @db.Json
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("user_preferences")
+}
+
+// AdminDefaults (singleton for system-wide dashboard defaults)
+model AdminDefaults {
+  id              String   @id @default(cuid())
+
+  dashboardLayout Json     @db.Json
+  widgetRoles     Json     @db.Json
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("admin_defaults")
 }
