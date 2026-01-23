@@ -17,10 +17,19 @@ export interface DashboardLayout {
   widgets: WidgetConfig[];
 }
 
+export type DatePreset =
+  | 'last7days'
+  | 'last30days'
+  | 'last90days'
+  | 'mtd'      // Month to date
+  | 'qtd'      // Quarter to date
+  | 'ytd'      // Year to date
+  | 'custom';
+
 export interface DateFilter {
   startDate: string | null;  // ISO date string
   endDate: string | null;    // ISO date string
-  preset?: 'thisMonth' | 'lastMonth' | 'thisQuarter' | 'thisYear' | 'custom';
+  preset: DatePreset;
 }
 
 export interface WidgetRoleRestrictions {
