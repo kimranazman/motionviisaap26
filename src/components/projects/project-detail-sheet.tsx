@@ -33,7 +33,7 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
-import { Loader2, Trash2, ArrowRight, Plus, Target, DollarSign } from 'lucide-react'
+import { Loader2, Trash2, ArrowRight, Plus, Target, DollarSign, CalendarIcon } from 'lucide-react'
 import { CompanySelect } from '@/components/pipeline/company-select'
 import { ContactSelect } from '@/components/pipeline/contact-select'
 import { InitiativeSelect } from './initiative-select'
@@ -47,6 +47,9 @@ import {
   formatProjectStatus,
 } from '@/lib/project-utils'
 import { cn, formatCurrency } from '@/lib/utils'
+import { Calendar } from '@/components/ui/calendar'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { format } from 'date-fns'
 
 interface Contact {
   id: string
@@ -74,10 +77,12 @@ interface Project {
   description: string | null
   revenue: number | null
   status: string
+  startDate: string | null
+  endDate: string | null
   company: { id: string; name: string } | null
   contact: { id: string; name: string } | null
   initiative: { id: string; title: string } | null
-  sourceDeal: { id: string; title: string } | null
+  sourceDeal: { id: string; title: string; stageChangedAt?: string } | null
   sourcePotential: { id: string; title: string } | null
   costs?: Cost[]
 }
@@ -113,6 +118,8 @@ export function ProjectDetailSheet({
   const [categories, setCategories] = useState<CostCategory[]>([])
   const [showAddCostForm, setShowAddCostForm] = useState(false)
   const [editingCost, setEditingCost] = useState<Cost | null>(null)
+  const [startDate, setStartDate] = useState<Date | null>(null)
+  const [endDate, setEndDate] = useState<Date | null>(null)
 
   // Fetch cost categories on mount
   useEffect(() => {
@@ -144,6 +151,17 @@ export function ProjectDetailSheet({
       setCosts(project.costs || [])
       setShowAddCostForm(false)
       setEditingCost(null)
+
+      // Initialize dates
+      if (project.startDate) {
+        setStartDate(new Date(project.startDate))
+      } else if (project.sourceDeal?.stageChangedAt) {
+        // Auto-fill from deal won date if available
+        setStartDate(new Date(project.sourceDeal.stageChangedAt))
+      } else {
+        setStartDate(null)
+      }
+      setEndDate(project.endDate ? new Date(project.endDate) : null)
 
       // Fetch contacts for selected company
       if (project.company?.id) {
@@ -207,6 +225,8 @@ export function ProjectDetailSheet({
           initiativeId: initiativeId || null,
           revenue: revenue ? parseFloat(revenue) : null,
           description: description.trim() || null,
+          startDate: startDate ? startDate.toISOString() : null,
+          endDate: endDate ? endDate.toISOString() : null,
         }),
       })
 
@@ -298,6 +318,17 @@ export function ProjectDetailSheet({
   const totalCosts = calculateTotalCosts(costs)
   const profit = calculateProfit(project.revenue, totalCosts)
 
+  // Helper to compare dates (only date portion)
+  const formatDateForCompare = (d: Date | null) => d?.toISOString().split('T')[0] || null
+  const projectStartDateForCompare = project.startDate
+    ? new Date(project.startDate).toISOString().split('T')[0]
+    : project.sourceDeal?.stageChangedAt
+      ? new Date(project.sourceDeal.stageChangedAt).toISOString().split('T')[0]
+      : null
+  const projectEndDateForCompare = project.endDate
+    ? new Date(project.endDate).toISOString().split('T')[0]
+    : null
+
   const hasChanges =
     title !== project.title ||
     status !== project.status ||
@@ -305,7 +336,9 @@ export function ProjectDetailSheet({
     contactId !== (project.contact?.id || null) ||
     initiativeId !== (project.initiative?.id || null) ||
     revenue !== (project.revenue?.toString() || '') ||
-    description !== (project.description || '')
+    description !== (project.description || '') ||
+    formatDateForCompare(startDate) !== projectStartDateForCompare ||
+    formatDateForCompare(endDate) !== projectEndDateForCompare
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -417,6 +450,66 @@ export function ProjectDetailSheet({
                 placeholder="Add notes about this project..."
                 className="min-h-[80px]"
               />
+            </div>
+
+            {/* Project Dates */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Start Date</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className={cn(
+                        'w-full justify-start text-left font-normal h-11',
+                        !startDate && 'text-muted-foreground'
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {startDate ? format(startDate, 'PP') : 'Pick date'}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={startDate || undefined}
+                      onSelect={(d) => setStartDate(d || null)}
+                    />
+                  </PopoverContent>
+                </Popover>
+                {project.sourceDeal?.stageChangedAt && !project.startDate && (
+                  <p className="text-xs text-muted-foreground">
+                    Auto-filled from deal won date
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label>End Date</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className={cn(
+                        'w-full justify-start text-left font-normal h-11',
+                        !endDate && 'text-muted-foreground'
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {endDate ? format(endDate, 'PP') : 'Pick date'}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={endDate || undefined}
+                      onSelect={(d) => setEndDate(d || null)}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
             </div>
 
             <Separator />

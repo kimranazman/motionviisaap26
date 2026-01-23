@@ -14,7 +14,7 @@ export default async function ProjectsPage() {
         select: { id: true, name: true },
       },
       sourceDeal: {
-        select: { id: true, title: true },
+        select: { id: true, title: true, stageChangedAt: true },
       },
       sourcePotential: {
         select: { id: true, title: true },
@@ -26,10 +26,20 @@ export default async function ProjectsPage() {
     orderBy: { createdAt: 'desc' },
   })
 
-  // Transform Decimal values to numbers for client component
+  // Transform Decimal and Date values for client component
   const serializedProjects = projects.map((project) => ({
     ...project,
     revenue: project.revenue ? Number(project.revenue) : null,
+    startDate: project.startDate ? project.startDate.toISOString() : null,
+    endDate: project.endDate ? project.endDate.toISOString() : null,
+    sourceDeal: project.sourceDeal
+      ? {
+          ...project.sourceDeal,
+          stageChangedAt: project.sourceDeal.stageChangedAt
+            ? project.sourceDeal.stageChangedAt.toISOString()
+            : undefined,
+        }
+      : null,
   }))
 
   return (

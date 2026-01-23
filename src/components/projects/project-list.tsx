@@ -17,10 +17,12 @@ interface Project {
   description: string | null
   revenue: number | null
   status: string
+  startDate: string | null
+  endDate: string | null
   company: { id: string; name: string } | null
   contact: { id: string; name: string } | null
   initiative: { id: string; title: string } | null
-  sourceDeal: { id: string; title: string } | null
+  sourceDeal: { id: string; title: string; stageChangedAt?: string } | null
   sourcePotential: { id: string; title: string } | null
 }
 
