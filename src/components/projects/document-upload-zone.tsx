@@ -31,10 +31,10 @@ export function DocumentUploadZone({ projectId, onUploadComplete }: DocumentUplo
   const [files, setFiles] = useState<FileWithProgress[]>([])
   const [defaultCategory, setDefaultCategory] = useState<DocumentCategory>('OTHER')
 
-  const uploadFile = async (file: File, index: number) => {
+  const uploadFile = useCallback(async (file: File, index: number, category: DocumentCategory) => {
     const formData = new FormData()
     formData.append('file', file)
-    formData.append('category', defaultCategory)
+    formData.append('category', category)
 
     return new Promise<void>((resolve, reject) => {
       const xhr = new XMLHttpRequest()
@@ -79,7 +79,7 @@ export function DocumentUploadZone({ projectId, onUploadComplete }: DocumentUplo
       xhr.open('POST', `/api/projects/${projectId}/documents`)
       xhr.send(formData)
     })
-  }
+  }, [projectId])
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return
@@ -92,19 +92,20 @@ export function DocumentUploadZone({ projectId, onUploadComplete }: DocumentUplo
     }))
 
     const startIndex = files.length
+    const categoryToUse = defaultCategory
     setFiles(prev => [...prev, ...newFiles])
 
     // Upload files sequentially (to avoid memory issues with large files)
     for (let i = 0; i < acceptedFiles.length; i++) {
       try {
-        await uploadFile(acceptedFiles[i], startIndex + i)
+        await uploadFile(acceptedFiles[i], startIndex + i, categoryToUse)
       } catch (err) {
         console.error('Upload error:', err)
       }
     }
 
     onUploadComplete()
-  }, [files.length, projectId, defaultCategory, onUploadComplete])
+  }, [files.length, defaultCategory, uploadFile, onUploadComplete])
 
   const { getRootProps, getInputProps, isDragActive, fileRejections } = useDropzone({
     onDrop,
