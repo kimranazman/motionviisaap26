@@ -132,10 +132,13 @@ Prompt & Context Structure for Claude Code Analysis:
    App imports and shows for user confirmation
 ```
 
+**Approach:** Phase A (Claude Code workflow) first, then Phase B (built-in API) later.
+
 Plans:
 - [ ] 25-01: TBD (Prompt templates + manifest generation)
-- [ ] 25-02: TBD (Invoice analysis + revenue calculation)
-- [ ] 25-03: TBD (Receipt analysis + cost creation)
+- [ ] 25-02: TBD (Invoice analysis → revenue import)
+- [ ] 25-03: TBD (Receipt analysis → cost import)
+- [ ] 25-04: TBD (Built-in "Analyze" button - future)
 
 ## Progress
 
