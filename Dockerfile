@@ -40,6 +40,9 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 # Set ownership
 RUN chown -R nextjs:nodejs /app
 
+# Create uploads directory for file storage
+RUN mkdir -p /app/uploads && chown -R nextjs:nodejs /app/uploads
+
 USER nextjs
 
 EXPOSE 3000
