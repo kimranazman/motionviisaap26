@@ -14,7 +14,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { WIDGET_REGISTRY, WidgetDefinition } from '@/lib/widgets/registry';
-import { cn } from '@/lib/utils';
 
 interface WidgetBankProps {
   open: boolean;
@@ -49,6 +48,12 @@ function WidgetBankItem({
           <div className="font-medium text-sm">{widget.title}</div>
           <div className="text-xs text-muted-foreground">
             {widget.description}
+          </div>
+          <div className="flex items-center gap-1 mt-1">
+            <span className="text-xs text-muted-foreground">Size:</span>
+            <span className="text-xs font-mono bg-muted px-1 rounded">
+              {widget.defaultSize.w} x {widget.defaultSize.h}
+            </span>
           </div>
         </div>
         <div className="flex items-center gap-2">
