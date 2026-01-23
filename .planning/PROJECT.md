@@ -14,16 +14,35 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 **Codebase:** ~45,000 LOC TypeScript
 **Tech stack:** Next.js 14, Prisma, MariaDB, Tailwind/shadcn, NextAuth.js
 
-## Next Milestone: v1.3 Enhancements (not started)
+## Next Milestone: v1.3 Document Management & Dashboard Customization
 
-**Goal:** Polish and add requested features from v1.2 usage.
+**Goal:** Enable project document management (receipts, invoices) with folder-based storage and Claude Code analysis, plus customizable per-user dashboards with role-based widget restrictions.
 
 **Target features:**
-- Receipt uploads for cost items
+
+*Document Management:*
+- Receipt uploads to projects (drag-drop, folder-based storage by project)
+- Invoice uploads to projects (external invoices, same pattern)
+- Project dates: start date (from deal won or manual), end date (from invoice)
+- Claude Code analysis integration for extracting values from documents
+
+*Customizable Dashboard:*
+- Per-user dashboard layouts (each user customizes their own)
+- Admin sets default layout (new users inherit this)
+- Users can reset to admin default
+- Role-based widget restrictions (Admin controls which roles see which widgets)
+- Widget bank (select which widgets appear)
+- Widget arrangement (size, position, drag-drop)
+- Date range filter for dashboard data
+
+**Deferred to v1.3.1:**
 - Expected close date on deals
 - Notes/activity log on deals
 - Dashboard deal aging alerts
 - Toast notifications (Sonner) for user feedback
+
+**Planned for v1.4:**
+- Invoice generation system (generate invoices from project data)
 
 ## Requirements
 
@@ -102,12 +121,24 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 <!-- Current scope. Building toward these. -->
 
-**v1.3 Enhancements:**
-- [ ] Receipt uploads for cost items
-- [ ] Expected close date on deals
-- [ ] Notes/activity log on deals
-- [ ] Dashboard deal aging alerts
-- [ ] Toast notifications (Sonner) for user feedback
+**v1.3 Document Management & Dashboard Customization:**
+
+*Document Management:*
+- [ ] Receipt uploads to projects (drag-drop, folder-based storage)
+- [ ] Invoice uploads to projects (external invoices, folder storage)
+- [ ] Project start date (from deal won date or manual entry)
+- [ ] Project end date (from invoice or manual entry)
+- [ ] Folder organization by project for uploaded documents
+
+*Customizable Dashboard:*
+- [ ] Per-user dashboard layout persistence
+- [ ] Admin-defined default dashboard layout
+- [ ] User reset to admin default option
+- [ ] Role-based widget restrictions (Admin configures)
+- [ ] Widget bank with selectable widgets
+- [ ] Widget size customization
+- [ ] Widget position/arrangement (drag-drop)
+- [ ] Dashboard date range filter
 
 ### Out of Scope
 
@@ -128,7 +159,7 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - Activity tracking/logging — overhead for small team; manual notes sufficient
 - Multi-currency support — MYR sufficient for current operations
 - Time tracking — separate feature domain; use external tools
-- Invoice generation — use external accounting software
+- Invoice generation — deferred to v1.4
 - Email integration — overkill for 3-person team
 
 ## Context
@@ -187,4 +218,4 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | Full-screen modals on mobile | Slide from bottom with rounded corners | ✓ Good |
 
 ---
-*Last updated: 2026-01-23 after completing v1.2.1 milestone*
+*Last updated: 2026-01-23 after starting v1.3 milestone*
