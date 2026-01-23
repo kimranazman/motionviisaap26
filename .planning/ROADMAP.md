@@ -88,11 +88,14 @@ Plans:
   4. User can reset dashboard to admin default
   5. Dashboard is responsive (drag-drop disabled on mobile, layout adapts)
   6. User can set date range filter that applies to all widgets and persists
-**Plans**: TBD
+**Plans**: 5 plans
 
 Plans:
-- [ ] 24-01: TBD
-- [ ] 24-02: TBD
+- [ ] 24-01-PLAN.md — Dependencies and infrastructure (react-grid-layout, sonner, user preferences API, layout utils)
+- [ ] 24-02-PLAN.md — Date range filter (date utilities, DateRangeFilter component with presets)
+- [ ] 24-03-PLAN.md — Dashboard grid (react-grid-layout grid, widget wrapper, layout hook with undo)
+- [ ] 24-04-PLAN.md — Widget bank (sidebar Sheet with categorized widgets, add functionality)
+- [ ] 24-05-PLAN.md — Dashboard integration (header controls, client component, page update, persistence)
 
 ### Phase 25: AI Document Intelligence
 **Goal**: AI automatically extracts financial data from invoices and receipts, calculates revenue/costs, and categorizes line items
@@ -149,7 +152,7 @@ Plans:
 | 21. Infrastructure & Schema | v1.3 | 2/2 | Complete | 2026-01-23 |
 | 22. Document Management | v1.3 | 3/3 | Complete | 2026-01-23 |
 | 23. Widget Registry & Roles | v1.3 | 3/3 | Complete | 2026-01-23 |
-| 24. Dashboard Customization UI | v1.3 | 0/TBD | Not started | - |
+| 24. Dashboard Customization UI | v1.3 | 0/5 | Planned | - |
 | 25. AI Document Intelligence | v1.3 | 0/TBD | Not started | - |
 
 ---
