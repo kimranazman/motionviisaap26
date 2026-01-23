@@ -4,7 +4,7 @@
  */
 
 import type { LayoutWidgetConfig } from '@/types/dashboard'
-import type { Layout, LayoutItem } from 'react-grid-layout'
+import type { Layout, LayoutItem } from 'react-grid-layout/legacy'
 
 /**
  * Generate a unique instance ID for widget placement
