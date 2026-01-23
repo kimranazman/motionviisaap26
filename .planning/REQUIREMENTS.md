@@ -66,15 +66,25 @@ Requirements for Document Management & Dashboard Customization milestone. Each m
 - [x] **INFRA-03**: File serving API route with authentication
 - [x] **INFRA-04**: Document, UserPreferences, AdminDefaults Prisma models
 
+### AI Document Intelligence
+
+**Invoice Processing (Revenue):**
+- [ ] **AI-01**: AI parses uploaded invoices and extracts line items (description, quantity, unit price, amount)
+- [ ] **AI-02**: Invoice totals auto-calculate project revenue
+- [ ] **AI-03**: User can review and confirm AI-extracted invoice data
+
+**Receipt Processing (Costs):**
+- [ ] **AI-04**: AI parses uploaded receipts and extracts items with amounts
+- [ ] **AI-05**: Receipt items auto-create cost entries linked to project
+- [ ] **AI-06**: AI suggests existing cost categories or creates new ones
+
+**Integration & Context:**
+- [ ] **AI-07**: Manifest file generated per project folder for AI context
+- [ ] **AI-08**: Project financials show AI-calculated revenue vs manual costs
+
 ## v2 Requirements
 
 Deferred to future release. Tracked but not in current roadmap.
-
-### Document Intelligence
-
-- **DOC-AI-01**: AI extraction of values from receipts (Claude Code integration)
-- **DOC-AI-02**: OCR text extraction from documents
-- **DOC-AI-03**: Full-text search across documents
 
 ### Dashboard Advanced
 
@@ -136,10 +146,18 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DASH-13 | Phase 24 | Pending |
 | DASH-14 | Phase 24 | Pending |
 | DASH-15 | Phase 24 | Pending |
+| AI-01 | Phase 25 | Pending |
+| AI-02 | Phase 25 | Pending |
+| AI-03 | Phase 25 | Pending |
+| AI-04 | Phase 25 | Pending |
+| AI-05 | Phase 25 | Pending |
+| AI-06 | Phase 25 | Pending |
+| AI-07 | Phase 25 | Pending |
+| AI-08 | Phase 25 | Pending |
 
 **Coverage:**
-- v1.3 requirements: 36 total
-- Mapped to phases: 36
+- v1.3 requirements: 44 total
+- Mapped to phases: 44
 - Unmapped: 0
 
 ---

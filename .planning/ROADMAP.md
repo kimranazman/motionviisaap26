@@ -6,7 +6,7 @@
 - [x] **v1.1 Authentication** - Phases 4-8 (shipped 2026-01-22)
 - [x] **v1.2 CRM & Project Financials** - Phases 9-15 (shipped 2026-01-22)
 - [x] **v1.2.1 Responsive / Mobile Web** - Phases 16-20 (shipped 2026-01-23)
-- [ ] **v1.3 Document Management & Dashboard Customization** - Phases 21-24 (in progress)
+- [ ] **v1.3 Document Management & Dashboard Customization** - Phases 21-25 (in progress)
 
 ## Phases
 
@@ -19,12 +19,13 @@ See `.planning/milestones/` for archived phase details.
 
 ### v1.3 Document Management & Dashboard Customization (In Progress)
 
-**Milestone Goal:** Enable project document management (receipts, invoices) with folder-based storage, plus customizable per-user dashboards with role-based widget restrictions.
+**Milestone Goal:** Enable project document management (receipts, invoices) with folder-based storage, AI-powered document analysis for revenue/cost extraction, plus customizable per-user dashboards with role-based widget restrictions.
 
 - [x] **Phase 21: Infrastructure & Schema** - Foundation config, Prisma models, Docker volume
 - [x] **Phase 22: Document Management** - Upload, list, preview, categorization, project dates
 - [ ] **Phase 23: Widget Registry & Roles** - Widget registry, role restrictions, admin defaults
 - [ ] **Phase 24: Dashboard Customization UI** - Widget bank, drag-drop, resize, persistence
+- [ ] **Phase 25: AI Document Intelligence** - Invoice/receipt parsing, revenue/cost extraction, auto-categorization
 
 ## Phase Details
 
@@ -91,6 +92,26 @@ Plans:
 - [ ] 24-01: TBD
 - [ ] 24-02: TBD
 
+### Phase 25: AI Document Intelligence
+**Goal**: AI automatically extracts financial data from invoices and receipts, calculates revenue/costs, and categorizes line items
+**Depends on**: Phase 22 (document management)
+**Requirements**: AI-01, AI-02, AI-03, AI-04, AI-05, AI-06, AI-07, AI-08
+**Success Criteria** (what must be TRUE):
+  1. AI parses uploaded invoices and extracts line items with amounts
+  2. Invoice totals auto-calculate project revenue (sum of all invoice line items)
+  3. AI parses uploaded receipts and extracts items with amounts
+  4. Receipt items auto-create cost entries with appropriate categories
+  5. AI suggests existing categories or creates new ones when needed
+  6. User can review and confirm AI-extracted data before finalizing
+  7. Project financials dashboard shows AI-calculated revenue vs costs
+  8. Manifest file generated per project for AI context
+**Plans**: TBD
+
+Plans:
+- [ ] 25-01: TBD
+- [ ] 25-02: TBD
+- [ ] 25-03: TBD
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -99,6 +120,7 @@ Plans:
 | 22. Document Management | v1.3 | 3/3 | Complete | 2026-01-23 |
 | 23. Widget Registry & Roles | v1.3 | 0/TBD | Not started | - |
 | 24. Dashboard Customization UI | v1.3 | 0/TBD | Not started | - |
+| 25. AI Document Intelligence | v1.3 | 0/TBD | Not started | - |
 
 ---
 *Roadmap created: 2026-01-23*
