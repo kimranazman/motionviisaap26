@@ -14,6 +14,7 @@ import { TeamWorkload } from './team-workload';
 import { RecentInitiatives } from './recent-initiatives';
 import { CRMKPICards } from './crm-kpi-cards';
 import { PipelineStageChart } from './pipeline-stage-chart';
+import { PendingAnalysisWidget } from './pending-analysis-widget';
 import type { LayoutWidgetConfig, DateFilter } from '@/types/dashboard';
 import { createDateFilter } from '@/lib/date-utils';
 
@@ -185,6 +186,8 @@ export function DashboardClient({
           ) : null;
         case 'pipeline-stage-chart':
           return crmData ? <PipelineStageChart data={crmData.stageData} /> : null;
+        case 'pending-analysis':
+          return <PendingAnalysisWidget />;
         default:
           return <div>Unknown widget: {widgetId}</div>;
       }

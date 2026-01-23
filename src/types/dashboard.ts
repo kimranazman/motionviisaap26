@@ -54,7 +54,7 @@ export interface WidgetDefinition {
   description: string;                 // What the widget shows
   defaultSize: { w: number; h: number };  // Grid dimensions
   minRole: UserRole;                   // Minimum role required to view
-  category: 'kri' | 'crm' | 'financials';  // Widget grouping
+  category: 'kri' | 'crm' | 'financials' | 'operations';  // Widget grouping
   dataKey?: string;                    // Optional key for data fetching
 }
 

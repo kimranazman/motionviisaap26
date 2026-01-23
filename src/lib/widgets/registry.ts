@@ -74,6 +74,14 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     category: 'crm',
     dataKey: 'stageData',
   },
+  'pending-analysis': {
+    id: 'pending-analysis',
+    title: 'AI Document Analysis',
+    description: 'Documents pending AI analysis',
+    defaultSize: { w: 6, h: 4 },
+    minRole: UserRole.EDITOR, // Editors can trigger analysis
+    category: 'operations',
+  },
 }
 
 /**

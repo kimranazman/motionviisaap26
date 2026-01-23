@@ -26,7 +26,8 @@ interface WidgetBankProps {
 const CATEGORY_LABELS: Record<string, string> = {
   kri: 'Key Result Initiatives',
   crm: 'Sales & CRM',
-  financials: 'Financials'
+  financials: 'Financials',
+  operations: 'Operations',
 };
 
 function WidgetBankItem({
