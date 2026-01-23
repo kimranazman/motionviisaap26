@@ -110,40 +110,14 @@ Plans:
   6. User can review and confirm AI-extracted data before finalizing
   7. Project financials dashboard shows AI-calculated revenue vs costs
   8. Manifest file generated per project for AI context
-**Plans**: TBD
-
-**Implementation Notes:**
-```
-Prompt & Context Structure for Claude Code Analysis:
-
-1. PROMPT TEMPLATES (store in .claude/prompts/)
-   ├── invoice-analysis.md    — How to extract invoice line items
-   ├── receipt-analysis.md    — How to extract receipt costs
-   └── categorization.md      — Rules for category matching/creation
-
-2. PROJECT MANIFEST (auto-generated in uploads/projects/{id}/)
-   └── manifest.json
-       ├── project context (title, company, dates, existing costs)
-       ├── document list (files + metadata)
-       └── existing categories (for AI to match against)
-
-3. OUTPUT SCHEMA (structured JSON for extracted data)
-   └── AI returns standardized format that app can import
-
-4. WORKFLOW
-   User uploads invoice → App generates manifest →
-   User runs Claude Code with prompt template →
-   Claude reads manifest + PDF → Returns structured JSON →
-   App imports and shows for user confirmation
-```
-
-**Approach:** Phase A (Claude Code workflow) first, then Phase B (built-in API) later.
+**Plans**: 5 plans
 
 Plans:
-- [ ] 25-01: TBD (Prompt templates + manifest generation)
-- [ ] 25-02: TBD (Invoice analysis → revenue import)
-- [ ] 25-03: TBD (Receipt analysis → cost import)
-- [ ] 25-04: TBD (Built-in "Analyze" button - future)
+- [ ] 25-01-PLAN.md — Schema & manifest infrastructure (aiStatus field, types, manifest generation)
+- [ ] 25-02-PLAN.md — Prompt templates (invoice/receipt/bulk analysis prompts for Claude Code)
+- [ ] 25-03-PLAN.md — AI import API routes (invoice import, receipt import, pending query)
+- [ ] 25-04-PLAN.md — Review UI components (AIReviewSheet, ExtractionTable, ConfidenceBadge)
+- [ ] 25-05-PLAN.md — Integration (AI status badges, dashboard widget, auto-manifest on upload)
 
 ## Progress
 
@@ -153,8 +127,8 @@ Plans:
 | 22. Document Management | v1.3 | 3/3 | Complete | 2026-01-23 |
 | 23. Widget Registry & Roles | v1.3 | 3/3 | Complete | 2026-01-23 |
 | 24. Dashboard Customization UI | v1.3 | 5/5 | Complete | 2026-01-23 |
-| 25. AI Document Intelligence | v1.3 | 0/TBD | Not started | - |
+| 25. AI Document Intelligence | v1.3 | 0/5 | Not started | - |
 
 ---
 *Roadmap created: 2026-01-23*
-*Last updated: 2026-01-23*
+*Last updated: 2026-01-24*
