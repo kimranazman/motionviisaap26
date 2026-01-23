@@ -10,20 +10,20 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 ## Current State
 
-**Version:** v1.2 CRM & Project Financials (shipped 2026-01-22)
-**Codebase:** ~17,500 LOC TypeScript
+**Version:** v1.2.1 Responsive / Mobile Web (shipped 2026-01-23)
+**Codebase:** ~45,000 LOC TypeScript
 **Tech stack:** Next.js 14, Prisma, MariaDB, Tailwind/shadcn, NextAuth.js
 
-## Current Milestone: v1.2.1 Responsive / Mobile Web
+## Next Milestone: v1.3 Enhancements (not started)
 
-**Goal:** Make SAAP fully usable with good UX across all device sizes — phone, tablet, and desktop.
+**Goal:** Polish and add requested features from v1.2 usage.
 
 **Target features:**
-- Responsive Kanban boards (touch-friendly drag, proper column sizing)
-- Responsive data tables (mobile-friendly layouts, no horizontal overflow)
-- Responsive forms and modals (full-width on mobile, proper touch targets)
-- Thoughtful breakpoints (phone ~375px, tablet ~768px, desktop)
-- Full editing workflow on mobile (not just viewing)
+- Receipt uploads for cost items
+- Expected close date on deals
+- Notes/activity log on deals
+- Dashboard deal aging alerts
+- Toast notifications (Sonner) for user feedback
 
 ## Requirements
 
@@ -82,19 +82,27 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - ✓ Dashboard: Revenue and Profit summaries — v1.2
 - ✓ Pipeline Stage Chart visualization — v1.2
 
+**v1.2.1 Responsive / Mobile Web:**
+- ✓ Bottom navigation bar for mobile with Dashboard, Initiatives, CRM, Events — v1.2.1
+- ✓ Mobile hamburger menu with slide-out sidebar — v1.2.1
+- ✓ Responsive search (icon → dialog on mobile) — v1.2.1
+- ✓ Touch-enabled Kanban drag-and-drop with 250ms hold delay — v1.2.1
+- ✓ Horizontal scroll columns with 75% viewport width snap — v1.2.1
+- ✓ Always-visible quick actions on mobile (hover-only on desktop) — v1.2.1
+- ✓ Priority columns pattern for tables (secondary columns hidden on mobile) — v1.2.1
+- ✓ Full-screen modals sliding from bottom on mobile — v1.2.1
+- ✓ 44px touch targets on all interactive elements — v1.2.1
+- ✓ Responsive form field grids (1 column mobile, 2 columns tablet+) — v1.2.1
+- ✓ Dashboard KPI cards stacking (1/2/4 columns by breakpoint) — v1.2.1
+- ✓ Chart legends and axis labels optimized for mobile readability — v1.2.1
+- ✓ Initiative and company detail pages with responsive layouts — v1.2.1
+- ✓ Timeline Gantt chart with horizontal scroll on mobile — v1.2.1
+
 ### Active
 
 <!-- Current scope. Building toward these. -->
 
-**v1.2.1 Responsive / Mobile Web:**
-- [ ] Kanban boards work on mobile (touch drag, column sizing, card readability)
-- [ ] Data tables are mobile-friendly (responsive layout, no overflow)
-- [ ] Forms and modals work on mobile (full-width, proper touch targets)
-- [ ] Navigation works on mobile (hamburger menu or responsive sidebar)
-- [ ] Dashboard is readable on mobile (stacked cards, proper sizing)
-- [ ] All breakpoints refined (phone, tablet, desktop)
-
-**v1.3 Enhancements (deferred):**
+**v1.3 Enhancements:**
 - [ ] Receipt uploads for cost items
 - [ ] Expected close date on deals
 - [ ] Notes/activity log on deals
@@ -171,5 +179,12 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | Win rate from closed deals only | Won / (Won + Lost) reflects true conversion | ✓ Good |
 | Profit card blue/orange coloring | Blue positive, orange negative for visual status | ✓ Good |
 
+| Mobile-first responsive | Phone → tablet → desktop breakpoints | ✓ Good |
+| Touch sensor with delay | 250ms hold prevents accidental drags | ✓ Good |
+| Priority columns pattern | Hide secondary columns on mobile | ✓ Good |
+| 44px touch targets | Apple HIG minimum for accessibility | ✓ Good |
+| Bottom navigation on mobile | Standard mobile pattern for key actions | ✓ Good |
+| Full-screen modals on mobile | Slide from bottom with rounded corners | ✓ Good |
+
 ---
-*Last updated: 2026-01-22 after starting v1.2.1 milestone*
+*Last updated: 2026-01-23 after completing v1.2.1 milestone*

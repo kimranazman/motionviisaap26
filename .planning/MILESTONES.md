@@ -1,5 +1,79 @@
 # Milestone History
 
+## v1.2.1: Responsive / Mobile Web
+
+**Shipped:** 2026-01-23
+**Duration:** 2 days
+**Phases:** 5 (Phases 16-20)
+**Plans:** 14
+**Stats:** 146 commits, 174 files changed, +28,206 / -601 lines
+
+### Summary
+
+Made SAAP fully usable on phone, tablet, and desktop with responsive navigation, touch-friendly Kanban boards, mobile-optimized tables, full-screen forms, and responsive dashboard/detail pages.
+
+### Key Accomplishments
+
+- Bottom navigation bar for mobile with Dashboard, Initiatives, CRM, Events
+- Mobile hamburger menu with slide-out sidebar
+- Responsive search (icon → dialog on mobile)
+- Touch-enabled Kanban drag-and-drop with 250ms hold delay
+- Horizontal scroll columns with 75% viewport width snap
+- Always-visible quick actions on mobile (hover-only on desktop)
+- Priority columns pattern for tables (secondary columns hidden on mobile)
+- Full-screen modals sliding from bottom on mobile
+- 44px touch targets on all interactive elements
+- Responsive form field grids (1 column mobile, 2 columns tablet+)
+- Dashboard KPI cards stacking (1/2/4 columns by breakpoint)
+- Chart legends and axis labels optimized for mobile readability
+- Initiative and company detail pages with responsive layouts
+- Timeline Gantt chart with horizontal scroll on mobile
+
+### Requirements Delivered
+
+| ID | Requirement |
+|----|-------------|
+| NAV-01 | Bottom navigation bar appears on mobile (<768px) |
+| NAV-02 | Bottom nav includes Dashboard, Initiatives, CRM, Events |
+| NAV-03 | Sidebar hidden on mobile, visible on tablet/desktop |
+| NAV-04 | Header adapts (search icon instead of full search bar) |
+| NAV-05 | User menu accessible on all screen sizes |
+| KAN-01 | Kanban columns scroll horizontally on mobile |
+| KAN-02 | Column edges visible to indicate more columns exist |
+| KAN-03 | Cards touch-friendly with adequate tap targets |
+| KAN-04 | Drag-and-drop works on touch devices |
+| KAN-05 | Quick actions menu accessible on mobile |
+| KAN-06 | Applies to all 3 Kanban boards (Initiatives, Pipeline, Potentials) |
+| TBL-01 | Tables show priority columns only on mobile |
+| TBL-02 | Secondary columns hidden on mobile, visible on tablet+ |
+| TBL-03 | Action buttons remain accessible on mobile |
+| TBL-04 | Filter/search controls work on mobile |
+| TBL-05 | Applies to all tables (Companies, Initiatives, Admin Users) |
+| FRM-01 | Modals become full-screen on mobile |
+| FRM-02 | Form fields stack vertically on mobile |
+| FRM-03 | Input fields have adequate touch target size |
+| FRM-04 | Date pickers work on mobile |
+| FRM-05 | Select dropdowns work on mobile |
+| FRM-06 | Detail sheets full-width on mobile |
+| DSH-01 | KPI cards stack vertically on mobile (1 column) |
+| DSH-02 | KPI cards show 2 columns on tablet |
+| DSH-03 | Pipeline stage chart readable on mobile |
+| DSH-04 | Chart legends don't overflow |
+| DSH-05 | Filter controls work on mobile |
+| DET-01 | Initiative detail page responsive layout |
+| DET-02 | Company detail page responsive layout |
+| DET-03 | Tabs/sections stack appropriately on mobile |
+| DET-04 | Inline editing works on mobile |
+| DET-05 | Comments section readable on mobile |
+
+### Artifacts
+
+- Roadmap: `.planning/milestones/v1.2.1-ROADMAP.md`
+- Requirements: `.planning/milestones/v1.2.1-REQUIREMENTS.md`
+- Audit: `.planning/milestones/v1.2.1-MILESTONE-AUDIT.md`
+
+---
+
 ## v1.2: CRM & Project Financials
 
 **Shipped:** 2026-01-22
