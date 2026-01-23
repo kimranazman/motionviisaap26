@@ -287,12 +287,12 @@ export function PotentialDetailSheet({
           </div>
         </ScrollArea>
 
-        <SheetFooter className="p-4 border-t flex-row justify-between sm:justify-between">
+        <SheetFooter className="p-4 border-t flex-col sm:flex-row gap-2 sm:gap-0 justify-between sm:justify-between">
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button
                 variant="ghost"
-                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                className="text-red-600 hover:text-red-700 hover:bg-red-50 w-full sm:w-auto"
                 disabled={isDeleting}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
@@ -323,6 +323,7 @@ export function PotentialDetailSheet({
           <Button
             onClick={handleSave}
             disabled={isSaving || !hasChanges}
+            className="w-full sm:w-auto"
           >
             {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Save Changes
