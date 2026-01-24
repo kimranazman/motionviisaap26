@@ -45,7 +45,7 @@ See `.planning/milestones/` for archived phase details.
 **Plans**: 1 plan
 
 Plans:
-- [ ] 29-01-PLAN.md - Add v1.4 database models (Supplier, Department, Deliverable, Task, ActivityLog)
+- [x] 29-01-PLAN.md - Add v1.4 database models (Supplier, Department, Deliverable, Task, ActivityLog)
 
 #### Phase 30: Supplier Management
 **Goal**: Users can track suppliers and link them to project costs
@@ -144,7 +144,7 @@ Phases execute in numeric order: 29 -> 30 -> 31 -> 32 -> 33 -> 34 -> 35
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 29. Schema Foundation | v1.4 | 0/1 | Not started | - |
+| 29. Schema Foundation | v1.4 | 1/1 | ✓ Complete | 2026-01-24 |
 | 30. Supplier Management | v1.4 | 0/2 | Not started | - |
 | 31. Department Organization | v1.4 | 0/2 | Not started | - |
 | 32. Project Deliverables | v1.4 | 0/2 | Not started | - |
@@ -152,8 +152,8 @@ Phases execute in numeric order: 29 -> 30 -> 31 -> 32 -> 33 -> 34 -> 35
 | 34. Activity Logging & Sync | v1.4 | 0/2 | Not started | - |
 | 35. AI Price Comparison | v1.4 | 0/1 | Not started | - |
 
-**v1.4 Total:** 0/13 plans complete
+**v1.4 Total:** 1/13 plans complete
 
 ---
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-01-24*
+*Last updated: 2026-01-24 (Phase 29 complete)*
