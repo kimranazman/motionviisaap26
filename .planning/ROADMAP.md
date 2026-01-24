@@ -8,7 +8,7 @@
 - [x] **v1.2.1 Responsive / Mobile Web** - Phases 16-20 (shipped 2026-01-23)
 - [x] **v1.3 Document Management & Dashboard Customization** - Phases 21-25 (shipped 2026-01-24)
 - [x] **v1.3.1 Revenue Model Refinement** - Phase 26 (shipped 2026-01-24)
-- [ ] **v1.3.2 Conversion Visibility & Archive** - Phases 27-28 (in progress)
+- [x] **v1.3.2 Conversion Visibility & Archive** - Phases 27-28 (shipped 2026-01-24)
 
 ## Phases
 
@@ -151,7 +151,7 @@ Plans:
 **Milestone Goal:** Show conversion status on deals/potentials with links to converted projects, display estimate vs actual variance, make converted items read-only, and add archive system to reduce clutter.
 
 - [x] **Phase 27: Conversion Visibility & Archive** - Conversion indicators, view project links, archive system
-- [ ] **Phase 28: Server Query Project Include Fix** - Gap closure: add project relation to page queries
+- [x] **Phase 28: Server Query Project Include Fix** - Gap closure: add project relation to page queries
 
 ### Phase 27: Conversion Visibility & Archive
 **Goal**: Users can see conversion status on deals/potentials, navigate to converted projects, and archive completed items
@@ -186,7 +186,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 28-01-PLAN.md — Add project include to page queries
+- [x] 28-01-PLAN.md — Add project include to page queries
 
 ## Progress
 
@@ -199,7 +199,7 @@ Plans:
 | 25. AI Document Intelligence | v1.3 | 5/5 | Complete | 2026-01-24 |
 | 26. Revenue Model Refinement | v1.3.1 | 3/3 | Complete | 2026-01-24 |
 | 27. Conversion Visibility & Archive | v1.3.2 | 3/3 | Complete | 2026-01-24 |
-| 28. Server Query Project Include Fix | v1.3.2 | 0/1 | Pending | - |
+| 28. Server Query Project Include Fix | v1.3.2 | 1/1 | Complete | 2026-01-24 |
 
 ---
 *Roadmap created: 2026-01-23*
