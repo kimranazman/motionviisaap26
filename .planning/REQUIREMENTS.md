@@ -94,6 +94,25 @@ Requirements for Revenue Model Refinement milestone.
 - [x] **REV-04**: Financials Summary shows potential vs actual with variance
 - [x] **REV-05**: Profit card displays correctly without cutoff on all screen sizes
 
+## v1.3.2 Requirements
+
+Requirements for Conversion Visibility & Archive milestone.
+
+### Conversion Visibility
+
+- [ ] **CONV-01**: CONFIRMED potential shows "Converted to Project" badge with project title
+- [ ] **CONV-02**: User can click "View Project" on converted potential to navigate to project detail
+- [ ] **CONV-03**: Converted potential shows variance (Estimated vs Actual revenue from linked project)
+- [ ] **CONV-04**: Converted potential is read-only (edit controls disabled)
+- [ ] **CONV-05**: WON deal shows same conversion indicators as potential (badge, View Project, variance, read-only)
+
+### Archive System
+
+- [ ] **ARCH-01**: User can archive completed/converted deals, potentials, and projects
+- [ ] **ARCH-02**: Archived items hidden from default list/board views
+- [ ] **ARCH-03**: User can toggle "Show Archived" to see archived items
+- [ ] **ARCH-04**: User can unarchive items to restore them to active views
+
 ## v2 Requirements
 
 Deferred to future release. Tracked but not in current roadmap.
@@ -171,13 +190,23 @@ Which phases cover which requirements. Updated during roadmap creation.
 | REV-03 | Phase 26 | Complete |
 | REV-04 | Phase 26 | Complete |
 | REV-05 | Phase 26 | Complete |
+| CONV-01 | Phase 27 | Pending |
+| CONV-02 | Phase 27 | Pending |
+| CONV-03 | Phase 27 | Pending |
+| CONV-04 | Phase 27 | Pending |
+| CONV-05 | Phase 27 | Pending |
+| ARCH-01 | Phase 27 | Pending |
+| ARCH-02 | Phase 27 | Pending |
+| ARCH-03 | Phase 27 | Pending |
+| ARCH-04 | Phase 27 | Pending |
 
 **Coverage:**
-- v1.3 requirements: 44 total
-- v1.3.1 requirements: 5 total
-- Mapped to phases: 49
+- v1.3 requirements: 44 total (complete)
+- v1.3.1 requirements: 5 total (complete)
+- v1.3.2 requirements: 9 total (pending)
+- Mapped to phases: 58
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-23*
-*Last updated: 2026-01-24 after Phase 26 completion (v1.3.1 complete)*
+*Last updated: 2026-01-24 after adding Phase 27 requirements*

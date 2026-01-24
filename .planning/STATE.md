@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-23)
 
 **Core value:** Team can visualize and track initiative progress with secure access, full CRM, customizable dashboards with project document management, AI document intelligence, and refined revenue model separating estimates from actuals.
-**Current focus:** v1.3.1 Revenue Model Refinement (COMPLETE)
+**Current focus:** v1.3.2 Conversion Visibility & Archive
 
 ## Current Position
 
-Phase: 26 - Revenue Model Refinement (1 of 1 in v1.3.1) - COMPLETE
-Plan: 3 of 3 in current phase (all plans complete)
-Status: Phase complete, milestone complete
-Last activity: 2026-01-24 - Completed 26-03-PLAN.md (UI Updates)
+Phase: 27 - Conversion Visibility & Archive (1 of 1 in v1.3.2)
+Plan: Not yet planned
+Status: Ready for planning
+Last activity: 2026-01-24 - Added Phase 27 to roadmap
 
-Progress: v1.3.1 [████████████████████████████████] 100% (1/1 phases complete)
+Progress: v1.3.2 [░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 0% (0/1 phases complete)
 
 ## Milestone History
 
@@ -101,5 +101,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Phase 26 verified, milestone v1.3.1 complete
-Resume: `/gsd:audit-milestone` to verify requirements and cross-phase integration
+Stopped at: Added Phase 27 (Conversion Visibility & Archive) to roadmap
+Resume: `/gsd:plan-phase 27` to create execution plans

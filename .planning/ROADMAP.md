@@ -8,6 +8,7 @@
 - [x] **v1.2.1 Responsive / Mobile Web** - Phases 16-20 (shipped 2026-01-23)
 - [x] **v1.3 Document Management & Dashboard Customization** - Phases 21-25 (shipped 2026-01-24)
 - [x] **v1.3.1 Revenue Model Refinement** - Phase 26 (shipped 2026-01-24)
+- [ ] **v1.3.2 Conversion Visibility & Archive** - Phase 27 (in progress)
 
 ## Phases
 
@@ -145,6 +146,28 @@ Plans:
 - [x] 26-02-PLAN.md — API route updates (conversion logic, AI import, projects API)
 - [x] 26-03-PLAN.md — UI updates (FinancialsSummary redesign, remove manual revenue input)
 
+### v1.3.2 Conversion Visibility & Archive
+
+**Milestone Goal:** Show conversion status on deals/potentials with links to converted projects, display estimate vs actual variance, make converted items read-only, and add archive system to reduce clutter.
+
+- [ ] **Phase 27: Conversion Visibility & Archive** - Conversion indicators, view project links, archive system
+
+### Phase 27: Conversion Visibility & Archive
+**Goal**: Users can see conversion status on deals/potentials, navigate to converted projects, and archive completed items
+**Depends on**: Phase 26 (revenue model refinement)
+**Requirements**: CONV-01, CONV-02, CONV-03, CONV-04, CONV-05, ARCH-01, ARCH-02, ARCH-03, ARCH-04
+**Success Criteria** (what must be TRUE):
+  1. CONFIRMED potential shows "Converted to Project" badge with project title
+  2. User can click "View Project" button on converted potential to navigate to project
+  3. Converted potential shows variance: Estimated vs Actual revenue from linked project
+  4. Converted potential is read-only (edit disabled)
+  5. WON deal shows same conversion indicators as potential
+  6. User can archive completed/converted deals, potentials, and projects
+  7. Archived items hidden from default views
+  8. User can toggle "Show Archived" to see archived items
+  9. User can unarchive items
+**Plans**: TBD (will be created during planning)
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -155,6 +178,7 @@ Plans:
 | 24. Dashboard Customization UI | v1.3 | 5/5 | Complete | 2026-01-23 |
 | 25. AI Document Intelligence | v1.3 | 5/5 | Complete | 2026-01-24 |
 | 26. Revenue Model Refinement | v1.3.1 | 3/3 | Complete | 2026-01-24 |
+| 27. Conversion Visibility & Archive | v1.3.2 | 0/? | In Progress | - |
 
 ---
 *Roadmap created: 2026-01-23*
