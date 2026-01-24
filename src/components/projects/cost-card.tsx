@@ -14,7 +14,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
-import { Edit2, Trash2 } from 'lucide-react'
+import { Edit2, Trash2, Sparkles } from 'lucide-react'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { getCategoryColor } from '@/lib/cost-utils'
 
@@ -25,6 +25,7 @@ interface Cost {
   date: string
   categoryId: string
   category: { id: string; name: string }
+  aiImported?: boolean
 }
 
 interface CostCardProps {
@@ -63,6 +64,12 @@ export function CostCard({ cost, projectId, onEdit, onDelete }: CostCardProps) {
           <Badge variant="outline" className={getCategoryColor(cost.category.name)}>
             {cost.category.name}
           </Badge>
+          {cost.aiImported && (
+            <Badge variant="secondary" className="bg-purple-100 text-purple-700 border-purple-200">
+              <Sparkles className="h-3 w-3 mr-1" />
+              AI
+            </Badge>
+          )}
         </div>
         <div className="text-sm text-gray-500 mt-1">
           {formatDate(cost.date)}

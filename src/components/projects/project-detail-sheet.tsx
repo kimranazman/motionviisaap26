@@ -33,7 +33,7 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
-import { Loader2, Trash2, ArrowRight, Plus, Target, DollarSign, CalendarIcon, TrendingUp, TrendingDown, Minus } from 'lucide-react'
+import { Loader2, Trash2, ArrowRight, Plus, Target, DollarSign, CalendarIcon, TrendingUp, TrendingDown, Minus, Sparkles } from 'lucide-react'
 import { CompanySelect } from '@/components/pipeline/company-select'
 import { ContactSelect } from '@/components/pipeline/contact-select'
 import { InitiativeSelect } from './initiative-select'
@@ -75,6 +75,7 @@ interface Cost {
   date: string
   categoryId: string
   category: { id: string; name: string }
+  aiImported?: boolean
 }
 
 interface Document {
@@ -94,6 +95,7 @@ interface Project {
   title: string
   description: string | null
   revenue: number | null
+  aiImportedRevenue?: number | null
   status: string
   startDate: string | null
   endDate: string | null
@@ -116,13 +118,18 @@ interface ProjectDetailSheetProps {
 // Financials Summary sub-component
 interface FinancialsSummaryProps {
   revenue: number | null
+  aiImportedRevenue?: number | null
   totalCosts: number
   profit: number
   costsCount: number
+  aiImportedCostsCount?: number
 }
 
-function FinancialsSummary({ revenue, totalCosts, profit, costsCount }: FinancialsSummaryProps) {
+function FinancialsSummary({ revenue, aiImportedRevenue, totalCosts, profit, costsCount, aiImportedCostsCount }: FinancialsSummaryProps) {
   const revenueValue = revenue ?? 0
+  const aiRevenueValue = aiImportedRevenue ?? 0
+  const hasAiRevenue = aiRevenueValue > 0
+  const hasAiCosts = (aiImportedCostsCount ?? 0) > 0
   const hasNoData = revenueValue === 0 && totalCosts === 0
 
   // Calculate margin percentage
@@ -163,12 +170,22 @@ function FinancialsSummary({ revenue, totalCosts, profit, costsCount }: Financia
           <div className="flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-green-600" />
             <div className="text-xs text-green-600 font-medium">Revenue</div>
+            {hasAiRevenue && (
+              <div className="flex items-center gap-0.5 bg-purple-100 text-purple-700 text-[10px] px-1.5 py-0.5 rounded-full font-medium">
+                <Sparkles className="h-2.5 w-2.5" />
+                AI
+              </div>
+            )}
           </div>
           <div className="text-lg font-semibold text-green-700 mt-1">
             {formatCurrency(revenueValue)}
           </div>
           <div className="text-xs text-green-600/70 mt-0.5">
-            {revenueValue > 0 ? 'From invoices' : 'No invoices yet'}
+            {hasAiRevenue
+              ? `${formatCurrency(aiRevenueValue)} from AI`
+              : revenueValue > 0
+                ? 'From invoices'
+                : 'No invoices yet'}
           </div>
         </Card>
 
@@ -176,12 +193,20 @@ function FinancialsSummary({ revenue, totalCosts, profit, costsCount }: Financia
           <div className="flex items-center gap-2">
             <TrendingDown className="h-4 w-4 text-red-600" />
             <div className="text-xs text-red-600 font-medium">Total Costs</div>
+            {hasAiCosts && (
+              <div className="flex items-center gap-0.5 bg-purple-100 text-purple-700 text-[10px] px-1.5 py-0.5 rounded-full font-medium">
+                <Sparkles className="h-2.5 w-2.5" />
+                AI
+              </div>
+            )}
           </div>
           <div className="text-lg font-semibold text-red-700 mt-1">
             {formatCurrency(totalCosts)}
           </div>
           <div className="text-xs text-red-600/70 mt-0.5">
-            From {costsCount} expense{costsCount !== 1 ? 's' : ''}
+            {hasAiCosts
+              ? `${aiImportedCostsCount} of ${costsCount} from AI`
+              : `From ${costsCount} expense${costsCount !== 1 ? 's' : ''}`}
           </div>
         </Card>
       </div>
@@ -814,9 +839,11 @@ export function ProjectDetailSheet({
             {/* Financials Summary */}
             <FinancialsSummary
               revenue={project.revenue}
+              aiImportedRevenue={project.aiImportedRevenue}
               totalCosts={totalCosts}
               profit={profit}
               costsCount={costs.length}
+              aiImportedCostsCount={costs.filter(c => c.aiImported).length}
             />
 
             <Separator />

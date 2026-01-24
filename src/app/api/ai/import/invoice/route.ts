@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     // Verify project exists
     const project = await prisma.project.findUnique({
       where: { id: projectId },
-      select: { id: true, revenue: true },
+      select: { id: true, revenue: true, aiImportedRevenue: true },
     })
 
     if (!project) {
@@ -78,12 +78,17 @@ export async function POST(request: NextRequest) {
     let updatedProject = project
     if (addToRevenue && extraction.total) {
       const currentRevenue = project.revenue ? Number(project.revenue) : 0
+      const currentAiRevenue = project.aiImportedRevenue ? Number(project.aiImportedRevenue) : 0
       const newRevenue = currentRevenue + extraction.total
+      const newAiRevenue = currentAiRevenue + extraction.total
 
       updatedProject = await prisma.project.update({
         where: { id: projectId },
-        data: { revenue: newRevenue },
-        select: { id: true, revenue: true },
+        data: {
+          revenue: newRevenue,
+          aiImportedRevenue: newAiRevenue,
+        },
+        select: { id: true, revenue: true, aiImportedRevenue: true },
       })
     }
 
@@ -102,6 +107,7 @@ export async function POST(request: NextRequest) {
       project: {
         id: updatedProject.id,
         revenue: updatedProject.revenue ? Number(updatedProject.revenue) : null,
+        aiImportedRevenue: updatedProject.aiImportedRevenue ? Number(updatedProject.aiImportedRevenue) : null,
       },
       document: {
         id: updatedDocument.id,

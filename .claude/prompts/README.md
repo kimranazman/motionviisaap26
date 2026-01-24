@@ -50,9 +50,17 @@ Before running AI analysis:
 2. Categorize docs      --> Set as INVOICE, RECEIPT, or OTHER
 3. Generate manifest    --> Creates context file for AI
 4. Run Claude analysis  --> AI reads docs, outputs structured JSON
-5. Import results       --> App reads ai-results.json, shows review UI
-6. Confirm import       --> Creates cost entries with AI badge
+5a. HIGH confidence     --> Auto-imports, adds AI badge (purple)
+5b. MEDIUM/LOW conf.    --> Requires manual review in app UI
 ```
+
+### Auto-Import (v1.1)
+
+HIGH confidence extractions are automatically imported:
+- **Invoices**: Revenue added to project with "AI" badge
+- **Receipts**: Cost entries created with "AI" badge
+
+No manual review needed for clear, unambiguous documents.
 
 ## Output Files
 
@@ -77,15 +85,15 @@ After running analysis:
 
 AI assigns confidence levels to extractions:
 
-| Level | Badge Color | Meaning |
-|-------|-------------|---------|
-| HIGH | Green | Clear text, unambiguous values |
-| MEDIUM | Yellow | Some uncertainty, review recommended |
-| LOW | Red | Unclear, manual verification required |
+| Level | Badge Color | Auto-Import | Meaning |
+|-------|-------------|-------------|---------|
+| HIGH | Green | Yes | Clear text, unambiguous values |
+| MEDIUM | Yellow | No | Some uncertainty, review recommended |
+| LOW | Red | No | Unclear, manual verification required |
 
 **Auto-import behavior:**
-- HIGH confidence items can be auto-selected for import
-- MEDIUM/LOW confidence items require manual review
+- HIGH confidence: Automatically imports and shows purple "AI" badge
+- MEDIUM/LOW: Saves results, user must review and confirm in app
 
 ## Troubleshooting
 

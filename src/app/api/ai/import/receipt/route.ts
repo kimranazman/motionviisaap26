@@ -197,7 +197,7 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      // Create cost entry
+      // Create cost entry with AI import flag
       const cost = await prisma.cost.create({
         data: {
           projectId,
@@ -205,6 +205,7 @@ export async function POST(request: NextRequest) {
           amount: item.amount,
           categoryId: finalCategoryId,
           date: costDate,
+          aiImported: true,
         },
         include: {
           category: { select: { id: true, name: true } },

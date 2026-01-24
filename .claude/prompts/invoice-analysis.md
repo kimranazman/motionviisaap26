@@ -152,6 +152,26 @@ Return a JSON object matching this exact schema:
 }
 ```
 
+## Post-Analysis Steps
+
+After extracting data:
+
+1. **Write results** to `uploads/projects/{projectId}/ai-results.json`
+
+2. **Auto-import if HIGH confidence:**
+   - If overall confidence is HIGH, call the auto-import API:
+   ```bash
+   curl -X POST http://localhost:3000/api/ai/auto-import \
+     -H "Content-Type: application/json" \
+     -d '{"projectId": "{projectId}", "documentId": "{documentId}"}'
+   ```
+   - This automatically adds the invoice total to project revenue
+   - Revenue is marked as "AI-imported" in the UI
+
+3. **Manual review if MEDIUM/LOW confidence:**
+   - Results file is saved but not auto-imported
+   - User reviews via app UI and confirms import
+
 ## Usage
 
 ```bash
@@ -164,5 +184,5 @@ claude "Read .claude/prompts/invoice-analysis.md, read uploads/projects/proj123/
 
 ---
 
-*Prompt version: 1.0*
+*Prompt version: 1.1*
 *For: SAAP 2026 AI Document Intelligence*

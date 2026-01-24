@@ -386,6 +386,7 @@ model Project {
   title           String          @db.VarChar(255)
   description     String?         @db.Text
   revenue         Decimal?        @db.Decimal(12, 2)
+  aiImportedRevenue Decimal?      @db.Decimal(12, 2) @map("ai_imported_revenue")
   status          ProjectStatus   @default(DRAFT)
   startDate       DateTime?       @map("start_date")
   endDate         DateTime?       @map("end_date")
@@ -450,6 +451,9 @@ model Cost {
 
   // Receipt file path (stored on filesystem, not in DB)
   receiptPath   String?           @db.VarChar(500) @map("receipt_path")
+
+  // AI import tracking
+  aiImported    Boolean           @default(false) @map("ai_imported")
 
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt

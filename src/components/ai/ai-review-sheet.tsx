@@ -225,7 +225,8 @@ export function AIReviewSheet({
 
   // Get document preview URL
   const getDocumentUrl = () => {
-    return `/api/projects/${projectId}/documents/${document.id}/file`
+    const storageFilename = document.storagePath.split('/').pop() || ''
+    return `/api/files/${projectId}/${storageFilename}`
   }
 
   const isImage = document.mimeType.startsWith('image/')
