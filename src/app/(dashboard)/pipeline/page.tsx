@@ -22,6 +22,14 @@ export default async function PipelinePage({
       contact: {
         select: { id: true, name: true },
       },
+      project: {
+        select: {
+          id: true,
+          title: true,
+          revenue: true,
+          potentialRevenue: true,
+        },
+      },
     },
     orderBy: [
       { stage: 'asc' },
@@ -33,6 +41,11 @@ export default async function PipelinePage({
   const serializedDeals = deals.map(deal => ({
     ...deal,
     value: deal.value ? Number(deal.value) : null,
+    project: deal.project ? {
+      ...deal.project,
+      revenue: deal.project.revenue ? Number(deal.project.revenue) : null,
+      potentialRevenue: deal.project.potentialRevenue ? Number(deal.project.potentialRevenue) : null,
+    } : null,
   }))
 
   return (
