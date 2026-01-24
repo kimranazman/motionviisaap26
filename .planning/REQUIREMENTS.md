@@ -82,6 +82,18 @@ Requirements for Document Management & Dashboard Customization milestone. Each m
 - [x] **AI-07**: Manifest file generated per project folder for AI context
 - [x] **AI-08**: Project financials show AI-calculated revenue vs manual costs
 
+## v1.3.1 Requirements
+
+Requirements for Revenue Model Refinement milestone.
+
+### Revenue Model
+
+- [x] **REV-01**: Project has potentialRevenue field set from deal/potential conversion
+- [x] **REV-02**: Project revenue field is actual revenue from AI invoices only
+- [x] **REV-03**: Manual revenue input removed from project edit form
+- [x] **REV-04**: Financials Summary shows potential vs actual with variance
+- [x] **REV-05**: Profit card displays correctly without cutoff on all screen sizes
+
 ## v2 Requirements
 
 Deferred to future release. Tracked but not in current roadmap.
@@ -154,12 +166,18 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AI-06 | Phase 25 | Complete |
 | AI-07 | Phase 25 | Complete |
 | AI-08 | Phase 25 | Complete |
+| REV-01 | Phase 26 | Complete |
+| REV-02 | Phase 26 | Complete |
+| REV-03 | Phase 26 | Complete |
+| REV-04 | Phase 26 | Complete |
+| REV-05 | Phase 26 | Complete |
 
 **Coverage:**
 - v1.3 requirements: 44 total
-- Mapped to phases: 44
+- v1.3.1 requirements: 5 total
+- Mapped to phases: 49
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-23*
-*Last updated: 2026-01-24 after Phase 25 completion (v1.3 complete)*
+*Last updated: 2026-01-24 after Phase 26 completion (v1.3.1 complete)*

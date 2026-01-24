@@ -4,17 +4,17 @@
 
 See: .planning/PROJECT.md (updated 2026-01-23)
 
-**Core value:** Team can visualize and track initiative progress with secure access, full CRM, and now customizable dashboards with project document management and AI document intelligence.
-**Current focus:** v1.4 Revenue Model Refinement
+**Core value:** Team can visualize and track initiative progress with secure access, full CRM, customizable dashboards with project document management, AI document intelligence, and refined revenue model separating estimates from actuals.
+**Current focus:** v1.3.1 Revenue Model Refinement (COMPLETE)
 
 ## Current Position
 
-Phase: 26 - Revenue Model Refinement (1 of 1 in v1.4)
-Plan: 3 of 4 in current phase
-Status: In progress
+Phase: 26 - Revenue Model Refinement (1 of 1 in v1.3.1) - COMPLETE
+Plan: 3 of 3 in current phase (all plans complete)
+Status: Phase complete, milestone complete
 Last activity: 2026-01-24 - Completed 26-03-PLAN.md (UI Updates)
 
-Progress: v1.4 [████████████████████████░░░░░░░░] 75% (3/4 plans complete)
+Progress: v1.3.1 [████████████████████████████████] 100% (1/1 phases complete)
 
 ## Milestone History
 
@@ -25,6 +25,7 @@ Progress: v1.4 [█████████████████████�
 | v1.2 | CRM & Project Financials | 9-15 | 2026-01-22 |
 | v1.2.1 | Responsive / Mobile Web | 16-20 | 2026-01-23 |
 | v1.3 | Document Management & Dashboard Customization | 21-25 | 2026-01-24 |
+| v1.3.1 | Revenue Model Refinement | 26 | 2026-01-24 |
 
 **Archives:** `.planning/milestones/`
 
@@ -32,10 +33,10 @@ Progress: v1.4 [█████████████████████�
 
 **Velocity:**
 - Total plans completed: 62
-- Average duration: 4.1 min
+- Average duration: 4.0 min
 - Total execution time: 255 min
 
-**By Phase (v1.0-v1.3):**
+**By Phase (v1.0-v1.3.1):**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
@@ -72,51 +73,22 @@ Progress: v1.4 [█████████████████████�
 
 Full decision log in PROJECT.md Key Decisions table.
 
-Recent (Phase 25-01):
-- DocumentAIStatus enum: PENDING, ANALYZED, IMPORTED, FAILED for tracking document analysis state
-- Manifest stored at UPLOADS_DIR/projects/{id}/manifest.json for Claude Code access
-- Last 20 costs included in manifest for context
-
-Recent (Phase 25-02):
-- Prompts stored in .claude/prompts/ for version control and easy Claude Code access
-- Three-tier confidence levels (HIGH/MEDIUM/LOW) for AI extraction certainty
-- Category matching rules embedded in receipt prompt
-- AIAnalysisResult saves to ai-results.json per project folder
-
-Recent (Phase 25-03):
-- Invoice import adds extraction.total to existing revenue (additive, not replacement)
-- Receipt import creates new categories when categoryId is null but suggestedCategory provided
-- Case-insensitive category matching to avoid duplicates
-- Pending API includes ready-to-run Claude command for bulk analysis
-
-Recent (Phase 25-04):
-- High and Medium confidence items auto-selected for import by default
-- Receipt category selection shows 'Create new' option when AI suggests new category
-- Document preview embedded for images, external link for PDFs
-
-Recent (Phase 25-05):
-- AI status badge shown next to category badge on document cards
-- Review button only for ANALYZED invoices/receipts (Sparkles icon)
-- Pending analysis widget in new 'operations' category
-- Manifest generation runs async to not block upload/delete/patch responses
-- Financials Summary enhanced with icons, margin %, and empty state
-
 Recent (Phase 26-01):
-- aiImportedRevenue field removed - revenue field is now exclusively for AI-imported actuals
-- potentialRevenue added for deal/potential conversion estimates
-- Revenue separation pattern: potentialRevenue (estimates) vs revenue (actuals)
+- potentialRevenue field added for deal/potential conversion estimates
+- aiImportedRevenue removed - all revenue now from AI invoices
+- Database migrated via prisma db push
 
 Recent (Phase 26-02):
-- Conversion routes set potentialRevenue instead of revenue on project creation
-- AI import routes only set revenue field (aiImportedRevenue removed)
-- Project PATCH API no longer accepts revenue updates (read-only)
-- Project GET API includes potentialRevenue in serialized response
+- Deal WON conversion sets potentialRevenue, not revenue
+- Potential CONFIRMED conversion sets potentialRevenue, not revenue
+- AI invoice import only sets revenue field
+- Manual revenue updates blocked in projects API
 
 Recent (Phase 26-03):
 - Manual revenue input removed from project edit form
-- FinancialsSummary shows dual revenue: Potential (blue) vs Actual (green)
-- Variance row displays when both potential and actual exist
-- Profit card margin text fixed with flex-shrink-0 whitespace-nowrap
+- FinancialsSummary redesigned with dual revenue cards
+- Variance row shows difference between potential and actual
+- Profit card margin fixed with flex-shrink-0 whitespace-nowrap
 
 ### Pending Todos
 
@@ -128,6 +100,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-24T02:54:06Z
-Stopped at: Completed 26-03-PLAN.md (UI Updates)
-Resume: Continue with 26-04-PLAN.md (if exists) or phase complete
+Last session: 2026-01-24
+Stopped at: Phase 26 verified, milestone v1.3.1 complete
+Resume: `/gsd:audit-milestone` to verify requirements and cross-phase integration

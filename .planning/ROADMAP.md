@@ -7,7 +7,7 @@
 - [x] **v1.2 CRM & Project Financials** - Phases 9-15 (shipped 2026-01-22)
 - [x] **v1.2.1 Responsive / Mobile Web** - Phases 16-20 (shipped 2026-01-23)
 - [x] **v1.3 Document Management & Dashboard Customization** - Phases 21-25 (shipped 2026-01-24)
-- [ ] **v1.3.1 Revenue Model Refinement** - Phase 26 (in progress)
+- [x] **v1.3.1 Revenue Model Refinement** - Phase 26 (shipped 2026-01-24)
 
 ## Phases
 
@@ -124,7 +124,7 @@ Plans:
 
 **Milestone Goal:** Separate potential revenue (estimates from deals/potentials) from actual revenue (from AI-imported invoices), fix UI cutoff issues.
 
-- [ ] **Phase 26: Revenue Model Refinement** - Schema update, UI changes, conversion logic
+- [x] **Phase 26: Revenue Model Refinement** - Schema update, UI changes, conversion logic
 
 ### Phase 26: Revenue Model Refinement
 **Goal**: Clear separation between estimated and actual revenue with proper data flow
@@ -141,9 +141,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 26-01-PLAN.md — Schema migration (add potentialRevenue, remove aiImportedRevenue)
-- [ ] 26-02-PLAN.md — API route updates (conversion logic, AI import, projects API)
-- [ ] 26-03-PLAN.md — UI updates (FinancialsSummary redesign, remove manual revenue input)
+- [x] 26-01-PLAN.md — Schema migration (add potentialRevenue, remove aiImportedRevenue)
+- [x] 26-02-PLAN.md — API route updates (conversion logic, AI import, projects API)
+- [x] 26-03-PLAN.md — UI updates (FinancialsSummary redesign, remove manual revenue input)
 
 ## Progress
 
@@ -154,7 +154,7 @@ Plans:
 | 23. Widget Registry & Roles | v1.3 | 3/3 | Complete | 2026-01-23 |
 | 24. Dashboard Customization UI | v1.3 | 5/5 | Complete | 2026-01-23 |
 | 25. AI Document Intelligence | v1.3 | 5/5 | Complete | 2026-01-24 |
-| 26. Revenue Model Refinement | v1.3.1 | 0/3 | In Progress | - |
+| 26. Revenue Model Refinement | v1.3.1 | 3/3 | Complete | 2026-01-24 |
 
 ---
 *Roadmap created: 2026-01-23*
