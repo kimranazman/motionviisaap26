@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 ## Current Position
 
 Phase: 27 - Conversion Visibility & Archive (1 of 1 in v1.3.2)
-Plan: Not yet planned
-Status: Ready for planning
-Last activity: 2026-01-24 - Added Phase 27 to roadmap
+Plan: 01 of 3 complete
+Status: In progress
+Last activity: 2026-01-24 - Completed 27-01-PLAN.md (Schema & API Foundation)
 
-Progress: v1.3.2 [░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 0% (0/1 phases complete)
+Progress: v1.3.2 [##########░░░░░░░░░░░░░░░░░░░░░░] 33% (1/3 plans complete)
 
 ## Milestone History
 
@@ -32,11 +32,11 @@ Progress: v1.3.2 [░░░░░░░░░░░░░░░░░░░░�
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 62
+- Total plans completed: 63
 - Average duration: 4.0 min
-- Total execution time: 255 min
+- Total execution time: 259 min
 
-**By Phase (v1.0-v1.3.1):**
+**By Phase (v1.0-v1.3.2):**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
@@ -66,6 +66,7 @@ Progress: v1.3.2 [░░░░░░░░░░░░░░░░░░░░�
 | 24-dashboard-customization-ui | 5 | 21min | 4.2min |
 | 25-ai-document-intelligence | 5 | 24min | 4.8min |
 | 26-revenue-model-refinement | 3 | 8min | 2.7min |
+| 27-conversion-visibility-archive | 1 | 4min | 4min |
 
 ## Accumulated Context
 
@@ -90,6 +91,11 @@ Recent (Phase 26-03):
 - Variance row shows difference between potential and actual
 - Profit card margin fixed with flex-shrink-0 whitespace-nowrap
 
+Recent (Phase 27-01):
+- isArchived field added to Deal, PotentialProject, Project models
+- Archive filter applied by default (showArchived=true to include archived)
+- Project relation included in deals/potentials API for conversion visibility
+
 ### Pending Todos
 
 None.
@@ -101,5 +107,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Added Phase 27 (Conversion Visibility & Archive) to roadmap
-Resume: `/gsd:plan-phase 27` to create execution plans
+Stopped at: Completed 27-01-PLAN.md (Schema & API Foundation)
+Resume: `/gsd:execute-phase 27-02` to continue with Conversion Visibility UI
