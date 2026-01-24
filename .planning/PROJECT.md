@@ -2,62 +2,17 @@
 
 ## What This Is
 
-Strategic Annual Action Plan (SAAP) application for Motionvii to track 2026 business initiatives. A visual planning tool with Kanban boards, Gantt timelines, and calendar views for a small team (Khairul, Azlan, Izyani) to manage strategic objectives, key results, and action items. Includes Google OAuth authentication, role-based access control, and complete CRM with sales pipeline, project management, and financial tracking.
+Strategic Annual Action Plan (SAAP) application for Motionvii to track 2026 business initiatives. A visual planning tool with Kanban boards, Gantt timelines, and calendar views for a small team (Khairul, Azlan, Izyani) to manage strategic objectives, key results, and action items. Includes Google OAuth authentication, role-based access control, complete CRM with sales pipeline, project management with document uploads and AI-powered financial extraction, customizable dashboards, and conversion visibility with archive management.
 
 ## Core Value
 
-Team can visualize and track initiative progress across multiple views (Kanban, timeline, calendar) and update status through intuitive drag-and-drop — with secure access restricted to authorized @talenta.com.my users. Full CRM enables tracking sales pipeline, converting deals to projects, and monitoring costs and profit.
+Team can visualize and track initiative progress across multiple views (Kanban, timeline, calendar) and update status through intuitive drag-and-drop — with secure access restricted to authorized @talenta.com.my users. Full CRM enables tracking sales pipeline, converting deals to projects with clear visibility into conversion status and revenue variance, managing project documents with AI-extracted financials, and archiving completed work.
 
 ## Current State
 
-**Version:** v1.2.1 Responsive / Mobile Web (shipped 2026-01-23)
-**Codebase:** ~45,000 LOC TypeScript
+**Version:** v1.3.2 Conversion Visibility & Archive (shipped 2026-01-24)
+**Codebase:** ~50,000 LOC TypeScript
 **Tech stack:** Next.js 14, Prisma, MariaDB, Tailwind/shadcn, NextAuth.js
-
-## Next Milestone: v1.3 Document Management & Dashboard Customization
-
-**Goal:** Enable project document management (receipts, invoices) with folder-based storage and Claude Code analysis, plus customizable per-user dashboards with role-based widget restrictions.
-
-**Target features:**
-
-*Document Management:*
-- Receipt uploads to projects (drag-drop, folder-based storage by project)
-- Invoice uploads to projects (external invoices, same pattern)
-- Project dates: start date (from deal won or manual), end date (from invoice)
-- Claude Code analysis integration for extracting values from documents
-
-*Customizable Dashboard:*
-- Per-user dashboard layouts (each user customizes their own)
-- Admin sets default layout (new users inherit this)
-- Users can reset to admin default
-- Role-based widget restrictions (Admin controls which roles see which widgets)
-- Widget bank (select which widgets appear)
-- Widget arrangement (size, position, drag-drop)
-- Date range filter for dashboard data
-
-**Deferred to v1.3.1:**
-- Expected close date on deals
-- Notes/activity log on deals
-- Dashboard deal aging alerts
-- Toast notifications (Sonner) for user feedback
-
-**Planned for v1.4: Intelligent Automation & Organization**
-
-*Bidirectional Sync:*
-- Bidirectional sync between Deals/Potentials ↔ Projects (changes sync both ways)
-
-*Supplier Management:*
-- New Supplier model with list page
-- Link suppliers to project costs
-
-*AI Document Intelligence (Enhanced):*
-- Auto-extract suppliers from receipts/invoices via AI
-- Auto-extract contacts from client invoices if not manually linked
-- Project breakdown from quotes/invoices — line items become deliverables
-
-*Company Organization:*
-- Department model for companies
-- Contacts and deals can belong to departments
 
 ## Requirements
 
@@ -132,28 +87,59 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - ✓ Initiative and company detail pages with responsive layouts — v1.2.1
 - ✓ Timeline Gantt chart with horizontal scroll on mobile — v1.2.1
 
+**v1.3 Document Management & Dashboard Customization:**
+- ✓ Document upload via drag-drop and file picker — v1.3
+- ✓ File validation (PDF, PNG, JPG only, max 10MB) — v1.3
+- ✓ Per-project document storage in /uploads/projects/{id}/ — v1.3
+- ✓ Document categorization (RECEIPT, INVOICE, OTHER) with filtering — v1.3
+- ✓ Project start/end date fields — v1.3
+- ✓ Widget registry with 7 dashboard widgets — v1.3
+- ✓ Role-based widget restrictions — v1.3
+- ✓ Admin-defined default dashboard layout — v1.3
+- ✓ User dashboard customization with drag-drop, resize, persistence — v1.3
+- ✓ Dashboard date range filter with presets — v1.3
+- ✓ AI invoice parsing with line item extraction and revenue calculation — v1.3
+- ✓ AI receipt parsing with cost entry creation and category suggestions — v1.3
+- ✓ Manifest file generation per project for AI context — v1.3
+
+**v1.3.1 Revenue Model Refinement:**
+- ✓ potentialRevenue field for deal/potential conversion estimates — v1.3.1
+- ✓ revenue field from AI invoices only (actual revenue) — v1.3.1
+- ✓ Manual revenue input removed from project edit form — v1.3.1
+- ✓ FinancialsSummary shows potential vs actual with variance — v1.3.1
+- ✓ Profit card displays correctly on all screen sizes — v1.3.1
+
+**v1.3.2 Conversion Visibility & Archive:**
+- ✓ Conversion badge on WON deals/CONFIRMED potentials with project title — v1.3.2
+- ✓ View Project button in detail sheets for navigation to converted project — v1.3.2
+- ✓ Variance display (estimated vs actual revenue) with color coding — v1.3.2
+- ✓ Read-only mode for converted deals/potentials and lost deals — v1.3.2
+- ✓ Archive toggle in pipeline, potential-projects, and projects boards — v1.3.2
+- ✓ Archive/Unarchive buttons in all detail sheets with toast notifications — v1.3.2
+- ✓ Archived badge on cards, drag disabled for archived kanban items — v1.3.2
+- ✓ Server-side project include for initial-load conversion visibility — v1.3.2
+
 ### Active
 
-<!-- Current scope. Building toward these. -->
+<!-- Next milestone scope. Define during /gsd:new-milestone. -->
 
-**v1.3 Document Management & Dashboard Customization:**
+**v1.4 Intelligent Automation & Organization (Planned):**
 
-*Document Management:*
-- [ ] Receipt uploads to projects (drag-drop, folder-based storage)
-- [ ] Invoice uploads to projects (external invoices, folder storage)
-- [ ] Project start date (from deal won date or manual entry)
-- [ ] Project end date (from invoice or manual entry)
-- [ ] Folder organization by project for uploaded documents
+*Bidirectional Sync:*
+- [ ] Bidirectional sync between Deals/Potentials ↔ Projects (changes sync both ways)
 
-*Customizable Dashboard:*
-- [ ] Per-user dashboard layout persistence
-- [ ] Admin-defined default dashboard layout
-- [ ] User reset to admin default option
-- [ ] Role-based widget restrictions (Admin configures)
-- [ ] Widget bank with selectable widgets
-- [ ] Widget size customization
-- [ ] Widget position/arrangement (drag-drop)
-- [ ] Dashboard date range filter
+*Supplier Management:*
+- [ ] New Supplier model with list page
+- [ ] Link suppliers to project costs
+
+*AI Document Intelligence (Enhanced):*
+- [ ] Auto-extract suppliers from receipts/invoices via AI
+- [ ] Auto-extract contacts from client invoices if not manually linked
+- [ ] Project breakdown from quotes/invoices — line items become deliverables
+
+*Company Organization:*
+- [ ] Department model for companies
+- [ ] Contacts and deals can belong to departments
 
 ### Out of Scope
 
@@ -184,7 +170,7 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - Accessible at https://saap.motionvii.com (Cloudflare tunnel)
 - Data seeded from Excel file (MotionVii_SAAP_2026.xlsx)
 - 28 initiatives, 38 events currently in database
-- v1.2 shipped — CRM with pipeline, projects, costs, dashboard
+- v1.3.2 shipped — conversion visibility, archive system, AI document intelligence
 - Primary admin: khairul@talenta.com.my
 
 ## Infrastructure
@@ -224,13 +210,20 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | STAGE_PROBABILITY constants | Lead 10%, Qualified 25%, Proposal 50%, Negotiation 75% | ✓ Good |
 | Win rate from closed deals only | Won / (Won + Lost) reflects true conversion | ✓ Good |
 | Profit card blue/orange coloring | Blue positive, orange negative for visual status | ✓ Good |
-
 | Mobile-first responsive | Phone → tablet → desktop breakpoints | ✓ Good |
 | Touch sensor with delay | 250ms hold prevents accidental drags | ✓ Good |
 | Priority columns pattern | Hide secondary columns on mobile | ✓ Good |
 | 44px touch targets | Apple HIG minimum for accessibility | ✓ Good |
 | Bottom navigation on mobile | Standard mobile pattern for key actions | ✓ Good |
 | Full-screen modals on mobile | Slide from bottom with rounded corners | ✓ Good |
+| Folder-based document storage | /uploads/projects/{id}/ for easy project isolation | ✓ Good |
+| react-grid-layout for dashboard | Proven library, handles drag-drop and resize | ✓ Good |
+| AI prompts via manifest + Claude Code | Leverage existing Claude integration | ✓ Good |
+| potentialRevenue vs revenue split | Clear separation of estimates from actuals | ✓ Good |
+| Archive filter default off | Clean views by default, toggle to see archived | ✓ Good |
+| Read-only for converted AND lost | Prevents accidental edits to finalized deals | ✓ Good |
+| View Project via ?open= param | URL pattern enables deep linking to detail sheet | ✓ Good |
+| Server queries mirror API includes | Initial render parity with client fetches | ✓ Good |
 
 ---
-*Last updated: 2026-01-23 after starting v1.3 milestone*
+*Last updated: 2026-01-24 after v1.3.2 milestone*

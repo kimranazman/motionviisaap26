@@ -1,5 +1,134 @@
 # Milestone History
 
+## v1.3.2: Conversion Visibility & Archive
+
+**Shipped:** 2026-01-24
+**Duration:** 1 day
+**Phases:** 2 (Phases 27-28)
+**Plans:** 4
+**Stats:** 28 commits, 90 files changed, +11,965 / -451 lines
+
+### Summary
+
+Added conversion visibility to pipeline deals and potential projects with badges linking to converted projects, variance display showing estimated vs actual revenue, read-only mode for converted/lost items, and archive system to hide completed work from active views.
+
+### Key Accomplishments
+
+- Conversion badge on WON deals and CONFIRMED potentials showing linked project title
+- "View Project" button in detail sheets for quick navigation to converted project
+- Variance display comparing estimated revenue (from deal/potential) vs actual revenue (from AI invoices)
+- Read-only mode for converted deals/potentials and lost deals (edit controls disabled)
+- Archive toggle in pipeline, potential-projects, and projects boards
+- Archive/Unarchive buttons in all detail sheets with toast notifications
+- Archived badge on cards with gray styling
+- Drag disabled for archived items in kanban boards
+- Server-side page queries now include project relation for initial-load conversion visibility
+
+### Requirements Delivered
+
+| ID | Requirement |
+|----|-------------|
+| CONV-01 | CONFIRMED potential shows "Converted to Project" badge with project title |
+| CONV-02 | User can click "View Project" on converted potential to navigate to project detail |
+| CONV-03 | Converted potential shows variance (Estimated vs Actual revenue) |
+| CONV-04 | Converted potential is read-only (edit controls disabled) |
+| CONV-05 | WON deal shows same conversion indicators as potential |
+| ARCH-01 | User can archive completed/converted deals, potentials, and projects |
+| ARCH-02 | Archived items hidden from default list/board views |
+| ARCH-03 | User can toggle "Show Archived" to see archived items |
+| ARCH-04 | User can unarchive items to restore them to active views |
+
+### Artifacts
+
+- Roadmap: `.planning/milestones/v1.3.2-ROADMAP.md`
+- Requirements: `.planning/milestones/v1.3.2-REQUIREMENTS.md`
+- Audit: `.planning/milestones/v1.3.2-MILESTONE-AUDIT.md`
+
+---
+
+## v1.3.1: Revenue Model Refinement
+
+**Shipped:** 2026-01-24
+**Duration:** < 1 day
+**Phases:** 1 (Phase 26)
+**Plans:** 3
+**Stats:** 10 commits, 15 files changed
+
+### Summary
+
+Separated potential revenue (estimates from deal/potential conversion) from actual revenue (from AI-imported invoices). Fixed profit card UI cutoff on narrow screens.
+
+### Key Accomplishments
+
+- Added potentialRevenue field to Project model for deal/potential conversion estimates
+- Deal WON and Potential CONFIRMED conversion now sets potentialRevenue (not revenue)
+- AI invoice import only sets revenue field (actual revenue)
+- Removed manual revenue input from project edit form
+- Redesigned FinancialsSummary with dual revenue cards showing potential vs actual
+- Added variance row showing difference between estimated and actual revenue
+- Fixed profit card margin display with flex-shrink-0 whitespace-nowrap
+
+### Requirements Delivered
+
+| ID | Requirement |
+|----|-------------|
+| REV-01 | Project has potentialRevenue field set from deal/potential conversion |
+| REV-02 | Project revenue field is actual revenue from AI invoices only |
+| REV-03 | Manual revenue input removed from project edit form |
+| REV-04 | Financials Summary shows potential vs actual with variance |
+| REV-05 | Profit card displays correctly without cutoff on all screen sizes |
+
+### Artifacts
+
+- Roadmap: See `.planning/ROADMAP.md` (Phase 26 section)
+- Audit: `.planning/milestones/v1.3.1-MILESTONE-AUDIT.md`
+
+---
+
+## v1.3: Document Management & Dashboard Customization
+
+**Shipped:** 2026-01-24
+**Duration:** 2 days
+**Phases:** 5 (Phases 21-25)
+**Plans:** 18
+**Stats:** 95 commits, 180 files changed, +15,200 / -380 lines
+
+### Summary
+
+Enabled project document management (receipts, invoices) with folder-based storage, AI-powered document analysis for revenue/cost extraction, plus customizable per-user dashboards with role-based widget restrictions.
+
+### Key Accomplishments
+
+- Document upload via drag-drop or file picker with progress indicator
+- File validation (PDF, PNG, JPG only, max 10MB)
+- Per-project document storage in `/uploads/projects/{id}/`
+- Document categorization (RECEIPT, INVOICE, OTHER) with filtering
+- Project start/end date fields
+- Widget registry with 7 dashboard widgets
+- Role-based widget restrictions (Admin configures which roles see which widgets)
+- Admin-defined default dashboard layout
+- User dashboard customization with drag-drop, resize, persistence
+- Dashboard date range filter with presets
+- AI invoice parsing with line item extraction and revenue calculation
+- AI receipt parsing with cost entry creation and category suggestions
+- Manifest file generation per project for AI context
+
+### Requirements Delivered
+
+| ID | Requirement |
+|----|-------------|
+| DOC-01 to DOC-17 | Document management (upload, list, preview, categorize, project dates) |
+| DASH-01 to DASH-15 | Dashboard customization (widget bank, drag-drop, resize, persist, roles) |
+| INFRA-01 to INFRA-04 | Infrastructure (body size, Docker volume, file API, Prisma models) |
+| AI-01 to AI-08 | AI document intelligence (invoice/receipt parsing, auto-categorization) |
+
+### Artifacts
+
+- Roadmap: See `.planning/ROADMAP.md` (Phases 21-25 section)
+- Audit: `.planning/milestones/v1.3-MILESTONE-AUDIT.md`
+
+---
+
 ## v1.2.1: Responsive / Mobile Web
 
 **Shipped:** 2026-01-23
