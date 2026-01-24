@@ -4,7 +4,8 @@ import { useRef } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { cn, formatCurrency } from '@/lib/utils'
-import { Building2, User, MoreHorizontal, Eye, GripVertical } from 'lucide-react'
+import { Building2, User, MoreHorizontal, Eye, GripVertical, ArrowRight } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -17,8 +18,16 @@ interface Deal {
   id: string
   title: string
   value: number | null
+  stage?: string
+  isArchived?: boolean
   company: { id: string; name: string } | null
   contact: { id: string; name: string } | null
+  project?: {
+    id: string
+    title: string
+    revenue: number | null
+    potentialRevenue: number | null
+  } | null
 }
 
 interface PipelineCardProps {
@@ -40,10 +49,10 @@ export function PipelineCard({ deal, onClick, isDragging, canEdit = true }: Pipe
     isDragging: isSorting,
   } = useSortable({
     id: deal.id,
-    disabled: !canEdit,
+    disabled: !canEdit || deal.isArchived,
   })
 
-  const dragListeners = canEdit ? listeners : {}
+  const dragListeners = canEdit && !deal.isArchived ? listeners : {}
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -186,6 +195,28 @@ export function PipelineCard({ deal, onClick, isDragging, canEdit = true }: Pipe
           </div>
         )}
 
+        {/* Conversion Badge */}
+        {deal.project && deal.stage === 'WON' && (
+          <Badge
+            variant="outline"
+            className="bg-green-50 text-green-700 border-green-200 text-xs mb-3"
+          >
+            <ArrowRight className="h-3 w-3 mr-1" />
+            {deal.project.title}
+          </Badge>
+        )}
+
+        {/* Archived Badge */}
+        {deal.isArchived && (
+          <Badge
+            variant="outline"
+            className="bg-gray-100 text-gray-500 border-gray-200 text-xs mb-3"
+          >
+            <Archive className="h-3 w-3 mr-1" />
+            Archived
+          </Badge>
+        )}
+
         {/* Footer - Company & Contact */}
         <div className="flex flex-col gap-1.5 text-xs text-gray-500">
           {deal.company && (
@@ -203,8 +234,8 @@ export function PipelineCard({ deal, onClick, isDragging, canEdit = true }: Pipe
         </div>
       </div>
 
-      {/* Drag Handle - visible on mobile, hover on desktop */}
-      {canEdit && (
+      {/* Drag Handle - visible on mobile, hover on desktop (hidden for archived) */}
+      {canEdit && !deal.isArchived && (
         <div
           {...dragListeners}
           className={cn(

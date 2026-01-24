@@ -4,7 +4,8 @@ import { useRef } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { cn, formatCurrency } from '@/lib/utils'
-import { Building2, User, MoreHorizontal, Eye, GripVertical } from 'lucide-react'
+import { Building2, User, MoreHorizontal, Eye, GripVertical, ArrowRight } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -17,8 +18,16 @@ interface PotentialProject {
   id: string
   title: string
   estimatedValue: number | null
+  stage?: string
+  isArchived?: boolean
   company: { id: string; name: string } | null
   contact: { id: string; name: string } | null
+  project?: {
+    id: string
+    title: string
+    revenue: number | null
+    potentialRevenue: number | null
+  } | null
 }
 
 interface PotentialCardProps {
@@ -184,6 +193,17 @@ export function PotentialCard({ project, onClick, isDragging, canEdit = true }: 
           <div className="text-sm font-semibold text-green-600 mb-3">
             {formatCurrency(project.estimatedValue)}
           </div>
+        )}
+
+        {/* Conversion Badge */}
+        {project.project && project.stage === 'CONFIRMED' && (
+          <Badge
+            variant="outline"
+            className="bg-green-50 text-green-700 border-green-200 text-xs mb-3"
+          >
+            <ArrowRight className="h-3 w-3 mr-1" />
+            {project.project.title}
+          </Badge>
         )}
 
         {/* Footer - Company & Contact */}
