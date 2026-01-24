@@ -7,6 +7,7 @@
 - [x] **v1.2 CRM & Project Financials** - Phases 9-15 (shipped 2026-01-22)
 - [x] **v1.2.1 Responsive / Mobile Web** - Phases 16-20 (shipped 2026-01-23)
 - [x] **v1.3 Document Management & Dashboard Customization** - Phases 21-25 (shipped 2026-01-24)
+- [ ] **v1.3.1 Revenue Model Refinement** - Phase 26 (in progress)
 
 ## Phases
 
@@ -119,6 +120,31 @@ Plans:
 - [x] 25-04-PLAN.md — Review UI components (AIReviewSheet, ExtractionTable, ConfidenceBadge)
 - [x] 25-05-PLAN.md — Integration (AI status badges, dashboard widget, auto-manifest on upload)
 
+### v1.3.1 Revenue Model Refinement
+
+**Milestone Goal:** Separate potential revenue (estimates from deals/potentials) from actual revenue (from AI-imported invoices), fix UI cutoff issues.
+
+- [ ] **Phase 26: Revenue Model Refinement** - Schema update, UI changes, conversion logic
+
+### Phase 26: Revenue Model Refinement
+**Goal**: Clear separation between estimated and actual revenue with proper data flow
+**Depends on**: Phase 25 (AI document intelligence)
+**Requirements**: REV-01, REV-02, REV-03, REV-04, REV-05
+**Success Criteria** (what must be TRUE):
+  1. Project has `potentialRevenue` field (from deal/potential conversion)
+  2. Project `revenue` field is actual revenue (from AI invoices only)
+  3. Deal/Potential conversion sets potentialRevenue, not revenue
+  4. AI invoice import sets revenue (actual), not potentialRevenue
+  5. Manual revenue input removed from project edit form
+  6. Financials Summary shows both potential and actual with variance
+  7. Profit card margin text no longer cut off on narrow screens
+**Plans**: 3 plans
+
+Plans:
+- [ ] 26-01-PLAN.md — Schema migration (add potentialRevenue, remove aiImportedRevenue)
+- [ ] 26-02-PLAN.md — API route updates (conversion logic, AI import, projects API)
+- [ ] 26-03-PLAN.md — UI updates (FinancialsSummary redesign, remove manual revenue input)
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -128,6 +154,7 @@ Plans:
 | 23. Widget Registry & Roles | v1.3 | 3/3 | Complete | 2026-01-23 |
 | 24. Dashboard Customization UI | v1.3 | 5/5 | Complete | 2026-01-23 |
 | 25. AI Document Intelligence | v1.3 | 5/5 | Complete | 2026-01-24 |
+| 26. Revenue Model Refinement | v1.3.1 | 0/3 | In Progress | - |
 
 ---
 *Roadmap created: 2026-01-23*
