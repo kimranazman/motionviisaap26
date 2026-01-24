@@ -1,4 +1,4 @@
-import { PrismaClient, InitiativeStatus, Objective, Department, TeamMember, EventPriority, EventCategory, EventStatus } from '@prisma/client'
+import { PrismaClient, InitiativeStatus, Objective, InitiativeDepartment, TeamMember, EventPriority, EventCategory, EventStatus } from '@prisma/client'
 import * as XLSX from 'xlsx'
 import * as path from 'path'
 
@@ -44,21 +44,21 @@ function normalizeObjective(objective: string | null | undefined): Objective {
 }
 
 // Map Excel department values to enum
-function normalizeDepartment(department: string | null | undefined): Department {
-  if (!department) return Department.BIZ_DEV
+function normalizeDepartment(department: string | null | undefined): InitiativeDepartment {
+  if (!department) return InitiativeDepartment.BIZ_DEV
   const normalized = department.toString().toLowerCase().trim()
-  const deptMap: Record<string, Department> = {
-    'biz dev': Department.BIZ_DEV,
-    'bizdev': Department.BIZ_DEV,
-    'business development': Department.BIZ_DEV,
-    'operations': Department.OPERATIONS,
-    'ops': Department.OPERATIONS,
-    'finance': Department.FINANCE,
-    'fin': Department.FINANCE,
-    'marketing': Department.MARKETING,
-    'mkt': Department.MARKETING,
+  const deptMap: Record<string, InitiativeDepartment> = {
+    'biz dev': InitiativeDepartment.BIZ_DEV,
+    'bizdev': InitiativeDepartment.BIZ_DEV,
+    'business development': InitiativeDepartment.BIZ_DEV,
+    'operations': InitiativeDepartment.OPERATIONS,
+    'ops': InitiativeDepartment.OPERATIONS,
+    'finance': InitiativeDepartment.FINANCE,
+    'fin': InitiativeDepartment.FINANCE,
+    'marketing': InitiativeDepartment.MARKETING,
+    'mkt': InitiativeDepartment.MARKETING,
   }
-  return deptMap[normalized] || Department.BIZ_DEV
+  return deptMap[normalized] || InitiativeDepartment.BIZ_DEV
 }
 
 // Map Excel team member values to enum

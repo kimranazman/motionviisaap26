@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
-import { Prisma, InitiativeStatus, Department, Objective, TeamMember } from '@prisma/client'
+import { Prisma, InitiativeStatus, InitiativeDepartment, Objective, TeamMember } from '@prisma/client'
 import { requireAuth, requireEditor } from '@/lib/auth-utils'
 
 // GET /api/initiatives - List all initiatives with filters
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (department) {
-      where.department = department as Department
+      where.department = department as InitiativeDepartment
     }
 
     if (objective) {
