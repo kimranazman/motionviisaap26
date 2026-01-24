@@ -26,7 +26,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
-import { Trash2, Package } from 'lucide-react'
+import { Trash2, DollarSign } from 'lucide-react'
 import { SupplierInlineField } from './supplier-inline-field'
 import { PaymentTermsSelect } from './payment-terms-select'
 import {
@@ -34,7 +34,27 @@ import {
   getPaymentTermsColor,
   getCreditStatusBadge,
 } from '@/lib/supplier-utils'
-import { cn } from '@/lib/utils'
+import { cn, formatCurrency, formatDate } from '@/lib/utils'
+import { getCategoryColor } from '@/lib/cost-utils'
+
+interface SupplierCost {
+  id: string
+  description: string
+  amount: number
+  date: string
+  category: { id: string; name: string }
+  project: {
+    id: string
+    title: string
+    company: { id: string; name: string } | null
+  } | null
+}
+
+interface SupplierProject {
+  id: string
+  title: string
+  company: { id: string; name: string } | null
+}
 
 interface Supplier {
   id: string
@@ -50,6 +70,9 @@ interface Supplier {
   _count: {
     costs: number
   }
+  costs: SupplierCost[]
+  totalSpend: number
+  projects: SupplierProject[]
 }
 
 interface SupplierDetailModalProps {
@@ -287,23 +310,102 @@ export function SupplierDetailModal({
 
               <Separator />
 
-              {/* Summary Card */}
-              <Card className="p-4 bg-gray-50">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white border">
-                    <Package className="h-5 w-5 text-gray-600" />
+              {/* Financial Summary */}
+              <div className="space-y-4">
+                <h3 className="font-medium text-gray-900">Financial Summary</h3>
+
+                {/* Total Spend Card */}
+                <Card className="p-4 bg-blue-50 border-blue-200">
+                  <div className="flex items-center gap-2">
+                    <DollarSign className="h-5 w-5 text-blue-600" />
+                    <div className="text-sm text-blue-600 font-medium">
+                      Total Spend
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">
-                      {supplier._count.costs} cost
-                      {supplier._count.costs !== 1 ? 's' : ''} linked
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      View price list and projects in next update
-                    </p>
+                  <div className="text-2xl font-bold text-blue-700 mt-1">
+                    {formatCurrency(supplier.totalSpend)}
                   </div>
-                </div>
-              </Card>
+                  <div className="text-xs text-blue-600/70 mt-0.5">
+                    {supplier.costs.length > 0
+                      ? `From ${supplier.costs.length} purchase${supplier.costs.length !== 1 ? 's' : ''}`
+                      : 'No purchases recorded yet'}
+                  </div>
+                </Card>
+              </div>
+
+              {/* Price List */}
+              {supplier.costs.length > 0 && (
+                <>
+                  <Separator />
+                  <div className="space-y-3">
+                    <h3 className="font-medium text-gray-900">
+                      Price List
+                      <span className="ml-2 text-sm font-normal text-gray-500">
+                        ({supplier.costs.length} items)
+                      </span>
+                    </h3>
+                    <div className="space-y-2 max-h-48 overflow-y-auto">
+                      {supplier.costs.map((cost) => (
+                        <div
+                          key={cost.id}
+                          className="flex items-center justify-between p-2 border rounded-lg bg-white text-sm"
+                        >
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="truncate font-medium">
+                                {cost.description}
+                              </span>
+                              <Badge
+                                variant="outline"
+                                className={getCategoryColor(cost.category.name)}
+                              >
+                                {cost.category.name}
+                              </Badge>
+                            </div>
+                            <div className="text-xs text-gray-500 mt-0.5">
+                              {formatDate(cost.date)}
+                              {cost.project && ` - ${cost.project.title}`}
+                            </div>
+                          </div>
+                          <div className="font-medium text-gray-900 ml-2">
+                            {formatCurrency(cost.amount)}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Projects Worked On */}
+              {supplier.projects.length > 0 && (
+                <>
+                  <Separator />
+                  <div className="space-y-3">
+                    <h3 className="font-medium text-gray-900">
+                      Projects Worked On
+                      <span className="ml-2 text-sm font-normal text-gray-500">
+                        ({supplier.projects.length})
+                      </span>
+                    </h3>
+                    <div className="space-y-1">
+                      {supplier.projects.map((project) => (
+                        <div
+                          key={project.id}
+                          className="flex items-center justify-between text-sm py-1"
+                        >
+                          <span className="truncate">{project.title}</span>
+                          {project.company && (
+                            <span className="text-xs text-gray-500 ml-2">
+                              {project.company.name}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
 
             <DialogFooter className="flex-row justify-between sm:justify-between">
