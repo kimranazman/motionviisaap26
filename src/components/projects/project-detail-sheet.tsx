@@ -33,12 +33,14 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
-import { Loader2, Trash2, ArrowRight, Plus, Target, DollarSign, CalendarIcon, TrendingUp, TrendingDown, Minus, Sparkles, Archive, ArchiveRestore } from 'lucide-react'
+import { Loader2, Trash2, ArrowRight, Plus, Target, DollarSign, CalendarIcon, TrendingUp, TrendingDown, Minus, Sparkles, Archive, ArchiveRestore, Package } from 'lucide-react'
 import { CompanySelect } from '@/components/pipeline/company-select'
 import { ContactSelect } from '@/components/pipeline/contact-select'
 import { InitiativeSelect } from './initiative-select'
 import { CostForm } from './cost-form'
 import { CostCard } from './cost-card'
+import { DeliverableForm } from './deliverable-form'
+import { DeliverableCard } from './deliverable-card'
 import { DocumentsSection } from './documents-section'
 import { ImagePreviewDialog } from './image-preview-dialog'
 import { AIReviewSheet } from '@/components/ai/ai-review-sheet'
@@ -76,6 +78,15 @@ interface Cost {
   categoryId: string
   category: { id: string; name: string }
   aiImported?: boolean
+}
+
+interface Deliverable {
+  id: string
+  title: string
+  description: string | null
+  value: number | null
+  sortOrder: number
+  aiExtracted?: boolean
 }
 
 interface Document {
@@ -372,6 +383,9 @@ export function ProjectDetailSheet({
   const [categories, setCategories] = useState<CostCategory[]>([])
   const [showAddCostForm, setShowAddCostForm] = useState(false)
   const [editingCost, setEditingCost] = useState<Cost | null>(null)
+  const [deliverables, setDeliverables] = useState<Deliverable[]>([])
+  const [showAddDeliverableForm, setShowAddDeliverableForm] = useState(false)
+  const [editingDeliverable, setEditingDeliverable] = useState<Deliverable | null>(null)
   const [startDate, setStartDate] = useState<Date | null>(null)
   const [endDate, setEndDate] = useState<Date | null>(null)
   const [documents, setDocuments] = useState<Document[]>([])
@@ -412,6 +426,9 @@ export function ProjectDetailSheet({
       setCosts(project.costs || [])
       setShowAddCostForm(false)
       setEditingCost(null)
+      setDeliverables([])
+      setShowAddDeliverableForm(false)
+      setEditingDeliverable(null)
 
       // Initialize dates
       if (project.startDate) {
@@ -456,6 +473,23 @@ export function ProjectDetailSheet({
       }
     }
     fetchDocuments()
+  }, [project?.id, open])
+
+  // Fetch deliverables when project changes
+  useEffect(() => {
+    const fetchDeliverables = async () => {
+      if (!project || !open) return
+      try {
+        const response = await fetch(`/api/projects/${project.id}/deliverables`)
+        if (response.ok) {
+          const data = await response.json()
+          setDeliverables(data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch deliverables:', error)
+      }
+    }
+    fetchDeliverables()
   }, [project?.id, open])
 
   const fetchContacts = async (compId: string) => {
@@ -597,6 +631,45 @@ export function ProjectDetailSheet({
   const handleCancelCostForm = () => {
     setShowAddCostForm(false)
     setEditingCost(null)
+  }
+
+  // Deliverable management handlers
+  const handleDeliverableAdded = async () => {
+    if (!project) return
+    try {
+      const response = await fetch(`/api/projects/${project.id}/deliverables`)
+      if (response.ok) {
+        const data = await response.json()
+        setDeliverables(data)
+      }
+    } catch (error) {
+      console.error('Failed to refresh deliverables:', error)
+    }
+    setShowAddDeliverableForm(false)
+    setEditingDeliverable(null)
+  }
+
+  const handleDeliverableDeleted = async () => {
+    if (!project) return
+    try {
+      const response = await fetch(`/api/projects/${project.id}/deliverables`)
+      if (response.ok) {
+        const data = await response.json()
+        setDeliverables(data)
+      }
+    } catch (error) {
+      console.error('Failed to refresh deliverables:', error)
+    }
+  }
+
+  const handleEditDeliverable = (deliverable: Deliverable) => {
+    setEditingDeliverable(deliverable)
+    setShowAddDeliverableForm(true)
+  }
+
+  const handleCancelDeliverableForm = () => {
+    setShowAddDeliverableForm(false)
+    setEditingDeliverable(null)
   }
 
   // Document management handlers
@@ -941,6 +1014,70 @@ export function ProjectDetailSheet({
               costsCount={costs.length}
               aiImportedCostsCount={costs.filter(c => c.aiImported).length}
             />
+
+            <Separator />
+
+            {/* Deliverables Section */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Label className="text-muted-foreground">Deliverables</Label>
+                  {deliverables.length > 0 && (
+                    <Badge variant="secondary" className="text-xs">
+                      {deliverables.length}
+                    </Badge>
+                  )}
+                </div>
+                {deliverables.length > 0 && !showAddDeliverableForm && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowAddDeliverableForm(true)}
+                  >
+                    <Plus className="mr-1 h-4 w-4" />
+                    Add Deliverable
+                  </Button>
+                )}
+              </div>
+
+              {/* Deliverable Form */}
+              {showAddDeliverableForm && (
+                <DeliverableForm
+                  projectId={project.id}
+                  deliverable={editingDeliverable || undefined}
+                  onSuccess={handleDeliverableAdded}
+                  onCancel={handleCancelDeliverableForm}
+                />
+              )}
+
+              {/* Deliverable List or Empty State */}
+              {deliverables.length === 0 && !showAddDeliverableForm ? (
+                <Card className="p-6 text-center border-dashed">
+                  <Package className="mx-auto h-8 w-8 text-gray-400 mb-2" />
+                  <p className="text-sm text-gray-500 mb-3">No deliverables defined</p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowAddDeliverableForm(true)}
+                  >
+                    <Plus className="mr-1 h-4 w-4" />
+                    Add deliverable
+                  </Button>
+                </Card>
+              ) : (
+                <div className="space-y-2">
+                  {deliverables.map((deliverable) => (
+                    <DeliverableCard
+                      key={deliverable.id}
+                      deliverable={deliverable}
+                      projectId={project.id}
+                      onEdit={handleEditDeliverable}
+                      onDelete={handleDeliverableDeleted}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
 
             <Separator />
 
