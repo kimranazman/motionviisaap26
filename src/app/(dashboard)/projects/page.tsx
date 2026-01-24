@@ -30,6 +30,7 @@ export default async function ProjectsPage() {
   const serializedProjects = projects.map((project) => ({
     ...project,
     revenue: project.revenue ? Number(project.revenue) : null,
+    potentialRevenue: project.potentialRevenue ? Number(project.potentialRevenue) : null,
     startDate: project.startDate ? project.startDate.toISOString() : null,
     endDate: project.endDate ? project.endDate.toISOString() : null,
     sourceDeal: project.sourceDeal
