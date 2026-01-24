@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 
 ## Current Position
 
-Phase: 27 - Conversion Visibility & Archive (1 of 1 in v1.3.2)
-Plan: 03 of 3 complete
-Status: Phase complete
-Last activity: 2026-01-24 - Completed 27-03-PLAN.md (Archive Toggle UI)
+Phase: 28 - Server Query Project Include Fix (2 of 2 in v1.3.2)
+Plan: 00 of 1 pending
+Status: Gap closure phase added
+Last activity: 2026-01-24 - Created Phase 28 to close audit gaps
 
-Progress: v1.3.2 [################################] 100% (3/3 plans complete)
+Progress: v1.3.2 [###########################-----] 75% (3/4 plans complete)
 
 ## Milestone History
 
@@ -120,5 +120,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: v1.3.2 Milestone complete - Phase 27 verified
-Resume: `/gsd:audit-milestone` to verify requirements and integration, or `/gsd:complete-milestone` to archive
+Stopped at: Phase 28 created to close v1.3.2 audit gaps
+Resume: `/gsd:plan-phase 28` to create execution plan for gap closure

@@ -8,7 +8,7 @@
 - [x] **v1.2.1 Responsive / Mobile Web** - Phases 16-20 (shipped 2026-01-23)
 - [x] **v1.3 Document Management & Dashboard Customization** - Phases 21-25 (shipped 2026-01-24)
 - [x] **v1.3.1 Revenue Model Refinement** - Phase 26 (shipped 2026-01-24)
-- [x] **v1.3.2 Conversion Visibility & Archive** - Phase 27 (shipped 2026-01-24)
+- [ ] **v1.3.2 Conversion Visibility & Archive** - Phases 27-28 (in progress)
 
 ## Phases
 
@@ -151,6 +151,7 @@ Plans:
 **Milestone Goal:** Show conversion status on deals/potentials with links to converted projects, display estimate vs actual variance, make converted items read-only, and add archive system to reduce clutter.
 
 - [x] **Phase 27: Conversion Visibility & Archive** - Conversion indicators, view project links, archive system
+- [ ] **Phase 28: Server Query Project Include Fix** - Gap closure: add project relation to page queries
 
 ### Phase 27: Conversion Visibility & Archive
 **Goal**: Users can see conversion status on deals/potentials, navigate to converted projects, and archive completed items
@@ -173,6 +174,20 @@ Plans:
 - [x] 27-02-PLAN.md — Conversion visibility UI (badges, View Project, variance, read-only)
 - [x] 27-03-PLAN.md — Archive system UI (toggle, archive buttons, deep linking)
 
+### Phase 28: Server Query Project Include Fix
+**Goal**: Fix server-side page queries to include project relation for conversion visibility on initial load
+**Depends on**: Phase 27 (conversion visibility implemented)
+**Requirements**: CONV-01 (gap closure)
+**Gap Closure**: Closes all gaps from v1.3.2 audit
+**Success Criteria** (what must be TRUE):
+  1. pipeline/page.tsx includes project relation in Prisma query with Decimal serialization
+  2. potential-projects/page.tsx includes project relation in Prisma query with Decimal serialization
+  3. Conversion badges visible on initial page load (not just after archive toggle)
+**Plans**: 1 plan
+
+Plans:
+- [ ] 28-01-PLAN.md — Add project include to page queries
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -184,6 +199,7 @@ Plans:
 | 25. AI Document Intelligence | v1.3 | 5/5 | Complete | 2026-01-24 |
 | 26. Revenue Model Refinement | v1.3.1 | 3/3 | Complete | 2026-01-24 |
 | 27. Conversion Visibility & Archive | v1.3.2 | 3/3 | Complete | 2026-01-24 |
+| 28. Server Query Project Include Fix | v1.3.2 | 0/1 | Pending | - |
 
 ---
 *Roadmap created: 2026-01-23*
