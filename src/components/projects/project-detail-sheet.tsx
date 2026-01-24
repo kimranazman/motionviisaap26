@@ -94,8 +94,8 @@ interface Project {
   id: string
   title: string
   description: string | null
-  revenue: number | null
-  aiImportedRevenue?: number | null
+  revenue: number | null              // Actual revenue from AI invoices
+  potentialRevenue: number | null     // From deal/potential conversion
   status: string
   startDate: string | null
   endDate: string | null
@@ -275,7 +275,6 @@ export function ProjectDetailSheet({
   const [contactId, setContactId] = useState<string | null>(null)
   const [contacts, setContacts] = useState<Contact[]>([])
   const [initiativeId, setInitiativeId] = useState<string | null>(null)
-  const [revenue, setRevenue] = useState('')
   const [description, setDescription] = useState('')
   const [isSaving, setIsSaving] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -320,7 +319,6 @@ export function ProjectDetailSheet({
       setCompanyId(project.company?.id || null)
       setContactId(project.contact?.id || null)
       setInitiativeId(project.initiative?.id || null)
-      setRevenue(project.revenue?.toString() || '')
       setDescription(project.description || '')
       setError(null)
       setCosts(project.costs || [])
@@ -425,7 +423,6 @@ export function ProjectDetailSheet({
           companyId,
           contactId: contactId || null,
           initiativeId: initiativeId || null,
-          revenue: revenue ? parseFloat(revenue) : null,
           description: description.trim() || null,
           startDate: startDate ? startDate.toISOString() : null,
           endDate: endDate ? endDate.toISOString() : null,
@@ -596,7 +593,9 @@ export function ProjectDetailSheet({
 
   // Calculate financial totals
   const totalCosts = calculateTotalCosts(costs)
-  const profit = calculateProfit(project.revenue, totalCosts)
+  // Use actual revenue if available, otherwise use potential
+  const revenueForProfit = project.revenue ?? project.potentialRevenue ?? 0
+  const profit = calculateProfit(revenueForProfit, totalCosts)
 
   // Helper to compare dates (only date portion)
   const formatDateForCompare = (d: Date | null) => d?.toISOString().split('T')[0] || null
@@ -615,7 +614,6 @@ export function ProjectDetailSheet({
     companyId !== (project.company?.id || null) ||
     contactId !== (project.contact?.id || null) ||
     initiativeId !== (project.initiative?.id || null) ||
-    revenue !== (project.revenue?.toString() || '') ||
     description !== (project.description || '') ||
     formatDateForCompare(startDate) !== projectStartDateForCompare ||
     formatDateForCompare(endDate) !== projectEndDateForCompare
@@ -698,20 +696,6 @@ export function ProjectDetailSheet({
                   Loading contacts...
                 </p>
               )}
-            </div>
-
-            {/* Revenue */}
-            <div className="space-y-2">
-              <Label htmlFor="edit-revenue">Revenue</Label>
-              <Input
-                id="edit-revenue"
-                type="number"
-                step="0.01"
-                min="0"
-                value={revenue}
-                onChange={(e) => setRevenue(e.target.value)}
-                placeholder="0.00"
-              />
             </div>
 
             {/* KRI Link */}
