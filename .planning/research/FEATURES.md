@@ -607,3 +607,446 @@ Based on current dashboard (`src/app/(dashboard)/page.tsx`):
 ---
 
 *Research completed: 2026-01-23*
+
+---
+---
+
+# Feature Landscape: v1.4 Supplier, Tasks, Deliverables, Activity
+
+**Domain:** Supplier management, task hierarchy, project deliverables, activity logging
+**Context:** SAAP v1.4 milestone for 3-person team (Motionvii)
+**Researched:** 2026-01-24
+**Confidence:** HIGH (well-established domain patterns)
+
+## Context
+
+This research addresses v1.4 milestone features:
+- Supplier management with price tracking and credit terms
+- Price comparison / procurement intelligence
+- Task management with hierarchical subtasks
+- Deliverables tracking (scope items from quotes)
+- Activity history / audit logging
+
+Existing infrastructure:
+- Projects with cost tracking (categories, amounts, receipt uploads)
+- AI document parsing (invoices, receipts)
+- Companies, contacts, deals, potentials
+
+---
+
+## 1. Supplier Management Features
+
+### Table Stakes
+
+Features users expect. Missing = feature feels incomplete.
+
+| Feature | Why Expected | Complexity | Notes |
+|---------|--------------|------------|-------|
+| **Supplier CRUD** | Core functionality - create, view, edit, delete suppliers | Low | Basic entity management |
+| **Contact information** | Name, email, phone, address | Low | Standard fields |
+| **Supplier list with search** | Find suppliers quickly | Low | Reuse existing list patterns |
+| **Link suppliers to costs** | Track who provided what expense | Low | Foreign key on ProjectCost |
+| **Credit terms field** | Know payment window (Net 30, Net 60) | Low | Simple text or enum field |
+| **Payment terms field** | Know payment conditions (COD, upfront, milestone) | Low | Simple text or enum field |
+| **Supplier detail page** | See all supplier info in one place | Medium | Shows related costs, total spent |
+| **Total spend per supplier** | Aggregate of linked costs | Low | Computed field from costs |
+| **Projects worked on list** | Which projects used this supplier | Low | Derived from cost links |
+
+### Differentiators
+
+Features that set the system apart. Not expected, but valuable for a small team.
+
+| Feature | Value Proposition | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| **Notes/remarks field** | Record supplier behavior, reliability, quirks | Low | Free-text field |
+| **Preferred supplier flag** | Quick identification of go-to suppliers | Low | Boolean toggle |
+| **Supplier categories** | Group by type (printing, AV, materials, etc.) | Low | Enum or tags |
+| **Bank account info** | Fast payment reference | Low | Consider simple encryption |
+| **SSM/company registration** | Official documentation reference | Low | Text field |
+
+### Anti-Features
+
+Features to deliberately NOT build for a 3-person team.
+
+| Anti-Feature | Why Avoid | What to Do Instead |
+|--------------|-----------|-------------------|
+| **Supplier portal/login** | Massive complexity, 3-person team doesn't need vendors self-managing | Keep supplier data internal |
+| **RFQ workflow** | Overkill for small team; manual quotes via email | Store quote documents instead |
+| **Automated PO generation** | Not a procurement system; use accounting software | Track costs, not create orders |
+| **Supplier performance scoring/KPIs** | Low volume doesn't justify algorithm; subjective notes better | Use notes field for observations |
+| **Supplier onboarding workflow** | 3 people can add suppliers manually in 2 minutes | Simple form entry |
+| **Risk/compliance tracking** | Enterprise feature, not needed for small creative agency | Skip entirely |
+| **Contract management** | Overkill; store contract PDFs as documents instead | Document upload on supplier |
+| **Automated payment scheduling** | Use accounting software for payments | Track terms, not execute payments |
+
+---
+
+## 2. Price Comparison / Procurement Intelligence Features
+
+### Table Stakes
+
+| Feature | Why Expected | Complexity | Notes |
+|---------|--------------|------------|-------|
+| **Price per line item** | Know what each item costs from each supplier | Medium | Requires item normalization |
+| **Price list per supplier** | All items bought from a supplier with prices | Low | Query costs, group by description |
+| **Price history over time** | Track if prices increased/decreased | Medium | Store date with each price point |
+| **Compare same item across suppliers** | "Who has the best price for X?" | High | Requires item matching logic |
+| **Last purchase price** | Quick reference for most recent cost | Low | Simple query |
+| **Last purchase date** | Know how current the price is | Low | Stored on cost entry |
+
+### Differentiators
+
+| Feature | Value Proposition | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| **AI semantic matching** | Match "Banner Printing 3x6" with "3x6 Banner" | High | Use existing Claude integration |
+| **Price alerts** | Notify when price changes significantly | Medium | Threshold-based detection |
+| **Recommended supplier** | Suggest cheapest reliable supplier for item | Medium | Combines price + notes/preferred |
+| **Average price per item** | Baseline for negotiation | Low | Computed average across suppliers |
+| **Price trend visualization** | Chart showing price movement over time | Medium | Simple line chart |
+
+### Anti-Features
+
+| Anti-Feature | Why Avoid | What to Do Instead |
+|--------------|-----------|-------------------|
+| **Real-time market pricing** | No API integration with suppliers; manual entry only | Historical tracking from purchases |
+| **Automated price negotiation** | 3-person team negotiates directly | Store negotiated prices manually |
+| **Supplier bidding system** | Not a procurement marketplace | Compare manually, pick supplier |
+| **Price forecasting/ML** | Low volume; insufficient data | Show historical trend, let human decide |
+| **Inventory management** | SAAP tracks projects, not warehouse stock | External system if needed |
+| **Purchase order automation** | Out of scope; accounting software handles this | Track what was bought, not ordering |
+
+---
+
+## 3. Task Management Features (with Hierarchy)
+
+### Table Stakes
+
+| Feature | Why Expected | Complexity | Notes |
+|---------|--------------|------------|-------|
+| **Task CRUD** | Create, edit, delete tasks | Low | Standard entity |
+| **Task title** | Describe what needs to be done | Low | Required field |
+| **Task description** | Longer details, context | Low | Optional rich text |
+| **Task status** | Todo, In Progress, Done | Low | Enum field |
+| **Due date** | When task is expected complete | Low | Date field |
+| **Assignee** | Who is responsible | Low | Link to team member |
+| **Task list per project** | See all tasks for a project | Low | Simple query |
+| **Subtasks** | Break task into smaller pieces | Medium | Self-referential relationship |
+| **Infinite nesting** | Subtasks of subtasks | Medium | Recursive parent reference |
+| **Task comments** | Discussion on specific task | Low | Reuse existing comment pattern |
+
+### Differentiators
+
+| Feature | Value Proposition | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| **Tags/labels** | Categorize tasks (design, printing, client review) | Low | Many-to-many with Tag entity |
+| **Inherited tags** | Subtasks get parent's tags automatically | Low | Computed on creation |
+| **Priority levels** | High/Medium/Low urgency | Low | Enum field |
+| **Multiple assignees** | Some tasks need collaboration | Low | Many-to-many relationship |
+| **Start date** | When work should begin | Low | Optional date field |
+| **Task ordering/position** | Drag to reorder within list | Medium | Position field with reorder logic |
+| **Quick-add task** | Inline task creation without modal | Low | Input field at list bottom |
+| **Checklist mode** | Simple checkbox subtasks for small items | Low | Simplified subtask view |
+| **Progress indicator** | "3 of 5 subtasks complete" | Low | Computed from subtask status |
+| **Collapse/expand subtasks** | Hide completed or nested tasks | Low | UI state, not data |
+
+### Anti-Features
+
+| Anti-Feature | Why Avoid | What to Do Instead |
+|--------------|-----------|-------------------|
+| **Time tracking on tasks** | Separate domain; use external time tracking | Focus on completion, not hours |
+| **Task dependencies** | Overkill for 3-person team; communicate directly | Use comments to note blockers |
+| **Gantt chart for tasks** | Initiatives have Gantt; tasks are simpler | Task list or Kanban view |
+| **Sprint/iteration planning** | Not running sprints; flexible timeline | Due dates sufficient |
+| **Story points/estimation** | Small team knows effort intuitively | Optional text estimate if needed |
+| **Burndown charts** | Agile metrics overkill for 3 people | Simple progress bar |
+| **Recurring tasks** | Low automation value; create manually | Copy task if needed |
+| **Task templates** | 3 people don't need standardized templates | Copy from previous project |
+| **Workload balancing** | 3 people coordinate directly | See assignee in task list |
+| **Email task creation** | Overkill; open app and create | Direct UI creation |
+| **Approval workflows** | 3 people can approve via comments | Comment "approved" |
+
+---
+
+## 4. Deliverables Tracking Features
+
+### Table Stakes
+
+| Feature | Why Expected | Complexity | Notes |
+|---------|--------------|------------|-------|
+| **Deliverable CRUD** | Create from quote scope items | Low | Standard entity |
+| **Deliverable title** | What is being delivered (e.g., "Banner Design 3x6") | Low | Required field |
+| **Deliverable value** | Line item price from quote | Low | Decimal field |
+| **Deliverable status** | Pending, In Progress, Completed | Low | Enum field |
+| **Deliverable list per project** | All scope items for project | Low | Simple query |
+| **Total deliverables value** | Sum of all line items = project scope | Low | Computed aggregate |
+| **AI extraction from our quotes** | Parse quote PDF to create deliverables | Medium | Extend existing AI parsing |
+| **Manual deliverable creation** | Add items not from documents | Low | Form entry |
+
+### Differentiators
+
+| Feature | Value Proposition | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| **Convert to task** | Turn deliverable into actionable task | Low | Create task linked to deliverable |
+| **Deliverable notes** | Additional context about scope item | Low | Text field |
+| **Delivery date** | When item was/will be delivered | Low | Date field |
+| **Partial completion** | Track percentage or partial value delivered | Medium | Adds complexity |
+| **Quantity tracking** | "5 of 10 banners delivered" | Low | Quantity field |
+| **Link to uploaded document** | Reference the quote document | Low | Document relationship |
+
+### Anti-Features
+
+| Anti-Feature | Why Avoid | What to Do Instead |
+|--------------|-----------|-------------------|
+| **Milestone billing** | Use accounting software for invoicing | Track completion, not billing |
+| **Client acceptance workflow** | 3-person team gets approval via email/WhatsApp | Mark as complete when client confirms |
+| **Version control for deliverables** | Overkill; scope rarely changes mid-project | Edit deliverable if scope changes |
+| **Deliverable templates** | Each project is custom | Create fresh per project |
+| **Automated deliverable creation** | AI extraction covers this | AI + manual entry |
+| **Client portal for deliverables** | Complexity not worth it | Email/WhatsApp for client updates |
+
+---
+
+## 5. Activity History / Audit Log Features
+
+### Table Stakes
+
+| Feature | Why Expected | Complexity | Notes |
+|---------|--------------|------------|-------|
+| **Change log per entity** | See what changed and when | Medium | Event sourcing lite |
+| **Who made change** | User attribution | Low | Store user ID with event |
+| **When change occurred** | Timestamp | Low | createdAt field |
+| **What changed** | Old value vs new value | Medium | Store before/after for key fields |
+| **Entity-specific history** | View history on deal/project detail page | Low | Filter by entity ID |
+
+### Differentiators
+
+| Feature | Value Proposition | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| **Human-readable descriptions** | "Khairul changed status from Draft to Active" | Medium | Format change events nicely |
+| **Activity feed on cards** | See recent changes in pipeline view | Low | Last N events shown |
+| **Sync event logging** | "Project revenue updated: RM 50K -> RM 55K" | Low | Specific event types |
+| **Filter by event type** | Show only status changes, or only value changes | Low | Event type enum |
+| **Grouped by date** | "Today", "Yesterday", "This Week" | Low | UI grouping |
+
+### Anti-Features
+
+| Anti-Feature | Why Avoid | What to Do Instead |
+|--------------|-----------|-------------------|
+| **Full audit trail (all fields)** | Storage bloat; track only key fields | Log important changes only |
+| **Undo/revert changes** | Complexity not worth it; edit to fix mistakes | Manual correction |
+| **Change approval workflow** | 3 people trust each other | Log changes, don't gate them |
+| **Export audit logs** | Not needed for internal tool | View in app only |
+| **Log retention policies** | 3-person team won't hit storage limits | Keep all logs |
+| **Real-time activity notifications** | Overkill for 3 people in same office | Check activity when needed |
+| **Activity analytics** | Who did most work? Not needed | Simple activity list |
+
+---
+
+## Feature Dependencies (v1.4)
+
+```
+Supplier Management
+  |
+  +---> Supplier CRUD (foundation)
+         |
+         +---> Link to Project Costs (requires suppliers exist)
+         |
+         +---> Price List (requires linked costs)
+                |
+                +---> Price History (requires multiple costs over time)
+                       |
+                       +---> Price Comparison (requires items from multiple suppliers)
+                              |
+                              +---> AI Semantic Matching (optional enhancement)
+
+Task Management
+  |
+  +---> Task CRUD (foundation)
+         |
+         +---> Subtasks (requires tasks exist)
+         |      |
+         |      +---> Infinite Nesting (extension of subtasks)
+         |
+         +---> Task Comments (requires tasks exist)
+         |
+         +---> Tags (can be built in parallel)
+                |
+                +---> Inherited Tags (requires tags exist)
+
+Deliverables
+  |
+  +---> Deliverable CRUD (foundation)
+         |
+         +---> AI Extraction (requires documents exist - already shipped)
+         |
+         +---> Convert to Task (requires both deliverables and tasks exist)
+
+Activity History
+  |
+  +---> Event Logging Infrastructure (foundation)
+         |
+         +---> Per-Entity History View (requires events logged)
+         |
+         +---> Sync Event Logging (specific to deal/project sync)
+```
+
+---
+
+## MVP Recommendation (v1.4)
+
+Given the 3-person team context and existing infrastructure:
+
+### Phase 1: Supplier Foundation
+1. Supplier CRUD with contact info, credit/payment terms
+2. Link suppliers to existing project costs
+3. Supplier detail page with total spend
+4. Price list per supplier (aggregated from costs)
+
+### Phase 2: Task Infrastructure
+1. Task CRUD with status, due date, assignee
+2. Subtasks with infinite nesting
+3. Task comments (reuse existing pattern)
+4. Tags with inheritance
+
+### Phase 3: Deliverables
+1. Deliverable CRUD
+2. AI extraction from quotes (extend existing invoice parsing)
+3. Convert deliverable to task
+
+### Phase 4: Activity History
+1. Event logging for key entity changes
+2. Human-readable activity descriptions
+3. Activity feed on deal/project detail pages
+4. Sync event logging for live project summary
+
+### Phase 5: Price Intelligence
+1. Price history tracking
+2. Same-item comparison across suppliers
+3. AI semantic matching for item normalization
+
+**Rationale:** Build foundations first (supplier, task entities), then layer intelligence (price comparison, activity tracking) on top of established data.
+
+---
+
+## Data Model Additions (v1.4)
+
+```
+Supplier
+  - id, name
+  - email, phone, address
+  - creditTerms (Net 30, Net 60, etc.)
+  - paymentTerms (COD, upfront, milestone, etc.)
+  - category (Printing, AV, Materials, etc.)
+  - bankAccount?, ssmNumber?
+  - notes
+  - isPreferred: Boolean
+  - createdAt, updatedAt
+
+ProjectCost (existing, add relation)
+  - supplierId? (nullable, links to Supplier)
+
+Task
+  - id, projectId
+  - parentId? (self-reference for subtasks)
+  - deliverableId? (optional link to Deliverable)
+  - title, description?
+  - status: Todo | InProgress | Done
+  - priority: Low | Medium | High
+  - dueDate?, startDate?
+  - assignee: TeamMember
+  - position: Int (for ordering)
+  - createdAt, updatedAt
+
+TaskTag
+  - id, name, color
+  - createdAt
+
+TaskTagLink (many-to-many)
+  - taskId, tagId
+
+TaskComment
+  - id, taskId
+  - author: TeamMember
+  - content
+  - createdAt
+
+Deliverable
+  - id, projectId
+  - documentId? (link to source quote document)
+  - title, description?
+  - value: Decimal
+  - quantity?: Int
+  - status: Pending | InProgress | Completed
+  - deliveryDate?
+  - notes?
+  - createdAt, updatedAt
+
+ActivityEvent
+  - id
+  - entityType: Deal | Potential | Project | Supplier | Task
+  - entityId
+  - eventType: Created | Updated | StatusChanged | ValueChanged | Synced
+  - field? (which field changed)
+  - oldValue?, newValue?
+  - description (human-readable)
+  - userId
+  - createdAt
+```
+
+---
+
+## Sources (v1.4)
+
+### Supplier Management
+- [Procurify - Best Vendor Management Software 2025](https://www.procurify.com/blog/best-vendor-management-software/)
+- [NetSuite - What Is a Vendor Management System](https://www.netsuite.com/portal/resource/articles/erp/vendor-management-system.shtml)
+- [Ramp - Vendor Payments](https://ramp.com/blog/vendor-payments)
+- [Wise - Vendor Management Best Practices](https://wise.com/us/blog/vendor-management-best-practices)
+- [Brex - Vendor Management Guide](https://www.brex.com/spend-trends/vendor-management/vendor-management-guide)
+
+### Procurement & Price Comparison
+- [Prokuria - Supplier Price Monitoring](https://www.prokuria.com/supplier-price-monitoring)
+- [Current SCM - Procurement Software](https://currentscm.com/solutions/procurement-software/)
+- [Procuredesk - Best Procurement Software](https://www.procuredesk.com/best-procurement-software/)
+- [Ramp - Procurement Software Small Business](https://ramp.com/blog/procurement-software-small-business)
+- [Procuredesk - Vendor Credits](https://www.procuredesk.com/glossary/vendor-credits/)
+
+### Task Management
+- [ONES - Mastering Issue Subtask Hierarchy](https://ones.com/blog/issue-subtask-hierarchy-key-features/)
+- [Zoho - Essential Features of Task Management Software](https://www.zoho.com/projects/task-management/essential-features.html)
+- [Kroolo - Tasks and Subtasks Guide](https://kroolo.com/blog/tasks-and-subtasks)
+- [ClickUp - Task Categories](https://clickup.com/blog/task-categories/)
+- [GanttPRO - Task Hierarchy Feature](https://ganttpro.com/task-hierarchy/)
+
+### Deliverables
+- [ONES - Project Deliverable Tracking Tools](https://ones.com/blog/comparison/project-deliverable-tracking-tools-features-guide/)
+- [Atlassian - What Are Project Deliverables](https://www.atlassian.com/work-management/project-management/project-deliverables)
+- [ProjectManager - Project Deliverable Definition](https://www.projectmanager.com/blog/project-deliverable)
+- [Adobe - Project Scope Definition](https://business.adobe.com/blog/basics/project-scope-definition-best-practices-examples-and-more)
+
+### Activity/Audit Logs
+- [Microsoft - Dataverse Activity Logging](https://learn.microsoft.com/en-us/power-platform/admin/enable-use-comprehensive-auditing)
+- [2POINT Agency - Audit Logs in CRM](https://www.2pointagency.com/glossary/audit-logs-and-compliance-in-crm-ensuring-data-integrity-and-security/)
+- [AorBorC - Zoho CRM Audit Logs](https://www.aorborc.com/zoho-crm-audit-logs-common-questions-answered/)
+- [Microsoft Dynamics 365 Audit Trail](https://www.iesgp.com/blog/microsoft-dynamics-365-audit-trail-management)
+
+### Anti-Patterns
+- [Jade Rubick - Project Management Anti-Patterns](https://www.rubick.com/three-anti-patterns-for-project-management/)
+- [PMI - Vendor Management Strategies](https://www.pmi.org/disciplined-agile/process/vendor-management/vendor-management-strategies)
+- [Catalyte - Eight Project Management Anti-Patterns](https://www.catalyte.io/insights/project-management-anti-patterns/)
+
+---
+
+## Confidence Assessment (v1.4)
+
+| Area | Confidence | Reason |
+|------|------------|--------|
+| Supplier Management | HIGH | Well-documented domain, clear feature patterns across VMS software |
+| Task Hierarchy | HIGH | Extensively covered in PM tools; subtask patterns well-established |
+| Deliverables | MEDIUM | Less documented than tasks; specific to project-based work |
+| Price Comparison | MEDIUM | Procurement software covers this, but AI matching is novel |
+| Activity History | HIGH | Standard audit log patterns; CRM systems document this well |
+
+---
+
+*Research completed: 2026-01-24*

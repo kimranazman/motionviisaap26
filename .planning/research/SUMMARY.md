@@ -268,3 +268,512 @@ Questions requiring user decision during implementation:
 
 *Research completed: 2026-01-23*
 *Ready for roadmap: yes*
+
+---
+---
+
+# v1.4 Research Summary: Intelligent Automation & Organization
+
+**Project:** SAAP 2026 v2 - v1.4 Supplier Management, Tasks, AI Matching
+**Domain:** Supplier tracking, task hierarchies, activity logging, bidirectional sync, AI semantic matching
+**Researched:** 2026-01-24
+**Confidence:** HIGH (verified against Prisma docs, established database patterns, industry research)
+
+---
+
+## Executive Summary
+
+The v1.4 milestone transforms SAAP from a basic CRM/project tracker into an intelligent project delivery system with five major feature areas: (1) **Live Project Summary on Pipeline** enabling bidirectional sync between deals and projects, (2) **Supplier Management** with price comparison and AI-powered semantic matching, (3) **Company Departments** for organizational structure, (4) **Enhanced AI Document Intelligence** building on v1.3 document uploads, and (5) **Project Deliverables & Tasks** with infinite hierarchical nesting.
+
+The recommended approach uses **adjacency list with recursive CTEs** for task hierarchies (not closure tables - MariaDB 10.2+ supports CTEs natively), **OpenAI text-embedding-3-small** for semantic matching (Anthropic does not offer embeddings; Claude recommends Voyage AI as partner, but OpenAI is simpler for this scale), and **polymorphic activity logging** with the entity type/ID pattern for audit trails. The most critical technical decision is using raw SQL CTEs for tree queries since Prisma does not support recursive includes natively.
+
+The primary risks center on three areas: (1) **infinite sync loops** between deals and projects without proper sync tokens, (2) **unbounded recursive queries** on deep task hierarchies causing performance issues, and (3) **AI service dependency** without cached embeddings and fallbacks. Following the phased approach below and implementing the pre-identified mitigations will prevent these issues.
+
+---
+
+## Key Findings from v1.4 Research
+
+### From STACK.md (v1.4 Section)
+
+**New Package Required:**
+
+| Package | Version | Purpose | Monthly Cost |
+|---------|---------|---------|--------------|
+| `openai` | ^4.x | Embeddings API for semantic price comparison | ~$1-5 (API usage) |
+
+**Why OpenAI over alternatives:**
+- Anthropic (Claude) does NOT offer embeddings - recommends Voyage AI as partner
+- transformers.js has onnxruntime-node size issues (~720MB) breaking Next.js API routes (max 250MB)
+- OpenAI text-embedding-3-small is cost-effective ($0.02/1M tokens)
+- Simple API, well-documented, production-proven
+
+**No Additional Packages Needed:**
+- Task hierarchy uses Prisma self-relations + raw SQL CTEs (built-in)
+- Activity logging uses Prisma Client Extensions (built-in since v4.16)
+- Data sync uses React useOptimistic + Server Actions (built into Next.js 14)
+- Tree view UI uses shadcn-tree-view (copy-paste component, not npm)
+
+**Existing Stack Reuse:**
+- `@dnd-kit/*` - Task reordering within tree
+- Prisma 6.19.2 - Extensions for activity logging
+- MariaDB 10.2+ - Recursive CTEs for tree queries
+- `sonner` - Toast notifications for sync feedback
+
+### From FEATURES.md (v1.4 Section)
+
+**Table Stakes (Must Have):**
+
+*Supplier Management:*
+- Supplier CRUD with contact info, credit/payment terms
+- Link suppliers to project costs
+- Total spend per supplier (aggregate)
+- Price list per supplier from linked costs
+
+*Task Hierarchy:*
+- Task CRUD with status, due date, assignee
+- Subtasks with infinite nesting (capped at 5 levels recommended)
+- Task comments
+- Position-based ordering within siblings
+
+*Deliverables:*
+- Deliverable CRUD linked to projects
+- AI extraction from quotes (extend v1.3 document parsing)
+- Convert deliverable to task
+
+*Activity History:*
+- Change log per entity (who, when, what changed)
+- Human-readable descriptions
+- Per-entity history view
+
+**Differentiators (Should Have):**
+
+*Supplier:*
+- Price history tracking over time
+- AI semantic matching for same-item comparison
+- Preferred supplier flag
+- Notes/remarks field
+
+*Tasks:*
+- Tags with inheritance to subtasks
+- Priority levels (High/Medium/Low)
+- Progress indicator (X of Y subtasks complete)
+- Collapse/expand subtasks
+
+**Anti-Features (Do NOT Build):**
+
+| Feature | Reason |
+|---------|--------|
+| Supplier portal/login | Massive complexity for 3-person team |
+| RFQ workflow | Overkill; manual quotes via email sufficient |
+| Task dependencies/Gantt | Initiatives have Gantt; tasks are simpler |
+| Time tracking on tasks | Separate domain; use external tools |
+| Real-time price API | No API integration; manual entry only |
+| ML price forecasting | Low volume; insufficient data |
+
+### From ARCHITECTURE.md (v1.4 Section)
+
+**Key Schema Additions:**
+
+```
+Supplier (NEW)
+  |
+  +---> Cost (existing, add supplierId FK)
+
+Department (NEW)
+  |
+  +---> Company (existing, add relation)
+  |
+  +---> Contact (existing, add departmentId FK)
+
+Deliverable (NEW)
+  |
+  +---> Project (existing, add relation)
+  |
+  +---> Task (NEW, optional link)
+
+Task (NEW - self-referencing)
+  |
+  +---> parentId (self-reference for subtasks)
+  |
+  +---> projectId (root tasks)
+  |
+  +---> deliverableId (optional scope link)
+
+ActivityLog (NEW - polymorphic)
+  |
+  +---> entityType + entityId (polymorphic reference)
+  |
+  +---> userId (actor)
+```
+
+**Critical Self-Reference Pattern (from Prisma docs):**
+```prisma
+model Task {
+  id        String  @id @default(cuid())
+  parentId  String? @map("parent_id")
+  parent    Task?   @relation("TaskHierarchy", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children  Task[]  @relation("TaskHierarchy")
+  // ...
+}
+```
+Note: `onDelete: NoAction` required on one side to prevent circular reference issues.
+
+**Query Pattern for Tree (Recursive CTE):**
+```typescript
+async function getTaskTree(projectId: string) {
+  return await prisma.$queryRaw`
+    WITH RECURSIVE task_tree AS (
+      SELECT *, 0 as level FROM tasks WHERE project_id = ${projectId} AND parent_id IS NULL
+      UNION ALL
+      SELECT t.*, tt.level + 1
+      FROM tasks t
+      INNER JOIN task_tree tt ON t.parent_id = tt.id
+      WHERE tt.level < 10  -- Safety limit
+    )
+    SELECT * FROM task_tree ORDER BY level, position
+  `;
+}
+```
+
+**Bidirectional Sync Pattern:**
+```
+Deal Update --> Check syncToken --> Update Project (skipSync: true) --> Log Activity
+Project Update --> Check syncToken --> Update Deal (skipSync: true) --> Log Activity
+```
+- Sync tokens prevent infinite loops
+- `skipSync` flag prevents cascade
+- Activity log shows sync source
+
+### From v1.4-PITFALLS.md
+
+**Top 7 Critical Pitfalls:**
+
+| # | Pitfall | Severity | Phase | Prevention |
+|---|---------|----------|-------|------------|
+| 1 | **Unbounded recursive includes** | CRITICAL | 1 | Use raw SQL CTEs, not nested Prisma includes |
+| 2 | **Cascade delete without depth control** | HIGH | 1 | Use `onDelete: SetNull`, implement explicit tree deletion with count confirmation |
+| 3 | **Infinite sync loop** | CRITICAL | 1 | Implement sync tokens; `skipSync` flag on updates |
+| 4 | **AI embeddings for numerical comparison** | HIGH | 4 | Hybrid approach: semantic matching for items, numerical sorting for prices |
+| 5 | **Single similarity threshold** | MEDIUM | 4 | Confidence levels (HIGH/MEDIUM/LOW) with human review for low confidence |
+| 6 | **No fallback for AI failure** | HIGH | 4 | Cache embeddings in DB; fall back to keyword matching |
+| 7 | **Logging in transaction** | MEDIUM | 2 | Log AFTER transaction commits; fire-and-forget pattern |
+
+**Additional Pitfalls to Monitor:**
+
+| Pitfall | Phase | Prevention |
+|---------|-------|------------|
+| No maximum depth on tasks | 2 | Enforce 5-level limit server-side |
+| Moving tasks creates cycles | 2 | Validate ancestry chain before reparenting |
+| UI renders full tree | 3 | Virtualize or lazy-load children |
+| Price without history | 1 | Create PriceHistory table from start |
+| Price without unit context | 1 | Require unit and pack size fields |
+| Activity table bloat | 2 | Polymorphic with indexes; retention policy |
+| Over-fetching relationships | ALL | Define select sets per context |
+| Missing FK indexes | 1 | Add `@@index` on all foreign keys |
+
+---
+
+## Recommended Stack (v1.4 Summary)
+
+### New Dependencies
+
+```bash
+npm install openai
+```
+
+### Environment Variables
+
+```env
+OPENAI_API_KEY=sk-...
+```
+
+### UI Components (Copy-Paste, Not NPM)
+
+```bash
+npx shadcn add "https://mrlightful.com/registry/tree-view"
+```
+
+### Existing Stack Reuse
+
+| Technology | Use For |
+|------------|---------|
+| Prisma self-relations | Task hierarchy |
+| MariaDB recursive CTEs | Tree queries |
+| Prisma Client Extensions | Activity logging |
+| React useOptimistic | Sync feedback |
+| Server Actions | Sync operations |
+| @dnd-kit | Task drag-drop reordering |
+
+---
+
+## Expected Features (v1.4 Priority)
+
+### Must Build (Table Stakes)
+
+1. Supplier CRUD with contact info
+2. Supplier-Cost linking (supplierId on Cost)
+3. Task CRUD with status, assignee, due date
+4. Subtask hierarchy (self-referential)
+5. Deliverable CRUD linked to projects
+6. Activity log per entity
+7. Deal-Project bidirectional sync
+
+### Should Build (Differentiators)
+
+1. Price history tracking with effectiveDate
+2. AI semantic matching for price comparison
+3. Department under Company
+4. Tags on tasks with inheritance
+5. AI extraction from quote documents
+
+### Defer to v2+
+
+- Supplier performance scoring
+- Task dependencies/Gantt
+- Real-time price APIs
+- ML forecasting
+
+---
+
+## Architecture Approach (v1.4)
+
+### Entity Relationships
+
+```
+Company
+  +---> Department (NEW)
+  +---> Contact (updated: departmentId)
+  +---> Deal --> Project (bidirectional sync)
+
+Project
+  +---> Deliverable (NEW)
+  +---> Task (NEW, hierarchical)
+  +---> Cost --> Supplier (NEW)
+
+Task
+  +---> Task (children, self-reference)
+  +---> Deliverable (optional link)
+```
+
+### Data Flow: Task Tree
+
+```
+API Request --> Recursive CTE Query --> Flat list --> Build tree client-side --> Virtualized render
+```
+
+### Data Flow: Sync
+
+```
+Deal Update --> Generate syncToken --> Update Project (skipSync) --> Log Activity
+                                          |
+                                          +--> revalidatePath()
+```
+
+### Data Flow: Price Comparison
+
+```
+User enters item description
+    |
+    v
+Generate embedding (OpenAI)
+    |
+    v
+Vector similarity search (in-memory, cached embeddings)
+    |
+    v
+Filter by threshold (0.7+)
+    |
+    v
+Sort by NUMERICAL price (not similarity)
+    |
+    v
+Display with confidence badge
+```
+
+---
+
+## Critical Pitfalls (v1.4 Top 7)
+
+| # | Pitfall | Prevention Strategy |
+|---|---------|---------------------|
+| 1 | Unbounded recursive includes | Use raw SQL CTEs with `LIMIT`; build tree client-side |
+| 2 | Cascade delete scope | `onDelete: SetNull`; require confirmation for large trees (>10 tasks) |
+| 3 | Infinite sync loop | Sync tokens; `skipSync` parameter; deduplication map |
+| 4 | Embeddings for price sort | Semantic match items THEN numerical sort prices |
+| 5 | Single threshold matching | Confidence levels; require review for <0.85 similarity |
+| 6 | AI service failure | Cache embeddings in JSON column; keyword fallback |
+| 7 | Logging blocks transaction | Log AFTER commit; fire-and-forget with error capture |
+
+---
+
+## Implications for Roadmap (v1.4)
+
+### Suggested Phases
+
+**Phase 1: Schema Foundation (2-3 days)**
+- Add Supplier model with SupplierStatus enum
+- Add supplierId to Cost model
+- Add Department model under Company
+- Add departmentId to Contact model
+- Add ActivityLog model (polymorphic)
+- Add Task model with self-reference
+- Add Deliverable model
+- Run migrations
+- Add all `@@index` on foreign keys
+
+*Rationale:* All subsequent work depends on schema. Self-reference pattern must be correct from start.
+
+*Pitfalls to avoid:* #1 (schema design), #2 (cascade config), #7 (price schema)
+
+**Phase 2: Supplier & Cost Integration (2-3 days)**
+- Supplier CRUD API routes
+- SupplierSelect component for Cost form
+- Supplier list/detail pages
+- Total spend aggregation
+- Price list per supplier
+
+*Rationale:* Independent feature, no dependencies on other v1.4 features.
+
+*Pitfalls to avoid:* #7 (price without unit)
+
+**Phase 3: Task Hierarchy (3-4 days)**
+- Task CRUD API with depth validation
+- Recursive CTE queries for tree fetch
+- TaskTree UI component (virtualized)
+- Subtask creation (POST /tasks/{id}/subtasks)
+- Task reordering with @dnd-kit
+- Cycle detection on move operations
+
+*Rationale:* Complex feature requiring careful implementation. Core to project delivery tracking.
+
+*Pitfalls to avoid:* #1 (recursive includes), #2 (cascade delete), #3 (no depth limit), #5 (cycles)
+
+**Phase 4: Deliverables (1-2 days)**
+- Deliverable CRUD linked to Project
+- AI extraction from quote documents (extend v1.3)
+- Convert deliverable to task
+- Deliverable list on project detail
+
+*Rationale:* Simpler feature building on v1.3 AI parsing.
+
+**Phase 5: Activity Logging (2 days)**
+- Activity log API routes
+- Prisma Client Extension for auto-logging
+- Activity feed component
+- Per-entity history view
+- Retention policy implementation
+
+*Rationale:* Touches all entities, implement after other CRUD is stable.
+
+*Pitfalls to avoid:* #6 (logging in transaction), #8 (table bloat)
+
+**Phase 6: Bidirectional Sync (2-3 days)**
+- Sync token generation utility
+- Deal-to-Project sync with skipSync
+- Project-to-Deal sync with skipSync
+- SyncIndicator component
+- Sync event in activity log
+- Field ownership rules
+
+*Rationale:* Requires Activity logging for visibility. Most complex integration.
+
+*Pitfalls to avoid:* #3 (infinite loop), #4 (no conflict resolution)
+
+**Phase 7: AI Price Comparison (2-3 days)**
+- OpenAI client setup
+- Embedding generation on SupplierItem create
+- Embedding cache in JSON column
+- Comparison API endpoint
+- Price comparison UI with confidence
+- Keyword fallback implementation
+
+*Rationale:* Final feature requiring embeddings infrastructure.
+
+*Pitfalls to avoid:* #4 (semantic for numbers), #5 (single threshold), #6 (no fallback)
+
+**Phase 8: Department & Polish (1-2 days)**
+- Department CRUD under Company
+- DepartmentSelect on Contact form
+- Integration testing all features
+- Mobile responsive testing
+- Performance testing (large task trees)
+
+### Research Flags
+
+| Phase | Needs Research? | Notes |
+|-------|-----------------|-------|
+| Phase 1 | NO | Prisma self-relations well-documented |
+| Phase 2 | NO | Standard CRUD patterns |
+| Phase 3 | MAYBE | Recursive CTE syntax for MariaDB if issues |
+| Phase 4 | NO | Extends v1.3 AI patterns |
+| Phase 5 | NO | Prisma extensions documented |
+| Phase 6 | MAYBE | Sync edge cases if complex |
+| Phase 7 | MAYBE | OpenAI API specifics if issues |
+| Phase 8 | NO | Polish phase |
+
+---
+
+## Confidence Assessment (v1.4)
+
+| Area | Confidence | Notes |
+|------|------------|-------|
+| Supplier Schema | HIGH | Simple entity, follows existing patterns |
+| Task Self-Reference | HIGH | Verified with Prisma official documentation |
+| Task Query Depth | MEDIUM | 3-4 levels in Prisma; unlimited requires raw SQL |
+| Department Schema | HIGH | Simple child entity pattern |
+| Deliverable Schema | HIGH | Follows Project-child patterns |
+| ActivityLog Polymorphic | HIGH | Common pattern, community examples |
+| Bidirectional Sync | MEDIUM | Complex; sync tokens well-documented but edge cases possible |
+| AI Embeddings | HIGH | OpenAI API well-documented |
+| AI Matching Accuracy | MEDIUM | Depends on data quality; threshold tuning needed |
+| Build Order | HIGH | Dependencies clearly mapped |
+
+**Overall Confidence: HIGH**
+
+Research verified against official Prisma documentation, OpenAI API docs, database pattern literature, and established community patterns. All patterns have production examples.
+
+---
+
+## Gaps to Address
+
+1. **SupplierQuoteItem vs Cost:** Research shows two approaches - should suppliers have their own quote items table, or reuse existing Cost model? Recommendation: Use Cost with supplierId link; add SupplierQuoteItem only if distinct price list feature needed later.
+
+2. **Embedding Storage Format:** MariaDB lacks native vector type. Research confirms JSON column is sufficient for <10K items with in-memory comparison. For larger scale, would need PostgreSQL with pgvector.
+
+3. **Tree Virtualization Library:** Research mentions react-vtree but shadcn-tree-view may be sufficient for 3-person team scale. Implement basic first, virtualize if performance issues.
+
+4. **Sync Conflict Resolution:** Research defines field ownership but what happens when both sides edited? Recommendation: Timestamp-based resolution with "last write wins" and clear activity log.
+
+---
+
+## Sources (v1.4)
+
+**Task Hierarchy:**
+- Prisma Self-Relations: https://www.prisma.io/docs/orm/prisma-schema/data-model/relations/self-relations
+- Prisma Recursive Issue #3725: https://github.com/prisma/prisma/issues/3725
+- MariaDB Recursive CTEs: https://mariadb.com/docs/server/reference/sql-statements/data-manipulation/selecting-data/common-table-expressions/recursive-common-table-expressions-overview
+
+**AI Embeddings:**
+- OpenAI Embeddings API: https://platform.openai.com/docs/guides/embeddings
+- Anthropic Embeddings (recommends partners): https://docs.anthropic.com/en/docs/build-with-claude/embeddings
+- text-embedding-3-small: https://platform.openai.com/docs/models/text-embedding-3-small
+
+**Activity Logging:**
+- Prisma Client Extensions: https://www.prisma.io/docs/orm/prisma-client/client-extensions
+- Database Audit Logging: https://vertabelo.com/blog/database-design-for-audit-logging/
+
+**Bidirectional Sync:**
+- Preventing Sync Loops: https://www.workato.com/product-hub/how-to-prevent-infinite-loops-in-bi-directional-data-syncs/
+- Data Sync Patterns: https://dev3lop.com/bidirectional-data-synchronization-patterns-between-systems/
+
+**Price History:**
+- Price History Database Model: https://vertabelo.com/blog/price-history-database-model/
+
+**UI Components:**
+- shadcn-tree-view: https://github.com/MrLightful/shadcn-tree-view
+- React useOptimistic: https://react.dev/reference/react/useOptimistic
+
+---
+
+*v1.4 Research completed: 2026-01-24*
+*Ready for roadmap: yes*

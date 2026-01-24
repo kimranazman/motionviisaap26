@@ -1356,3 +1356,946 @@ Based on dependencies and complexity, here is the recommended phase structure:
 ---
 
 *Architecture research for v1.3: 2026-01-23*
+
+---
+
+# Architecture Patterns: v1.4 Features
+
+**Domain:** Supplier management, task hierarchies, activity logging, company departments, deliverables
+**Researched:** 2026-01-24
+**Overall Confidence:** HIGH (verified against existing codebase patterns and Prisma documentation)
+
+## Executive Summary
+
+The v1.4 features integrate with an existing Next.js 14 + Prisma + MySQL CRM/project management system. The architecture follows established patterns from the codebase: Server Components for data fetching, REST API routes for mutations, and feature-based component organization.
+
+Key architectural decisions:
+1. **Supplier** - New top-level entity linking to Cost via optional foreign key
+2. **Task** - Self-referencing model for infinite subtask hierarchy
+3. **ActivityLog** - Polymorphic table tracking changes across entity types
+4. **Department** - Child model under Company with cascade behavior
+5. **Deliverable** - Junction between Project scope items and Tasks
+
+---
+
+## 1. Schema Design
+
+### 1.1 Supplier Model
+
+**Purpose:** Track vendors/suppliers that provide goods or services, linked to project costs.
+
+```prisma
+// New enum for supplier status
+enum SupplierStatus {
+  ACTIVE
+  INACTIVE
+  PENDING
+}
+
+model Supplier {
+  id          String         @id @default(cuid())
+  name        String         @db.VarChar(255)
+  contactName String?        @map("contact_name") @db.VarChar(255)
+  email       String?        @db.VarChar(255)
+  phone       String?        @db.VarChar(50)
+  address     String?        @db.Text
+  website     String?        @db.VarChar(255)
+  notes       String?        @db.Text
+  status      SupplierStatus @default(ACTIVE)
+
+  costs Cost[]  // Costs associated with this supplier
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+  @@index([status])
+  @@map("suppliers")
+}
+```
+
+**Cost Model Update:**
+```prisma
+model Cost {
+  // ... existing fields ...
+
+  // NEW: Optional link to supplier
+  supplierId String?   @map("supplier_id")
+  supplier   Supplier? @relation(fields: [supplierId], references: [id])
+
+  @@index([supplierId])  // NEW index
+}
+```
+
+**Design Rationale:**
+- Optional `supplierId` on Cost - not all expenses have a supplier (e.g., miscellaneous costs)
+- Supplier is a top-level entity, not nested under Company (suppliers can serve multiple clients)
+- Status enum allows filtering active suppliers in dropdowns
+
+---
+
+### 1.2 Task Model (Self-Referencing Hierarchy)
+
+**Purpose:** Track tasks with infinite subtask nesting capability.
+
+```prisma
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  BLOCKED
+  DONE
+  CANCELLED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model Task {
+  id          String       @id @default(cuid())
+  title       String       @db.VarChar(500)
+  description String?      @db.Text
+  status      TaskStatus   @default(TODO)
+  priority    TaskPriority @default(MEDIUM)
+  dueDate     DateTime?    @map("due_date")
+  position    Int          @default(0)  // For ordering within parent
+
+  // Self-referencing relation for infinite nesting
+  parentId  String? @map("parent_id")
+  parent    Task?   @relation("TaskToSubtask", fields: [parentId], references: [id], onDelete: Cascade)
+  subtasks  Task[]  @relation("TaskToSubtask")
+
+  // Link to Project (root tasks)
+  projectId String?  @map("project_id")
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  // Link to Deliverable (optional, for scope-based tasks)
+  deliverableId String?      @map("deliverable_id")
+  deliverable   Deliverable? @relation(fields: [deliverableId], references: [id], onDelete: SetNull)
+
+  // Assignee (using existing TeamMember enum)
+  assignee TeamMember?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId])
+  @@index([parentId])
+  @@index([deliverableId])
+  @@index([status])
+  @@index([assignee])
+  @@map("tasks")
+}
+```
+
+**Self-Reference Pattern (from [Prisma Self-Relations Documentation](https://www.prisma.io/docs/orm/prisma-schema/data-model/relations/self-relations)):**
+- `parent` and `subtasks` use the same relation name `"TaskToSubtask"`
+- `parentId` is nullable - root tasks have no parent
+- `onDelete: Cascade` - deleting a parent deletes all subtasks
+
+**Query Pattern for Nested Tasks:**
+```typescript
+// Fetch tasks with 3 levels of subtasks
+const tasks = await prisma.task.findMany({
+  where: { projectId, parentId: null },
+  include: {
+    subtasks: {
+      include: {
+        subtasks: {
+          include: {
+            subtasks: true
+          }
+        }
+      }
+    }
+  }
+})
+```
+
+> **Note:** Prisma does not support recursive queries natively ([Issue #3725](https://github.com/prisma/prisma/issues/3725)). For truly unlimited depth, use raw SQL with recursive CTEs, or implement client-side recursion with lazy loading. For most use cases, 3-4 levels of nesting is sufficient.
+
+---
+
+### 1.3 Department Model
+
+**Purpose:** Organize contacts and deals under company departments.
+
+```prisma
+model Department {
+  id        String  @id @default(cuid())
+  name      String  @db.VarChar(100)
+  code      String? @db.VarChar(20)  // e.g., "HR", "IT", "SALES"
+
+  companyId String  @map("company_id")
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  contacts Contact[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([companyId, name])  // No duplicate department names per company
+  @@index([companyId])
+  @@map("departments")
+}
+```
+
+**Company Model Update:**
+```prisma
+model Company {
+  // ... existing fields ...
+
+  departments Department[]  // NEW relation
+}
+```
+
+**Contact Model Update:**
+```prisma
+model Contact {
+  // ... existing fields ...
+
+  // NEW: Optional department link
+  departmentId String?     @map("department_id")
+  department   Department? @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+
+  @@index([departmentId])  // NEW index
+}
+```
+
+**Design Rationale:**
+- Department is optional on Contact - not all contacts need departmental assignment
+- `onDelete: SetNull` - if department is deleted, contacts remain but lose department link
+- Unique constraint on `[companyId, name]` prevents duplicate department names within a company
+
+---
+
+### 1.4 Deliverable Model
+
+**Purpose:** Define scope items/milestones on a Project, linkable to Tasks.
+
+```prisma
+enum DeliverableStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model Deliverable {
+  id          String            @id @default(cuid())
+  title       String            @db.VarChar(255)
+  description String?           @db.Text
+  status      DeliverableStatus @default(PENDING)
+  dueDate     DateTime?         @map("due_date")
+  position    Int               @default(0)  // For ordering
+
+  projectId String  @map("project_id")
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  tasks Task[]  // Tasks linked to this deliverable
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId])
+  @@index([status])
+  @@map("deliverables")
+}
+```
+
+**Project Model Update:**
+```prisma
+model Project {
+  // ... existing fields ...
+
+  deliverables Deliverable[]  // NEW relation
+  tasks        Task[]         // NEW relation for project-level tasks
+}
+```
+
+---
+
+### 1.5 ActivityLog Model (Polymorphic Audit Trail)
+
+**Purpose:** Track changes across all entity types for sync events and audit trail.
+
+```prisma
+enum ActivityAction {
+  CREATED
+  UPDATED
+  DELETED
+  STATUS_CHANGED
+  ASSIGNED
+  SYNCED
+  IMPORTED
+}
+
+model ActivityLog {
+  id          String         @id @default(cuid())
+  entityType  String         @map("entity_type") @db.VarChar(50)  // "Project", "Task", "Deal", etc.
+  entityId    String         @map("entity_id")
+  action      ActivityAction
+  description String?        @db.Text  // Human-readable summary
+  changes     Json?          @db.Json  // Before/after snapshot
+
+  // Actor tracking
+  userId      String?        @map("user_id")
+  user        User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Context for sync events
+  syncSource  String?        @map("sync_source") @db.VarChar(50)  // "EXCEL_IMPORT", "API", etc.
+
+  createdAt   DateTime       @default(now())
+
+  @@index([entityType, entityId])
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("activity_logs")
+}
+```
+
+**User Model Update:**
+```prisma
+model User {
+  // ... existing fields ...
+
+  activityLogs ActivityLog[]  // NEW relation
+}
+```
+
+**Polymorphic Pattern (from [Prisma Audit Trail Discussions](https://github.com/prisma/prisma/discussions/1874)):**
+- `entityType` stores the model name as string (e.g., "Project", "Task", "Deal")
+- `entityId` stores the entity's primary key
+- `changes` stores JSON diff of before/after values
+- No foreign key constraint on entityId (allows logging for any entity type)
+
+**Usage Pattern:**
+```typescript
+// Log a status change
+await prisma.activityLog.create({
+  data: {
+    entityType: 'Task',
+    entityId: task.id,
+    action: 'STATUS_CHANGED',
+    description: `Task status changed from ${oldStatus} to ${newStatus}`,
+    changes: { before: { status: oldStatus }, after: { status: newStatus } },
+    userId: session.user.id,
+  }
+})
+
+// Query activity for an entity
+const activity = await prisma.activityLog.findMany({
+  where: { entityType: 'Project', entityId: projectId },
+  orderBy: { createdAt: 'desc' },
+  take: 20,
+})
+```
+
+---
+
+## 2. Data Flow Diagrams
+
+### 2.1 Entity Relationship Overview
+
+```
+                                    +-------------------+
+                                    |     Company       |
+                                    +-------------------+
+                                             |
+                     +-----------------------+-----------------------+
+                     |                       |                       |
+                     v                       v                       v
+            +-------------+         +-------------+         +-------------+
+            | Department  |         |   Contact   |<--------|    Deal     |
+            +-------------+         +-------------+         +-------------+
+                     |                       |                       |
+                     +-------------------------------------------+
+                                             | (converts to)
+                                             v
+                                    +-------------------+
+                                    |     Project       |
+                                    +-------------------+
+                                             |
+              +------------------------------+------------------------------+
+              |                              |                              |
+              v                              v                              v
+     +-------------+                +-------------+                +-------------+
+     |    Cost     |                | Deliverable |                |    Task     |
+     +-------------+                +-------------+                +-------------+
+              |                              |                              |
+              v                              |                              |
+     +-------------+                         |                              |
+     |  Supplier   |                         +------------------------------+
+     +-------------+                                   (optional link)
+                                                                            |
+                                                                            v
+                                                                   +-------------+
+                                                                   |  Subtasks   |
+                                                                   | (recursive) |
+                                                                   +-------------+
+```
+
+### 2.2 Activity Logging Flow
+
+```
++-----------------------------------------------------------------------------+
+|                              Any Entity Change                               |
+|  (Project, Task, Deal, Contact, Supplier, Deliverable, etc.)                |
++-----------------------------------------------------------------------------+
+                                      |
+                                      v
+                    +---------------------------------+
+                    |       API Route Handler         |
+                    |   (mutation: POST/PATCH/DELETE) |
+                    +---------------------------------+
+                                      |
+                      +---------------+---------------+
+                      |                               |
+                      v                               v
+          +-------------------+           +-------------------+
+          |  Execute Prisma   |           | Create ActivityLog |
+          |    Transaction    |           |      Entry         |
+          +-------------------+           +-------------------+
+                      |                               |
+                      +---------------+---------------+
+                                      |
+                                      v
+                          +-------------------+
+                          |  Return Response  |
+                          +-------------------+
+```
+
+### 2.3 Task Hierarchy Data Flow
+
+```
++-----------------------------------------------------------------------------+
+|                           Project Detail View                                |
++-----------------------------------------------------------------------------+
+                                      |
+                                      v
+                    +---------------------------------+
+                    |     Server Component (Page)     |
+                    |   Fetch tasks with subtasks     |
+                    |   (include: { subtasks: {...}}) |
+                    +---------------------------------+
+                                      |
+                                      v
+                    +---------------------------------+
+                    |   Serialize & Pass to Client    |
+                    |     (dates to ISO strings)      |
+                    +---------------------------------+
+                                      |
+                                      v
+                    +---------------------------------+
+                    |      Client Component           |
+                    |   Recursive TaskTree render     |
+                    +---------------------------------+
+                                      |
+                    +-----------------+-----------------+
+                    |                                   |
+                    v                                   v
+        +-------------------+               +-------------------+
+        |  TaskCard Level 0 |               |  TaskCard Level 0 |
+        +-------------------+               +-------------------+
+                    |
+                    v
+        +-------------------+
+        |  TaskCard Level 1 |
+        |   (indent: 1rem)  |
+        +-------------------+
+                    |
+                    v
+        +-------------------+
+        |  TaskCard Level 2 |
+        |   (indent: 2rem)  |
+        +-------------------+
+```
+
+---
+
+## 3. Component Architecture
+
+### 3.1 New Pages Structure
+
+```
+src/app/(dashboard)/
++-- suppliers/
+|   +-- page.tsx                  # Supplier list with CRUD
++-- projects/
+    +-- [id]/
+        +-- page.tsx              # Project detail (existing pattern)
+        +-- tasks/
+        |   +-- page.tsx          # Task board for project
+        +-- deliverables/
+            +-- page.tsx          # Deliverable management
+```
+
+### 3.2 Component Hierarchy
+
+```
+suppliers/
++-- supplier-list.tsx             # Main list component (Client)
++-- supplier-card.tsx             # Display card (Client)
++-- supplier-form-modal.tsx       # Create/edit modal (Client)
++-- supplier-select.tsx           # Dropdown for Cost form (Client)
+
+tasks/
++-- task-board.tsx                # Kanban or list view (Client)
++-- task-tree.tsx                 # Recursive tree renderer (Client)
++-- task-card.tsx                 # Individual task display (Client)
++-- task-form-modal.tsx           # Create/edit task (Client)
++-- subtask-list.tsx              # Nested subtask section (Client)
+
+deliverables/
++-- deliverable-list.tsx          # List with drag-reorder (Client)
++-- deliverable-card.tsx          # Display card (Client)
++-- deliverable-form-modal.tsx    # Create/edit (Client)
+
+departments/
++-- department-list.tsx           # Under company detail (Client)
++-- department-form.tsx           # Create/edit inline (Client)
++-- department-select.tsx         # Dropdown for Contact form (Client)
+
+activity/
++-- activity-feed.tsx             # Timeline of activities (Client)
++-- activity-item.tsx             # Individual log entry (Client)
++-- activity-filters.tsx          # Filter by entity/action (Client)
+```
+
+### 3.3 Existing Component Updates
+
+**project-detail-sheet.tsx** - Add sections for:
+- Deliverables list with add button
+- Tasks section (link to full task board)
+- Activity feed (recent 5 entries)
+
+**cost-form.tsx** - Add:
+- SupplierSelect dropdown (optional)
+
+**company-detail-modal.tsx** - Add:
+- Departments tab/section
+- Department CRUD inline
+
+**contact-form.tsx** - Add:
+- DepartmentSelect dropdown (scoped to selected company)
+
+---
+
+## 4. API Structure
+
+### 4.1 New API Routes
+
+```
+src/app/api/
++-- suppliers/
+|   +-- route.ts                  # GET (list), POST (create)
+|   +-- [id]/
+|       +-- route.ts              # GET, PATCH, DELETE
+|
++-- projects/
+|   +-- [id]/
+|       +-- deliverables/
+|       |   +-- route.ts          # GET, POST
+|       |   +-- [deliverableId]/
+|       |       +-- route.ts      # GET, PATCH, DELETE
+|       |
+|       +-- tasks/
+|       |   +-- route.ts          # GET (tree), POST (create root task)
+|       |   +-- [taskId]/
+|       |       +-- route.ts      # GET, PATCH, DELETE
+|       |       +-- subtasks/
+|       |           +-- route.ts  # POST (add subtask)
+|       |
+|       +-- activity/
+|           +-- route.ts          # GET (activity for this project)
+|
++-- companies/
+|   +-- [id]/
+|       +-- departments/
+|           +-- route.ts          # GET, POST
+|           +-- [departmentId]/
+|               +-- route.ts      # GET, PATCH, DELETE
+|
++-- activity/
+    +-- route.ts                  # GET (global activity feed with filters)
+```
+
+### 4.2 API Pattern Examples
+
+**GET /api/projects/[id]/tasks** (Fetch task tree):
+```typescript
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { error } = await requireAuth()
+  if (error) return error
+
+  const { id } = await params
+
+  // Fetch root tasks with 3 levels of subtasks
+  const tasks = await prisma.task.findMany({
+    where: { projectId: id, parentId: null },
+    include: {
+      subtasks: {
+        include: {
+          subtasks: {
+            include: { subtasks: true }
+          }
+        }
+      }
+    },
+    orderBy: { position: 'asc' }
+  })
+
+  return NextResponse.json(serializeTasks(tasks))
+}
+```
+
+**POST /api/projects/[id]/tasks/[taskId]/subtasks** (Add subtask):
+```typescript
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string, taskId: string }> }
+) {
+  const { error, session } = await requireEditor()
+  if (error) return error
+
+  const { id: projectId, taskId } = await params
+  const body = await request.json()
+
+  // Verify parent task exists and belongs to project
+  const parent = await prisma.task.findFirst({
+    where: { id: taskId, projectId }
+  })
+  if (!parent) {
+    return NextResponse.json({ error: 'Parent task not found' }, { status: 404 })
+  }
+
+  // Get next position
+  const lastSubtask = await prisma.task.findFirst({
+    where: { parentId: taskId },
+    orderBy: { position: 'desc' }
+  })
+  const nextPosition = (lastSubtask?.position ?? -1) + 1
+
+  const task = await prisma.task.create({
+    data: {
+      title: body.title.trim(),
+      parentId: taskId,
+      projectId,
+      position: nextPosition,
+      // Note: Subtasks inherit projectId from parent
+    }
+  })
+
+  // Log activity
+  await prisma.activityLog.create({
+    data: {
+      entityType: 'Task',
+      entityId: task.id,
+      action: 'CREATED',
+      description: `Subtask "${task.title}" added to "${parent.title}"`,
+      userId: session.user.id,
+    }
+  })
+
+  return NextResponse.json(task, { status: 201 })
+}
+```
+
+---
+
+## 5. Build Order (Dependencies)
+
+### Phase Sequence with Rationale
+
+| Phase | Feature | Depends On | Rationale |
+|-------|---------|------------|-----------|
+| 1 | Supplier CRUD | None | Independent entity, no foreign key dependencies |
+| 2 | Cost-Supplier Link | Supplier | Update Cost model to reference Supplier |
+| 3 | Department CRUD | Company (exists) | Simple child entity under Company |
+| 4 | Contact-Department Link | Department | Update Contact to reference Department |
+| 5 | Deliverable CRUD | Project (exists) | Child entity under Project |
+| 6 | Task CRUD (root level) | Project (exists) | Root tasks linked to Project |
+| 7 | Task Hierarchy | Task | Add subtask creation/display |
+| 8 | Task-Deliverable Link | Deliverable, Task | Optional link between scope and tasks |
+| 9 | ActivityLog Schema | User (exists) | Foundation for all logging |
+| 10 | ActivityLog Integration | All CRUD routes | Add logging to existing mutations |
+
+### Dependency Graph
+
+```
+                      +-----------------+
+                      | 1. Supplier     |
+                      |    CRUD         |
+                      +--------+--------+
+                               |
+                               v
+                      +-----------------+
+                      | 2. Cost-Supplier|
+                      |    Link         |
+                      +-----------------+
+
+
+                      +-----------------+
+                      | 3. Department   |
+                      |    CRUD         |
+                      +--------+--------+
+                               |
+                               v
+                      +-----------------+
+                      | 4. Contact-Dept |
+                      |    Link         |
+                      +-----------------+
+
+
+                      +-----------------+
+                      | 5. Deliverable  |
+                      |    CRUD         |
+                      +--------+--------+
+                               |
+                               +----------------------+
+                               |                      |
+                               v                      v
+                      +-----------------+    +-----------------+
+                      | 6. Task CRUD    |    |                 |
+                      |    (root)       |    |                 |
+                      +--------+--------+    |                 |
+                               |             |                 |
+                               v             |                 |
+                      +-----------------+    |                 |
+                      | 7. Task         |    |                 |
+                      |    Hierarchy    |    |                 |
+                      +--------+--------+    |                 |
+                               |             |                 |
+                               +-------------+                 |
+                                             |                 |
+                                             v                 |
+                                    +-----------------+        |
+                                    | 8. Task-Deliv   |        |
+                                    |    Link         |        |
+                                    +-----------------+        |
+                                                               |
+                                                               |
+                      +-----------------+                      |
+                      | 9. ActivityLog  |                      |
+                      |    Schema       |<---------------------+
+                      +--------+--------+
+                               |
+                               v
+                      +-----------------+
+                      | 10. ActivityLog |
+                      |    Integration  |
+                      +-----------------+
+```
+
+---
+
+## 6. Integration Points
+
+### 6.1 How New Features Connect to Existing System
+
+| New Feature | Connects To | Integration Pattern |
+|-------------|-------------|---------------------|
+| Supplier | Cost (existing) | Optional FK on Cost pointing to Supplier |
+| Department | Company (existing) | Child relation, cascade delete |
+| Department | Contact (existing) | Optional FK on Contact, SetNull on delete |
+| Deliverable | Project (existing) | Child relation, cascade delete |
+| Task | Project (existing) | Parent relation, cascade delete |
+| Task | Deliverable (new) | Optional FK, SetNull on delete |
+| Task | Task (self) | Self-reference for subtasks, cascade delete |
+| ActivityLog | User (existing) | Optional FK for actor tracking |
+| ActivityLog | All entities | Polymorphic via entityType/entityId strings |
+
+### 6.2 UI Integration Points
+
+**Dashboard:**
+- Add "Pending Tasks" widget (similar to existing "Pending Analysis")
+- Add "Recent Activity" widget
+
+**Project Detail Sheet:**
+- Add collapsible "Deliverables" section
+- Add "View Tasks" link (opens task board)
+- Add "Activity" tab in detail sheet
+
+**Cost Form:**
+- Add optional "Supplier" dropdown
+- Auto-suggest supplier based on description
+
+**Company Detail Modal:**
+- Add "Departments" tab alongside existing Contacts tab
+- Department CRUD inline
+
+**Contact Form:**
+- Add "Department" dropdown (filtered by selected company)
+
+### 6.3 Deal/PotentialProject Conversion Enhancement
+
+When Deal converts to Project (stage -> WON), or PotentialProject confirms:
+1. Copy estimated value to `potentialRevenue` (existing)
+2. **NEW:** Log ActivityLog entry with action `CREATED` and source context
+
+```typescript
+// In deal conversion logic
+await prisma.activityLog.create({
+  data: {
+    entityType: 'Project',
+    entityId: project.id,
+    action: 'CREATED',
+    description: `Project created from won deal "${deal.title}"`,
+    changes: {
+      source: { type: 'Deal', id: deal.id, title: deal.title },
+      convertedValue: deal.value
+    },
+    userId: session.user.id,
+  }
+})
+```
+
+---
+
+## 7. Migration Strategy
+
+### 7.1 Database Migration Order
+
+```bash
+# 1. Create Supplier table (independent)
+npx prisma migrate dev --name add_supplier_model
+
+# 2. Add supplierId to Cost table
+npx prisma migrate dev --name add_cost_supplier_link
+
+# 3. Create Department table
+npx prisma migrate dev --name add_department_model
+
+# 4. Add departmentId to Contact table
+npx prisma migrate dev --name add_contact_department_link
+
+# 5. Create Deliverable table
+npx prisma migrate dev --name add_deliverable_model
+
+# 6. Create Task table (with self-reference)
+npx prisma migrate dev --name add_task_model
+
+# 7. Create ActivityLog table
+npx prisma migrate dev --name add_activity_log_model
+```
+
+### 7.2 Backward Compatibility
+
+All new fields are **optional** or have **default values**:
+- `Cost.supplierId` - nullable, existing costs unaffected
+- `Contact.departmentId` - nullable, existing contacts unaffected
+- `Task.parentId` - nullable, root tasks have no parent
+- `Task.deliverableId` - nullable, tasks can exist without deliverable link
+
+No data migration required for existing records.
+
+---
+
+## 8. Anti-Patterns to Avoid
+
+### 8.1 Over-Nesting Task Queries
+
+**Bad:** Fetching unlimited depth in a single query
+```typescript
+// DON'T - can cause memory issues and slow queries
+const tasks = await prisma.task.findMany({
+  include: recursiveInclude(10) // 10 levels deep
+})
+```
+
+**Good:** Limit depth and lazy-load deeper levels
+```typescript
+// DO - fetch 3 levels, load more on expand
+const tasks = await prisma.task.findMany({
+  where: { parentId: null },
+  include: {
+    subtasks: { include: { subtasks: { include: { subtasks: true } } } }
+  }
+})
+```
+
+### 8.2 Activity Log in Transaction
+
+**Bad:** Letting ActivityLog failure roll back main operation
+```typescript
+// DON'T - if log fails, main operation fails too
+await prisma.$transaction([
+  prisma.task.update({ ... }),
+  prisma.activityLog.create({ ... }) // if this fails, update is rolled back
+])
+```
+
+**Good:** Log activity after successful operation
+```typescript
+// DO - main operation succeeds even if logging fails
+const task = await prisma.task.update({ ... })
+try {
+  await prisma.activityLog.create({ ... })
+} catch (logError) {
+  console.error('Activity logging failed:', logError)
+  // Don't throw - main operation already succeeded
+}
+```
+
+### 8.3 Tight Coupling Department to Contact
+
+**Bad:** Making department required on contact
+```typescript
+// DON'T - breaks existing contacts
+model Contact {
+  departmentId String     // required
+  department   Department @relation(...)
+}
+```
+
+**Good:** Keep it optional
+```typescript
+// DO - backward compatible
+model Contact {
+  departmentId String?     // optional
+  department   Department? @relation(...)
+}
+```
+
+---
+
+## Sources
+
+**Prisma Documentation:**
+- [Self-relations](https://www.prisma.io/docs/orm/prisma-schema/data-model/relations/self-relations) - Official pattern for parent-child hierarchies
+- [Relation queries](https://www.prisma.io/docs/orm/prisma-client/queries/relation-queries) - Nested include patterns
+
+**GitHub Discussions:**
+- [Recursive relationships Issue #3725](https://github.com/prisma/prisma/issues/3725) - Limitations of Prisma recursive queries
+- [Audit Trail Discussion #1874](https://github.com/prisma/prisma/discussions/1874) - Community patterns for activity logging
+- [Prisma Client Extensions - Audit Log Context](https://github.com/prisma/prisma-client-extensions/tree/main/audit-log-context) - Official example implementation
+
+**Industry Best Practices:**
+- [Supplier Master Data Management](https://www.verdantis.com/vendor-master-data/) - Data model recommendations
+- [Bemi - Automatic Audit Trail](https://bemi.io/) - Polymorphic tracking patterns
+
+---
+
+## Confidence Assessment (v1.4)
+
+| Area | Confidence | Rationale |
+|------|------------|-----------|
+| Supplier Schema | HIGH | Simple entity, follows existing Cost/Company patterns |
+| Task Self-Reference | HIGH | Verified with Prisma official documentation |
+| Task Query Depth | MEDIUM | 3-4 levels sufficient for most cases; unlimited requires raw SQL |
+| Department Schema | HIGH | Simple child entity pattern, well-established |
+| Deliverable Schema | HIGH | Follows existing Project-child patterns |
+| ActivityLog Polymorphic | HIGH | Common pattern, verified with Prisma community examples |
+| Build Order | HIGH | Dependencies clearly mapped, incremental approach |
+
+---
+
+*Architecture research for v1.4: 2026-01-24*
+*Confidence: HIGH - verified against existing codebase patterns and official Prisma documentation*
