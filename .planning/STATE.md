@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 31 of 35 (Department Organization)
-Plan: 01 complete
+Plan: 02 complete
 Status: In progress
-Last activity: 2026-01-24 - Completed 31-01-PLAN.md (Department CRUD with contact assignment)
+Last activity: 2026-01-24 - Completed 31-02-PLAN.md (Deal & Potential Department Assignment)
 
-Progress: v1.4 [██████░░░░░░░░░░░░░░░░░░░░░░░░░] 31% (4/13 plans)
+Progress: v1.4 [████████░░░░░░░░░░░░░░░░░░░░░░░] 38% (5/13 plans)
 
 ## Milestone History
 
@@ -34,9 +34,9 @@ Progress: v1.4 [██████░░░░░░░░░░░░░░░�
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 70 (v1.0-v1.4 partial)
+- Total plans completed: 71 (v1.0-v1.4 partial)
 - Average duration: 4.1 min
-- Total execution time: 297 min
+- Total execution time: 302 min
 
 **By Milestone (summary):**
 
@@ -49,7 +49,7 @@ Progress: v1.4 [██████░░░░░░░░░░░░░░░�
 | v1.3 | 21-25 | 18 | 5.1min |
 | v1.3.1 | 26 | 3 | 2.7min |
 | v1.3.2 | 27-28 | 4 | 4.8min |
-| v1.4 | 29-35 | 4 | 7.0min (partial) |
+| v1.4 | 29-35 | 5 | 6.6min (partial) |
 
 ## Accumulated Context
 
@@ -69,6 +69,8 @@ Recent decisions from v1.4:
 - Delete department via transaction that unlinks contacts/deals/potentials first
 - DepartmentSelect only shown in ContactForm when departments.length > 0
 - Departments section placed between contacts and related items in modal
+- Contact filtering shows department contacts plus company-wide contacts (departmentId null)
+- Department selection resets contact if not in filtered list
 
 ### Pending Todos
 
@@ -80,6 +82,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-24T15:14:30Z
-Stopped at: Completed 31-01-PLAN.md
+Last session: 2026-01-24T15:25:00Z
+Stopped at: Completed 31-02-PLAN.md
 Resume file: None
