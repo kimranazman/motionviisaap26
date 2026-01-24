@@ -151,17 +151,13 @@ async function autoImportInvoice(
     }
   }
 
-  // Update revenue
-  const currentRevenue = project.revenue ? Number(project.revenue) : 0
-  const currentAiRevenue = project.aiImportedRevenue ? Number(project.aiImportedRevenue) : 0
-  const newRevenue = currentRevenue + results.total
-  const newAiRevenue = currentAiRevenue + results.total
-
+  // Replace revenue with AI-extracted amount (invoice is the source of truth)
+  // Previous revenue may have been an estimate from deal/potential
   await prisma.project.update({
     where: { id: projectId },
     data: {
-      revenue: newRevenue,
-      aiImportedRevenue: newAiRevenue,
+      revenue: results.total,
+      aiImportedRevenue: results.total,
     },
   })
 

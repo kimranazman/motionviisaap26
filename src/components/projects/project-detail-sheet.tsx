@@ -182,7 +182,7 @@ function FinancialsSummary({ revenue, aiImportedRevenue, totalCosts, profit, cos
           </div>
           <div className="text-xs text-green-600/70 mt-0.5">
             {hasAiRevenue
-              ? `${formatCurrency(aiRevenueValue)} from AI`
+              ? 'From AI invoice'
               : revenueValue > 0
                 ? 'From invoices'
                 : 'No invoices yet'}
@@ -213,16 +213,16 @@ function FinancialsSummary({ revenue, aiImportedRevenue, totalCosts, profit, cos
 
       {/* Profit/Loss card - full width */}
       <Card className={cn(
-        'p-3',
+        'p-3 overflow-hidden',
         isProfitable && 'bg-green-100 border-green-200',
         isLoss && 'bg-red-100 border-red-200',
         isBreakEven && 'bg-gray-100 border-gray-200'
       )}>
-        <div className="flex items-center justify-between">
-          <div>
+        <div className="flex items-center justify-between gap-2">
+          <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <ProfitIcon className={cn(
-                'h-4 w-4',
+                'h-4 w-4 flex-shrink-0',
                 isProfitable && 'text-green-700',
                 isLoss && 'text-red-700',
                 isBreakEven && 'text-gray-600'
@@ -237,7 +237,7 @@ function FinancialsSummary({ revenue, aiImportedRevenue, totalCosts, profit, cos
               </div>
             </div>
             <div className={cn(
-              'text-xl font-bold mt-1',
+              'text-xl font-bold mt-1 truncate',
               isProfitable && 'text-green-800',
               isLoss && 'text-red-800',
               isBreakEven && 'text-gray-700'
@@ -247,7 +247,7 @@ function FinancialsSummary({ revenue, aiImportedRevenue, totalCosts, profit, cos
           </div>
           {revenueValue > 0 && (
             <div className={cn(
-              'text-right',
+              'text-right flex-shrink-0',
               isProfitable && 'text-green-700',
               isLoss && 'text-red-700',
               isBreakEven && 'text-gray-600'

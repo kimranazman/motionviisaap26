@@ -74,19 +74,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Update project revenue if requested
+    // Replace project revenue with AI-extracted amount (invoice is source of truth)
     let updatedProject = project
     if (addToRevenue && extraction.total) {
-      const currentRevenue = project.revenue ? Number(project.revenue) : 0
-      const currentAiRevenue = project.aiImportedRevenue ? Number(project.aiImportedRevenue) : 0
-      const newRevenue = currentRevenue + extraction.total
-      const newAiRevenue = currentAiRevenue + extraction.total
-
       updatedProject = await prisma.project.update({
         where: { id: projectId },
         data: {
-          revenue: newRevenue,
-          aiImportedRevenue: newAiRevenue,
+          revenue: extraction.total,
+          aiImportedRevenue: extraction.total,
         },
         select: { id: true, revenue: true, aiImportedRevenue: true },
       })
