@@ -166,7 +166,12 @@ Plans:
   7. Archived items hidden from default views
   8. User can toggle "Show Archived" to see archived items
   9. User can unarchive items
-**Plans**: TBD (will be created during planning)
+**Plans**: 3 plans
+
+Plans:
+- [ ] 27-01-PLAN.md — Schema & API updates (isArchived field, project include, archive filter)
+- [ ] 27-02-PLAN.md — Conversion visibility UI (badges, View Project, variance, read-only)
+- [ ] 27-03-PLAN.md — Archive system UI (toggle, archive buttons, deep linking)
 
 ## Progress
 
@@ -178,7 +183,7 @@ Plans:
 | 24. Dashboard Customization UI | v1.3 | 5/5 | Complete | 2026-01-23 |
 | 25. AI Document Intelligence | v1.3 | 5/5 | Complete | 2026-01-24 |
 | 26. Revenue Model Refinement | v1.3.1 | 3/3 | Complete | 2026-01-24 |
-| 27. Conversion Visibility & Archive | v1.3.2 | 0/? | In Progress | - |
+| 27. Conversion Visibility & Archive | v1.3.2 | 0/3 | In Progress | - |
 
 ---
 *Roadmap created: 2026-01-23*
