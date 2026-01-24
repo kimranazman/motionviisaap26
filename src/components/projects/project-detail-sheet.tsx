@@ -33,7 +33,7 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
-import { Loader2, Trash2, ArrowRight, Plus, Target, DollarSign, CalendarIcon, TrendingUp, TrendingDown, Minus, Sparkles } from 'lucide-react'
+import { Loader2, Trash2, ArrowRight, Plus, Target, DollarSign, CalendarIcon, TrendingUp, TrendingDown, Minus, Sparkles, Archive, ArchiveRestore } from 'lucide-react'
 import { CompanySelect } from '@/components/pipeline/company-select'
 import { ContactSelect } from '@/components/pipeline/contact-select'
 import { InitiativeSelect } from './initiative-select'
@@ -99,6 +99,7 @@ interface Project {
   status: string
   startDate: string | null
   endDate: string | null
+  isArchived?: boolean
   company: { id: string; name: string } | null
   contact: { id: string; name: string } | null
   initiative: { id: string; title: string } | null
@@ -364,6 +365,7 @@ export function ProjectDetailSheet({
   const [description, setDescription] = useState('')
   const [isSaving, setIsSaving] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [isArchiving, setIsArchiving] = useState(false)
   const [isLoadingContacts, setIsLoadingContacts] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [costs, setCosts] = useState<Cost[]>([])
@@ -672,6 +674,30 @@ export function ProjectDetailSheet({
       } catch (error) {
         console.error('Failed to refresh costs:', error)
       }
+    }
+  }
+
+  const handleArchive = async () => {
+    if (!project) return
+    setIsArchiving(true)
+    try {
+      const response = await fetch(`/api/projects/${project.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isArchived: !project.isArchived }),
+      })
+      if (response.ok) {
+        const updated = await response.json()
+        onUpdate(updated)
+        toast.success(updated.isArchived ? 'Project archived' : 'Project unarchived')
+      } else {
+        toast.error('Failed to update archive status')
+      }
+    } catch (err) {
+      console.error('Failed to archive project:', err)
+      toast.error('Failed to update archive status')
+    } finally {
+      setIsArchiving(false)
     }
   }
 
@@ -1020,38 +1046,61 @@ export function ProjectDetailSheet({
           />
         )}
 
-        <SheetFooter className="p-4 border-t flex-col sm:flex-row gap-2 sm:gap-0 justify-between sm:justify-between">
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="ghost"
-                className="text-red-600 hover:text-red-700 hover:bg-red-50 w-full sm:w-auto"
-                disabled={isDeleting}
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
-                Delete
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Delete Project</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Are you sure you want to delete &quot;{project.title}&quot;? This
-                  action cannot be undone.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleDelete}
+        <SheetFooter className="p-4 border-t flex-row gap-2 justify-between sm:justify-between">
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleArchive}
+              disabled={isArchiving}
+              className={project.isArchived ? 'text-blue-600' : 'text-gray-600'}
+            >
+              {project.isArchived ? (
+                <>
+                  <ArchiveRestore className="mr-2 h-4 w-4" />
+                  Unarchive
+                </>
+              ) : (
+                <>
+                  <Archive className="mr-2 h-4 w-4" />
+                  Archive
+                </>
+              )}
+            </Button>
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
                   disabled={isDeleting}
-                  className="bg-red-600 hover:bg-red-700"
                 >
-                  {isDeleting ? 'Deleting...' : 'Delete Project'}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete Project</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to delete &quot;{project.title}&quot;? This
+                    action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDelete}
+                    disabled={isDeleting}
+                    className="bg-red-600 hover:bg-red-700"
+                  >
+                    {isDeleting ? 'Deleting...' : 'Delete Project'}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
 
           <Button
             onClick={handleSave}

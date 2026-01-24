@@ -4,8 +4,17 @@ import prisma from '@/lib/prisma'
 
 export const dynamic = 'force-dynamic'
 
-export default async function ProjectsPage() {
+export default async function ProjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ showArchived?: string; open?: string }>
+}) {
+  const { showArchived, open } = await searchParams
+
   const projects = await prisma.project.findMany({
+    where: {
+      ...(showArchived !== 'true' ? { isArchived: false } : {}),
+    },
     include: {
       company: {
         select: { id: true, name: true },
@@ -50,7 +59,11 @@ export default async function ProjectsPage() {
         description="Manage active projects and track deliverables"
       />
       <main className="flex-1 overflow-auto p-6">
-        <ProjectList initialData={serializedProjects} />
+        <ProjectList
+          initialData={serializedProjects}
+          initialShowArchived={showArchived === 'true'}
+          openProjectId={open}
+        />
       </main>
     </div>
   )

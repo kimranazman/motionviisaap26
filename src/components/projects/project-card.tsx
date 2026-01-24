@@ -2,7 +2,7 @@
 
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
-import { Building2, ArrowRight, Plus } from 'lucide-react'
+import { Building2, ArrowRight, Plus, Archive } from 'lucide-react'
 import { formatProjectStatus, getProjectStatusColor } from '@/lib/project-utils'
 import { cn } from '@/lib/utils'
 
@@ -13,6 +13,7 @@ interface Project {
   revenue: number | null              // Actual revenue from AI invoices
   potentialRevenue: number | null     // From deal/potential conversion
   status: string
+  isArchived?: boolean
   company: { id: string; name: string } | null
   contact: { id: string; name: string } | null
   initiative: { id: string; title: string } | null
@@ -125,6 +126,17 @@ export function ProjectCard({ project, onClick }: ProjectCardProps) {
               className="text-xs bg-purple-50 text-purple-700 border-purple-200"
             >
               KRI
+            </Badge>
+          )}
+
+          {/* Archived badge */}
+          {project.isArchived && (
+            <Badge
+              variant="outline"
+              className="text-xs bg-gray-100 text-gray-500 border-gray-200"
+            >
+              <Archive className="h-3 w-3 mr-1" />
+              Archived
             </Badge>
           )}
         </div>

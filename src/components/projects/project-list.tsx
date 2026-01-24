@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
-import { Plus } from 'lucide-react'
+import { Plus, Archive } from 'lucide-react'
 import { ProjectCard } from './project-card'
 import { ProjectFormModal } from './project-form-modal'
 import { ProjectDetailSheet } from './project-detail-sheet'
@@ -20,6 +20,7 @@ interface Project {
   status: string
   startDate: string | null
   endDate: string | null
+  isArchived?: boolean
   company: { id: string; name: string } | null
   contact: { id: string; name: string } | null
   initiative: { id: string; title: string } | null
@@ -29,9 +30,11 @@ interface Project {
 
 interface ProjectListProps {
   initialData: Project[]
+  initialShowArchived?: boolean
+  openProjectId?: string
 }
 
-export function ProjectList({ initialData }: ProjectListProps) {
+export function ProjectList({ initialData, initialShowArchived = false, openProjectId }: ProjectListProps) {
   const { data: session } = useSession()
   const userCanEdit = canEdit(session?.user?.role as never)
 
@@ -40,6 +43,19 @@ export function ProjectList({ initialData }: ProjectListProps) {
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
+  const [showArchived, setShowArchived] = useState(initialShowArchived)
+  const [isTogglingArchived, setIsTogglingArchived] = useState(false)
+
+  // Handle opening project from URL param
+  useState(() => {
+    if (openProjectId) {
+      const projectToOpen = initialData.find(p => p.id === openProjectId)
+      if (projectToOpen) {
+        setSelectedProject(projectToOpen)
+        setIsDetailOpen(true)
+      }
+    }
+  })
 
   // Filter projects by selected status
   const filteredProjects =
@@ -76,13 +92,54 @@ export function ProjectList({ initialData }: ProjectListProps) {
     ...PROJECT_STATUSES.map((s) => ({ id: s.id as ProjectStatusId, label: s.title })),
   ]
 
+  // Toggle archive visibility
+  const handleToggleArchived = async () => {
+    const newValue = !showArchived
+    setIsTogglingArchived(true)
+    setShowArchived(newValue)
+
+    // Update URL
+    const url = new URL(window.location.href)
+    if (newValue) {
+      url.searchParams.set('showArchived', 'true')
+    } else {
+      url.searchParams.delete('showArchived')
+    }
+    window.history.replaceState({}, '', url)
+
+    // Refetch data
+    try {
+      const response = await fetch(`/api/projects?showArchived=${newValue}`)
+      if (response.ok) {
+        const data = await response.json()
+        setProjects(data)
+      }
+    } catch (error) {
+      console.error('Failed to fetch projects:', error)
+    } finally {
+      setIsTogglingArchived(false)
+    }
+  }
+
   return (
     <div className="space-y-6">
-      {/* Header with filter and add button */}
-      <div className="flex items-center justify-between">
-        {/* Status filter tabs */}
-        <div className="flex items-center gap-1 p-1 bg-gray-100 rounded-lg">
-          {statusTabs.map((tab) => (
+      {/* Header with archive toggle, filter and add button */}
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        {/* Left side: Archive toggle and status filter */}
+        <div className="flex items-center gap-3">
+          <Button
+            variant={showArchived ? 'secondary' : 'ghost'}
+            size="sm"
+            onClick={handleToggleArchived}
+            disabled={isTogglingArchived}
+          >
+            <Archive className="h-4 w-4 mr-1" />
+            {showArchived ? 'Showing Archived' : 'Show Archived'}
+          </Button>
+
+          {/* Status filter tabs */}
+          <div className="flex items-center gap-1 p-1 bg-gray-100 rounded-lg">
+            {statusTabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setSelectedStatus(tab.id)}
@@ -96,6 +153,7 @@ export function ProjectList({ initialData }: ProjectListProps) {
               {tab.label}
             </button>
           ))}
+          </div>
         </div>
 
         {/* Add button */}
