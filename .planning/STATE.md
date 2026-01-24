@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Team can visualize and track initiative progress with secure access, full CRM, customizable dashboards, project document management, AI document intelligence, conversion visibility, archive management, and intelligent project delivery with supplier tracking and task management.
-**Current focus:** v1.4 Intelligent Automation & Organization - Phase 29 ready to plan
+**Current focus:** v1.4 Intelligent Automation & Organization - Phase 29 in progress
 
 ## Current Position
 
 Phase: 29 of 35 (Schema Foundation)
-Plan: Ready to plan
-Status: v1.4 milestone roadmap created
-Last activity: 2026-01-24 - v1.4 roadmap created with 7 phases (29-35)
+Plan: 01 of 02
+Status: In progress
+Last activity: 2026-01-24 - Completed 29-01-PLAN.md (Schema models)
 
-Progress: v1.4 [                                ] 0% (0/13 plans)
+Progress: v1.4 [##                              ] 8% (1/13 plans)
 
 ## Milestone History
 
@@ -56,11 +56,10 @@ Progress: v1.4 [                                ] 0% (0/13 plans)
 
 Full decision log in PROJECT.md Key Decisions table.
 
-Recent decisions from v1.3.2:
-- Archive filter default off (clean views by default)
-- Read-only for converted AND lost (prevents accidental edits)
-- View Project via ?open= param (URL pattern for deep linking)
-- Server queries mirror API includes (initial render parity)
+Recent decisions from v1.4:
+- Renamed Department enum to InitiativeDepartment (avoids name collision with Department model)
+- Global tags for tasks (simpler initial implementation, can add projectId later)
+- Task self-reference uses onDelete: NoAction (cascade handled in app code)
 
 ### Pending Todos
 
@@ -73,5 +72,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: v1.4 roadmap created
-Resume: Start planning with `/gsd:plan-phase 29`
+Stopped at: Completed 29-01-PLAN.md
+Resume: Execute next plan with `/gsd:execute-plan 29-02`
