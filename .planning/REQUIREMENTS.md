@@ -39,7 +39,7 @@ Requirements for v1.4 Intelligent Automation & Organization milestone.
 - [ ] **DEPT-05**: User can assign contact to department
 - [ ] **DEPT-06**: User can assign deal to department
 - [ ] **DEPT-07**: User can assign potential project to department
-- [ ] **DEPT-08**: Company → Department → Contact selection flow in forms
+- [ ] **DEPT-08**: Company -> Department -> Contact selection flow in forms
 
 ### Project Deliverables
 
@@ -109,56 +109,56 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SYNC-01 | TBD | Pending |
-| SYNC-02 | TBD | Pending |
-| SYNC-03 | TBD | Pending |
-| SYNC-04 | TBD | Pending |
-| SYNC-05 | TBD | Pending |
-| SYNC-06 | TBD | Pending |
-| SUPP-01 | TBD | Pending |
-| SUPP-02 | TBD | Pending |
-| SUPP-03 | TBD | Pending |
-| SUPP-04 | TBD | Pending |
-| SUPP-05 | TBD | Pending |
-| SUPP-06 | TBD | Pending |
-| SUPP-07 | TBD | Pending |
-| SUPP-08 | TBD | Pending |
-| SUPP-09 | TBD | Pending |
-| SUPP-10 | TBD | Pending |
-| SUPP-11 | TBD | Pending |
-| DEPT-01 | TBD | Pending |
-| DEPT-02 | TBD | Pending |
-| DEPT-03 | TBD | Pending |
-| DEPT-04 | TBD | Pending |
-| DEPT-05 | TBD | Pending |
-| DEPT-06 | TBD | Pending |
-| DEPT-07 | TBD | Pending |
-| DEPT-08 | TBD | Pending |
-| DELV-01 | TBD | Pending |
-| DELV-02 | TBD | Pending |
-| DELV-03 | TBD | Pending |
-| DELV-04 | TBD | Pending |
-| DELV-05 | TBD | Pending |
-| TASK-01 | TBD | Pending |
-| TASK-02 | TBD | Pending |
-| TASK-03 | TBD | Pending |
-| TASK-04 | TBD | Pending |
-| TASK-05 | TBD | Pending |
-| TASK-06 | TBD | Pending |
-| TASK-07 | TBD | Pending |
-| TASK-08 | TBD | Pending |
-| TASK-09 | TBD | Pending |
-| TASK-10 | TBD | Pending |
-| TASK-11 | TBD | Pending |
-| TASK-12 | TBD | Pending |
-| TASK-13 | TBD | Pending |
-| TASK-14 | TBD | Pending |
+| SYNC-01 | 34 | Pending |
+| SYNC-02 | 34 | Pending |
+| SYNC-03 | 34 | Pending |
+| SYNC-04 | 34 | Pending |
+| SYNC-05 | 34 | Pending |
+| SYNC-06 | 34 | Pending |
+| SUPP-01 | 30 | Pending |
+| SUPP-02 | 30 | Pending |
+| SUPP-03 | 30 | Pending |
+| SUPP-04 | 30 | Pending |
+| SUPP-05 | 30 | Pending |
+| SUPP-06 | 30 | Pending |
+| SUPP-07 | 30 | Pending |
+| SUPP-08 | 30 | Pending |
+| SUPP-09 | 30 | Pending |
+| SUPP-10 | 35 | Pending |
+| SUPP-11 | 35 | Pending |
+| DEPT-01 | 31 | Pending |
+| DEPT-02 | 31 | Pending |
+| DEPT-03 | 31 | Pending |
+| DEPT-04 | 31 | Pending |
+| DEPT-05 | 31 | Pending |
+| DEPT-06 | 31 | Pending |
+| DEPT-07 | 31 | Pending |
+| DEPT-08 | 31 | Pending |
+| DELV-01 | 32 | Pending |
+| DELV-02 | 32 | Pending |
+| DELV-03 | 32 | Pending |
+| DELV-04 | 32 | Pending |
+| DELV-05 | 32 | Pending |
+| TASK-01 | 33 | Pending |
+| TASK-02 | 33 | Pending |
+| TASK-03 | 33 | Pending |
+| TASK-04 | 33 | Pending |
+| TASK-05 | 33 | Pending |
+| TASK-06 | 33 | Pending |
+| TASK-07 | 33 | Pending |
+| TASK-08 | 33 | Pending |
+| TASK-09 | 33 | Pending |
+| TASK-10 | 33 | Pending |
+| TASK-11 | 33 | Pending |
+| TASK-12 | 33 | Pending |
+| TASK-13 | 33 | Pending |
+| TASK-14 | 33 | Pending |
 
 **Coverage:**
-- v1.4 requirements: 45 total
-- Mapped to phases: 0
-- Unmapped: 45
+- v1.4 requirements: 44 total
+- Mapped to phases: 44
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-24*
-*Last updated: 2026-01-24 after initial definition*
+*Last updated: 2026-01-24 after v1.4 roadmap creation*

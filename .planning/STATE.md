@@ -4,17 +4,17 @@
 
 See: .planning/PROJECT.md (updated 2026-01-24)
 
-**Core value:** Team can visualize and track initiative progress with secure access, full CRM, customizable dashboards, project document management, AI document intelligence, revenue model with estimate/actual separation, conversion visibility, and archive management.
-**Current focus:** v1.3.2 complete — ready for v1.4 planning
+**Core value:** Team can visualize and track initiative progress with secure access, full CRM, customizable dashboards, project document management, AI document intelligence, conversion visibility, archive management, and intelligent project delivery with supplier tracking and task management.
+**Current focus:** v1.4 Intelligent Automation & Organization - Phase 29 ready to plan
 
 ## Current Position
 
-Phase: 28 of 28 (Server Query Project Include Fix)
-Plan: Complete
-Status: v1.3.2 milestone shipped
-Last activity: 2026-01-24 — v1.3.2 milestone archived
+Phase: 29 of 35 (Schema Foundation)
+Plan: Ready to plan
+Status: v1.4 milestone roadmap created
+Last activity: 2026-01-24 - v1.4 roadmap created with 7 phases (29-35)
 
-Progress: v1.3.2 [################################] 100% (4/4 plans complete)
+Progress: v1.4 [                                ] 0% (0/13 plans)
 
 ## Milestone History
 
@@ -27,48 +27,28 @@ Progress: v1.3.2 [################################] 100% (4/4 plans complete)
 | v1.3 | Document Management & Dashboard Customization | 21-25 | 2026-01-24 |
 | v1.3.1 | Revenue Model Refinement | 26 | 2026-01-24 |
 | v1.3.2 | Conversion Visibility & Archive | 27-28 | 2026-01-24 |
+| v1.4 | Intelligent Automation & Organization | 29-35 | In progress |
 
 **Archives:** `.planning/milestones/`
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 67
+- Total plans completed: 67 (v1.0-v1.3.2)
 - Average duration: 4.1 min
 - Total execution time: 277 min
 
-**By Phase (v1.0-v1.3.2):**
+**By Milestone (summary):**
 
-| Phase | Plans | Total | Avg/Plan |
-|-------|-------|-------|----------|
-| 01-navigation-detail-page | 2 | 18min | 9min |
-| 02-header-features | 2 | 8min | 4min |
-| 03-kanban-quick-actions | 1 | 3min | 3min |
-| 04-auth-foundation | 4 | 13min | 3min |
-| 05-role-infrastructure | 1 | 3min | 3min |
-| 06-route-protection | 2 | 5min | 2.5min |
-| 07-admin-user-management | 2 | 7min | 3.5min |
-| 08-role-based-ui | 2 | 7min | 3.5min |
-| 09-foundation | 1 | 5min | 5min |
-| 10-companies-contacts | 2 | 8min | 4min |
-| 11-sales-pipeline | 2 | 7min | 3.5min |
-| 12-potential-projects | 1 | 6min | 6min |
-| 13-projects-conversion | 3 | 10min | 3.3min |
-| 14-project-costs | 2 | 7min | 3.5min |
-| 15-dashboard-widgets | 2 | 9min | 4.5min |
-| 16-navigation-layout-foundation | 2 | 6min | 3min |
-| 17-kanban-responsive | 3 | 21min | 7min |
-| 18-tables-responsive | 3 | 11min | 3.7min |
-| 19-forms-modals-responsive | 3 | 12min | 4min |
-| 20-dashboard-detail-pages | 3 | 7min | 2.3min |
-| 21-infrastructure-schema | 2 | 8min | 4min |
-| 22-document-management | 3 | 28min | 9.3min |
-| 23-widget-registry-roles | 3 | 10min | 3.3min |
-| 24-dashboard-customization-ui | 5 | 21min | 4.2min |
-| 25-ai-document-intelligence | 5 | 24min | 4.8min |
-| 26-revenue-model-refinement | 3 | 8min | 2.7min |
-| 27-conversion-visibility-archive | 3 | 16min | 5.3min |
-| 28-server-query-project-include | 1 | 3min | 3min |
+| Milestone | Phases | Plans | Avg/Plan |
+|-----------|--------|-------|----------|
+| v1.0 | 1-3 | 5 | 5.8min |
+| v1.1 | 4-8 | 11 | 3.2min |
+| v1.2 | 9-15 | 13 | 4.0min |
+| v1.2.1 | 16-20 | 14 | 4.1min |
+| v1.3 | 21-25 | 18 | 5.1min |
+| v1.3.1 | 26 | 3 | 2.7min |
+| v1.3.2 | 27-28 | 4 | 4.8min |
 
 ## Accumulated Context
 
@@ -76,7 +56,7 @@ Progress: v1.3.2 [################################] 100% (4/4 plans complete)
 
 Full decision log in PROJECT.md Key Decisions table.
 
-Recent decisions added in v1.3.2:
+Recent decisions from v1.3.2:
 - Archive filter default off (clean views by default)
 - Read-only for converted AND lost (prevents accidental edits)
 - View Project via ?open= param (URL pattern for deep linking)
@@ -93,5 +73,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: v1.3.2 milestone complete and archived
-Resume: Start v1.4 with `/gsd:new-milestone`
+Stopped at: v1.4 roadmap created
+Resume: Start planning with `/gsd:plan-phase 29`
