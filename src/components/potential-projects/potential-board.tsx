@@ -23,7 +23,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
-import { Plus } from 'lucide-react'
+import { Plus, Archive } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PotentialColumn } from './potential-column'
 import { PotentialCard } from './potential-card'
@@ -41,17 +41,19 @@ interface PotentialProject {
   estimatedValue: number | null
   stage: string
   position: number
+  isArchived?: boolean
   company: { id: string; name: string } | null
   contact: { id: string; name: string } | null
 }
 
 interface PotentialBoardProps {
   initialData: PotentialProject[]
+  initialShowArchived?: boolean
 }
 
 const STAGE_IDS: string[] = POTENTIAL_STAGES.map(s => s.id)
 
-export function PotentialBoard({ initialData }: PotentialBoardProps) {
+export function PotentialBoard({ initialData, initialShowArchived = false }: PotentialBoardProps) {
   const { data: session } = useSession()
   const userCanEdit = canEdit(session?.user?.role)
 
@@ -61,6 +63,8 @@ export function PotentialBoard({ initialData }: PotentialBoardProps) {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [selectedProject, setSelectedProject] = useState<PotentialProject | null>(null)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
+  const [showArchived, setShowArchived] = useState(initialShowArchived)
+  const [isTogglingArchived, setIsTogglingArchived] = useState(false)
 
   // Track original stage before drag for reverting
   const originalStageRef = useRef<string | null>(null)
@@ -282,11 +286,48 @@ export function PotentialBoard({ initialData }: PotentialBoardProps) {
     setProjects(prev => prev.filter(p => p.id !== projectId))
   }
 
+  // Toggle archive visibility
+  const handleToggleArchived = async () => {
+    const newValue = !showArchived
+    setIsTogglingArchived(true)
+    setShowArchived(newValue)
+
+    // Update URL
+    const url = new URL(window.location.href)
+    if (newValue) {
+      url.searchParams.set('showArchived', 'true')
+    } else {
+      url.searchParams.delete('showArchived')
+    }
+    window.history.replaceState({}, '', url)
+
+    // Refetch data
+    try {
+      const response = await fetch(`/api/potential-projects?showArchived=${newValue}`)
+      if (response.ok) {
+        const data = await response.json()
+        setProjects(data)
+      }
+    } catch (error) {
+      console.error('Failed to fetch potential projects:', error)
+    } finally {
+      setIsTogglingArchived(false)
+    }
+  }
+
   return (
     <>
-      {/* Header with Add Project button */}
+      {/* Header with Archive toggle and Add Project button */}
       <div className="flex justify-between items-center mb-4">
-        <div /> {/* Spacer for alignment */}
+        <Button
+          variant={showArchived ? 'secondary' : 'ghost'}
+          size="sm"
+          onClick={handleToggleArchived}
+          disabled={isTogglingArchived}
+        >
+          <Archive className="h-4 w-4 mr-1" />
+          {showArchived ? 'Showing Archived' : 'Show Archived'}
+        </Button>
         {userCanEdit && (
           <Button onClick={() => setIsCreateModalOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />

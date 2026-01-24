@@ -4,7 +4,7 @@ import { useRef } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { cn, formatCurrency } from '@/lib/utils'
-import { Building2, User, MoreHorizontal, Eye, GripVertical, ArrowRight } from 'lucide-react'
+import { Building2, User, MoreHorizontal, Eye, GripVertical, ArrowRight, Archive } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -49,10 +49,10 @@ export function PotentialCard({ project, onClick, isDragging, canEdit = true }: 
     isDragging: isSorting,
   } = useSortable({
     id: project.id,
-    disabled: !canEdit,
+    disabled: !canEdit || project.isArchived,
   })
 
-  const dragListeners = canEdit ? listeners : {}
+  const dragListeners = canEdit && !project.isArchived ? listeners : {}
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -206,6 +206,17 @@ export function PotentialCard({ project, onClick, isDragging, canEdit = true }: 
           </Badge>
         )}
 
+        {/* Archived Badge */}
+        {project.isArchived && (
+          <Badge
+            variant="outline"
+            className="bg-gray-100 text-gray-500 border-gray-200 text-xs mb-3"
+          >
+            <Archive className="h-3 w-3 mr-1" />
+            Archived
+          </Badge>
+        )}
+
         {/* Footer - Company & Contact */}
         <div className="flex flex-col gap-1.5 text-xs text-gray-500">
           {project.company && (
@@ -223,8 +234,8 @@ export function PotentialCard({ project, onClick, isDragging, canEdit = true }: 
         </div>
       </div>
 
-      {/* Drag Handle - visible on mobile, hover on desktop */}
-      {canEdit && (
+      {/* Drag Handle - visible on mobile, hover on desktop (hidden for archived) */}
+      {canEdit && !project.isArchived && (
         <div
           {...dragListeners}
           className={cn(
