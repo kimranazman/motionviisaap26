@@ -29,6 +29,7 @@ import { CompanyInlineField } from './company-inline-field'
 import { IndustryCombobox } from './industry-combobox'
 import { ContactCard } from './contact-card'
 import { ContactForm } from './contact-form'
+import { DepartmentSection } from './department-section'
 import { formatDealStage, getStageColor } from '@/lib/pipeline-utils'
 import { formatPotentialStage, getPotentialStageColor } from '@/lib/potential-utils'
 import { formatProjectStatus, getProjectStatusColor } from '@/lib/project-utils'
@@ -40,6 +41,18 @@ interface Contact {
   phone: string | null
   role: string | null
   isPrimary: boolean
+  department?: { id: string; name: string } | null
+}
+
+interface Department {
+  id: string
+  name: string
+  description: string | null
+  _count: {
+    contacts: number
+    deals: number
+    potentials: number
+  }
 }
 
 interface RelatedDeal {
@@ -72,6 +85,7 @@ interface Company {
   phone: string | null
   notes: string | null
   contacts: Contact[]
+  departments: Department[]
   deals: RelatedDeal[]
   potentials: RelatedPotential[]
   projects: RelatedProject[]
@@ -181,6 +195,11 @@ export function CompanyDetailModal({
   }
 
   const handleContactDeleted = () => {
+    fetchCompany()
+    onUpdated()
+  }
+
+  const handleDepartmentChange = () => {
     fetchCompany()
     onUpdated()
   }
@@ -324,6 +343,15 @@ export function CompanyDetailModal({
                   </div>
                 )}
               </div>
+
+              <Separator />
+
+              {/* Departments Section */}
+              <DepartmentSection
+                companyId={company.id}
+                departments={company.departments}
+                onDepartmentChange={handleDepartmentChange}
+              />
 
               <Separator />
 
