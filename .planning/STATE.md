@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-23)
 ## Current Position
 
 Phase: 27 - Conversion Visibility & Archive (1 of 1 in v1.3.2)
-Plan: 01 of 3 complete
+Plan: 02 of 3 complete
 Status: In progress
-Last activity: 2026-01-24 - Completed 27-01-PLAN.md (Schema & API Foundation)
+Last activity: 2026-01-24 - Completed 27-02-PLAN.md (Conversion Visibility UI)
 
-Progress: v1.3.2 [##########░░░░░░░░░░░░░░░░░░░░░░] 33% (1/3 plans complete)
+Progress: v1.3.2 [#####################░░░░░░░░░░░░] 67% (2/3 plans complete)
 
 ## Milestone History
 
@@ -32,9 +32,9 @@ Progress: v1.3.2 [##########░░░░░░░░░░░░░░░░░�
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 63
+- Total plans completed: 64
 - Average duration: 4.0 min
-- Total execution time: 259 min
+- Total execution time: 263 min
 
 **By Phase (v1.0-v1.3.2):**
 
@@ -66,7 +66,7 @@ Progress: v1.3.2 [##########░░░░░░░░░░░░░░░░░�
 | 24-dashboard-customization-ui | 5 | 21min | 4.2min |
 | 25-ai-document-intelligence | 5 | 24min | 4.8min |
 | 26-revenue-model-refinement | 3 | 8min | 2.7min |
-| 27-conversion-visibility-archive | 1 | 4min | 4min |
+| 27-conversion-visibility-archive | 2 | 8min | 4min |
 
 ## Accumulated Context
 
@@ -96,6 +96,12 @@ Recent (Phase 27-01):
 - Archive filter applied by default (showArchived=true to include archived)
 - Project relation included in deals/potentials API for conversion visibility
 
+Recent (Phase 27-02):
+- Conversion badge shows on WON deals and CONFIRMED potentials with linked project title
+- View Project button navigates via /projects?open={id} pattern
+- Variance display shows estimated vs actual with color coding
+- Read-only mode for converted AND lost deals (no editing either)
+
 ### Pending Todos
 
 None.
@@ -107,5 +113,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 27-01-PLAN.md (Schema & API Foundation)
-Resume: `/gsd:execute-phase 27-02` to continue with Conversion Visibility UI
+Stopped at: Completed 27-02-PLAN.md (Conversion Visibility UI)
+Resume: `/gsd:execute-phase 27-03` to continue with Archive Toggle UI
