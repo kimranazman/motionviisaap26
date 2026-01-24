@@ -95,6 +95,7 @@ export async function PATCH(
         ...(body.initiativeId !== undefined && { initiativeId: body.initiativeId || null }),
         ...(body.startDate !== undefined && { startDate: body.startDate ? new Date(body.startDate) : null }),
         ...(body.endDate !== undefined && { endDate: body.endDate ? new Date(body.endDate) : null }),
+        ...(body.isArchived !== undefined && { isArchived: body.isArchived }),
       },
       include: {
         company: {

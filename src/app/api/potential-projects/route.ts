@@ -3,20 +3,33 @@ import prisma from '@/lib/prisma'
 import { requireAuth, requireEditor } from '@/lib/auth-utils'
 import { PotentialStage } from '@prisma/client'
 
-// GET /api/potential-projects - List all potential projects with company and contact
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// GET /api/potential-projects - List all potential projects with company, contact, and project
 export async function GET(request: NextRequest) {
   const { error } = await requireAuth()
   if (error) return error
 
   try {
+    const { searchParams } = new URL(request.url)
+    const showArchived = searchParams.get('showArchived') === 'true'
+
     const potentialProjects = await prisma.potentialProject.findMany({
+      where: {
+        ...(showArchived ? {} : { isArchived: false }),
+      },
       include: {
         company: {
           select: { id: true, name: true },
         },
         contact: {
           select: { id: true, name: true },
+        },
+        project: {
+          select: {
+            id: true,
+            title: true,
+            revenue: true,
+            potentialRevenue: true,
+          },
         },
       },
       orderBy: [
@@ -25,7 +38,18 @@ export async function GET(request: NextRequest) {
       ],
     })
 
-    return NextResponse.json(potentialProjects)
+    // Serialize Decimal fields
+    const serialized = potentialProjects.map(pp => ({
+      ...pp,
+      estimatedValue: pp.estimatedValue ? Number(pp.estimatedValue) : null,
+      project: pp.project ? {
+        ...pp.project,
+        revenue: pp.project.revenue ? Number(pp.project.revenue) : null,
+        potentialRevenue: pp.project.potentialRevenue ? Number(pp.project.potentialRevenue) : null,
+      } : null,
+    }))
+
+    return NextResponse.json(serialized)
   } catch (error) {
     console.error('Error fetching potential projects:', error)
     return NextResponse.json(
@@ -81,6 +105,14 @@ export async function POST(request: NextRequest) {
         },
         contact: {
           select: { id: true, name: true },
+        },
+        project: {
+          select: {
+            id: true,
+            title: true,
+            revenue: true,
+            potentialRevenue: true,
+          },
         },
       },
     })

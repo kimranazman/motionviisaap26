@@ -4,12 +4,18 @@ import { requireAuth, requireEditor } from '@/lib/auth-utils'
 import { ProjectStatus } from '@prisma/client'
 
 // GET /api/projects - List all projects with company and contact
-export async function GET() {
+export async function GET(request: NextRequest) {
   const { error } = await requireAuth()
   if (error) return error
 
   try {
+    const { searchParams } = new URL(request.url)
+    const showArchived = searchParams.get('showArchived') === 'true'
+
     const projects = await prisma.project.findMany({
+      where: {
+        ...(showArchived ? {} : { isArchived: false }),
+      },
       include: {
         company: {
           select: { id: true, name: true },
@@ -30,7 +36,14 @@ export async function GET() {
       orderBy: { createdAt: 'desc' },
     })
 
-    return NextResponse.json(projects)
+    // Serialize Decimal fields
+    const serialized = projects.map(project => ({
+      ...project,
+      revenue: project.revenue ? Number(project.revenue) : null,
+      potentialRevenue: project.potentialRevenue ? Number(project.potentialRevenue) : null,
+    }))
+
+    return NextResponse.json(serialized)
   } catch (error) {
     console.error('Error fetching projects:', error)
     return NextResponse.json(
