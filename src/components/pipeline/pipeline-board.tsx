@@ -23,7 +23,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
-import { Plus } from 'lucide-react'
+import { Plus, Archive } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PipelineColumn } from './pipeline-column'
 import { PipelineCard } from './pipeline-card'
@@ -43,6 +43,7 @@ interface Deal {
   stage: string
   lostReason?: string | null
   position: number
+  isArchived?: boolean
   company: { id: string; name: string } | null
   contact: { id: string; name: string } | null
 }
@@ -55,11 +56,12 @@ interface PendingLostDeal {
 
 interface PipelineBoardProps {
   initialData: Deal[]
+  initialShowArchived?: boolean
 }
 
 const STAGE_IDS: string[] = STAGES.map(s => s.id)
 
-export function PipelineBoard({ initialData }: PipelineBoardProps) {
+export function PipelineBoard({ initialData, initialShowArchived = false }: PipelineBoardProps) {
   const { data: session } = useSession()
   const userCanEdit = canEdit(session?.user?.role)
 
@@ -70,6 +72,8 @@ export function PipelineBoard({ initialData }: PipelineBoardProps) {
   const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
   const [pendingLostDeal, setPendingLostDeal] = useState<PendingLostDeal | null>(null)
+  const [showArchived, setShowArchived] = useState(initialShowArchived)
+  const [isTogglingArchived, setIsTogglingArchived] = useState(false)
 
   // Track original stage before drag for reverting
   const originalStageRef = useRef<string | null>(null)
@@ -371,11 +375,48 @@ export function PipelineBoard({ initialData }: PipelineBoardProps) {
     setDeals(prev => prev.filter(d => d.id !== dealId))
   }
 
+  // Toggle archive visibility
+  const handleToggleArchived = async () => {
+    const newValue = !showArchived
+    setIsTogglingArchived(true)
+    setShowArchived(newValue)
+
+    // Update URL
+    const url = new URL(window.location.href)
+    if (newValue) {
+      url.searchParams.set('showArchived', 'true')
+    } else {
+      url.searchParams.delete('showArchived')
+    }
+    window.history.replaceState({}, '', url)
+
+    // Refetch data
+    try {
+      const response = await fetch(`/api/deals?showArchived=${newValue}`)
+      if (response.ok) {
+        const data = await response.json()
+        setDeals(data)
+      }
+    } catch (error) {
+      console.error('Failed to fetch deals:', error)
+    } finally {
+      setIsTogglingArchived(false)
+    }
+  }
+
   return (
     <>
-      {/* Header with Add Deal button */}
+      {/* Header with Archive toggle and Add Deal button */}
       <div className="flex justify-between items-center mb-4">
-        <div /> {/* Spacer for alignment */}
+        <Button
+          variant={showArchived ? 'secondary' : 'ghost'}
+          size="sm"
+          onClick={handleToggleArchived}
+          disabled={isTogglingArchived}
+        >
+          <Archive className="h-4 w-4 mr-1" />
+          {showArchived ? 'Showing Archived' : 'Show Archived'}
+        </Button>
         {userCanEdit && (
           <Button onClick={() => setIsCreateModalOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />

@@ -26,11 +26,13 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
-import { Loader2, Trash2 } from 'lucide-react'
+import { Loader2, Trash2, Archive, ArchiveRestore, ExternalLink, Lock } from 'lucide-react'
+import { toast } from 'sonner'
+import Link from 'next/link'
 import { CompanySelect } from './company-select'
 import { ContactSelect } from './contact-select'
 import { getStageColor, formatDealStage } from '@/lib/pipeline-utils'
-import { cn } from '@/lib/utils'
+import { cn, formatCurrency } from '@/lib/utils'
 
 interface Contact {
   id: string
@@ -45,8 +47,15 @@ interface Deal {
   stage: string
   lostReason?: string | null
   position: number
+  isArchived?: boolean
   company: { id: string; name: string } | null
   contact: { id: string; name: string } | null
+  project?: {
+    id: string
+    title: string
+    revenue: number | null
+    potentialRevenue: number | null
+  } | null
 }
 
 interface DealDetailSheetProps {
@@ -74,6 +83,7 @@ export function DealDetailSheet({
   const [isSaving, setIsSaving] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [isLoadingContacts, setIsLoadingContacts] = useState(false)
+  const [isArchiving, setIsArchiving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   // Initialize form when deal changes
@@ -193,7 +203,36 @@ export function DealDetailSheet({
     }
   }
 
+  const handleArchive = async () => {
+    if (!deal) return
+    setIsArchiving(true)
+    try {
+      const response = await fetch(`/api/deals/${deal.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isArchived: !deal.isArchived }),
+      })
+      if (response.ok) {
+        const updated = await response.json()
+        onUpdate(updated)
+        toast.success(updated.isArchived ? 'Deal archived' : 'Deal unarchived')
+      } else {
+        toast.error('Failed to update archive status')
+      }
+    } catch (err) {
+      console.error('Failed to archive deal:', err)
+      toast.error('Failed to update archive status')
+    } finally {
+      setIsArchiving(false)
+    }
+  }
+
   if (!deal) return null
+
+  // Computed flags for conversion and read-only state
+  const isConverted = deal.stage === 'WON' && deal.project !== null && deal.project !== undefined
+  const isLost = deal.stage === 'LOST'
+  const isReadOnly = isConverted || isLost
 
   const hasChanges =
     title !== deal.title ||
@@ -310,18 +349,40 @@ export function DealDetailSheet({
           </div>
         </ScrollArea>
 
-        <SheetFooter className="p-4 border-t flex-row justify-between sm:justify-between">
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="ghost"
-                className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                disabled={isDeleting}
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
-                Delete
-              </Button>
-            </AlertDialogTrigger>
+        <SheetFooter className="p-4 border-t flex-row gap-2 justify-between sm:justify-between">
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleArchive}
+              disabled={isArchiving}
+              className={deal.isArchived ? 'text-blue-600' : 'text-gray-600'}
+            >
+              {deal.isArchived ? (
+                <>
+                  <ArchiveRestore className="mr-2 h-4 w-4" />
+                  Unarchive
+                </>
+              ) : (
+                <>
+                  <Archive className="mr-2 h-4 w-4" />
+                  Archive
+                </>
+              )}
+            </Button>
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                  disabled={isDeleting}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete
+                </Button>
+              </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Delete Deal</AlertDialogTitle>
@@ -341,7 +402,8 @@ export function DealDetailSheet({
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
-          </AlertDialog>
+            </AlertDialog>
+          </div>
 
           <Button
             onClick={handleSave}

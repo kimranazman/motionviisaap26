@@ -4,8 +4,17 @@ import prisma from '@/lib/prisma'
 
 export const dynamic = 'force-dynamic'
 
-export default async function PipelinePage() {
+export default async function PipelinePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ showArchived?: string }>
+}) {
+  const { showArchived } = await searchParams
+
   const deals = await prisma.deal.findMany({
+    where: {
+      ...(showArchived !== 'true' ? { isArchived: false } : {}),
+    },
     include: {
       company: {
         select: { id: true, name: true },
@@ -33,7 +42,10 @@ export default async function PipelinePage() {
         description="Track deals through stages"
       />
       <main className="flex-1 overflow-auto p-6">
-        <PipelineBoard initialData={serializedDeals} />
+        <PipelineBoard
+          initialData={serializedDeals}
+          initialShowArchived={showArchived === 'true'}
+        />
       </main>
     </div>
   )

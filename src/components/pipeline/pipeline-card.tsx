@@ -4,7 +4,7 @@ import { useRef } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { cn, formatCurrency } from '@/lib/utils'
-import { Building2, User, MoreHorizontal, Eye, GripVertical, ArrowRight } from 'lucide-react'
+import { Building2, User, MoreHorizontal, Eye, GripVertical, ArrowRight, Archive } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
