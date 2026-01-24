@@ -22,6 +22,14 @@ export async function GET(
         contact: {
           select: { id: true, name: true },
         },
+        project: {
+          select: {
+            id: true,
+            title: true,
+            revenue: true,
+            potentialRevenue: true,
+          },
+        },
       },
     })
 
@@ -76,6 +84,7 @@ export async function PATCH(
         ...(body.contactId !== undefined && { contactId: body.contactId || null }),
         ...(body.stage !== undefined && { stage: body.stage as DealStage }),
         ...(body.lostReason !== undefined && { lostReason: body.lostReason || null }),
+        ...(body.isArchived !== undefined && { isArchived: body.isArchived }),
         ...stageUpdate,
       },
       include: {
@@ -84,6 +93,14 @@ export async function PATCH(
         },
         contact: {
           select: { id: true, name: true },
+        },
+        project: {
+          select: {
+            id: true,
+            title: true,
+            revenue: true,
+            potentialRevenue: true,
+          },
         },
       },
     })

@@ -3,19 +3,33 @@ import prisma from '@/lib/prisma'
 import { requireAuth, requireEditor } from '@/lib/auth-utils'
 import { DealStage } from '@prisma/client'
 
-// GET /api/deals - List all deals with company and contact
-export async function GET() {
+// GET /api/deals - List all deals with company, contact, and project
+export async function GET(request: NextRequest) {
   const { error } = await requireAuth()
   if (error) return error
 
   try {
+    const { searchParams } = new URL(request.url)
+    const showArchived = searchParams.get('showArchived') === 'true'
+
     const deals = await prisma.deal.findMany({
+      where: {
+        ...(showArchived ? {} : { isArchived: false }),
+      },
       include: {
         company: {
           select: { id: true, name: true },
         },
         contact: {
           select: { id: true, name: true },
+        },
+        project: {
+          select: {
+            id: true,
+            title: true,
+            revenue: true,
+            potentialRevenue: true,
+          },
         },
       },
       orderBy: [
@@ -24,7 +38,18 @@ export async function GET() {
       ],
     })
 
-    return NextResponse.json(deals)
+    // Serialize Decimal fields
+    const serialized = deals.map(deal => ({
+      ...deal,
+      value: deal.value ? Number(deal.value) : null,
+      project: deal.project ? {
+        ...deal.project,
+        revenue: deal.project.revenue ? Number(deal.project.revenue) : null,
+        potentialRevenue: deal.project.potentialRevenue ? Number(deal.project.potentialRevenue) : null,
+      } : null,
+    }))
+
+    return NextResponse.json(serialized)
   } catch (error) {
     console.error('Error fetching deals:', error)
     return NextResponse.json(
@@ -80,6 +105,14 @@ export async function POST(request: NextRequest) {
         },
         contact: {
           select: { id: true, name: true },
+        },
+        project: {
+          select: {
+            id: true,
+            title: true,
+            revenue: true,
+            potentialRevenue: true,
+          },
         },
       },
     })
