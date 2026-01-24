@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Team can visualize and track initiative progress with secure access, full CRM, customizable dashboards, project document management, AI document intelligence, conversion visibility, archive management, and intelligent project delivery with supplier tracking and task management.
-**Current focus:** v1.4 Intelligent Automation & Organization - Phase 30 ready to plan
+**Current focus:** v1.4 Intelligent Automation & Organization - Phase 30 Plan 01 complete
 
 ## Current Position
 
 Phase: 30 of 35 (Supplier Management)
-Plan: Ready to plan
-Status: Phase 29 complete
-Last activity: 2026-01-24 - Phase 29 (Schema Foundation) complete - all v1.4 models added
+Plan: 1 of 1 complete
+Status: Phase complete
+Last activity: 2026-01-24 - Completed 30-01-PLAN.md (Supplier CRUD)
 
-Progress: v1.4 [██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 8% (1/13 plans)
+Progress: v1.4 [████░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 15% (2/13 plans)
 
 ## Milestone History
 
@@ -34,9 +34,9 @@ Progress: v1.4 [██░░░░░░░░░░░░░░░░░░░�
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 67 (v1.0-v1.3.2)
+- Total plans completed: 68 (v1.0-v1.4 partial)
 - Average duration: 4.1 min
-- Total execution time: 277 min
+- Total execution time: 285 min
 
 **By Milestone (summary):**
 
@@ -49,6 +49,7 @@ Progress: v1.4 [██░░░░░░░░░░░░░░░░░░░�
 | v1.3 | 21-25 | 18 | 5.1min |
 | v1.3.1 | 26 | 3 | 2.7min |
 | v1.3.2 | 27-28 | 4 | 4.8min |
+| v1.4 | 29-35 | 2 | 8min (partial) |
 
 ## Accumulated Context
 
@@ -60,6 +61,9 @@ Recent decisions from v1.4:
 - Renamed Department enum to InitiativeDepartment (avoids name collision with Department model)
 - Global tags for tasks (simpler initial implementation, can add projectId later)
 - Task self-reference uses onDelete: NoAction (cascade handled in app code)
+- Suppliers link placed after Projects in CRM section
+- Payment terms displayed as colored badges (urgency-based coloring)
+- Delete protection on suppliers (cannot delete if costs linked)
 
 ### Pending Todos
 
@@ -72,5 +76,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Phase 29 complete
-Resume: Start planning with `/gsd:discuss-phase 30`
+Stopped at: Phase 30 complete
+Resume: Start planning with `/gsd:discuss-phase 31`
