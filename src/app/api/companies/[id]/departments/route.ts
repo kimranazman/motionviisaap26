@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { requireAuth, requireEditor } from '@/lib/auth-utils'
 
-// GET /api/companies/[id]/contacts - List contacts for company
+// GET /api/companies/[id]/departments - List departments for company
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -26,25 +26,27 @@ export async function GET(
       )
     }
 
-    const contacts = await prisma.contact.findMany({
+    const departments = await prisma.department.findMany({
       where: { companyId: id },
-      orderBy: [
-        { isPrimary: 'desc' },
-        { name: 'asc' },
-      ],
+      include: {
+        _count: {
+          select: { contacts: true, deals: true, potentials: true },
+        },
+      },
+      orderBy: { name: 'asc' },
     })
 
-    return NextResponse.json(contacts)
+    return NextResponse.json(departments)
   } catch (error) {
-    console.error('Error fetching contacts:', error)
+    console.error('Error fetching departments:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch contacts' },
+      { error: 'Failed to fetch departments' },
       { status: 500 }
     )
   }
 }
 
-// POST /api/companies/[id]/contacts - Create contact
+// POST /api/companies/[id]/departments - Create department
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -59,7 +61,7 @@ export async function POST(
     // Validate name is required
     if (!body.name || !body.name.trim()) {
       return NextResponse.json(
-        { error: 'Name is required' },
+        { error: 'Department name is required' },
         { status: 400 }
       )
     }
@@ -77,45 +79,36 @@ export async function POST(
       )
     }
 
-    // Check if this will be the first contact (auto-set isPrimary)
-    const existingContacts = await prisma.contact.count({
-      where: { companyId: id },
-    })
-
-    // Validate departmentId if provided
-    if (body.departmentId) {
-      const department = await prisma.department.findFirst({
-        where: {
-          id: body.departmentId,
-          companyId: id,
-        },
-      })
-
-      if (!department) {
-        return NextResponse.json(
-          { error: 'Department not found or belongs to different company' },
-          { status: 400 }
-        )
-      }
-    }
-
-    const contact = await prisma.contact.create({
+    const department = await prisma.department.create({
       data: {
         companyId: id,
         name: body.name.trim(),
-        email: body.email?.trim() || null,
-        phone: body.phone?.trim() || null,
-        role: body.role?.trim() || null,
-        departmentId: body.departmentId || null,
-        isPrimary: existingContacts === 0, // First contact is primary
+        description: body.description?.trim() || null,
+      },
+      include: {
+        _count: {
+          select: { contacts: true, deals: true, potentials: true },
+        },
       },
     })
 
-    return NextResponse.json(contact, { status: 201 })
+    return NextResponse.json(department, { status: 201 })
   } catch (error) {
-    console.error('Error creating contact:', error)
+    // Handle unique constraint violation (P2002)
+    if (
+      error instanceof Error &&
+      'code' in error &&
+      (error as { code: string }).code === 'P2002'
+    ) {
+      return NextResponse.json(
+        { error: 'Department with this name already exists' },
+        { status: 400 }
+      )
+    }
+
+    console.error('Error creating department:', error)
     return NextResponse.json(
-      { error: 'Failed to create contact' },
+      { error: 'Failed to create department' },
       { status: 500 }
     )
   }

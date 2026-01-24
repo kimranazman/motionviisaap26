@@ -20,6 +20,17 @@ export async function GET(
             { isPrimary: 'desc' },
             { name: 'asc' },
           ],
+          include: {
+            department: { select: { id: true, name: true } },
+          },
+        },
+        departments: {
+          orderBy: { name: 'asc' },
+          include: {
+            _count: {
+              select: { contacts: true, deals: true, potentials: true },
+            },
+          },
         },
         deals: {
           select: {
