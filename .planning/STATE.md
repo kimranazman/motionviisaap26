@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-23)
 
 **Core value:** Team can visualize and track initiative progress with secure access, full CRM, and now customizable dashboards with project document management and AI document intelligence.
-**Current focus:** v1.3 Document Management & Dashboard Customization (COMPLETE)
+**Current focus:** v1.4 Revenue Model Refinement
 
 ## Current Position
 
-Phase: 25 - AI Document Intelligence (5 of 5 in v1.3) - COMPLETE
-Plan: 5 of 5 in current phase (all plans complete)
-Status: Phase complete, milestone complete
-Last activity: 2026-01-24 - Completed 25-05-PLAN.md (Integration)
+Phase: 26 - Revenue Model Refinement (1 of 1 in v1.4)
+Plan: 1 of 4 in current phase
+Status: In progress
+Last activity: 2026-01-24 - Completed 26-01-PLAN.md (Schema Update)
 
-Progress: v1.3 [████████████████████████████████] 100% (5/5 phases complete)
+Progress: v1.4 [████████░░░░░░░░░░░░░░░░░░░░░░░░] 25% (1/4 plans complete)
 
 ## Milestone History
 
@@ -31,9 +31,9 @@ Progress: v1.3 [█████████████████████�
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 59
+- Total plans completed: 60
 - Average duration: 4.2 min
-- Total execution time: 247 min
+- Total execution time: 249 min
 
 **By Phase (v1.0-v1.3):**
 
@@ -64,6 +64,7 @@ Progress: v1.3 [█████████████████████�
 | 23-widget-registry-roles | 3 | 10min | 3.3min |
 | 24-dashboard-customization-ui | 5 | 21min | 4.2min |
 | 25-ai-document-intelligence | 5 | 24min | 4.8min |
+| 26-revenue-model-refinement | 1 | 2min | 2min |
 
 ## Accumulated Context
 
@@ -100,6 +101,11 @@ Recent (Phase 25-05):
 - Manifest generation runs async to not block upload/delete/patch responses
 - Financials Summary enhanced with icons, margin %, and empty state
 
+Recent (Phase 26-01):
+- aiImportedRevenue field removed - revenue field is now exclusively for AI-imported actuals
+- potentialRevenue added for deal/potential conversion estimates
+- Revenue separation pattern: potentialRevenue (estimates) vs revenue (actuals)
+
 ### Pending Todos
 
 None.
@@ -110,6 +116,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-24
-Stopped at: Phase 25 verified, milestone v1.3 complete
-Resume: `/gsd:audit-milestone` to verify requirements and cross-phase integration
+Last session: 2026-01-24T02:48:24Z
+Stopped at: Completed 26-01-PLAN.md (Schema Update)
+Resume: Continue with 26-02-PLAN.md (Conversion Logic Updates)
