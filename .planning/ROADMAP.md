@@ -72,11 +72,11 @@ Plans:
   2. User can assign contacts to departments
   3. User can assign deals and potential projects to departments
   4. Company -> Department -> Contact cascading selection works in forms
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 31-01: Department CRUD and contact assignment
-- [ ] 31-02: Deal/potential department scoping and selection flow
+- [ ] 31-01-PLAN.md - Department CRUD and contact assignment
+- [ ] 31-02-PLAN.md - Deal/potential department scoping and cascading selection
 
 #### Phase 32: Project Deliverables
 **Goal**: Users can track project scope items (deliverables) from quotes
@@ -146,7 +146,7 @@ Phases execute in numeric order: 29 -> 30 -> 31 -> 32 -> 33 -> 34 -> 35
 |-------|-----------|----------------|--------|-----------|
 | 29. Schema Foundation | v1.4 | 1/1 | ✓ Complete | 2026-01-24 |
 | 30. Supplier Management | v1.4 | 2/2 | ✓ Complete | 2026-01-24 |
-| 31. Department Organization | v1.4 | 0/2 | Not started | - |
+| 31. Department Organization | v1.4 | 0/2 | Planned | - |
 | 32. Project Deliverables | v1.4 | 0/2 | Not started | - |
 | 33. Task Management | v1.4 | 0/3 | Not started | - |
 | 34. Activity Logging & Sync | v1.4 | 0/2 | Not started | - |
@@ -156,4 +156,4 @@ Phases execute in numeric order: 29 -> 30 -> 31 -> 32 -> 33 -> 34 -> 35
 
 ---
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-01-24 (Phase 30 complete)*
+*Last updated: 2026-01-24 (Phase 31 planned)*
