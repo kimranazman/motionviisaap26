@@ -267,6 +267,8 @@ export function DealDetailSheet({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Enter deal title"
+                disabled={isReadOnly}
+                className={cn(isReadOnly && "bg-gray-50 cursor-not-allowed")}
               />
             </div>
 
@@ -278,6 +280,7 @@ export function DealDetailSheet({
               <CompanySelect
                 value={companyId}
                 onValueChange={handleCompanyChange}
+                disabled={isReadOnly}
               />
             </div>
 
@@ -288,7 +291,7 @@ export function DealDetailSheet({
                 value={contactId}
                 onValueChange={setContactId}
                 contacts={contacts}
-                disabled={!companyId || isLoadingContacts}
+                disabled={!companyId || isLoadingContacts || isReadOnly}
               />
               {isLoadingContacts && (
                 <p className="text-xs text-muted-foreground">
@@ -308,6 +311,8 @@ export function DealDetailSheet({
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 placeholder="0.00"
+                disabled={isReadOnly}
+                className={cn(isReadOnly && "bg-gray-50 cursor-not-allowed")}
               />
             </div>
 
@@ -319,9 +324,60 @@ export function DealDetailSheet({
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Add notes about this deal..."
-                className="min-h-[80px]"
+                className={cn("min-h-[80px]", isReadOnly && "bg-gray-50 cursor-not-allowed")}
+                disabled={isReadOnly}
               />
             </div>
+
+            {/* Converted Project Info */}
+            {isConverted && deal.project && (
+              <>
+                <Separator />
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Lock className="h-4 w-4" />
+                    <span className="text-sm">Converted to Project</span>
+                  </div>
+
+                  <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium text-green-800">{deal.project.title}</div>
+                      </div>
+                      <Button variant="outline" size="sm" asChild>
+                        <Link href={`/projects?open=${deal.project.id}`}>
+                          <ExternalLink className="h-4 w-4 mr-1" />
+                          View
+                        </Link>
+                      </Button>
+                    </div>
+
+                    {/* Variance display */}
+                    {deal.project.revenue !== null && (
+                      <div className="mt-3 pt-3 border-t border-green-200 text-sm">
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <span className="text-gray-500">Estimated: </span>
+                            <span className="font-medium">{formatCurrency(deal.value ?? 0)}</span>
+                          </div>
+                          <div>
+                            <span className="text-gray-500">Actual: </span>
+                            <span className="font-medium">{formatCurrency(deal.project.revenue)}</span>
+                          </div>
+                        </div>
+                        <div className={cn(
+                          "mt-1 font-medium",
+                          deal.project.revenue > (deal.value ?? 0) ? "text-green-600" : "text-amber-600"
+                        )}>
+                          Variance: {deal.project.revenue > (deal.value ?? 0) ? '+' : ''}
+                          {formatCurrency(deal.project.revenue - (deal.value ?? 0))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
 
             {/* Lost Reason (only show if stage is LOST) */}
             {deal.stage === 'LOST' && (
@@ -405,14 +461,20 @@ export function DealDetailSheet({
             </AlertDialog>
           </div>
 
-          <Button
-            onClick={handleSave}
-            disabled={isSaving || !hasChanges}
-            className="w-full sm:w-auto"
-          >
-            {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Save Changes
-          </Button>
+          {isReadOnly ? (
+            <div className="text-sm text-muted-foreground text-center py-2 px-4">
+              {isConverted ? 'Converted deals cannot be edited' : 'Lost deals cannot be edited'}
+            </div>
+          ) : (
+            <Button
+              onClick={handleSave}
+              disabled={isSaving || !hasChanges}
+              className="w-full sm:w-auto"
+            >
+              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Save Changes
+            </Button>
+          )}
         </SheetFooter>
       </SheetContent>
     </Sheet>
