@@ -57,11 +57,11 @@ Plans:
   3. User can link supplier when creating/editing project cost entry
   4. Supplier detail page shows total spend and list of all purchased items
   5. Supplier detail page shows projects the supplier worked on
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 30-01: Supplier CRUD
-- [ ] 30-02: Supplier-Cost linking and detail page
+- [ ] 30-01-PLAN.md - Supplier CRUD with list page, detail modal, and navigation
+- [ ] 30-02-PLAN.md - Supplier-Cost linking and spend analytics on detail page
 
 #### Phase 31: Department Organization
 **Goal**: Users can organize company contacts by department and scope deals/potentials
@@ -145,7 +145,7 @@ Phases execute in numeric order: 29 -> 30 -> 31 -> 32 -> 33 -> 34 -> 35
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 29. Schema Foundation | v1.4 | 1/1 | ✓ Complete | 2026-01-24 |
-| 30. Supplier Management | v1.4 | 0/2 | Not started | - |
+| 30. Supplier Management | v1.4 | 0/2 | Planned | - |
 | 31. Department Organization | v1.4 | 0/2 | Not started | - |
 | 32. Project Deliverables | v1.4 | 0/2 | Not started | - |
 | 33. Task Management | v1.4 | 0/3 | Not started | - |
@@ -156,4 +156,4 @@ Phases execute in numeric order: 29 -> 30 -> 31 -> 32 -> 33 -> 34 -> 35
 
 ---
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-01-24 (Phase 29 complete)*
+*Last updated: 2026-01-24 (Phase 30 planned)*
