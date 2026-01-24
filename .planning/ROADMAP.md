@@ -42,10 +42,10 @@ See `.planning/milestones/` for archived phase details.
   3. Deliverable model exists linked to Project
   4. Task model exists with self-referencing parent/children relations
   5. ActivityLog model exists with polymorphic entity reference
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 29-01: Schema and migrations
+- [ ] 29-01-PLAN.md - Add v1.4 database models (Supplier, Department, Deliverable, Task, ActivityLog)
 
 #### Phase 30: Supplier Management
 **Goal**: Users can track suppliers and link them to project costs
