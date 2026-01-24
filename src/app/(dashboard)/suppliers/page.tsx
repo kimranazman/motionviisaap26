@@ -1,6 +1,8 @@
 import prisma from '@/lib/prisma'
 import { SupplierList } from '@/components/suppliers/supplier-list'
 
+export const dynamic = 'force-dynamic'
+
 export default async function SuppliersPage() {
   const suppliers = await prisma.supplier.findMany({
     include: {
