@@ -75,8 +75,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 31-01-PLAN.md - Department CRUD and contact assignment
-- [ ] 31-02-PLAN.md - Deal/potential department scoping and cascading selection
+- [x] 31-01-PLAN.md - Department CRUD and contact assignment
+- [x] 31-02-PLAN.md - Deal/potential department scoping and cascading selection
 
 #### Phase 32: Project Deliverables
 **Goal**: Users can track project scope items (deliverables) from quotes
@@ -146,14 +146,14 @@ Phases execute in numeric order: 29 -> 30 -> 31 -> 32 -> 33 -> 34 -> 35
 |-------|-----------|----------------|--------|-----------|
 | 29. Schema Foundation | v1.4 | 1/1 | ✓ Complete | 2026-01-24 |
 | 30. Supplier Management | v1.4 | 2/2 | ✓ Complete | 2026-01-24 |
-| 31. Department Organization | v1.4 | 0/2 | Planned | - |
+| 31. Department Organization | v1.4 | 2/2 | ✓ Complete | 2026-01-24 |
 | 32. Project Deliverables | v1.4 | 0/2 | Not started | - |
 | 33. Task Management | v1.4 | 0/3 | Not started | - |
 | 34. Activity Logging & Sync | v1.4 | 0/2 | Not started | - |
 | 35. AI Price Comparison | v1.4 | 0/1 | Not started | - |
 
-**v1.4 Total:** 3/13 plans complete
+**v1.4 Total:** 5/13 plans complete
 
 ---
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-01-24 (Phase 31 planned)*
+*Last updated: 2026-01-24 (Phase 31 complete)*

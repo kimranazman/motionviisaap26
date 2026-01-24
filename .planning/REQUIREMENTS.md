@@ -126,14 +126,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SUPP-09 | 30 | Complete |
 | SUPP-10 | 35 | Pending |
 | SUPP-11 | 35 | Pending |
-| DEPT-01 | 31 | Pending |
-| DEPT-02 | 31 | Pending |
-| DEPT-03 | 31 | Pending |
-| DEPT-04 | 31 | Pending |
-| DEPT-05 | 31 | Pending |
-| DEPT-06 | 31 | Pending |
-| DEPT-07 | 31 | Pending |
-| DEPT-08 | 31 | Pending |
+| DEPT-01 | 31 | Complete |
+| DEPT-02 | 31 | Complete |
+| DEPT-03 | 31 | Complete |
+| DEPT-04 | 31 | Complete |
+| DEPT-05 | 31 | Complete |
+| DEPT-06 | 31 | Complete |
+| DEPT-07 | 31 | Complete |
+| DEPT-08 | 31 | Complete |
 | DELV-01 | 32 | Pending |
 | DELV-02 | 32 | Pending |
 | DELV-03 | 32 | Pending |
@@ -161,4 +161,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-24*
-*Last updated: 2026-01-24 Phase 30 complete*
+*Last updated: 2026-01-24 Phase 31 complete*
