@@ -22,6 +22,14 @@ export default async function PotentialProjectsPage({
       contact: {
         select: { id: true, name: true },
       },
+      project: {
+        select: {
+          id: true,
+          title: true,
+          revenue: true,
+          potentialRevenue: true,
+        },
+      },
     },
     orderBy: [
       { stage: 'asc' },
@@ -33,6 +41,11 @@ export default async function PotentialProjectsPage({
   const serializedProjects = potentialProjects.map(project => ({
     ...project,
     estimatedValue: project.estimatedValue ? Number(project.estimatedValue) : null,
+    project: project.project ? {
+      ...project.project,
+      revenue: project.project.revenue ? Number(project.project.revenue) : null,
+      potentialRevenue: project.project.potentialRevenue ? Number(project.project.potentialRevenue) : null,
+    } : null,
   }))
 
   return (
