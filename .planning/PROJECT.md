@@ -121,25 +121,45 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 ### Active
 
-<!-- Next milestone scope. Define during /gsd:new-milestone. -->
+<!-- Current milestone scope. v1.4 Intelligent Automation & Organization -->
 
-**v1.4 Intelligent Automation & Organization (Planned):**
+**v1.4 Intelligent Automation & Organization:**
 
-*Bidirectional Sync:*
-- [ ] Bidirectional sync between Deals/Potentials ↔ Projects (changes sync both ways)
+*Live Project Summary on Pipeline:*
+- [ ] Converted deals/potentials show live project metrics (revenue, costs, status)
+- [ ] Project title changes sync back to source deal/potential
+- [ ] Activity history log on cards showing changes ("Revenue updated: RM 50K → RM 55K")
+- [ ] Data refreshes automatically when viewing pipeline boards
 
 *Supplier Management:*
-- [ ] New Supplier model with list page
+- [ ] Supplier model with contact info, credit terms, payment terms
+- [ ] Supplier list page with search and filtering
 - [ ] Link suppliers to project costs
+- [ ] Complete price list per supplier (all line items purchased)
+- [ ] Price history tracking over time
+- [ ] Line item comparison across suppliers (AI semantic matching)
+- [ ] Supplier detail page showing total spent, projects worked on
 
-*AI Document Intelligence (Enhanced):*
-- [ ] Auto-extract suppliers from receipts/invoices via AI
-- [ ] Auto-extract contacts from client invoices if not manually linked
-- [ ] Project breakdown from quotes/invoices — line items become deliverables
+*Company Departments:*
+- [ ] Department model under Company
+- [ ] Contacts belong to departments
+- [ ] Deals/potentials scoped to departments
+- [ ] Department-specific notes and behavior tracking
+- [ ] Company → Department → Contact selection flow
 
-*Company Organization:*
-- [ ] Department model for companies
-- [ ] Contacts and deals can belong to departments
+*Enhanced AI Document Intelligence:*
+- [ ] Our invoices/quotes (Talenta/Motionvii) → Project deliverables
+- [ ] Supplier invoices → Cost entries (enhanced with supplier linking)
+- [ ] Supplier quotations → Supplier pricing info (for comparison)
+- [ ] Auto-extract and link suppliers from documents
+- [ ] Auto-extract contacts from client invoices
+
+*Project Deliverables & Tasks:*
+- [ ] Deliverables model (scope items from our quotes with values)
+- [ ] Convert deliverable to task (optional)
+- [ ] Standalone tasks on projects
+- [ ] Full task tracking: due dates, status, assignee, comments, tags
+- [ ] Infinite subtask nesting with inherited tags
 
 ### Out of Scope
 
@@ -157,10 +177,10 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - Marketing automation — not a marketing tool; use external tools
 - Custom pipeline stages — fixed stages are clearer for small team
 - Multi-pipeline support — one business, one pipeline + potentials
-- Activity tracking/logging — overhead for small team; manual notes sufficient
+- Activity tracking/logging — overhead for small team; activity history added specifically for sync events only
 - Multi-currency support — MYR sufficient for current operations
 - Time tracking — separate feature domain; use external tools
-- Invoice generation — deferred to v1.4
+- Invoice generation — SAAP tracks invoices, doesn't generate them; use accounting software
 - Email integration — overkill for 3-person team
 
 ## Context
@@ -226,4 +246,4 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | Server queries mirror API includes | Initial render parity with client fetches | ✓ Good |
 
 ---
-*Last updated: 2026-01-24 after v1.3.2 milestone*
+*Last updated: 2026-01-24 after starting v1.4 milestone*
