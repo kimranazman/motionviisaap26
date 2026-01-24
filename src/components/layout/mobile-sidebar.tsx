@@ -17,6 +17,7 @@ import {
   Funnel,
   FolderKanban,
   Briefcase,
+  Truck,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
@@ -36,6 +37,7 @@ const crmNavigation = [
   { name: 'Pipeline', href: '/pipeline', icon: Funnel },
   { name: 'Potential Projects', href: '/potential-projects', icon: FolderKanban },
   { name: 'Projects', href: '/projects', icon: Briefcase },
+  { name: 'Suppliers', href: '/suppliers', icon: Truck },
 ]
 
 export function MobileSidebar() {
