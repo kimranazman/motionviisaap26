@@ -115,15 +115,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SYNC-04 | 34 | Pending |
 | SYNC-05 | 34 | Pending |
 | SYNC-06 | 34 | Pending |
-| SUPP-01 | 30 | Pending |
-| SUPP-02 | 30 | Pending |
-| SUPP-03 | 30 | Pending |
-| SUPP-04 | 30 | Pending |
-| SUPP-05 | 30 | Pending |
-| SUPP-06 | 30 | Pending |
-| SUPP-07 | 30 | Pending |
-| SUPP-08 | 30 | Pending |
-| SUPP-09 | 30 | Pending |
+| SUPP-01 | 30 | Complete |
+| SUPP-02 | 30 | Complete |
+| SUPP-03 | 30 | Complete |
+| SUPP-04 | 30 | Complete |
+| SUPP-05 | 30 | Complete |
+| SUPP-06 | 30 | Complete |
+| SUPP-07 | 30 | Complete |
+| SUPP-08 | 30 | Complete |
+| SUPP-09 | 30 | Complete |
 | SUPP-10 | 35 | Pending |
 | SUPP-11 | 35 | Pending |
 | DEPT-01 | 31 | Pending |
@@ -161,4 +161,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-24*
-*Last updated: 2026-01-24 after v1.4 roadmap creation*
+*Last updated: 2026-01-24 Phase 30 complete*

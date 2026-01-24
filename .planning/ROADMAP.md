@@ -60,8 +60,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 30-01-PLAN.md - Supplier CRUD with list page, detail modal, and navigation
-- [ ] 30-02-PLAN.md - Supplier-Cost linking and spend analytics on detail page
+- [x] 30-01-PLAN.md - Supplier CRUD with list page, detail modal, and navigation
+- [x] 30-02-PLAN.md - Supplier-Cost linking and spend analytics on detail page
 
 #### Phase 31: Department Organization
 **Goal**: Users can organize company contacts by department and scope deals/potentials
@@ -145,15 +145,15 @@ Phases execute in numeric order: 29 -> 30 -> 31 -> 32 -> 33 -> 34 -> 35
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 29. Schema Foundation | v1.4 | 1/1 | ✓ Complete | 2026-01-24 |
-| 30. Supplier Management | v1.4 | 0/2 | Planned | - |
+| 30. Supplier Management | v1.4 | 2/2 | ✓ Complete | 2026-01-24 |
 | 31. Department Organization | v1.4 | 0/2 | Not started | - |
 | 32. Project Deliverables | v1.4 | 0/2 | Not started | - |
 | 33. Task Management | v1.4 | 0/3 | Not started | - |
 | 34. Activity Logging & Sync | v1.4 | 0/2 | Not started | - |
 | 35. AI Price Comparison | v1.4 | 0/1 | Not started | - |
 
-**v1.4 Total:** 1/13 plans complete
+**v1.4 Total:** 3/13 plans complete
 
 ---
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-01-24 (Phase 30 planned)*
+*Last updated: 2026-01-24 (Phase 30 complete)*
