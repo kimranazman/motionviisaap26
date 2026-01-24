@@ -86,11 +86,11 @@ Plans:
   1. User can create deliverable on project with title and value
   2. User can view, edit, and delete deliverables on project detail
   3. AI extracts deliverables from uploaded Talenta/Motionvii quotes/invoices
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 32-01: Deliverable CRUD
-- [ ] 32-02: AI deliverable extraction
+- [ ] 32-01-PLAN.md - Deliverable CRUD API and UI components
+- [ ] 32-02-PLAN.md - AI deliverable extraction and review
 
 #### Phase 33: Task Management
 **Goal**: Users can track tasks and subtasks on projects with full workflow
@@ -147,7 +147,7 @@ Phases execute in numeric order: 29 -> 30 -> 31 -> 32 -> 33 -> 34 -> 35
 | 29. Schema Foundation | v1.4 | 1/1 | ✓ Complete | 2026-01-24 |
 | 30. Supplier Management | v1.4 | 2/2 | ✓ Complete | 2026-01-24 |
 | 31. Department Organization | v1.4 | 2/2 | ✓ Complete | 2026-01-24 |
-| 32. Project Deliverables | v1.4 | 0/2 | Not started | - |
+| 32. Project Deliverables | v1.4 | 0/2 | Ready | - |
 | 33. Task Management | v1.4 | 0/3 | Not started | - |
 | 34. Activity Logging & Sync | v1.4 | 0/2 | Not started | - |
 | 35. AI Price Comparison | v1.4 | 0/1 | Not started | - |
@@ -156,4 +156,4 @@ Phases execute in numeric order: 29 -> 30 -> 31 -> 32 -> 33 -> 34 -> 35
 
 ---
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-01-24 (Phase 31 complete)*
+*Last updated: 2026-01-25 (Phase 32 planned)*
