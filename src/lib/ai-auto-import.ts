@@ -138,7 +138,7 @@ async function autoImportInvoice(
   // Get project
   const project = await prisma.project.findUnique({
     where: { id: projectId },
-    select: { id: true, revenue: true, aiImportedRevenue: true },
+    select: { id: true, revenue: true, potentialRevenue: true },
   })
 
   if (!project) {
@@ -152,12 +152,12 @@ async function autoImportInvoice(
   }
 
   // Replace revenue with AI-extracted amount (invoice is the source of truth)
-  // Previous revenue may have been an estimate from deal/potential
+  // potentialRevenue may have been set from deal/potential conversion (estimate)
+  // revenue is now set by AI invoice import only (actuals)
   await prisma.project.update({
     where: { id: projectId },
     data: {
-      revenue: results.total,
-      aiImportedRevenue: results.total,
+      revenue: results.total, // Only set actual revenue
     },
   })
 

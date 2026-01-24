@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     // Verify project exists
     const project = await prisma.project.findUnique({
       where: { id: projectId },
-      select: { id: true, revenue: true, aiImportedRevenue: true },
+      select: { id: true, revenue: true, potentialRevenue: true },
     })
 
     if (!project) {
@@ -75,15 +75,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Replace project revenue with AI-extracted amount (invoice is source of truth)
+    // potentialRevenue may have been set from deal/potential conversion (estimate)
+    // revenue is now set by AI invoice import only (actuals)
     let updatedProject = project
     if (addToRevenue && extraction.total) {
       updatedProject = await prisma.project.update({
         where: { id: projectId },
         data: {
-          revenue: extraction.total,
-          aiImportedRevenue: extraction.total,
+          revenue: extraction.total, // Only set actual revenue
         },
-        select: { id: true, revenue: true, aiImportedRevenue: true },
+        select: { id: true, revenue: true, potentialRevenue: true },
       })
     }
 
@@ -102,7 +103,7 @@ export async function POST(request: NextRequest) {
       project: {
         id: updatedProject.id,
         revenue: updatedProject.revenue ? Number(updatedProject.revenue) : null,
-        aiImportedRevenue: updatedProject.aiImportedRevenue ? Number(updatedProject.aiImportedRevenue) : null,
+        potentialRevenue: updatedProject.potentialRevenue ? Number(updatedProject.potentialRevenue) : null,
       },
       document: {
         id: updatedDocument.id,
