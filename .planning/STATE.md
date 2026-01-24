@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Team can visualize and track initiative progress with secure access, full CRM, customizable dashboards, project document management, AI document intelligence, conversion visibility, archive management, and intelligent project delivery with supplier tracking and task management.
-**Current focus:** v1.4 Intelligent Automation & Organization - Phase 31 ready to plan
+**Current focus:** v1.4 Intelligent Automation & Organization - Phase 31 in progress
 
 ## Current Position
 
 Phase: 31 of 35 (Department Organization)
-Plan: Ready to plan
-Status: Phase 30 complete
-Last activity: 2026-01-24 - Phase 30 (Supplier Management) complete - CRUD, cost linking, spend analytics
+Plan: 01 complete
+Status: In progress
+Last activity: 2026-01-24 - Completed 31-01-PLAN.md (Department CRUD with contact assignment)
 
-Progress: v1.4 [█████░░░░░░░░░░░░░░░░░░░░░░░░░░░] 23% (3/13 plans)
+Progress: v1.4 [██████░░░░░░░░░░░░░░░░░░░░░░░░░] 31% (4/13 plans)
 
 ## Milestone History
 
@@ -34,9 +34,9 @@ Progress: v1.4 [█████░░░░░░░░░░░░░░░░�
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 69 (v1.0-v1.4 partial)
+- Total plans completed: 70 (v1.0-v1.4 partial)
 - Average duration: 4.1 min
-- Total execution time: 291 min
+- Total execution time: 297 min
 
 **By Milestone (summary):**
 
@@ -49,7 +49,7 @@ Progress: v1.4 [█████░░░░░░░░░░░░░░░░�
 | v1.3 | 21-25 | 18 | 5.1min |
 | v1.3.1 | 26 | 3 | 2.7min |
 | v1.3.2 | 27-28 | 4 | 4.8min |
-| v1.4 | 29-35 | 3 | 7.3min (partial) |
+| v1.4 | 29-35 | 4 | 7.0min (partial) |
 
 ## Accumulated Context
 
@@ -66,6 +66,9 @@ Recent decisions from v1.4:
 - Delete protection on suppliers (cannot delete if costs linked)
 - Lazy-load suppliers in combobox when popover opens
 - Total spend calculated server-side for consistency
+- Delete department via transaction that unlinks contacts/deals/potentials first
+- DepartmentSelect only shown in ContactForm when departments.length > 0
+- Departments section placed between contacts and related items in modal
 
 ### Pending Todos
 
@@ -77,6 +80,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-24
-Stopped at: Phase 30 complete
-Resume: Start planning with `/gsd:discuss-phase 31`
+Last session: 2026-01-24T15:14:30Z
+Stopped at: Completed 31-01-PLAN.md
+Resume file: None
