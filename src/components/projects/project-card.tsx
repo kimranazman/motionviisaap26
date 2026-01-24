@@ -10,7 +10,8 @@ interface Project {
   id: string
   title: string
   description: string | null
-  revenue: number | null
+  revenue: number | null              // Actual revenue from AI invoices
+  potentialRevenue: number | null     // From deal/potential conversion
   status: string
   company: { id: string; name: string } | null
   contact: { id: string; name: string } | null
