@@ -54,6 +54,7 @@ export async function GET(
     const serialized = {
       ...project,
       revenue: project.revenue ? Number(project.revenue) : null,
+      potentialRevenue: project.potentialRevenue ? Number(project.potentialRevenue) : null,
       costs: project.costs.map(cost => ({
         ...cost,
         amount: Number(cost.amount),
@@ -87,7 +88,7 @@ export async function PATCH(
       data: {
         ...(body.title !== undefined && { title: body.title }),
         ...(body.description !== undefined && { description: body.description || null }),
-        ...(body.revenue !== undefined && { revenue: body.revenue ? parseFloat(body.revenue) : null }),
+        // revenue is NOT updateable via API - only set by AI invoice import
         ...(body.status !== undefined && { status: body.status as ProjectStatus }),
         ...(body.companyId !== undefined && { companyId: body.companyId }),
         ...(body.contactId !== undefined && { contactId: body.contactId || null }),
