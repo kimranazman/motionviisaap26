@@ -6,18 +6,26 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card } from '@/components/ui/card'
 import { Loader2 } from 'lucide-react'
+import { DepartmentSelect } from '@/components/pipeline/department-select'
+
+interface Department {
+  id: string
+  name: string
+}
 
 interface ContactFormProps {
   companyId: string
+  departments?: Department[]
   onSuccess: () => void
   onCancel: () => void
 }
 
-export function ContactForm({ companyId, onSuccess, onCancel }: ContactFormProps) {
+export function ContactForm({ companyId, departments = [], onSuccess, onCancel }: ContactFormProps) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [role, setRole] = useState('')
+  const [departmentId, setDepartmentId] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -41,6 +49,7 @@ export function ContactForm({ companyId, onSuccess, onCancel }: ContactFormProps
           email: email.trim() || null,
           phone: phone.trim() || null,
           role: role.trim() || null,
+          departmentId: departmentId || null,
         }),
       })
 
@@ -50,6 +59,7 @@ export function ContactForm({ companyId, onSuccess, onCancel }: ContactFormProps
         setEmail('')
         setPhone('')
         setRole('')
+        setDepartmentId(null)
         onSuccess()
       } else {
         const data = await response.json()
@@ -125,6 +135,18 @@ export function ContactForm({ companyId, onSuccess, onCancel }: ContactFormProps
               disabled={isSubmitting}
             />
           </div>
+
+          {departments.length > 0 && (
+            <div className="space-y-1.5 md:col-span-2">
+              <Label className="text-xs">Department</Label>
+              <DepartmentSelect
+                value={departmentId}
+                onValueChange={setDepartmentId}
+                departments={departments}
+                disabled={isSubmitting}
+              />
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">

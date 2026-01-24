@@ -308,6 +308,7 @@ export function CompanyDetailModal({
                 {showAddForm && (
                   <ContactForm
                     companyId={company.id}
+                    departments={company.departments}
                     onSuccess={handleContactAdded}
                     onCancel={() => setShowAddForm(false)}
                   />
