@@ -44,9 +44,10 @@ import { DeliverableCard } from './deliverable-card'
 import { DocumentsSection } from './documents-section'
 import { ImagePreviewDialog } from './image-preview-dialog'
 import { AIReviewSheet } from '@/components/ai/ai-review-sheet'
+import { DeliverableReviewSheet } from '@/components/ai/deliverable-review-sheet'
 import { type DocumentCategory, type DocumentAIStatus } from '@/lib/document-utils'
 import { toast } from 'sonner'
-import { InvoiceExtraction, ReceiptExtraction, AIAnalysisResult } from '@/types/ai-extraction'
+import { InvoiceExtraction, ReceiptExtraction, DeliverableExtraction, AIAnalysisResult } from '@/types/ai-extraction'
 import { calculateTotalCosts, calculateProfit } from '@/lib/cost-utils'
 import { Card } from '@/components/ui/card'
 import {
@@ -397,6 +398,11 @@ export function ProjectDetailSheet({
   const [reviewExtraction, setReviewExtraction] = useState<InvoiceExtraction | ReceiptExtraction | null>(null)
   const [isReviewSheetOpen, setIsReviewSheetOpen] = useState(false)
 
+  // Deliverable Review state
+  const [reviewDeliverableDocument, setReviewDeliverableDocument] = useState<Document | null>(null)
+  const [reviewDeliverableExtraction, setReviewDeliverableExtraction] = useState<DeliverableExtraction | null>(null)
+  const [isDeliverableReviewSheetOpen, setIsDeliverableReviewSheetOpen] = useState(false)
+
   // Fetch cost categories on mount
   useEffect(() => {
     const fetchCategories = async () => {
@@ -450,6 +456,11 @@ export function ProjectDetailSheet({
       setReviewDocument(null)
       setReviewExtraction(null)
       setIsReviewSheetOpen(false)
+
+      // Reset deliverable review state
+      setReviewDeliverableDocument(null)
+      setReviewDeliverableExtraction(null)
+      setIsDeliverableReviewSheetOpen(false)
 
       // Fetch contacts for selected company
       if (project.company?.id) {
@@ -746,6 +757,59 @@ export function ProjectDetailSheet({
         }
       } catch (error) {
         console.error('Failed to refresh costs:', error)
+      }
+    }
+  }
+
+  // AI Deliverable Review handler - load AI results and open deliverable review sheet
+  const handleReviewDeliverable = async (doc: Document) => {
+    if (!project) return
+
+    try {
+      const response = await fetch(`/api/projects/${project.id}/ai-results`)
+      if (!response.ok) {
+        const data = await response.json()
+        toast.error('Failed to load AI results', {
+          description: data.message || data.error || 'Unknown error',
+        })
+        return
+      }
+
+      const results: AIAnalysisResult = await response.json()
+
+      // Find deliverable extraction matching the document
+      const extraction = results.deliverables?.find((d) => d.documentId === doc.id) || null
+
+      if (!extraction) {
+        toast.error('Deliverable extraction not found', {
+          description: 'No deliverable analysis data found for this document',
+        })
+        return
+      }
+
+      setReviewDeliverableDocument(doc)
+      setReviewDeliverableExtraction(extraction)
+      setIsDeliverableReviewSheetOpen(true)
+    } catch (error) {
+      console.error('Failed to load AI results:', error)
+      toast.error('Failed to load AI results')
+    }
+  }
+
+  // Handle deliverable import complete - refresh documents and deliverables
+  const handleDeliverableImportComplete = async () => {
+    // Refresh documents to update AI status
+    await handleDocumentsRefresh()
+    // Refresh deliverables
+    if (project) {
+      try {
+        const response = await fetch(`/api/projects/${project.id}/deliverables`)
+        if (response.ok) {
+          const data = await response.json()
+          setDeliverables(data)
+        }
+      } catch (error) {
+        console.error('Failed to refresh deliverables:', error)
       }
     }
   }
@@ -1153,6 +1217,7 @@ export function ProjectDetailSheet({
               onPreview={handlePreviewDocument}
               onDocumentsChange={handleDocumentsRefresh}
               onReview={handleReviewDocument}
+              onReviewDeliverable={handleReviewDeliverable}
             />
 
             {/* Error message */}
@@ -1180,6 +1245,18 @@ export function ProjectDetailSheet({
             extraction={reviewExtraction}
             categories={categories}
             onImportComplete={handleImportComplete}
+          />
+        )}
+
+        {/* Deliverable Review Sheet */}
+        {reviewDeliverableDocument && reviewDeliverableExtraction && (
+          <DeliverableReviewSheet
+            open={isDeliverableReviewSheetOpen}
+            onOpenChange={setIsDeliverableReviewSheetOpen}
+            projectId={project.id}
+            document={reviewDeliverableDocument}
+            extraction={reviewDeliverableExtraction}
+            onImportComplete={handleDeliverableImportComplete}
           />
         )}
 

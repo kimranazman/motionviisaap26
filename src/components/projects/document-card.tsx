@@ -21,7 +21,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
-import { FileText, ImageIcon, Download, Trash2, Eye, Sparkles } from 'lucide-react'
+import { FileText, ImageIcon, Download, Trash2, Eye, Sparkles, Package } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 import { formatFileSize, getCategoryColor, getAIStatusColor, formatAIStatus, isPreviewable, DOCUMENT_CATEGORIES, type DocumentCategory, type DocumentAIStatus } from '@/lib/document-utils'
 
@@ -44,6 +44,7 @@ interface DocumentCardProps {
   onCategoryChange: () => void
   onDelete: () => void
   onReview?: (document: Document) => void
+  onReviewDeliverable?: (document: Document) => void
 }
 
 export function DocumentCard({
@@ -53,6 +54,7 @@ export function DocumentCard({
   onCategoryChange,
   onDelete,
   onReview,
+  onReviewDeliverable,
 }: DocumentCardProps) {
   const [isDeleting, setIsDeleting] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
@@ -165,6 +167,19 @@ export function DocumentCard({
             title="Review AI extraction"
           >
             <Sparkles className="h-4 w-4" />
+          </Button>
+        )}
+
+        {/* Import Deliverables - only for ANALYZED invoices (from Talenta/Motionvii) */}
+        {onReviewDeliverable && document.aiStatus === 'ANALYZED' && document.category === 'INVOICE' && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-10 w-10 text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+            onClick={() => onReviewDeliverable(document)}
+            title="Import Deliverables"
+          >
+            <Package className="h-4 w-4" />
           </Button>
         )}
 

@@ -23,6 +23,7 @@ interface DocumentListProps {
   onPreview: (document: Document) => void
   onDocumentChange: () => void
   onReview?: (document: Document) => void
+  onReviewDeliverable?: (document: Document) => void
 }
 
 const CATEGORY_TABS = [
@@ -40,6 +41,7 @@ export function DocumentList({
   onPreview,
   onDocumentChange,
   onReview,
+  onReviewDeliverable,
 }: DocumentListProps) {
   const [selectedCategory, setSelectedCategory] = useState<FilterCategory>('ALL')
 
@@ -95,6 +97,7 @@ export function DocumentList({
               onCategoryChange={handleCategoryChange}
               onDelete={onDocumentChange}
               onReview={onReview}
+              onReviewDeliverable={onReviewDeliverable}
             />
           ))}
         </div>
