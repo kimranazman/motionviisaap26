@@ -55,7 +55,8 @@ export async function PATCH(request: NextRequest) {
             data: {
               title: currentDeal.title,
               description: null,
-              revenue: currentDeal.value,
+              potentialRevenue: currentDeal.value, // Set potential, not actual
+              // revenue is null - will be set by AI invoice import
               status: ProjectStatus.DRAFT,
               companyId: currentDeal.companyId,
               contactId: currentDeal.contactId,
