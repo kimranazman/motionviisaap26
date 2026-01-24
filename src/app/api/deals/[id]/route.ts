@@ -81,6 +81,7 @@ export async function PATCH(
         ...(body.description !== undefined && { description: body.description || null }),
         ...(body.value !== undefined && { value: body.value ? parseFloat(body.value) : null }),
         ...(body.companyId !== undefined && { companyId: body.companyId }),
+        ...(body.departmentId !== undefined && { departmentId: body.departmentId || null }),
         ...(body.contactId !== undefined && { contactId: body.contactId || null }),
         ...(body.stage !== undefined && { stage: body.stage as DealStage }),
         ...(body.lostReason !== undefined && { lostReason: body.lostReason || null }),
@@ -89,6 +90,9 @@ export async function PATCH(
       },
       include: {
         company: {
+          select: { id: true, name: true },
+        },
+        department: {
           select: { id: true, name: true },
         },
         contact: {

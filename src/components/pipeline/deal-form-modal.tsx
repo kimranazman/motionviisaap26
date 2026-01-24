@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -15,10 +15,17 @@ import { Label } from '@/components/ui/label'
 import { Loader2 } from 'lucide-react'
 import { CompanySelect } from './company-select'
 import { ContactSelect } from './contact-select'
+import { DepartmentSelect } from './department-select'
+
+interface Department {
+  id: string
+  name: string
+}
 
 interface Contact {
   id: string
   name: string
+  departmentId: string | null
 }
 
 interface Deal {
@@ -45,6 +52,8 @@ export function DealFormModal({
 }: DealFormModalProps) {
   const [title, setTitle] = useState('')
   const [companyId, setCompanyId] = useState<string | null>(null)
+  const [departmentId, setDepartmentId] = useState<string | null>(null)
+  const [departments, setDepartments] = useState<Department[]>([])
   const [contactId, setContactId] = useState<string | null>(null)
   const [contacts, setContacts] = useState<Contact[]>([])
   const [value, setValue] = useState('')
@@ -58,6 +67,8 @@ export function DealFormModal({
     if (!open) {
       setTitle('')
       setCompanyId(null)
+      setDepartmentId(null)
+      setDepartments([])
       setContactId(null)
       setContacts([])
       setValue('')
@@ -66,32 +77,55 @@ export function DealFormModal({
     }
   }, [open])
 
-  // Fetch contacts when company changes
+  // Fetch contacts and departments when company changes
   useEffect(() => {
     if (!companyId) {
       setContacts([])
+      setDepartments([])
       setContactId(null)
+      setDepartmentId(null)
       return
     }
 
-    const fetchContacts = async () => {
+    const fetchCompanyData = async () => {
       setIsLoadingContacts(true)
       setContactId(null) // Clear contact when company changes
+      setDepartmentId(null) // Clear department when company changes
       try {
         const response = await fetch(`/api/companies/${companyId}`)
         if (response.ok) {
           const data = await response.json()
           setContacts(data.contacts || [])
+          setDepartments(data.departments || [])
         }
       } catch (error) {
-        console.error('Failed to fetch contacts:', error)
+        console.error('Failed to fetch company data:', error)
         setContacts([])
+        setDepartments([])
       } finally {
         setIsLoadingContacts(false)
       }
     }
-    fetchContacts()
+    fetchCompanyData()
   }, [companyId])
+
+  // Filter contacts by department
+  const filteredContacts = useMemo(() => {
+    if (!departmentId) return contacts // No filter when no department selected
+    return contacts.filter(
+      (c) => c.departmentId === departmentId || c.departmentId === null
+    )
+  }, [contacts, departmentId])
+
+  // Clear contact if not in filtered list when department changes
+  useEffect(() => {
+    if (contactId && departmentId) {
+      const isValidContact = filteredContacts.some((c) => c.id === contactId)
+      if (!isValidContact) {
+        setContactId(null)
+      }
+    }
+  }, [departmentId, filteredContacts, contactId])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -116,6 +150,7 @@ export function DealFormModal({
         body: JSON.stringify({
           title: title.trim(),
           companyId,
+          departmentId: departmentId || null,
           contactId: contactId || null,
           value: value ? parseFloat(value) : null,
           description: description.trim() || null,
@@ -173,13 +208,29 @@ export function DealFormModal({
               />
             </div>
 
+            {/* Department */}
+            <div className="space-y-2">
+              <Label>Department</Label>
+              <DepartmentSelect
+                value={departmentId}
+                onValueChange={setDepartmentId}
+                departments={departments}
+                disabled={!companyId || isLoadingContacts}
+              />
+              {!companyId && (
+                <p className="text-xs text-muted-foreground">
+                  Select a company first
+                </p>
+              )}
+            </div>
+
             {/* Contact */}
             <div className="space-y-2">
               <Label>Contact</Label>
               <ContactSelect
                 value={contactId}
                 onValueChange={setContactId}
-                contacts={contacts}
+                contacts={filteredContacts}
                 disabled={!companyId || isLoadingContacts}
               />
               {isLoadingContacts && (
