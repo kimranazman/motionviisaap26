@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-23)
 
 **Core value:** Team can visualize and track initiative progress with secure access, full CRM, customizable dashboards with project document management, AI document intelligence, and refined revenue model separating estimates from actuals.
-**Current focus:** v1.3.2 Conversion Visibility & Archive (complete)
+**Current focus:** v1.3.2 Conversion Visibility & Archive (complete with gap closure)
 
 ## Current Position
 
 Phase: 28 - Server Query Project Include Fix (2 of 2 in v1.3.2)
-Plan: 00 of 1 pending
-Status: Gap closure phase added
-Last activity: 2026-01-24 - Created Phase 28 to close audit gaps
+Plan: 01 of 1 complete
+Status: Phase complete - v1.3.2 gap closure done
+Last activity: 2026-01-24 - Completed 28-01-PLAN.md (server query project include fix)
 
-Progress: v1.3.2 [###########################-----] 75% (3/4 plans complete)
+Progress: v1.3.2 [################################] 100% (4/4 plans complete)
 
 ## Milestone History
 
@@ -33,9 +33,9 @@ Progress: v1.3.2 [###########################-----] 75% (3/4 plans complete)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 65
+- Total plans completed: 66
 - Average duration: 4.2 min
-- Total execution time: 271 min
+- Total execution time: 274 min
 
 **By Phase (v1.0-v1.3.2):**
 
@@ -68,6 +68,7 @@ Progress: v1.3.2 [###########################-----] 75% (3/4 plans complete)
 | 25-ai-document-intelligence | 5 | 24min | 4.8min |
 | 26-revenue-model-refinement | 3 | 8min | 2.7min |
 | 27-conversion-visibility-archive | 3 | 16min | 5.3min |
+| 28-server-query-project-include | 1 | 3min | 3min |
 
 ## Accumulated Context
 
@@ -109,6 +110,11 @@ Recent (Phase 27-03):
 - Archive/Unarchive uses toast notifications for feedback
 - Archived badge shows on all card types with gray styling
 
+Recent (Phase 28-01):
+- Server-side page queries now include project relation (matching API routes)
+- Decimal serialization for project.revenue and project.potentialRevenue
+- Conversion badges visible on initial page load (CONV-01 gap closed)
+
 ### Pending Todos
 
 None.
@@ -120,5 +126,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Phase 28 created to close v1.3.2 audit gaps
-Resume: `/gsd:plan-phase 28` to create execution plan for gap closure
+Stopped at: Completed Phase 28 (v1.3.2 gap closure complete)
+Resume: v1.3.2 milestone complete - ready for v1.4 planning
