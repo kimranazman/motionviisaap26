@@ -50,6 +50,26 @@ export interface ReceiptExtraction {
   warnings?: string[]
 }
 
+// Deliverable item extracted from quote/invoice (v1.4 - Phase 32)
+export interface DeliverableItem {
+  title: string
+  description?: string
+  value: number
+  confidence: ConfidenceLevel
+}
+
+// Deliverable extraction from Talenta/Motionvii quote/invoice
+export interface DeliverableExtraction {
+  documentId: string
+  confidence: ConfidenceLevel
+  documentType: 'QUOTE' | 'INVOICE'
+  issuer?: string  // "Talenta" or "Motionvii"
+  deliverables: DeliverableItem[]
+  documentTotal: number
+  notes?: string
+  warnings?: string[]
+}
+
 // Bulk AI analysis result (multiple documents)
 export interface AIAnalysisResult {
   version: '1.0'
@@ -57,6 +77,7 @@ export interface AIAnalysisResult {
   projectId: string
   invoices: InvoiceExtraction[]
   receipts: ReceiptExtraction[]
+  deliverables?: DeliverableExtraction[]  // Optional for backward compatibility
   errors?: {
     documentId: string
     error: string
