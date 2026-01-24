@@ -166,7 +166,7 @@ export function AIReviewSheet({
         const response = await fetch('/api/ai/import/invoice', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ projectId, extraction: payload }),
+          body: JSON.stringify({ projectId, extraction: payload, addToRevenue: true }),
         })
 
         if (!response.ok) {
