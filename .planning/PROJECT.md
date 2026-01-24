@@ -41,8 +41,23 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - Dashboard deal aging alerts
 - Toast notifications (Sonner) for user feedback
 
-**Planned for v1.4:**
-- Invoice generation system (generate invoices from project data)
+**Planned for v1.4: Intelligent Automation & Organization**
+
+*Bidirectional Sync:*
+- Bidirectional sync between Deals/Potentials ↔ Projects (changes sync both ways)
+
+*Supplier Management:*
+- New Supplier model with list page
+- Link suppliers to project costs
+
+*AI Document Intelligence (Enhanced):*
+- Auto-extract suppliers from receipts/invoices via AI
+- Auto-extract contacts from client invoices if not manually linked
+- Project breakdown from quotes/invoices — line items become deliverables
+
+*Company Organization:*
+- Department model for companies
+- Contacts and deals can belong to departments
 
 ## Requirements
 
