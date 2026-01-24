@@ -14,7 +14,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
-import { Edit2, Trash2, Sparkles } from 'lucide-react'
+import { Edit2, Trash2, Sparkles, Truck } from 'lucide-react'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { getCategoryColor } from '@/lib/cost-utils'
 
@@ -26,6 +26,7 @@ interface Cost {
   categoryId: string
   category: { id: string; name: string }
   aiImported?: boolean
+  supplier?: { id: string; name: string } | null
 }
 
 interface CostCardProps {
@@ -71,8 +72,14 @@ export function CostCard({ cost, projectId, onEdit, onDelete }: CostCardProps) {
             </Badge>
           )}
         </div>
-        <div className="text-sm text-gray-500 mt-1">
-          {formatDate(cost.date)}
+        <div className="flex items-center gap-3 text-sm text-gray-500 mt-1">
+          <span>{formatDate(cost.date)}</span>
+          {cost.supplier && (
+            <span className="flex items-center gap-1">
+              <Truck className="h-3 w-3" />
+              {cost.supplier.name}
+            </span>
+          )}
         </div>
       </div>
 

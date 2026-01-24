@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { requireAuth, requireEditor } from '@/lib/auth-utils'
 
-// GET /api/suppliers/[id] - Get single supplier with all fields
+// GET /api/suppliers/[id] - Get single supplier with all fields and spend analytics
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -18,6 +18,23 @@ export async function GET(
         _count: {
           select: { costs: true },
         },
+        costs: {
+          select: {
+            id: true,
+            description: true,
+            amount: true,
+            date: true,
+            category: { select: { id: true, name: true } },
+            project: {
+              select: {
+                id: true,
+                title: true,
+                company: { select: { id: true, name: true } },
+              },
+            },
+          },
+          orderBy: { date: 'desc' },
+        },
       },
     })
 
@@ -28,7 +45,44 @@ export async function GET(
       )
     }
 
-    return NextResponse.json(supplier)
+    // Calculate total spend
+    const totalSpend = supplier.costs.reduce(
+      (sum, cost) => sum + Number(cost.amount),
+      0
+    )
+
+    // Extract unique projects from costs
+    const projectMap = new Map<
+      string,
+      {
+        id: string
+        title: string
+        company: { id: string; name: string } | null
+      }
+    >()
+    supplier.costs.forEach((cost) => {
+      if (cost.project && !projectMap.has(cost.project.id)) {
+        projectMap.set(cost.project.id, {
+          id: cost.project.id,
+          title: cost.project.title,
+          company: cost.project.company,
+        })
+      }
+    })
+    const projects = Array.from(projectMap.values())
+
+    // Serialize costs (convert Decimal to Number)
+    const serializedCosts = supplier.costs.map((cost) => ({
+      ...cost,
+      amount: Number(cost.amount),
+    }))
+
+    return NextResponse.json({
+      ...supplier,
+      costs: serializedCosts,
+      totalSpend,
+      projects,
+    })
   } catch (error) {
     console.error('Error fetching supplier:', error)
     return NextResponse.json(
