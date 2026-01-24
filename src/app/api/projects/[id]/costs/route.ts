@@ -30,6 +30,7 @@ export async function GET(
       where: { projectId: id },
       include: {
         category: { select: { id: true, name: true } },
+        supplier: { select: { id: true, name: true } },
       },
       orderBy: [
         { date: 'desc' },
@@ -118,9 +119,11 @@ export async function POST(
         amount: parseFloat(body.amount),
         categoryId: body.categoryId,
         date: body.date ? new Date(body.date) : new Date(),
+        supplierId: body.supplierId || null,
       },
       include: {
         category: { select: { id: true, name: true } },
+        supplier: { select: { id: true, name: true } },
       },
     })
 

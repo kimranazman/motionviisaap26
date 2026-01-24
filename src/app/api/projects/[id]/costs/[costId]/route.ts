@@ -47,6 +47,7 @@ export async function PATCH(
       amount?: number
       categoryId?: string
       date?: Date
+      supplierId?: string | null
     } = {}
 
     if (body.description !== undefined) {
@@ -61,12 +62,16 @@ export async function PATCH(
     if (body.date !== undefined) {
       updateData.date = new Date(body.date)
     }
+    if (body.supplierId !== undefined) {
+      updateData.supplierId = body.supplierId || null
+    }
 
     const cost = await prisma.cost.update({
       where: { id: costId },
       data: updateData,
       include: {
         category: { select: { id: true, name: true } },
+        supplier: { select: { id: true, name: true } },
       },
     })
 

@@ -20,6 +20,7 @@ import {
 import { format } from 'date-fns'
 import { CalendarIcon, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { SupplierSelect } from '@/components/suppliers/supplier-select'
 
 interface CostCategory {
   id: string
@@ -33,6 +34,7 @@ interface Cost {
   amount: number
   categoryId: string
   date: string
+  supplierId?: string | null
 }
 
 interface CostFormProps {
@@ -55,6 +57,9 @@ export function CostForm({
   const [categoryId, setCategoryId] = useState(cost?.categoryId || '')
   const [date, setDate] = useState<Date>(
     cost?.date ? new Date(cost.date) : new Date()
+  )
+  const [supplierId, setSupplierId] = useState<string | null>(
+    cost?.supplierId || null
   )
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -92,6 +97,7 @@ export function CostForm({
           amount: parseFloat(amount),
           categoryId,
           date: date.toISOString(),
+          supplierId: supplierId || null,
         }),
       })
 
@@ -188,6 +194,18 @@ export function CostForm({
               />
             </PopoverContent>
           </Popover>
+        </div>
+
+        {/* Supplier */}
+        <div className="col-span-2 space-y-2">
+          <Label>Supplier</Label>
+          <SupplierSelect
+            value={supplierId}
+            onValueChange={setSupplierId}
+          />
+          <p className="text-xs text-muted-foreground">
+            Optional: Link this cost to a supplier for spend tracking
+          </p>
         </div>
       </div>
 
