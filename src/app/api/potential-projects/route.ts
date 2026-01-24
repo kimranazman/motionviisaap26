@@ -95,12 +95,16 @@ export async function POST(request: NextRequest) {
         description: body.description || null,
         estimatedValue: body.estimatedValue ? parseFloat(body.estimatedValue) : null,
         companyId: body.companyId,
+        departmentId: body.departmentId || null,
         contactId: body.contactId || null,
         stage: PotentialStage.POTENTIAL,
         position: nextPosition,
       },
       include: {
         company: {
+          select: { id: true, name: true },
+        },
+        department: {
           select: { id: true, name: true },
         },
         contact: {

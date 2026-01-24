@@ -81,6 +81,7 @@ export async function PATCH(
         ...(body.description !== undefined && { description: body.description || null }),
         ...(body.estimatedValue !== undefined && { estimatedValue: body.estimatedValue ? parseFloat(body.estimatedValue) : null }),
         ...(body.companyId !== undefined && { companyId: body.companyId }),
+        ...(body.departmentId !== undefined && { departmentId: body.departmentId || null }),
         ...(body.contactId !== undefined && { contactId: body.contactId || null }),
         ...(body.stage !== undefined && { stage: body.stage as PotentialStage }),
         ...(body.isArchived !== undefined && { isArchived: body.isArchived }),
@@ -88,6 +89,9 @@ export async function PATCH(
       },
       include: {
         company: {
+          select: { id: true, name: true },
+        },
+        department: {
           select: { id: true, name: true },
         },
         contact: {
