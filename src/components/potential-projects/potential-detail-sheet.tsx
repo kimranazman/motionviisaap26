@@ -263,6 +263,8 @@ export function PotentialDetailSheet({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Enter project title"
+                disabled={isReadOnly}
+                className={cn(isReadOnly && "bg-gray-50 cursor-not-allowed")}
               />
             </div>
 
@@ -274,6 +276,7 @@ export function PotentialDetailSheet({
               <CompanySelect
                 value={companyId}
                 onValueChange={handleCompanyChange}
+                disabled={isReadOnly}
               />
             </div>
 
@@ -284,7 +287,7 @@ export function PotentialDetailSheet({
                 value={contactId}
                 onValueChange={setContactId}
                 contacts={contacts}
-                disabled={!companyId || isLoadingContacts}
+                disabled={!companyId || isLoadingContacts || isReadOnly}
               />
               {isLoadingContacts && (
                 <p className="text-xs text-muted-foreground">
@@ -304,6 +307,8 @@ export function PotentialDetailSheet({
                 value={estimatedValue}
                 onChange={(e) => setEstimatedValue(e.target.value)}
                 placeholder="0.00"
+                disabled={isReadOnly}
+                className={cn(isReadOnly && "bg-gray-50 cursor-not-allowed")}
               />
             </div>
 
@@ -315,9 +320,60 @@ export function PotentialDetailSheet({
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Add notes about this project..."
-                className="min-h-[80px]"
+                className={cn("min-h-[80px]", isReadOnly && "bg-gray-50 cursor-not-allowed")}
+                disabled={isReadOnly}
               />
             </div>
+
+            {/* Converted Project Info */}
+            {isConverted && project.project && (
+              <>
+                <Separator />
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Lock className="h-4 w-4" />
+                    <span className="text-sm">Converted to Project</span>
+                  </div>
+
+                  <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium text-green-800">{project.project.title}</div>
+                      </div>
+                      <Button variant="outline" size="sm" asChild>
+                        <Link href={`/projects?open=${project.project.id}`}>
+                          <ExternalLink className="h-4 w-4 mr-1" />
+                          View
+                        </Link>
+                      </Button>
+                    </div>
+
+                    {/* Variance display */}
+                    {project.project.revenue !== null && (
+                      <div className="mt-3 pt-3 border-t border-green-200 text-sm">
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <span className="text-gray-500">Estimated: </span>
+                            <span className="font-medium">{formatCurrency(project.estimatedValue ?? 0)}</span>
+                          </div>
+                          <div>
+                            <span className="text-gray-500">Actual: </span>
+                            <span className="font-medium">{formatCurrency(project.project.revenue)}</span>
+                          </div>
+                        </div>
+                        <div className={cn(
+                          "mt-1 font-medium",
+                          project.project.revenue > (project.estimatedValue ?? 0) ? "text-green-600" : "text-amber-600"
+                        )}>
+                          Variance: {project.project.revenue > (project.estimatedValue ?? 0) ? '+' : ''}
+                          {formatCurrency(project.project.revenue - (project.estimatedValue ?? 0))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
 
             {/* Error message */}
             {error && (
@@ -382,14 +438,20 @@ export function PotentialDetailSheet({
             </AlertDialog>
           </div>
 
-          <Button
-            onClick={handleSave}
-            disabled={isSaving || !hasChanges}
-            className="w-full sm:w-auto"
-          >
-            {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Save Changes
-          </Button>
+          {isReadOnly ? (
+            <div className="text-sm text-muted-foreground text-center py-2 px-4">
+              Converted potentials cannot be edited
+            </div>
+          ) : (
+            <Button
+              onClick={handleSave}
+              disabled={isSaving || !hasChanges}
+              className="w-full sm:w-auto"
+            >
+              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Save Changes
+            </Button>
+          )}
         </SheetFooter>
       </SheetContent>
     </Sheet>
