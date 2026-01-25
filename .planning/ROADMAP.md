@@ -133,10 +133,11 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. AI semantic matching finds similar line items across suppliers
   2. Price comparison view shows suppliers' prices for similar items with confidence
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 35-01: AI embeddings and price comparison
+- [ ] 35-01-PLAN.md - Schema & embedding infrastructure (Cost.embedding, OpenAI SDK, lib/embeddings.ts)
+- [ ] 35-02-PLAN.md - Comparison API & UI (fire-and-forget embedding, /api/suppliers/compare, PriceComparisonSheet)
 
 ## Progress
 
@@ -151,10 +152,10 @@ Phases execute in numeric order: 29 -> 30 -> 31 -> 32 -> 33 -> 34 -> 35
 | 32. Project Deliverables | v1.4 | 2/2 | ✓ Complete | 2026-01-25 |
 | 33. Task Management | v1.4 | 4/4 | ✓ Complete | 2026-01-25 |
 | 34. Activity Logging & Sync | v1.4 | 2/2 | ✓ Complete | 2026-01-25 |
-| 35. AI Price Comparison | v1.4 | 0/1 | Not started | - |
+| 35. AI Price Comparison | v1.4 | 0/2 | Ready to execute | - |
 
-**v1.4 Total:** 13/14 plans complete
+**v1.4 Total:** 13/15 plans complete
 
 ---
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-01-25 (Phase 34 complete)*
+*Last updated: 2026-01-25 (Phase 35 planned)*
