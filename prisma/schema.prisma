@@ -521,6 +521,9 @@ model Cost {
   // AI import tracking
   aiImported Boolean @default(false) @map("ai_imported")
 
+  // AI embedding for semantic matching (1536 floats for text-embedding-3-small)
+  embedding Json? @db.Json
+
   supplierId String?   @map("supplier_id")
   supplier   Supplier? @relation(fields: [supplierId], references: [id])
 
