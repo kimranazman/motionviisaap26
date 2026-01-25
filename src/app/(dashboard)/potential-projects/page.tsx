@@ -26,8 +26,12 @@ export default async function PotentialProjectsPage({
         select: {
           id: true,
           title: true,
+          status: true,
           revenue: true,
           potentialRevenue: true,
+          costs: {
+            select: { amount: true },
+          },
         },
       },
     },
@@ -42,9 +46,12 @@ export default async function PotentialProjectsPage({
     ...project,
     estimatedValue: project.estimatedValue ? Number(project.estimatedValue) : null,
     project: project.project ? {
-      ...project.project,
+      id: project.project.id,
+      title: project.project.title,
+      status: project.project.status,
       revenue: project.project.revenue ? Number(project.project.revenue) : null,
       potentialRevenue: project.project.potentialRevenue ? Number(project.project.potentialRevenue) : null,
+      totalCosts: project.project.costs.reduce((sum, cost) => sum + Number(cost.amount), 0),
     } : null,
   }))
 
