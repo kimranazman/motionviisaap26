@@ -2,21 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-01-25)
+See: .planning/PROJECT.md (updated 2026-01-26)
 
-**Core value:** Users can compare supplier prices for the same item by filtering a table - AI categorizes items, users do the comparison.
-**Current focus:** v1.4.2 UI Polish & Bug Fixes - SHIPPED
+**Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, and AI-powered intelligence.
+**Current focus:** Planning next milestone
 
 ## Current Position
 
-Phase: 37 (Convert Detail Sheets to Modals)
-Plan: 2 of 2 complete
-Status: Phase complete, milestone verified
-Last activity: 2026-01-26 - Phase 37 verified, v1.4.2 shipped
+Phase: 37 complete (all milestones through v1.4.2 shipped)
+Plan: N/A — between milestones
+Status: Ready for new milestone
+Last activity: 2026-01-26 — v1.4.2 archived
 
-Progress: v1.4.2 [████████████████████████████████] 100% (shipped)
-
-**Milestone Complete:** v1.4.2 UI Polish & Bug Fixes
+Progress: All milestones complete ✓
 
 ## Milestone History
 
@@ -41,37 +39,20 @@ Progress: v1.4.2 [████████████████████�
 
 Full decision log in PROJECT.md Key Decisions table.
 
-v1.4.1 context:
-- v1.4 built on-demand semantic search for price comparison
-- Actual need: AI categorizes items, users filter table manually
-- This patch corrects the implementation to match original intent
-- 36-01: gpt-4o-mini with temperature=0 for consistent categorization
-- 36-01: Fire-and-forget pattern for non-blocking API responses
-- 36-02: Page named "Price Comparison" for user clarity
-- 36-02: Server component with direct prisma (middleware handles auth)
-
-v1.4.2 context:
-- 37-01: Moved state resets inside fetch effects to prevent race conditions
-- 37-01: Pattern: reset async data at fetch start, not in separate effect
-- 37-02: All detail sheets converted from Sheet to Dialog
-- 37-02: Dialog widths: 650px default, 512px tasks, 768px AI review, 672px deliverable review
-- 37-02: Pattern: Dialog detail modal with p-0 flex flex-col, Header pr-12, ScrollArea min-h-0
-
 ### Pending Todos
 
 None.
 
 ### Roadmap Evolution
 
-- Phase 37 complete: Convert Detail Sheets to Modals
+- v1.4.2 archived — all milestones through v1.4.2 shipped
 
 ### Blockers/Concerns
 
-- ~~Documents not showing in project detail~~ FIXED in 37-01
-- ~~Resizable sheet handle too subtle (1px)~~ FIXED in 37-02 (converted to Dialog, no handle needed)
+None — ready for next milestone.
 
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Phase 37 verified, v1.4.2 shipped
-Resume: Run /gsd:audit-milestone or /gsd:new-milestone for next work
+Stopped at: v1.4.2 milestone archived
+Resume: Run /gsd:new-milestone to start next milestone

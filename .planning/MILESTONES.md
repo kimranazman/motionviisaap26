@@ -1,5 +1,71 @@
 # Milestone History
 
+## v1.4.2: UI Polish & Bug Fixes
+
+**Shipped:** 2026-01-26
+**Duration:** < 1 day
+**Phases:** 1 (Phase 37)
+**Plans:** 2
+**Stats:** 11 commits, 15 files changed, +1,213 / -158 lines
+
+### Summary
+
+Fixed post-deployment bug where documents stopped displaying in project detail, and converted all detail sheet components from sliding Sheet to centered Dialog modals for better UX discoverability.
+
+### Key Accomplishments
+
+- Fixed documents display race condition (useEffect dependency mismatch — init effect reset state but fetch effect didn't re-trigger)
+- Converted 7 detail sheet components to centered Dialog modals (project, deal, initiative, potential, task, AI review, deliverable review)
+- Proper width sizing per component type (650px default, 512px task, 768px AI review, 672px deliverable review)
+- Mobile responsive with automatic slide-from-bottom behavior on small screens
+
+### Requirements Delivered
+
+| Category | Count | IDs |
+|----------|-------|-----|
+| Bug Fix (documents display) | 1 | Bug fix |
+| UX Improvement (sheet → modal) | 6 | Success criteria 1-6 |
+
+### Artifacts
+
+- Roadmap: `.planning/milestones/v1.4.2-ROADMAP.md`
+- Requirements: `.planning/milestones/v1.4.2-REQUIREMENTS.md`
+
+---
+
+## v1.4.1: Line Item Categorization
+
+**Shipped:** 2026-01-25
+**Duration:** < 1 day
+**Phases:** 1 (Phase 36)
+**Plans:** 2
+**Stats:** 10 commits, 20 files changed
+
+### Summary
+
+Corrected v1.4 price comparison — replaced semantic search with simpler approach: AI categorizes cost line items with normalized names, users compare prices by filtering a table manually.
+
+### Key Accomplishments
+
+- AI assigns normalizedItem on cost create/update using gpt-4o-mini
+- Supplier items table showing all line items across suppliers
+- Filter by normalizedItem (category) or supplier
+- Sort by price for manual comparison
+- Inline editing of normalizedItem for manual corrections
+
+### Requirements Delivered
+
+| Category | Count | IDs |
+|----------|-------|-----|
+| Line Item Categorization (ITEM) | 9 | ITEM-01 to ITEM-09 |
+
+### Artifacts
+
+- Roadmap: `.planning/milestones/v1.4.2-ROADMAP.md` (included in v1.4.2 archive)
+- Requirements: `.planning/milestones/v1.4.2-REQUIREMENTS.md` (included in v1.4.2 archive)
+
+---
+
 ## v1.4: Intelligent Automation & Organization
 
 **Shipped:** 2026-01-25

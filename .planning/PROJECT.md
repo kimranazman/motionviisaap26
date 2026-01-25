@@ -10,8 +10,8 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 ## Current State
 
-**Version:** v1.4 Intelligent Automation & Organization (shipped 2026-01-25)
-**Codebase:** ~33,000 LOC TypeScript
+**Version:** v1.4.2 UI Polish & Bug Fixes (shipped 2026-01-26)
+**Codebase:** ~34,000 LOC TypeScript
 **Tech stack:** Next.js 14, Prisma, MariaDB, Tailwind/shadcn, NextAuth.js, OpenAI
 
 ## Requirements
@@ -140,18 +140,22 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - ✓ Task comments and progress tracking — v1.4
 - ✓ Task tree view with collapse/expand — v1.4
 
+**v1.4.1 Line Item Categorization:**
+- ✓ AI assigns normalizedItem to cost on create/update — v1.4.1
+- ✓ Supplier items table with filtering by category and supplier — v1.4.1
+- ✓ Price sorting for manual comparison — v1.4.1
+- ✓ Inline editing of normalizedItem for corrections — v1.4.1
+
+**v1.4.2 UI Polish & Bug Fixes:**
+- ✓ Documents display fixed (useEffect dependency race condition) — v1.4.2
+- ✓ All detail panels converted from Sheet to centered Dialog modal — v1.4.2
+- ✓ Proper modal sizing (650px default, responsive mobile slide-from-bottom) — v1.4.2
+
 ### Active
 
-<!-- Current milestone scope: v1.4.1 Line Item Categorization -->
+<!-- No active milestone — run /gsd:new-milestone to start next -->
 
-**v1.4.1 Line Item Categorization:**
-
-*Corrects v1.4 price comparison - AI categorizes, users filter table:*
-- [ ] AI assigns normalizedItem to cost on create/update
-- [ ] User can view table of all line items across suppliers
-- [ ] User can filter by normalizedItem (category) to compare prices
-- [ ] User can filter by supplier to see their price list
-- [ ] User can manually edit normalizedItem if AI got it wrong
+(None — next milestone not yet defined)
 
 ### Out of Scope
 
@@ -182,7 +186,7 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - Accessible at https://saap.motionvii.com (Cloudflare tunnel)
 - Data seeded from Excel file (MotionVii_SAAP_2026.xlsx)
 - 28 initiatives, 38 events currently in database
-- v1.3.2 shipped — conversion visibility, archive system, AI document intelligence
+- v1.4.2 shipped — all major features complete through intelligent automation, supplier management, and UI polish
 - Primary admin: khairul@talenta.com.my
 
 ## Infrastructure
@@ -255,6 +259,10 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | Fire-and-forget embedding generation | No await, background execution | ✓ Good |
 | 0.7 similarity threshold | Balances recall with precision | ✓ Good |
 | Lazy OpenAI initialization | Prevents build-time errors | ✓ Good |
+| Reset state inside fetch effect | Prevents race condition with separate init/fetch effects | ✓ Good |
+| Dialog modal for detail views | Better UX than sliding sheet — centered, discoverable | ✓ Good |
+| Keep *-sheet.tsx file names | Minimizes import changes across codebase | ✓ Good |
+| Dialog width per component type | 650px default, 512px task, 768px AI review | ✓ Good |
 
 ---
-*Last updated: 2026-01-25 after starting v1.4.1 milestone*
+*Last updated: 2026-01-26 after v1.4.2 milestone*
