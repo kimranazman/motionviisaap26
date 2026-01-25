@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { requireEditor, requireAdmin } from '@/lib/auth-utils'
-
-// Validate hex color format (#RRGGBB)
-function isValidHexColor(color: string): boolean {
-  return /^#[0-9A-Fa-f]{6}$/.test(color)
-}
+import { isValidHexColor } from '@/lib/tag-utils'
 
 // PATCH /api/tags/[tagId] - Update tag
 export async function PATCH(
@@ -45,19 +41,13 @@ export async function PATCH(
 
       const name = body.name.trim()
 
-      // Check for duplicate name (case-insensitive) if name is changing
-      if (name.toLowerCase() !== tag.name.toLowerCase()) {
-        const existing = await prisma.tag.findFirst({
-          where: {
-            name: {
-              equals: name,
-              mode: 'insensitive',
-            },
-            NOT: { id: tagId },
-          },
+      // Check for duplicate name if name is changing (MySQL varchar is case-insensitive)
+      if (name !== tag.name) {
+        const existing = await prisma.tag.findUnique({
+          where: { name },
         })
 
-        if (existing) {
+        if (existing && existing.id !== tagId) {
           return NextResponse.json(
             { error: 'Tag with this name already exists' },
             { status: 409 }

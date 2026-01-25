@@ -1,23 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { requireAuth, requireEditor } from '@/lib/auth-utils'
-
-// Preset color palette for tags
-export const TAG_COLORS = [
-  '#6B7280', // Gray
-  '#EF4444', // Red
-  '#F97316', // Orange
-  '#EAB308', // Yellow
-  '#22C55E', // Green
-  '#06B6D4', // Cyan
-  '#3B82F6', // Blue
-  '#8B5CF6', // Purple
-] as const
-
-// Validate hex color format (#RRGGBB)
-function isValidHexColor(color: string): boolean {
-  return /^#[0-9A-Fa-f]{6}$/.test(color)
-}
+import { isValidHexColor, DEFAULT_TAG_COLOR } from '@/lib/tag-utils'
 
 // GET /api/tags - List all tags (global)
 export async function GET() {
@@ -57,14 +41,9 @@ export async function POST(request: NextRequest) {
 
     const name = body.name.trim()
 
-    // Check for duplicate name (case-insensitive)
-    const existing = await prisma.tag.findFirst({
-      where: {
-        name: {
-          equals: name,
-          mode: 'insensitive',
-        },
-      },
+    // Check for duplicate name (MySQL varchar is case-insensitive by default)
+    const existing = await prisma.tag.findUnique({
+      where: { name },
     })
 
     if (existing) {
@@ -75,7 +54,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate color if provided
-    const color = body.color || '#6B7280' // Default gray
+    const color = body.color || DEFAULT_TAG_COLOR
     if (!isValidHexColor(color)) {
       return NextResponse.json(
         { error: 'Invalid color format. Use #RRGGBB format.' },
