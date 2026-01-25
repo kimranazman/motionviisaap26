@@ -32,6 +32,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
+    // Preserve the authorized callback from authConfig for middleware protection
+    authorized: authConfig.callbacks.authorized,
     async signIn({ account, profile }) {
       // CRITICAL: Server-side domain validation
       // hd parameter alone is NOT sufficient (Pitfall #2)
