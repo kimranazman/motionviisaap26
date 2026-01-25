@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetFooter,
-} from '@/components/ui/sheet'
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -920,29 +920,24 @@ export function ProjectDetailSheet({
     formatDateForCompare(endDate) !== projectEndDateForCompare
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        className="w-full sm:max-w-lg p-0 flex flex-col"
-        resizable
-        storageKey="project-detail-sheet-width"
-        defaultWidth={512}
-        minWidth={400}
-        maxWidth={900}
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent
+        className="md:max-w-[650px] p-0 flex flex-col"
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => e.preventDefault()}
       >
-        <SheetHeader className="p-6 pb-4 border-b">
+        <DialogHeader className="p-6 pb-4 border-b shrink-0 pr-12">
           <div className="flex items-center gap-3">
             <Badge className={cn('shrink-0', getProjectStatusColor(project.status))}>
               {formatProjectStatus(project.status)}
             </Badge>
-            <SheetTitle className="text-left text-lg leading-snug truncate">
+            <DialogTitle className="text-left text-lg leading-snug truncate">
               {project.title}
-            </SheetTitle>
+            </DialogTitle>
           </div>
-        </SheetHeader>
+        </DialogHeader>
 
-        <ScrollArea className="flex-1">
+        <ScrollArea className="flex-1 min-h-0">
           <div className="p-6 space-y-4">
             {/* Title */}
             <div className="space-y-2">
@@ -1326,7 +1321,7 @@ export function ProjectDetailSheet({
           />
         )}
 
-        <SheetFooter className="p-4 border-t flex-row gap-2 justify-between sm:justify-between">
+        <DialogFooter className="p-4 border-t shrink-0 flex-row gap-2 justify-between sm:justify-between">
           <div className="flex gap-2">
             <Button
               variant="outline"
@@ -1390,8 +1385,8 @@ export function ProjectDetailSheet({
             {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Save Changes
           </Button>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
