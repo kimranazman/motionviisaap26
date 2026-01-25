@@ -10,6 +10,7 @@
 - [x] **v1.3.1 Revenue Model Refinement** - Phase 26 (shipped 2026-01-24)
 - [x] **v1.3.2 Conversion Visibility & Archive** - Phases 27-28 (shipped 2026-01-24)
 - [x] **v1.4 Intelligent Automation & Organization** - Phases 29-35 (shipped 2026-01-25)
+- [ ] **v1.4.1 Line Item Categorization** - Phase 36 (in progress)
 
 ## Phases
 
@@ -29,6 +30,30 @@ See `.planning/milestones/` for archived phase details.
 
 </details>
 
+### v1.4.1 Line Item Categorization (In Progress)
+
+**Milestone Goal:** Correct v1.4 price comparison - AI categorizes line items, users compare via table filtering (not AI search).
+
+**Context:** v1.4 built on-demand semantic search. The actual need was simpler: AI assigns normalized category names to cost items, then users filter a table to compare prices manually.
+
+#### Phase 36: Line Item Categorization & Price Table
+**Goal**: AI categorizes cost line items; users compare prices via filterable table
+**Depends on**: Phase 35 (v1.4 complete)
+**Requirements**: ITEM-01 to ITEM-09
+**Success Criteria** (what must be TRUE):
+  1. Cost model has normalizedItem field
+  2. AI assigns normalizedItem on cost create/update
+  3. User can view all supplier line items in a single table
+  4. User can filter by normalizedItem to see all suppliers for same item
+  5. User can filter by supplier to see their price list
+  6. User can sort by price to compare
+  7. User can manually correct normalizedItem if AI got it wrong
+**Plans**: TBD (estimated 2 plans)
+
+Plans:
+- [ ] 36-01-PLAN.md - Schema update and AI categorization
+- [ ] 36-02-PLAN.md - Supplier items table with filtering
+
 ## Progress
 
 | Milestone | Phases | Plans | Status | Shipped |
@@ -41,9 +66,10 @@ See `.planning/milestones/` for archived phase details.
 | v1.3.1 Revenue Model | 26 | 3 | Complete | 2026-01-24 |
 | v1.3.2 Conversion & Archive | 27-28 | 4 | Complete | 2026-01-24 |
 | v1.4 Intelligent Automation | 29-35 | 15 | Complete | 2026-01-25 |
+| v1.4.1 Line Item Categorization | 36 | 0/2 | In Progress | - |
 
-**Total:** 35 phases, 83 plans complete
+**Total:** 35 phases complete, 1 in progress
 
 ---
 *Roadmap created: 2026-01-20*
-*Last updated: 2026-01-25 (v1.4 milestone archived)*
+*Last updated: 2026-01-25 (v1.4.1 milestone started)*

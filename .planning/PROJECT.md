@@ -142,9 +142,16 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 ### Active
 
-<!-- Next milestone scope. Define with /gsd:new-milestone -->
+<!-- Current milestone scope: v1.4.1 Line Item Categorization -->
 
-(No active milestone. Run `/gsd:new-milestone` to define v1.5 or v2.0 scope.)
+**v1.4.1 Line Item Categorization:**
+
+*Corrects v1.4 price comparison - AI categorizes, users filter table:*
+- [ ] AI assigns normalizedItem to cost on create/update
+- [ ] User can view table of all line items across suppliers
+- [ ] User can filter by normalizedItem (category) to compare prices
+- [ ] User can filter by supplier to see their price list
+- [ ] User can manually edit normalizedItem if AI got it wrong
 
 ### Out of Scope
 
@@ -250,4 +257,4 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | Lazy OpenAI initialization | Prevents build-time errors | ✓ Good |
 
 ---
-*Last updated: 2026-01-25 after v1.4 milestone complete*
+*Last updated: 2026-01-25 after starting v1.4.1 milestone*
