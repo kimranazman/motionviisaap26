@@ -2,12 +2,12 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetFooter,
-} from '@/components/ui/sheet'
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -246,9 +246,9 @@ export function AIReviewSheet({
   const totalCount = isInvoice ? invoiceItems.length : receiptItems.length
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-2xl p-0 flex flex-col">
-        <SheetHeader className="p-6 pb-4 border-b">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="md:max-w-3xl p-0 flex flex-col">
+        <DialogHeader className="p-6 pb-4 border-b shrink-0 pr-12">
           <div className="flex items-center gap-3">
             <Badge
               variant="outline"
@@ -260,14 +260,14 @@ export function AIReviewSheet({
             >
               {document.category}
             </Badge>
-            <SheetTitle className="text-left text-lg leading-snug truncate flex-1">
+            <DialogTitle className="text-left text-lg leading-snug truncate flex-1">
               {document.filename}
-            </SheetTitle>
+            </DialogTitle>
             <ConfidenceBadge confidence={extraction.confidence} />
           </div>
-        </SheetHeader>
+        </DialogHeader>
 
-        <ScrollArea className="flex-1">
+        <ScrollArea className="flex-1 min-h-0">
           <div className="p-6 space-y-4">
             {/* Document Preview */}
             <div className="space-y-2">
@@ -388,7 +388,7 @@ export function AIReviewSheet({
           </div>
         </ScrollArea>
 
-        <SheetFooter className="p-4 border-t flex-col sm:flex-row gap-2 sm:gap-0 justify-between sm:justify-between">
+        <DialogFooter className="p-4 border-t shrink-0 flex-col sm:flex-row gap-2 sm:gap-0 justify-between sm:justify-between">
           <Button
             variant="ghost"
             onClick={() => onOpenChange(false)}
@@ -403,8 +403,8 @@ export function AIReviewSheet({
             {isImporting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Import {selectedCount} Item{selectedCount !== 1 ? 's' : ''}
           </Button>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
