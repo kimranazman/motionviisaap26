@@ -84,7 +84,15 @@ export function PotentialDetailSheet({
   const [isLoadingContacts, setIsLoadingContacts] = useState(false)
   const [isArchiving, setIsArchiving] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [activityLogs, setActivityLogs] = useState<any[]>([])
+  const [activityLogs, setActivityLogs] = useState<{
+    id: string
+    action: string
+    field?: string | null
+    oldValue?: string | null
+    newValue?: string | null
+    createdAt: string
+    user?: { name?: string | null; image?: string | null } | null
+  }[]>([])
   const [isLoadingActivity, setIsLoadingActivity] = useState(false)
 
   const fetchActivityLogs = async (potentialId: string) => {
