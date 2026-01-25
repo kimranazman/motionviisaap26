@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import {
   DndContext,
@@ -74,6 +74,41 @@ export function PipelineBoard({ initialData, initialShowArchived = false }: Pipe
   const [pendingLostDeal, setPendingLostDeal] = useState<PendingLostDeal | null>(null)
   const [showArchived, setShowArchived] = useState(initialShowArchived)
   const [isTogglingArchived, setIsTogglingArchived] = useState(false)
+
+  // Auto-refresh polling
+  useEffect(() => {
+    const fetchDeals = async () => {
+      try {
+        const response = await fetch(`/api/deals?showArchived=${showArchived}`)
+        if (response.ok) {
+          const newData = await response.json()
+          // Only update if data actually changed to avoid flicker
+          setDeals(prev => {
+            if (JSON.stringify(prev) === JSON.stringify(newData)) return prev
+            return newData
+          })
+        }
+      } catch (error) {
+        console.error('Failed to refresh deals:', error)
+      }
+    }
+
+    // Poll every 60 seconds
+    const pollInterval = setInterval(fetchDeals, 60000)
+
+    // Refresh on tab focus
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchDeals()
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      clearInterval(pollInterval)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [showArchived])
 
   // Track original stage before drag for reverting
   const originalStageRef = useRef<string | null>(null)
