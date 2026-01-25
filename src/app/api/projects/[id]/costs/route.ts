@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { requireAuth, requireEditor } from '@/lib/auth-utils'
 import { getEmbedding } from '@/lib/embeddings'
+import { getNormalizedItem } from '@/lib/ai-categorization'
 
 // GET /api/projects/[id]/costs - List costs for project
 export async function GET(
@@ -128,9 +129,10 @@ export async function POST(
       },
     })
 
-    // Fire-and-forget embedding generation for costs with suppliers
+    // Fire-and-forget embedding and categorization for costs with suppliers
     if (cost.supplierId) {
       generateCostEmbedding(cost.id, cost.description).catch(console.error)
+      generateCostCategorization(cost.id, cost.description).catch(console.error)
     }
 
     // Convert Decimal amount to Number
@@ -157,5 +159,18 @@ async function generateCostEmbedding(costId: string, description: string) {
     })
   } catch (error) {
     console.error(`Failed to generate embedding for cost ${costId}:`, error)
+  }
+}
+
+// Generate AI categorization for a cost item (fire-and-forget)
+async function generateCostCategorization(costId: string, description: string) {
+  try {
+    const normalizedItem = await getNormalizedItem(description)
+    await prisma.cost.update({
+      where: { id: costId },
+      data: { normalizedItem },
+    })
+  } catch (error) {
+    console.error(`Failed to categorize cost ${costId}:`, error)
   }
 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { requireEditor } from '@/lib/auth-utils'
 import { getEmbedding } from '@/lib/embeddings'
+import { getNormalizedItem } from '@/lib/ai-categorization'
 
 // PATCH /api/projects/[id]/costs/[costId] - Update cost
 export async function PATCH(
@@ -76,11 +77,12 @@ export async function PATCH(
       },
     })
 
-    // Fire-and-forget embedding regeneration if description changed or supplier added
+    // Fire-and-forget embedding and categorization regeneration if description changed or supplier added
     const descriptionChanged = body.description !== undefined && body.description.trim() !== existingCost.description
     const supplierAdded = body.supplierId !== undefined && body.supplierId && !existingCost.supplierId
     if (cost.supplierId && (descriptionChanged || supplierAdded)) {
       generateCostEmbedding(cost.id, cost.description).catch(console.error)
+      generateCostCategorization(cost.id, cost.description).catch(console.error)
     }
 
     // Convert Decimal amount to Number
@@ -107,6 +109,19 @@ async function generateCostEmbedding(costId: string, description: string) {
     })
   } catch (error) {
     console.error(`Failed to generate embedding for cost ${costId}:`, error)
+  }
+}
+
+// Generate AI categorization for a cost item (fire-and-forget)
+async function generateCostCategorization(costId: string, description: string) {
+  try {
+    const normalizedItem = await getNormalizedItem(description)
+    await prisma.cost.update({
+      where: { id: costId },
+      data: { normalizedItem },
+    })
+  } catch (error) {
+    console.error(`Failed to categorize cost ${costId}:`, error)
   }
 }
 
