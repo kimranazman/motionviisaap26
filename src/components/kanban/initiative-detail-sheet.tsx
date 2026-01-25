@@ -5,11 +5,11 @@ import { useSession } from 'next-auth/react'
 import { canEdit } from '@/lib/permissions'
 import { PermissionDeniedDialog } from '@/components/permission-denied-dialog'
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -238,27 +238,20 @@ export function InitiativeDetailSheet({
     (personInCharge || null) !== (initiative.personInCharge || null)
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        className="w-full sm:max-w-lg p-0 flex flex-col"
-        resizable
-        storageKey="initiative-detail-sheet-width"
-        defaultWidth={512}
-        minWidth={400}
-        maxWidth={800}
-      >
-        <SheetHeader className="p-6 pb-4 border-b">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="md:max-w-[650px] p-0 flex flex-col">
+        <DialogHeader className="p-6 pb-4 border-b shrink-0 pr-12">
           <div className="flex items-start gap-3">
             <Badge variant="outline" className="shrink-0 mt-1">
               {initiative.keyResult}
             </Badge>
-            <SheetTitle className="text-left text-lg leading-snug">
+            <DialogTitle className="text-left text-lg leading-snug">
               {initiative.title}
-            </SheetTitle>
+            </DialogTitle>
           </div>
-        </SheetHeader>
+        </DialogHeader>
 
-        <ScrollArea className="flex-1">
+        <ScrollArea className="flex-1 min-h-0">
           <div className="p-6 space-y-6">
             {/* Quick Info Grid */}
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -482,12 +475,12 @@ export function InitiativeDetailSheet({
             </div>
           </div>
         </ScrollArea>
-      </SheetContent>
+      </DialogContent>
 
       <PermissionDeniedDialog
         open={showPermissionDenied}
         onOpenChange={setShowPermissionDenied}
       />
-    </Sheet>
+    </Dialog>
   )
 }

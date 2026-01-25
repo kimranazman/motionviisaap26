@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetFooter,
-} from '@/components/ui/sheet'
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog'
 import {
   Select,
   SelectContent,
@@ -180,9 +180,9 @@ export function TaskDetailSheet({
     assignee !== (task.assignee || '')
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-md p-0 flex flex-col">
-        <SheetHeader className="p-6 pb-4 border-b">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="md:max-w-lg p-0 flex flex-col">
+        <DialogHeader className="p-6 pb-4 border-b shrink-0 pr-12">
           <div className="flex items-center gap-3">
             <Badge
               className={cn('shrink-0', getTaskStatusColor(task.status))}
@@ -195,13 +195,13 @@ export function TaskDetailSheet({
             >
               {formatTaskPriority(task.priority)}
             </Badge>
-            <SheetTitle className="text-left text-lg leading-snug truncate">
+            <DialogTitle className="text-left text-lg leading-snug truncate">
               {task.title}
-            </SheetTitle>
+            </DialogTitle>
           </div>
-        </SheetHeader>
+        </DialogHeader>
 
-        <ScrollArea className="flex-1">
+        <ScrollArea className="flex-1 min-h-0">
           <div className="p-6 space-y-4">
             {/* Title */}
             <div className="space-y-2">
@@ -337,7 +337,7 @@ export function TaskDetailSheet({
           </div>
         </ScrollArea>
 
-        <SheetFooter className="p-4 border-t">
+        <DialogFooter className="p-4 border-t shrink-0">
           <Button
             onClick={handleSave}
             disabled={isSaving || !hasChanges}
@@ -346,8 +346,8 @@ export function TaskDetailSheet({
             {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Save Changes
           </Button>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }

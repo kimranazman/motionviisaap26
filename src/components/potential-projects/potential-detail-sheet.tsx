@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetFooter,
-} from '@/components/ui/sheet'
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -270,27 +270,20 @@ export function PotentialDetailSheet({
     description !== (project.description || '')
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        className="w-full sm:max-w-lg p-0 flex flex-col"
-        resizable
-        storageKey="potential-detail-sheet-width"
-        defaultWidth={512}
-        minWidth={400}
-        maxWidth={800}
-      >
-        <SheetHeader className="p-6 pb-4 border-b">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="md:max-w-[650px] p-0 flex flex-col">
+        <DialogHeader className="p-6 pb-4 border-b shrink-0 pr-12">
           <div className="flex items-center gap-3">
             <Badge className={cn('shrink-0', getPotentialStageColor(project.stage))}>
               {formatPotentialStage(project.stage)}
             </Badge>
-            <SheetTitle className="text-left text-lg leading-snug truncate">
+            <DialogTitle className="text-left text-lg leading-snug truncate">
               {project.title}
-            </SheetTitle>
+            </DialogTitle>
           </div>
-        </SheetHeader>
+        </DialogHeader>
 
-        <ScrollArea className="flex-1">
+        <ScrollArea className="flex-1 min-h-0">
           <div className="p-6 space-y-4">
             {/* Title */}
             <div className="space-y-2">
@@ -435,7 +428,7 @@ export function PotentialDetailSheet({
           </div>
         </ScrollArea>
 
-        <SheetFooter className="p-4 border-t flex-row gap-2 justify-between sm:justify-between">
+        <DialogFooter className="p-4 border-t shrink-0 flex-row gap-2 justify-between sm:justify-between">
           <div className="flex gap-2">
             <Button
               variant="outline"
@@ -505,8 +498,8 @@ export function PotentialDetailSheet({
               Save Changes
             </Button>
           )}
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
