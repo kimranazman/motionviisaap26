@@ -271,7 +271,14 @@ export function PotentialDetailSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-lg p-0 flex flex-col">
+      <SheetContent
+        className="w-full sm:max-w-lg p-0 flex flex-col"
+        resizable
+        storageKey="potential-detail-sheet-width"
+        defaultWidth={512}
+        minWidth={400}
+        maxWidth={800}
+      >
         <SheetHeader className="p-6 pb-4 border-b">
           <div className="flex items-center gap-3">
             <Badge className={cn('shrink-0', getPotentialStageColor(project.stage))}>

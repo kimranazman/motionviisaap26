@@ -923,6 +923,11 @@ export function ProjectDetailSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         className="w-full sm:max-w-lg p-0 flex flex-col"
+        resizable
+        storageKey="project-detail-sheet-width"
+        defaultWidth={512}
+        minWidth={400}
+        maxWidth={900}
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => e.preventDefault()}
       >

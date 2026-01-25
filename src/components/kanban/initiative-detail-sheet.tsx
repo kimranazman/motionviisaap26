@@ -239,7 +239,14 @@ export function InitiativeDetailSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-lg p-0 flex flex-col">
+      <SheetContent
+        className="w-full sm:max-w-lg p-0 flex flex-col"
+        resizable
+        storageKey="initiative-detail-sheet-width"
+        defaultWidth={512}
+        minWidth={400}
+        maxWidth={800}
+      >
         <SheetHeader className="p-6 pb-4 border-b">
           <div className="flex items-start gap-3">
             <Badge variant="outline" className="shrink-0 mt-1">

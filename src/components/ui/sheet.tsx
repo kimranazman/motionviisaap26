@@ -3,7 +3,7 @@
 import * as React from "react"
 import * as SheetPrimitive from "@radix-ui/react-dialog"
 import { cva, type VariantProps } from "class-variance-authority"
-import { X } from "lucide-react"
+import { X, GripVertical } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -51,27 +51,122 @@ const sheetVariants = cva(
 
 interface SheetContentProps
   extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content>,
-    VariantProps<typeof sheetVariants> {}
+    VariantProps<typeof sheetVariants> {
+  resizable?: boolean
+  storageKey?: string
+  defaultWidth?: number
+  minWidth?: number
+  maxWidth?: number
+}
+
+const SHEET_WIDTH_STORAGE_KEY = "sheet-width"
+const DEFAULT_SHEET_WIDTH = 512 // sm:max-w-lg = 32rem = 512px
+const MIN_SHEET_WIDTH = 384 // min reasonable width
+const MAX_SHEET_WIDTH = 900 // max reasonable width
 
 const SheetContent = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Content>,
   SheetContentProps
->(({ side = "right", className, children, ...props }, ref) => (
-  <SheetPortal>
-    <SheetOverlay />
-    <SheetPrimitive.Content
-      ref={ref}
-      className={cn(sheetVariants({ side }), className)}
-      {...props}
-    >
-      <SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary h-10 w-10 flex items-center justify-center md:h-6 md:w-6">
-        <X className="h-4 w-4" />
-        <span className="sr-only">Close</span>
-      </SheetPrimitive.Close>
-      {children}
-    </SheetPrimitive.Content>
-  </SheetPortal>
-))
+>(({
+  side = "right",
+  className,
+  children,
+  resizable = false,
+  storageKey = SHEET_WIDTH_STORAGE_KEY,
+  defaultWidth = DEFAULT_SHEET_WIDTH,
+  minWidth = MIN_SHEET_WIDTH,
+  maxWidth = MAX_SHEET_WIDTH,
+  ...props
+}, ref) => {
+  const [width, setWidth] = React.useState<number>(defaultWidth)
+  const [isResizing, setIsResizing] = React.useState(false)
+
+  // Load saved width from localStorage on mount
+  React.useEffect(() => {
+    if (resizable && typeof window !== 'undefined') {
+      const saved = localStorage.getItem(storageKey)
+      if (saved) {
+        const savedWidth = parseInt(saved, 10)
+        if (!isNaN(savedWidth) && savedWidth >= minWidth && savedWidth <= maxWidth) {
+          setWidth(savedWidth)
+        }
+      }
+    }
+  }, [resizable, storageKey, minWidth, maxWidth])
+
+  // Handle resize
+  const handleMouseDown = React.useCallback((e: React.MouseEvent) => {
+    if (!resizable) return
+    e.preventDefault()
+    setIsResizing(true)
+  }, [resizable])
+
+  React.useEffect(() => {
+    if (!isResizing) return
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const newWidth = window.innerWidth - e.clientX
+      const clampedWidth = Math.max(minWidth, Math.min(maxWidth, newWidth))
+      setWidth(clampedWidth)
+    }
+
+    const handleMouseUp = () => {
+      setIsResizing(false)
+      // Save to localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(storageKey, width.toString())
+      }
+    }
+
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [isResizing, width, storageKey, minWidth, maxWidth])
+
+  // For resizable sheets, apply custom width style
+  const resizableStyle = resizable && side === 'right' ? { width: `${width}px` } : undefined
+
+  return (
+    <SheetPortal>
+      <SheetOverlay />
+      <SheetPrimitive.Content
+        ref={ref}
+        className={cn(
+          sheetVariants({ side }),
+          resizable && side === 'right' && 'md:w-auto md:max-w-none',
+          isResizing && 'select-none transition-none',
+          className
+        )}
+        style={resizableStyle}
+        {...props}
+      >
+        {/* Resize handle for right-side sheets */}
+        {resizable && side === 'right' && (
+          <div
+            onMouseDown={handleMouseDown}
+            className={cn(
+              "absolute left-0 top-0 bottom-0 w-1 cursor-ew-resize group hover:bg-primary/20 transition-colors",
+              isResizing && "bg-primary/30"
+            )}
+          >
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <GripVertical className="h-4 w-4 text-muted-foreground" />
+            </div>
+          </div>
+        )}
+        <SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary h-10 w-10 flex items-center justify-center md:h-6 md:w-6">
+          <X className="h-4 w-4" />
+          <span className="sr-only">Close</span>
+        </SheetPrimitive.Close>
+        {children}
+      </SheetPrimitive.Content>
+    </SheetPortal>
+  )
+})
 SheetContent.displayName = SheetPrimitive.Content.displayName
 
 const SheetHeader = ({
