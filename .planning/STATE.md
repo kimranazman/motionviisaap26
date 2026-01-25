@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 35 of 35 (AI Price Comparison)
-Plan: 01 of 3 complete
+Plan: 02 of 3 complete
 Status: In progress
-Last activity: 2026-01-25 - Completed 35-01-PLAN.md (embedding infrastructure)
+Last activity: 2026-01-25 - Completed 35-02-PLAN.md (comparison API)
 
-Progress: v1.4 [██████████████████████████████░] 97% (14/15 plans)
+Progress: v1.4 [██████████████████████████████░] 99% (15/16 plans)
 
 ## Milestone History
 
@@ -49,7 +49,7 @@ Progress: v1.4 [█████████████████████�
 | v1.3 | 21-25 | 18 | 5.1min |
 | v1.3.1 | 26 | 3 | 2.7min |
 | v1.3.2 | 27-28 | 4 | 4.8min |
-| v1.4 | 29-35 | 12 | 7.1min (partial) |
+| v1.4 | 29-35 | 13 | 7.0min (partial) |
 
 ## Accumulated Context
 
@@ -93,6 +93,9 @@ Recent decisions from v1.4:
 - JSON column for embedding storage (works with any MariaDB version)
 - Cosine similarity via dot product (OpenAI vectors are pre-normalized)
 - Confidence thresholds: HIGH >= 0.85, MEDIUM >= 0.7, LOW < 0.7
+- Fire-and-forget pattern for embedding generation (no await, background execution)
+- 0.7 similarity threshold for price comparison matching
+- Lazy OpenAI initialization to prevent build-time errors
 
 ### Pending Todos
 
@@ -105,5 +108,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 35-01-PLAN.md
-Resume: Continue with 35-02-PLAN.md (comparison API)
+Stopped at: Completed 35-02-PLAN.md
+Resume: Continue with 35-03-PLAN.md (price trend analysis)
