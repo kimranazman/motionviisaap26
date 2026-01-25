@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { requireAuth, requireEditor } from '@/lib/auth-utils'
+import { getEmbedding } from '@/lib/embeddings'
 
 // GET /api/projects/[id]/costs - List costs for project
 export async function GET(
@@ -127,6 +128,11 @@ export async function POST(
       },
     })
 
+    // Fire-and-forget embedding generation for costs with suppliers
+    if (cost.supplierId) {
+      generateCostEmbedding(cost.id, cost.description).catch(console.error)
+    }
+
     // Convert Decimal amount to Number
     return NextResponse.json({
       ...cost,
@@ -138,5 +144,18 @@ export async function POST(
       { error: 'Failed to create cost' },
       { status: 500 }
     )
+  }
+}
+
+// Generate embedding for a cost item (fire-and-forget)
+async function generateCostEmbedding(costId: string, description: string) {
+  try {
+    const embedding = await getEmbedding(description)
+    await prisma.cost.update({
+      where: { id: costId },
+      data: { embedding },
+    })
+  } catch (error) {
+    console.error(`Failed to generate embedding for cost ${costId}:`, error)
   }
 }
