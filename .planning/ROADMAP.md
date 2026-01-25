@@ -123,8 +123,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 34-01-PLAN.md - Activity logging infrastructure and title sync
-- [ ] 34-02-PLAN.md - Live project metrics on cards and auto-refresh
+- [x] 34-01-PLAN.md - Activity logging infrastructure and title sync
+- [x] 34-02-PLAN.md - Live project metrics on cards and auto-refresh
 
 #### Phase 35: AI Price Comparison
 **Goal**: Users can compare prices across suppliers using AI semantic matching
@@ -150,11 +150,11 @@ Phases execute in numeric order: 29 -> 30 -> 31 -> 32 -> 33 -> 34 -> 35
 | 31. Department Organization | v1.4 | 2/2 | ✓ Complete | 2026-01-24 |
 | 32. Project Deliverables | v1.4 | 2/2 | ✓ Complete | 2026-01-25 |
 | 33. Task Management | v1.4 | 4/4 | ✓ Complete | 2026-01-25 |
-| 34. Activity Logging & Sync | v1.4 | 0/2 | Planned | - |
+| 34. Activity Logging & Sync | v1.4 | 2/2 | ✓ Complete | 2026-01-25 |
 | 35. AI Price Comparison | v1.4 | 0/1 | Not started | - |
 
-**v1.4 Total:** 11/14 plans complete
+**v1.4 Total:** 13/14 plans complete
 
 ---
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-01-25 (Phase 34 planned)*
+*Last updated: 2026-01-25 (Phase 34 complete)*

@@ -9,12 +9,12 @@ Requirements for v1.4 Intelligent Automation & Organization milestone.
 
 ### Live Project Summary
 
-- [ ] **SYNC-01**: Converted deal shows live project metrics (revenue, costs, status) on pipeline card
-- [ ] **SYNC-02**: Converted potential shows live project metrics on potential-projects card
-- [ ] **SYNC-03**: Project title changes sync back to source deal title
-- [ ] **SYNC-04**: Project title changes sync back to source potential title
-- [ ] **SYNC-05**: Pipeline board data refreshes automatically when viewing
-- [ ] **SYNC-06**: Activity history log shows sync changes on deal/potential cards
+- [x] **SYNC-01**: Converted deal shows live project metrics (revenue, costs, status) on pipeline card
+- [x] **SYNC-02**: Converted potential shows live project metrics on potential-projects card
+- [x] **SYNC-03**: Project title changes sync back to source deal title
+- [x] **SYNC-04**: Project title changes sync back to source potential title
+- [x] **SYNC-05**: Pipeline board data refreshes automatically when viewing
+- [x] **SYNC-06**: Activity history log shows sync changes on deal/potential cards
 
 ### Supplier Management
 
@@ -109,12 +109,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SYNC-01 | 34 | Pending |
-| SYNC-02 | 34 | Pending |
-| SYNC-03 | 34 | Pending |
-| SYNC-04 | 34 | Pending |
-| SYNC-05 | 34 | Pending |
-| SYNC-06 | 34 | Pending |
+| SYNC-01 | 34 | Complete |
+| SYNC-02 | 34 | Complete |
+| SYNC-03 | 34 | Complete |
+| SYNC-04 | 34 | Complete |
+| SYNC-05 | 34 | Complete |
+| SYNC-06 | 34 | Complete |
 | SUPP-01 | 30 | Complete |
 | SUPP-02 | 30 | Complete |
 | SUPP-03 | 30 | Complete |
@@ -161,4 +161,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-24*
-*Last updated: 2026-01-25 Phase 33 complete*
+*Last updated: 2026-01-25 Phase 34 complete*
