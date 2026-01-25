@@ -33,7 +33,7 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
-import { Loader2, Trash2, ArrowRight, Plus, Target, DollarSign, CalendarIcon, TrendingUp, TrendingDown, Minus, Sparkles, Archive, ArchiveRestore, Package } from 'lucide-react'
+import { Loader2, Trash2, ArrowRight, Plus, Target, DollarSign, CalendarIcon, TrendingUp, TrendingDown, Minus, Sparkles, Archive, ArchiveRestore, Package, ListTodo } from 'lucide-react'
 import { CompanySelect } from '@/components/pipeline/company-select'
 import { ContactSelect } from '@/components/pipeline/contact-select'
 import { InitiativeSelect } from './initiative-select'
@@ -41,6 +41,8 @@ import { CostForm } from './cost-form'
 import { CostCard } from './cost-card'
 import { DeliverableForm } from './deliverable-form'
 import { DeliverableCard } from './deliverable-card'
+import { TaskForm } from './task-form'
+import { TaskCard } from './task-card'
 import { DocumentsSection } from './documents-section'
 import { ImagePreviewDialog } from './image-preview-dialog'
 import { AIReviewSheet } from '@/components/ai/ai-review-sheet'
@@ -88,6 +90,18 @@ interface Deliverable {
   value: number | null
   sortOrder: number
   aiExtracted?: boolean
+}
+
+interface Task {
+  id: string
+  title: string
+  description: string | null
+  status: 'TODO' | 'IN_PROGRESS' | 'DONE'
+  priority: 'LOW' | 'MEDIUM' | 'HIGH'
+  dueDate: string | null
+  assignee: string | null
+  parentId: string | null
+  _count?: { children: number; comments: number }
 }
 
 interface Document {
@@ -387,6 +401,9 @@ export function ProjectDetailSheet({
   const [deliverables, setDeliverables] = useState<Deliverable[]>([])
   const [showAddDeliverableForm, setShowAddDeliverableForm] = useState(false)
   const [editingDeliverable, setEditingDeliverable] = useState<Deliverable | null>(null)
+  const [tasks, setTasks] = useState<Task[]>([])
+  const [showAddTaskForm, setShowAddTaskForm] = useState(false)
+  const [editingTask, setEditingTask] = useState<Task | null>(null)
   const [startDate, setStartDate] = useState<Date | null>(null)
   const [endDate, setEndDate] = useState<Date | null>(null)
   const [documents, setDocuments] = useState<Document[]>([])
@@ -435,6 +452,9 @@ export function ProjectDetailSheet({
       setDeliverables([])
       setShowAddDeliverableForm(false)
       setEditingDeliverable(null)
+      setTasks([])
+      setShowAddTaskForm(false)
+      setEditingTask(null)
 
       // Initialize dates
       if (project.startDate) {
@@ -501,6 +521,23 @@ export function ProjectDetailSheet({
       }
     }
     fetchDeliverables()
+  }, [project?.id, open])
+
+  // Fetch tasks when project changes
+  useEffect(() => {
+    const fetchTasks = async () => {
+      if (!project || !open) return
+      try {
+        const response = await fetch(`/api/projects/${project.id}/tasks`)
+        if (response.ok) {
+          const data = await response.json()
+          setTasks(data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch tasks:', error)
+      }
+    }
+    fetchTasks()
   }, [project?.id, open])
 
   const fetchContacts = async (compId: string) => {
@@ -681,6 +718,45 @@ export function ProjectDetailSheet({
   const handleCancelDeliverableForm = () => {
     setShowAddDeliverableForm(false)
     setEditingDeliverable(null)
+  }
+
+  // Task management handlers
+  const handleTaskAdded = async () => {
+    if (!project) return
+    try {
+      const response = await fetch(`/api/projects/${project.id}/tasks`)
+      if (response.ok) {
+        const data = await response.json()
+        setTasks(data)
+      }
+    } catch (error) {
+      console.error('Failed to refresh tasks:', error)
+    }
+    setShowAddTaskForm(false)
+    setEditingTask(null)
+  }
+
+  const handleTaskDeleted = async () => {
+    if (!project) return
+    try {
+      const response = await fetch(`/api/projects/${project.id}/tasks`)
+      if (response.ok) {
+        const data = await response.json()
+        setTasks(data)
+      }
+    } catch (error) {
+      console.error('Failed to refresh tasks:', error)
+    }
+  }
+
+  const handleEditTask = (task: Task) => {
+    setEditingTask(task)
+    setShowAddTaskForm(true)
+  }
+
+  const handleCancelTaskForm = () => {
+    setShowAddTaskForm(false)
+    setEditingTask(null)
   }
 
   // Document management handlers
@@ -1137,6 +1213,70 @@ export function ProjectDetailSheet({
                       projectId={project.id}
                       onEdit={handleEditDeliverable}
                       onDelete={handleDeliverableDeleted}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <Separator />
+
+            {/* Tasks Section */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Label className="text-muted-foreground">Tasks</Label>
+                  {tasks.length > 0 && (
+                    <Badge variant="secondary" className="text-xs">
+                      {tasks.length}
+                    </Badge>
+                  )}
+                </div>
+                {tasks.length > 0 && !showAddTaskForm && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowAddTaskForm(true)}
+                  >
+                    <Plus className="mr-1 h-4 w-4" />
+                    Add Task
+                  </Button>
+                )}
+              </div>
+
+              {/* Task Form */}
+              {showAddTaskForm && (
+                <TaskForm
+                  projectId={project.id}
+                  task={editingTask || undefined}
+                  onSuccess={handleTaskAdded}
+                  onCancel={handleCancelTaskForm}
+                />
+              )}
+
+              {/* Task List or Empty State */}
+              {tasks.length === 0 && !showAddTaskForm ? (
+                <Card className="p-6 text-center border-dashed">
+                  <ListTodo className="mx-auto h-8 w-8 text-gray-400 mb-2" />
+                  <p className="text-sm text-gray-500 mb-3">No tasks yet</p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowAddTaskForm(true)}
+                  >
+                    <Plus className="mr-1 h-4 w-4" />
+                    Add your first task
+                  </Button>
+                </Card>
+              ) : (
+                <div className="space-y-2">
+                  {tasks.filter(t => !t.parentId).map((task) => (
+                    <TaskCard
+                      key={task.id}
+                      task={task}
+                      projectId={project.id}
+                      onEdit={handleEditTask}
+                      onDelete={handleTaskDeleted}
                     />
                   ))}
                 </div>
