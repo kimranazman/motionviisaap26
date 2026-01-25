@@ -5,18 +5,18 @@
 See: .planning/PROJECT.md (updated 2026-01-25)
 
 **Core value:** Users can compare supplier prices for the same item by filtering a table - AI categorizes items, users do the comparison.
-**Current focus:** v1.4.2 UI Polish & Bug Fixes - IN PROGRESS
+**Current focus:** v1.4.2 UI Polish & Bug Fixes - COMPLETE
 
 ## Current Position
 
 Phase: 37 (Convert Detail Sheets to Modals)
-Plan: 1 of 2 complete
-Status: In progress
-Last activity: 2026-01-26 - Completed 37-01-PLAN.md (fix documents display)
+Plan: 2 of 2 complete
+Status: Phase complete
+Last activity: 2026-01-26 - Completed 37-02-PLAN.md (sheet to modal conversion)
 
-Progress: v1.4.2 [================----------------] 50% (1/2 plans)
+Progress: v1.4.2 [================================] 100% (2/2 plans)
 
-**Next:** Plan 37-02 (Sheet to Modal conversion)
+**Next:** Phase complete - ready for next milestone or phase
 
 ## Milestone History
 
@@ -31,7 +31,7 @@ Progress: v1.4.2 [================----------------] 50% (1/2 plans)
 | v1.3.2 | Conversion Visibility & Archive | 27-28 | 2026-01-24 |
 | v1.4 | Intelligent Automation & Organization | 29-35 | 2026-01-25 |
 | v1.4.1 | Line Item Categorization | 36 | 2026-01-25 |
-| v1.4.2 | UI Polish & Bug Fixes | 37 | In progress |
+| v1.4.2 | UI Polish & Bug Fixes | 37 | 2026-01-26 |
 
 **Archives:** `.planning/milestones/`
 
@@ -53,6 +53,9 @@ v1.4.1 context:
 v1.4.2 context:
 - 37-01: Moved state resets inside fetch effects to prevent race conditions
 - 37-01: Pattern: reset async data at fetch start, not in separate effect
+- 37-02: All detail sheets converted from Sheet to Dialog
+- 37-02: Dialog widths: 650px default, 512px tasks, 768px AI review, 672px deliverable review
+- 37-02: Pattern: Dialog detail modal with p-0 flex flex-col, Header pr-12, ScrollArea min-h-0
 
 ### Pending Todos
 
@@ -60,15 +63,15 @@ None.
 
 ### Roadmap Evolution
 
-- Phase 37 added: Convert Detail Sheets to Modals (bug fix + UX improvement)
+- Phase 37 complete: Convert Detail Sheets to Modals
 
 ### Blockers/Concerns
 
 - ~~Documents not showing in project detail~~ FIXED in 37-01
-- Resizable sheet handle too subtle (1px) - users can't find it
+- ~~Resizable sheet handle too subtle (1px)~~ FIXED in 37-02 (converted to Dialog, no handle needed)
 
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 37-01-PLAN.md
-Resume file: .planning/phases/37-sheet-to-modal/37-02-PLAN.md
+Stopped at: Completed Phase 37 (v1.4.2)
+Resume file: None
