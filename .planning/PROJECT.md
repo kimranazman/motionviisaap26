@@ -2,17 +2,17 @@
 
 ## What This Is
 
-Strategic Annual Action Plan (SAAP) application for Motionvii to track 2026 business initiatives. A visual planning tool with Kanban boards, Gantt timelines, and calendar views for a small team (Khairul, Azlan, Izyani) to manage strategic objectives, key results, and action items. Includes Google OAuth authentication, role-based access control, complete CRM with sales pipeline, project management with document uploads and AI-powered financial extraction, customizable dashboards, and conversion visibility with archive management.
+Strategic Annual Action Plan (SAAP) application for Motionvii to track 2026 business initiatives. A visual planning tool with Kanban boards, Gantt timelines, and calendar views for a small team (Khairul, Azlan, Izyani) to manage strategic objectives, key results, and action items. Includes Google OAuth authentication, role-based access control, complete CRM with sales pipeline and company departments, project management with deliverables, tasks, document uploads and AI-powered intelligence (financial extraction, price comparison), customizable dashboards, supplier management, and bidirectional pipeline-project sync.
 
 ## Core Value
 
-Team can visualize and track initiative progress across multiple views (Kanban, timeline, calendar) and update status through intuitive drag-and-drop — with secure access restricted to authorized @talenta.com.my users. Full CRM enables tracking sales pipeline, converting deals to projects with clear visibility into conversion status and revenue variance, managing project documents with AI-extracted financials, and archiving completed work.
+Team can visualize and track initiative progress across multiple views (Kanban, timeline, calendar) and update status through intuitive drag-and-drop — with secure access restricted to authorized @talenta.com.my users. Full CRM enables tracking sales pipeline, organizing contacts by department, converting deals to projects with live bidirectional sync, managing project scope (deliverables and tasks), tracking suppliers with AI-powered price comparison, and managing project documents with AI-extracted financials.
 
 ## Current State
 
-**Version:** v1.3.2 Conversion Visibility & Archive (shipped 2026-01-24)
-**Codebase:** ~50,000 LOC TypeScript
-**Tech stack:** Next.js 14, Prisma, MariaDB, Tailwind/shadcn, NextAuth.js
+**Version:** v1.4 Intelligent Automation & Organization (shipped 2026-01-25)
+**Codebase:** ~33,000 LOC TypeScript
+**Tech stack:** Next.js 14, Prisma, MariaDB, Tailwind/shadcn, NextAuth.js, OpenAI
 
 ## Requirements
 
@@ -119,47 +119,32 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - ✓ Archived badge on cards, drag disabled for archived kanban items — v1.3.2
 - ✓ Server-side project include for initial-load conversion visibility — v1.3.2
 
+**v1.4 Intelligent Automation & Organization:**
+- ✓ Converted deals/potentials show live project metrics (revenue, costs, status) — v1.4
+- ✓ Project title changes sync back to source deal/potential — v1.4
+- ✓ Activity history log on cards showing sync changes — v1.4
+- ✓ Pipeline boards auto-refresh with 60-second polling — v1.4
+- ✓ Supplier CRUD with contact info, credit terms, payment terms — v1.4
+- ✓ Supplier list page with search filtering — v1.4
+- ✓ Link suppliers to project costs via SupplierSelect — v1.4
+- ✓ Supplier detail with price list, total spend, projects worked on — v1.4
+- ✓ AI semantic matching for line item comparison across suppliers — v1.4
+- ✓ Price comparison view with confidence levels and savings — v1.4
+- ✓ Department CRUD under Company — v1.4
+- ✓ Contacts belong to departments — v1.4
+- ✓ Deals/potentials scoped to departments — v1.4
+- ✓ Cascading Company → Department → Contact selection in forms — v1.4
+- ✓ Project deliverables CRUD with AI extraction from invoices — v1.4
+- ✓ Task CRUD with status, due date, assignee, priority — v1.4
+- ✓ Subtasks with 5-level nesting and tag inheritance — v1.4
+- ✓ Task comments and progress tracking — v1.4
+- ✓ Task tree view with collapse/expand — v1.4
+
 ### Active
 
-<!-- Current milestone scope. v1.4 Intelligent Automation & Organization -->
+<!-- Next milestone scope. Define with /gsd:new-milestone -->
 
-**v1.4 Intelligent Automation & Organization:**
-
-*Live Project Summary on Pipeline:*
-- [ ] Converted deals/potentials show live project metrics (revenue, costs, status)
-- [ ] Project title changes sync back to source deal/potential
-- [ ] Activity history log on cards showing changes ("Revenue updated: RM 50K → RM 55K")
-- [ ] Data refreshes automatically when viewing pipeline boards
-
-*Supplier Management:*
-- [ ] Supplier model with contact info, credit terms, payment terms
-- [ ] Supplier list page with search and filtering
-- [ ] Link suppliers to project costs
-- [ ] Complete price list per supplier (all line items purchased)
-- [ ] Price history tracking over time
-- [ ] Line item comparison across suppliers (AI semantic matching)
-- [ ] Supplier detail page showing total spent, projects worked on
-
-*Company Departments:*
-- [ ] Department model under Company
-- [ ] Contacts belong to departments
-- [ ] Deals/potentials scoped to departments
-- [ ] Department-specific notes and behavior tracking
-- [ ] Company → Department → Contact selection flow
-
-*Enhanced AI Document Intelligence:*
-- [ ] Our invoices/quotes (Talenta/Motionvii) → Project deliverables
-- [ ] Supplier invoices → Cost entries (enhanced with supplier linking)
-- [ ] Supplier quotations → Supplier pricing info (for comparison)
-- [ ] Auto-extract and link suppliers from documents
-- [ ] Auto-extract contacts from client invoices
-
-*Project Deliverables & Tasks:*
-- [ ] Deliverables model (scope items from our quotes with values)
-- [ ] Convert deliverable to task (optional)
-- [ ] Standalone tasks on projects
-- [ ] Full task tracking: due dates, status, assignee, comments, tags
-- [ ] Infinite subtask nesting with inherited tags
+(No active milestone. Run `/gsd:new-milestone` to define v1.5 or v2.0 scope.)
 
 ### Out of Scope
 
@@ -244,6 +229,25 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | Read-only for converted AND lost | Prevents accidental edits to finalized deals | ✓ Good |
 | View Project via ?open= param | URL pattern enables deep linking to detail sheet | ✓ Good |
 | Server queries mirror API includes | Initial render parity with client fetches | ✓ Good |
+| InitiativeDepartment enum rename | Avoids collision with Department model | ✓ Good |
+| Global tags for tasks | Simpler implementation, can add projectId later | ✓ Good |
+| Task self-reference onDelete: NoAction | MySQL limitation, cascade in app code | ✓ Good |
+| Delete protection on suppliers | Cannot delete if costs linked | ✓ Good |
+| Lazy-load suppliers in combobox | Load when popover opens, not on mount | ✓ Good |
+| Delete department via transaction | Unlinks contacts/deals/potentials first | ✓ Good |
+| Contact filtering by department | Shows department contacts plus company-wide (null) | ✓ Good |
+| DeliverableReviewSheet separate component | Simpler than extending AIReviewSheet | ✓ Good |
+| Task cascade delete in app code | MySQL self-referential FK limitation | ✓ Good |
+| TAG_COLORS in lib/tag-utils.ts | Next.js route files cannot export non-route values | ✓ Good |
+| Admin role required for tag deletion | Shared resource protection | ✓ Good |
+| Expand state in parent TaskTree | Preserves state across data refreshes | ✓ Good |
+| Title sync in $transaction | Atomic update with activity logging | ✓ Good |
+| 60-second poll interval | Balances freshness with server load | ✓ Good |
+| OpenAI text-embedding-3-small | 1536 dimensions, $0.02/1M tokens | ✓ Good |
+| JSON column for embedding storage | Works with any MariaDB version | ✓ Good |
+| Fire-and-forget embedding generation | No await, background execution | ✓ Good |
+| 0.7 similarity threshold | Balances recall with precision | ✓ Good |
+| Lazy OpenAI initialization | Prevents build-time errors | ✓ Good |
 
 ---
-*Last updated: 2026-01-24 after starting v1.4 milestone*
+*Last updated: 2026-01-25 after v1.4 milestone complete*

@@ -1,5 +1,45 @@
 # Milestone History
 
+## v1.4: Intelligent Automation & Organization
+
+**Shipped:** 2026-01-25
+**Duration:** 2 days
+**Phases:** 7 (Phases 29-35)
+**Plans:** 15
+**Stats:** 84 commits, 129 files changed, +21,058 / -199 lines
+
+### Summary
+
+Transformed SAAP into an intelligent project delivery system with supplier management, company departments for organizational structure, project deliverables tracking, comprehensive task management with subtask hierarchies, bidirectional data sync between pipelines and projects, and AI-powered price comparison across suppliers.
+
+### Key Accomplishments
+
+- Full supplier management with CRUD, cost linking, spend analytics, and payment terms tracking
+- Company departments with contact assignment and cascading Company → Department → Contact selection in forms
+- Project deliverables with CRUD and AI extraction from Talenta/Motionvii invoices
+- Comprehensive task management with subtasks (5-level nesting), tags with automatic inheritance, comments, and progress tracking
+- Bidirectional sync between projects and source deals/potentials with activity logging timeline
+- AI-powered price comparison using OpenAI embeddings for semantic item matching across suppliers with confidence levels
+
+### Requirements Delivered
+
+| Category | Count | IDs |
+|----------|-------|-----|
+| Live Project Summary (SYNC) | 6 | SYNC-01 to SYNC-06 |
+| Supplier Management (SUPP) | 11 | SUPP-01 to SUPP-11 |
+| Company Departments (DEPT) | 8 | DEPT-01 to DEPT-08 |
+| Project Deliverables (DELV) | 5 | DELV-01 to DELV-05 |
+| Task Management (TASK) | 14 | TASK-01 to TASK-14 |
+| **Total** | **44** | |
+
+### Artifacts
+
+- Roadmap: `.planning/milestones/v1.4-ROADMAP.md`
+- Requirements: `.planning/milestones/v1.4-REQUIREMENTS.md`
+- Audit: `.planning/milestones/v1.4-MILESTONE-AUDIT.md`
+
+---
+
 ## v1.3.2: Conversion Visibility & Archive
 
 **Shipped:** 2026-01-24
