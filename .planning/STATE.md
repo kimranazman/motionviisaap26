@@ -5,16 +5,18 @@
 See: .planning/PROJECT.md (updated 2026-01-25)
 
 **Core value:** Users can compare supplier prices for the same item by filtering a table - AI categorizes items, users do the comparison.
-**Current focus:** v1.4.1 Line Item Categorization - COMPLETE
+**Current focus:** v1.4.2 UI Polish & Bug Fixes - IN PROGRESS
 
 ## Current Position
 
-Phase: 36 of 36 (Line Item Categorization & Price Table)
-Plan: 2 of 2 complete
-Status: Phase complete - v1.4.1 milestone shipped
-Last activity: 2026-01-25 - Completed 36-02-PLAN.md
+Phase: 37 (Convert Detail Sheets to Modals)
+Plan: 0 of TBD complete
+Status: Not planned yet - run /gsd:plan-phase 37
+Last activity: 2026-01-26 - Phase 37 added to roadmap
 
-Progress: v1.4.1 [████████████████████████████████] 100% (2/2 plans)
+Progress: v1.4.2 [░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 0% (not planned)
+
+**Next Phase:** 37 - Convert Detail Sheets to Modals
 
 ## Milestone History
 
@@ -29,6 +31,7 @@ Progress: v1.4.1 [████████████████████�
 | v1.3.2 | Conversion Visibility & Archive | 27-28 | 2026-01-24 |
 | v1.4 | Intelligent Automation & Organization | 29-35 | 2026-01-25 |
 | v1.4.1 | Line Item Categorization | 36 | 2026-01-25 |
+| v1.4.2 | UI Polish & Bug Fixes | 37 | In progress |
 
 **Archives:** `.planning/milestones/`
 
@@ -51,12 +54,17 @@ v1.4.1 context:
 
 None.
 
+### Roadmap Evolution
+
+- Phase 37 added: Convert Detail Sheets to Modals (bug fix + UX improvement)
+
 ### Blockers/Concerns
 
-None.
+- Documents not showing in project detail (post-v1.4.1 deployment)
+- Resizable sheet handle too subtle (1px) - users can't find it
 
 ## Session Continuity
 
-Last session: 2026-01-25 13:24 UTC
-Stopped at: Completed 36-02-PLAN.md - v1.4.1 milestone complete
-Resume: None - all planned work complete. Start new milestone if needed.
+Last session: 2026-01-26
+Stopped at: Added Phase 37 to roadmap
+Resume: Run /gsd:plan-phase 37 to create execution plans
