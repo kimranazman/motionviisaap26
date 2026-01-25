@@ -4,16 +4,24 @@
 import OpenAI from 'openai'
 import type { ConfidenceLevel } from '@/types/ai-extraction'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+// Lazy initialization to avoid build-time errors when OPENAI_API_KEY is not set
+let openai: OpenAI | null = null
+
+function getOpenAI(): OpenAI {
+  if (!openai) {
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    })
+  }
+  return openai
+}
 
 /**
  * Generate embedding vector for a text string
  * Returns 1536-dimensional float array
  */
 export async function getEmbedding(text: string): Promise<number[]> {
-  const response = await openai.embeddings.create({
+  const response = await getOpenAI().embeddings.create({
     model: 'text-embedding-3-small',
     input: text.slice(0, 8000), // Max 8191 tokens
     encoding_format: 'float',

@@ -14,9 +14,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
-import { Edit2, Trash2, Sparkles, Truck } from 'lucide-react'
+import { Edit2, Trash2, Sparkles, Truck, Scale } from 'lucide-react'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { getCategoryColor } from '@/lib/cost-utils'
+import { PriceComparisonSheet } from '@/components/suppliers/price-comparison-sheet'
 
 interface Cost {
   id: string
@@ -38,6 +39,7 @@ interface CostCardProps {
 
 export function CostCard({ cost, projectId, onEdit, onDelete }: CostCardProps) {
   const [isDeleting, setIsDeleting] = useState(false)
+  const [showComparison, setShowComparison] = useState(false)
 
   const handleDelete = async () => {
     setIsDeleting(true)
@@ -97,6 +99,18 @@ export function CostCard({ cost, projectId, onEdit, onDelete }: CostCardProps) {
           <Edit2 className="h-4 w-4" />
         </Button>
 
+        {cost.supplier && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => setShowComparison(true)}
+            title="Compare Prices"
+          >
+            <Scale className="h-4 w-4" />
+          </Button>
+        )}
+
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button
@@ -128,6 +142,17 @@ export function CostCard({ cost, projectId, onEdit, onDelete }: CostCardProps) {
           </AlertDialogContent>
         </AlertDialog>
       </div>
+
+      {cost.supplier && (
+        <PriceComparisonSheet
+          open={showComparison}
+          onOpenChange={setShowComparison}
+          costDescription={cost.description}
+          costId={cost.id}
+          costAmount={cost.amount}
+          currentSupplier={cost.supplier.name}
+        />
+      )}
     </div>
   )
 }
