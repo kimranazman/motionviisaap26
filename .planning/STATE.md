@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Team can visualize and track initiative progress with secure access, full CRM, customizable dashboards, project document management, AI document intelligence, conversion visibility, archive management, and intelligent project delivery with supplier tracking and task management.
-**Current focus:** v1.4 Intelligent Automation & Organization - Phase 35 ready to plan
+**Current focus:** v1.4 Intelligent Automation & Organization - Phase 35 in progress
 
 ## Current Position
 
 Phase: 35 of 35 (AI Price Comparison)
-Plan: Ready to plan
-Status: Phase 34 complete
-Last activity: 2026-01-25 - Phase 34 (Activity Logging & Sync) complete - title sync, live metrics, auto-refresh
+Plan: 01 of 3 complete
+Status: In progress
+Last activity: 2026-01-25 - Completed 35-01-PLAN.md (embedding infrastructure)
 
-Progress: v1.4 [█████████████████████████████░░] 93% (13/14 plans)
+Progress: v1.4 [██████████████████████████████░] 97% (14/15 plans)
 
 ## Milestone History
 
@@ -89,6 +89,10 @@ Recent decisions from v1.4:
 - JSON.stringify comparison before state update to prevent flicker on polling
 - 60-second poll interval balances freshness with server load
 - Activity logs fetched for converted items only
+- OpenAI text-embedding-3-small for embeddings (1536 dimensions, $0.02/1M tokens)
+- JSON column for embedding storage (works with any MariaDB version)
+- Cosine similarity via dot product (OpenAI vectors are pre-normalized)
+- Confidence thresholds: HIGH >= 0.85, MEDIUM >= 0.7, LOW < 0.7
 
 ### Pending Todos
 
@@ -101,5 +105,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Phase 34 complete
-Resume: Start planning with `/gsd:discuss-phase 35`
+Stopped at: Completed 35-01-PLAN.md
+Resume: Continue with 35-02-PLAN.md (comparison API)
