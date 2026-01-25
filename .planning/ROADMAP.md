@@ -10,7 +10,7 @@
 - [x] **v1.3.1 Revenue Model Refinement** - Phase 26 (shipped 2026-01-24)
 - [x] **v1.3.2 Conversion Visibility & Archive** - Phases 27-28 (shipped 2026-01-24)
 - [x] **v1.4 Intelligent Automation & Organization** - Phases 29-35 (shipped 2026-01-25)
-- [ ] **v1.4.1 Line Item Categorization** - Phase 36 (in progress)
+- [x] **v1.4.1 Line Item Categorization** - Phase 36 (shipped 2026-01-25)
 
 ## Phases
 
@@ -30,7 +30,7 @@ See `.planning/milestones/` for archived phase details.
 
 </details>
 
-### v1.4.1 Line Item Categorization (In Progress)
+### v1.4.1 Line Item Categorization (Complete)
 
 **Milestone Goal:** Correct v1.4 price comparison - AI categorizes line items, users compare via table filtering (not AI search).
 
@@ -51,8 +51,8 @@ See `.planning/milestones/` for archived phase details.
   7. User can manually correct normalizedItem if AI got it wrong
 
 Plans:
-- [ ] 36-01-PLAN.md - Schema update and AI categorization (Wave 1)
-- [ ] 36-02-PLAN.md - Supplier items table with filtering (Wave 2)
+- [x] 36-01-PLAN.md - Schema update and AI categorization (Wave 1)
+- [x] 36-02-PLAN.md - Supplier items table with filtering (Wave 2)
 
 ## Progress
 
@@ -66,10 +66,10 @@ Plans:
 | v1.3.1 Revenue Model | 26 | 3 | Complete | 2026-01-24 |
 | v1.3.2 Conversion & Archive | 27-28 | 4 | Complete | 2026-01-24 |
 | v1.4 Intelligent Automation | 29-35 | 15 | Complete | 2026-01-25 |
-| v1.4.1 Line Item Categorization | 36 | 2 | In Progress | - |
+| v1.4.1 Line Item Categorization | 36 | 2 | Complete | 2026-01-25 |
 
-**Total:** 35 phases complete, 1 in progress
+**Total:** 36 phases complete
 
 ---
 *Roadmap created: 2026-01-20*
-*Last updated: 2026-01-25 (v1.4.1 phase 36 planned)*
+*Last updated: 2026-01-25 (v1.4.1 phase 36 complete)*

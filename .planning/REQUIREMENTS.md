@@ -11,18 +11,18 @@ Requirements for v1.4.1 Line Item Categorization & Price Table.
 
 ### Line Item Categorization
 
-- [ ] **ITEM-01**: Cost entry has `normalizedItem` field (AI-assigned category)
-- [ ] **ITEM-02**: AI assigns normalizedItem when cost is created
-- [ ] **ITEM-03**: AI updates normalizedItem when cost description changes
-- [ ] **ITEM-04**: User can manually edit normalizedItem if AI got it wrong
+- [x] **ITEM-01**: Cost entry has `normalizedItem` field (AI-assigned category)
+- [x] **ITEM-02**: AI assigns normalizedItem when cost is created
+- [x] **ITEM-03**: AI updates normalizedItem when cost description changes
+- [x] **ITEM-04**: User can manually edit normalizedItem if AI got it wrong
 
 ### Supplier Items Table
 
-- [ ] **ITEM-05**: User can view table of all line items across all suppliers
-- [ ] **ITEM-06**: Table shows: item description, normalizedItem, supplier, unit price, project
-- [ ] **ITEM-07**: User can filter table by normalizedItem (category)
-- [ ] **ITEM-08**: User can filter table by supplier
-- [ ] **ITEM-09**: User can sort table by price to compare
+- [x] **ITEM-05**: User can view table of all line items across all suppliers
+- [x] **ITEM-06**: Table shows: item description, normalizedItem, supplier, unit price, project
+- [x] **ITEM-07**: User can filter table by normalizedItem (category)
+- [x] **ITEM-08**: User can filter table by supplier
+- [x] **ITEM-09**: User can sort table by price to compare
 
 ## Out of Scope
 
@@ -39,15 +39,15 @@ Explicitly excluded. Documented to prevent scope creep.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ITEM-01 | 36 | Pending |
-| ITEM-02 | 36 | Pending |
-| ITEM-03 | 36 | Pending |
-| ITEM-04 | 36 | Pending |
-| ITEM-05 | 36 | Pending |
-| ITEM-06 | 36 | Pending |
-| ITEM-07 | 36 | Pending |
-| ITEM-08 | 36 | Pending |
-| ITEM-09 | 36 | Pending |
+| ITEM-01 | 36 | Complete |
+| ITEM-02 | 36 | Complete |
+| ITEM-03 | 36 | Complete |
+| ITEM-04 | 36 | Complete |
+| ITEM-05 | 36 | Complete |
+| ITEM-06 | 36 | Complete |
+| ITEM-07 | 36 | Complete |
+| ITEM-08 | 36 | Complete |
+| ITEM-09 | 36 | Complete |
 
 **Coverage:**
 - v1.4.1 requirements: 9 total
