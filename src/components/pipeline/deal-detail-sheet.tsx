@@ -29,6 +29,7 @@ import { Separator } from '@/components/ui/separator'
 import { Loader2, Trash2, Archive, ArchiveRestore, ExternalLink, Lock } from 'lucide-react'
 import { toast } from 'sonner'
 import Link from 'next/link'
+import { ActivityTimeline } from '@/components/shared/activity-timeline'
 import { CompanySelect } from './company-select'
 import { ContactSelect } from './contact-select'
 import { getStageColor, formatDealStage } from '@/lib/pipeline-utils'
@@ -85,6 +86,23 @@ export function DealDetailSheet({
   const [isLoadingContacts, setIsLoadingContacts] = useState(false)
   const [isArchiving, setIsArchiving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [activityLogs, setActivityLogs] = useState<any[]>([])
+  const [isLoadingActivity, setIsLoadingActivity] = useState(false)
+
+  const fetchActivityLogs = async (dealId: string) => {
+    setIsLoadingActivity(true)
+    try {
+      const response = await fetch(`/api/activity-logs?entityType=DEAL&entityId=${dealId}`)
+      if (response.ok) {
+        const data = await response.json()
+        setActivityLogs(data)
+      }
+    } catch (error) {
+      console.error('Failed to fetch activity logs:', error)
+    } finally {
+      setIsLoadingActivity(false)
+    }
+  }
 
   // Initialize form when deal changes
   useEffect(() => {
@@ -96,10 +114,16 @@ export function DealDetailSheet({
       setDescription(deal.description || '')
       setLostReason(deal.lostReason || '')
       setError(null)
+      setActivityLogs([])
 
       // Fetch contacts for selected company
       if (deal.company?.id) {
         fetchContacts(deal.company.id)
+      }
+
+      // Fetch activity logs for converted deals
+      if (deal.project) {
+        fetchActivityLogs(deal.id)
       }
     }
   }, [deal, open])
@@ -375,6 +399,20 @@ export function DealDetailSheet({
                       </div>
                     )}
                   </div>
+                </div>
+              </>
+            )}
+
+            {/* Activity History - Only for converted deals */}
+            {isConverted && (
+              <>
+                <Separator />
+                <div className="space-y-3">
+                  <Label className="text-muted-foreground">Activity History</Label>
+                  <ActivityTimeline
+                    logs={activityLogs}
+                    isLoading={isLoadingActivity}
+                  />
                 </div>
               </>
             )}

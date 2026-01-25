@@ -28,6 +28,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Loader2, Trash2, ExternalLink, Lock, Archive, ArchiveRestore } from 'lucide-react'
 import { toast } from 'sonner'
 import { Separator } from '@/components/ui/separator'
+import { ActivityTimeline } from '@/components/shared/activity-timeline'
 import Link from 'next/link'
 import { CompanySelect } from '@/components/pipeline/company-select'
 import { ContactSelect } from '@/components/pipeline/contact-select'
@@ -83,6 +84,23 @@ export function PotentialDetailSheet({
   const [isLoadingContacts, setIsLoadingContacts] = useState(false)
   const [isArchiving, setIsArchiving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [activityLogs, setActivityLogs] = useState<any[]>([])
+  const [isLoadingActivity, setIsLoadingActivity] = useState(false)
+
+  const fetchActivityLogs = async (potentialId: string) => {
+    setIsLoadingActivity(true)
+    try {
+      const response = await fetch(`/api/activity-logs?entityType=POTENTIAL&entityId=${potentialId}`)
+      if (response.ok) {
+        const data = await response.json()
+        setActivityLogs(data)
+      }
+    } catch (error) {
+      console.error('Failed to fetch activity logs:', error)
+    } finally {
+      setIsLoadingActivity(false)
+    }
+  }
 
   // Initialize form when project changes
   useEffect(() => {
@@ -93,10 +111,16 @@ export function PotentialDetailSheet({
       setEstimatedValue(project.estimatedValue?.toString() || '')
       setDescription(project.description || '')
       setError(null)
+      setActivityLogs([])
 
       // Fetch contacts for selected company
       if (project.company?.id) {
         fetchContacts(project.company.id)
+      }
+
+      // Fetch activity logs for converted potentials
+      if (project.project) {
+        fetchActivityLogs(project.id)
       }
     }
   }, [project, open])
@@ -371,6 +395,20 @@ export function PotentialDetailSheet({
                       </div>
                     )}
                   </div>
+                </div>
+              </>
+            )}
+
+            {/* Activity History - Only for converted potentials */}
+            {isConverted && (
+              <>
+                <Separator />
+                <div className="space-y-3">
+                  <Label className="text-muted-foreground">Activity History</Label>
+                  <ActivityTimeline
+                    logs={activityLogs}
+                    isLoading={isLoadingActivity}
+                  />
                 </div>
               </>
             )}
