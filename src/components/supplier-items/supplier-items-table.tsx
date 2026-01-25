@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { ArrowUpDown, Search, Tag } from 'lucide-react'
-import { cn, formatCurrency, formatDate } from '@/lib/utils'
+import { cn, formatCurrency } from '@/lib/utils'
 import { NormalizedItemEdit } from './normalized-item-edit'
 
 interface SupplierItem {
