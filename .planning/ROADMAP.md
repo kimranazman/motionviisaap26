@@ -106,10 +106,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 33-01-PLAN.md - Task CRUD API and basic UI (TaskForm, TaskCard, integration)
-- [ ] 33-02-PLAN.md - Tags API and TaskTagSelect component
-- [ ] 33-03-PLAN.md - Task tree view with hierarchy, collapse/expand, progress, tag inheritance
-- [ ] 33-04-PLAN.md - Task comments API and TaskDetailSheet
+- [x] 33-01-PLAN.md - Task CRUD API and basic UI (TaskForm, TaskCard, integration)
+- [x] 33-02-PLAN.md - Tags API and TaskTagSelect component
+- [x] 33-03-PLAN.md - Task tree view with hierarchy, collapse/expand, progress, tag inheritance
+- [x] 33-04-PLAN.md - Task comments API and TaskDetailSheet
 
 #### Phase 34: Activity Logging & Bidirectional Sync
 **Goal**: Users see live project data on pipeline and changes sync bidirectionally
@@ -149,12 +149,12 @@ Phases execute in numeric order: 29 -> 30 -> 31 -> 32 -> 33 -> 34 -> 35
 | 30. Supplier Management | v1.4 | 2/2 | ✓ Complete | 2026-01-24 |
 | 31. Department Organization | v1.4 | 2/2 | ✓ Complete | 2026-01-24 |
 | 32. Project Deliverables | v1.4 | 2/2 | ✓ Complete | 2026-01-25 |
-| 33. Task Management | v1.4 | 0/4 | Not started | - |
+| 33. Task Management | v1.4 | 4/4 | ✓ Complete | 2026-01-25 |
 | 34. Activity Logging & Sync | v1.4 | 0/2 | Not started | - |
 | 35. AI Price Comparison | v1.4 | 0/1 | Not started | - |
 
-**v1.4 Total:** 7/14 plans complete
+**v1.4 Total:** 11/14 plans complete
 
 ---
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-01-25 (Phase 33 planned)*
+*Last updated: 2026-01-25 (Phase 33 complete)*
