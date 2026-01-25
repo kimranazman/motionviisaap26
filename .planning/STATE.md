@@ -10,13 +10,13 @@ See: .planning/PROJECT.md (updated 2026-01-25)
 ## Current Position
 
 Phase: 37 (Convert Detail Sheets to Modals)
-Plan: 0 of TBD complete
-Status: Not planned yet - run /gsd:plan-phase 37
-Last activity: 2026-01-26 - Phase 37 added to roadmap
+Plan: 1 of 2 complete
+Status: In progress
+Last activity: 2026-01-26 - Completed 37-01-PLAN.md (fix documents display)
 
-Progress: v1.4.2 [░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 0% (not planned)
+Progress: v1.4.2 [================----------------] 50% (1/2 plans)
 
-**Next Phase:** 37 - Convert Detail Sheets to Modals
+**Next:** Plan 37-02 (Sheet to Modal conversion)
 
 ## Milestone History
 
@@ -50,6 +50,10 @@ v1.4.1 context:
 - 36-02: Page named "Price Comparison" for user clarity
 - 36-02: Server component with direct prisma (middleware handles auth)
 
+v1.4.2 context:
+- 37-01: Moved state resets inside fetch effects to prevent race conditions
+- 37-01: Pattern: reset async data at fetch start, not in separate effect
+
 ### Pending Todos
 
 None.
@@ -60,11 +64,11 @@ None.
 
 ### Blockers/Concerns
 
-- Documents not showing in project detail (post-v1.4.1 deployment)
+- ~~Documents not showing in project detail~~ FIXED in 37-01
 - Resizable sheet handle too subtle (1px) - users can't find it
 
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Added Phase 37 to roadmap
-Resume: Run /gsd:plan-phase 37 to create execution plans
+Stopped at: Completed 37-01-PLAN.md
+Resume file: .planning/phases/37-sheet-to-modal/37-02-PLAN.md
