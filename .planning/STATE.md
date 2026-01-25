@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-24)
 
 **Core value:** Team can visualize and track initiative progress with secure access, full CRM, customizable dashboards, project document management, AI document intelligence, conversion visibility, archive management, and intelligent project delivery with supplier tracking and task management.
-**Current focus:** v1.4 Intelligent Automation & Organization - Phase 33 Plan 01 complete
+**Current focus:** v1.4 Intelligent Automation & Organization - Phase 33 Plan 02 complete
 
 ## Current Position
 
 Phase: 33 of 35 (Task Management)
-Plan: 01 of 04 complete
+Plan: 02 of 04 complete
 Status: In progress
-Last activity: 2026-01-25 - Completed 33-01-PLAN.md (Task CRUD API and Basic UI)
+Last activity: 2026-01-25 - Completed 33-02-PLAN.md (Tags API and Task Utilities)
 
-Progress: v1.4 [████████████░░░░░░░░░░░░░░░░░░░] 62% (8/13 plans)
+Progress: v1.4 [█████████████░░░░░░░░░░░░░░░░░░] 69% (9/13 plans)
 
 ## Milestone History
 
@@ -34,9 +34,9 @@ Progress: v1.4 [████████████░░░░░░░░░�
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 74 (v1.0-v1.4 partial)
-- Average duration: 4.2 min
-- Total execution time: 323 min
+- Total plans completed: 75 (v1.0-v1.4 partial)
+- Average duration: 4.3 min
+- Total execution time: 336 min
 
 **By Milestone (summary):**
 
@@ -49,7 +49,7 @@ Progress: v1.4 [████████████░░░░░░░░░�
 | v1.3 | 21-25 | 18 | 5.1min |
 | v1.3.1 | 26 | 3 | 2.7min |
 | v1.3.2 | 27-28 | 4 | 4.8min |
-| v1.4 | 29-35 | 8 | 6.4min (partial) |
+| v1.4 | 29-35 | 9 | 7.0min (partial) |
 
 ## Accumulated Context
 
@@ -77,6 +77,9 @@ Recent decisions from v1.4:
 - DeliverableReviewSheet created as separate component (simpler than extending AIReviewSheet)
 - Task cascade delete implemented in app code (MySQL limitation with self-referential FK)
 - Tasks section placed between Deliverables and Costs in ProjectDetailSheet
+- TAG_COLORS extracted to lib/tag-utils.ts (Next.js route files cannot export non-route values)
+- MySQL varchar is case-insensitive - use findUnique instead of mode: 'insensitive'
+- Admin role required for tag deletion (shared resource protection)
 
 ### Pending Todos
 
@@ -88,6 +91,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-25 00:57 UTC
-Stopped at: Completed 33-01-PLAN.md
-Resume: Continue with `/gsd:execute-phase` for 33-02-PLAN.md
+Last session: 2026-01-25 00:59 UTC
+Stopped at: Completed 33-02-PLAN.md
+Resume: Continue with `/gsd:execute-phase` for 33-03-PLAN.md
