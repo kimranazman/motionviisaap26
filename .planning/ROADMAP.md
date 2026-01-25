@@ -40,6 +40,7 @@ See `.planning/milestones/` for archived phase details.
 **Goal**: AI categorizes cost line items; users compare prices via filterable table
 **Depends on**: Phase 35 (v1.4 complete)
 **Requirements**: ITEM-01 to ITEM-09
+**Plans**: 2 plans in 2 waves
 **Success Criteria** (what must be TRUE):
   1. Cost model has normalizedItem field
   2. AI assigns normalizedItem on cost create/update
@@ -48,11 +49,10 @@ See `.planning/milestones/` for archived phase details.
   5. User can filter by supplier to see their price list
   6. User can sort by price to compare
   7. User can manually correct normalizedItem if AI got it wrong
-**Plans**: TBD (estimated 2 plans)
 
 Plans:
-- [ ] 36-01-PLAN.md - Schema update and AI categorization
-- [ ] 36-02-PLAN.md - Supplier items table with filtering
+- [ ] 36-01-PLAN.md - Schema update and AI categorization (Wave 1)
+- [ ] 36-02-PLAN.md - Supplier items table with filtering (Wave 2)
 
 ## Progress
 
@@ -66,10 +66,10 @@ Plans:
 | v1.3.1 Revenue Model | 26 | 3 | Complete | 2026-01-24 |
 | v1.3.2 Conversion & Archive | 27-28 | 4 | Complete | 2026-01-24 |
 | v1.4 Intelligent Automation | 29-35 | 15 | Complete | 2026-01-25 |
-| v1.4.1 Line Item Categorization | 36 | 0/2 | In Progress | - |
+| v1.4.1 Line Item Categorization | 36 | 2 | In Progress | - |
 
 **Total:** 35 phases complete, 1 in progress
 
 ---
 *Roadmap created: 2026-01-20*
-*Last updated: 2026-01-25 (v1.4.1 milestone started)*
+*Last updated: 2026-01-25 (v1.4.1 phase 36 planned)*
