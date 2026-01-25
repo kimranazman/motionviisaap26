@@ -39,6 +39,7 @@ import {
   formatTaskStatus,
   formatTaskPriority,
   type TaskWithChildren,
+  type Task,
 } from '@/lib/task-utils'
 import { TaskForm } from './task-form'
 
@@ -49,6 +50,7 @@ interface TaskTreeNodeProps {
   expandedIds: Set<string>
   onToggleExpanded: (taskId: string) => void
   onTaskUpdate: () => void
+  onSelectTask: (task: Task) => void
 }
 
 export function TaskTreeNode({
@@ -58,6 +60,7 @@ export function TaskTreeNode({
   expandedIds,
   onToggleExpanded,
   onTaskUpdate,
+  onSelectTask,
 }: TaskTreeNodeProps) {
   const [isDeleting, setIsDeleting] = useState(false)
   const [showEditForm, setShowEditForm] = useState(false)
@@ -145,13 +148,16 @@ export function TaskTreeNode({
             <div className="w-6 shrink-0" />
           )}
 
-          {/* Task content */}
-          <div className="flex-1 min-w-0">
+          {/* Task content - clickable to open detail sheet */}
+          <div
+            className="flex-1 min-w-0 cursor-pointer"
+            onClick={() => onSelectTask(task)}
+          >
             <div className="flex items-center gap-2 flex-wrap">
               {/* Title */}
               <span
                 className={cn(
-                  'font-medium truncate',
+                  'font-medium truncate hover:text-blue-600 transition-colors',
                   task.status === 'DONE' && 'line-through text-gray-500'
                 )}
               >
@@ -317,6 +323,7 @@ export function TaskTreeNode({
                 expandedIds={expandedIds}
                 onToggleExpanded={onToggleExpanded}
                 onTaskUpdate={onTaskUpdate}
+                onSelectTask={onSelectTask}
               />
             ))}
           </div>

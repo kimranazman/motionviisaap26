@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react'
 import { TaskTreeNode } from './task-tree-node'
+import { TaskDetailSheet } from './task-detail-sheet'
 import { TaskForm } from './task-form'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -23,6 +24,8 @@ interface TaskTreeProps {
 export function TaskTree({ projectId, tasks, onTasksChange }: TaskTreeProps) {
   const [showAddForm, setShowAddForm] = useState(false)
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null)
+  const [isDetailSheetOpen, setIsDetailSheetOpen] = useState(false)
 
   // Build tree structure from flat list
   const tree = useMemo(() => buildTaskTree(tasks), [tasks])
@@ -52,6 +55,29 @@ export function TaskTree({ projectId, tasks, onTasksChange }: TaskTreeProps) {
   const handleTaskSuccess = () => {
     onTasksChange()
     setShowAddForm(false)
+  }
+
+  const handleSelectTask = (task: Task) => {
+    setSelectedTask(task)
+    setIsDetailSheetOpen(true)
+  }
+
+  const handleDetailSheetClose = (open: boolean) => {
+    setIsDetailSheetOpen(open)
+    if (!open) {
+      setSelectedTask(null)
+    }
+  }
+
+  const handleTaskUpdate = () => {
+    onTasksChange()
+    // Refresh selectedTask with updated data
+    if (selectedTask) {
+      const updated = tasks.find((t) => t.id === selectedTask.id)
+      if (updated) {
+        setSelectedTask(updated)
+      }
+    }
   }
 
   return (
@@ -111,10 +137,20 @@ export function TaskTree({ projectId, tasks, onTasksChange }: TaskTreeProps) {
               expandedIds={expandedIds}
               onToggleExpanded={toggleExpanded}
               onTaskUpdate={onTasksChange}
+              onSelectTask={handleSelectTask}
             />
           ))}
         </div>
       )}
+
+      {/* Task Detail Sheet */}
+      <TaskDetailSheet
+        task={selectedTask}
+        projectId={projectId}
+        open={isDetailSheetOpen}
+        onOpenChange={handleDetailSheetClose}
+        onTaskUpdate={handleTaskUpdate}
+      />
     </div>
   )
 }
