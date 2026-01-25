@@ -27,6 +27,8 @@ interface Deal {
     title: string
     revenue: number | null
     potentialRevenue: number | null
+    status: string
+    totalCosts: number
   } | null
 }
 
@@ -204,6 +206,37 @@ export function PipelineCard({ deal, onClick, isDragging, canEdit = true }: Pipe
             <ArrowRight className="h-3 w-3 mr-1" />
             {deal.project.title}
           </Badge>
+        )}
+
+        {/* Project Metrics - Only for WON deals with project */}
+        {deal.project && deal.stage === 'WON' && (
+          <div className="mt-2 p-2 bg-gray-50 rounded-lg text-xs space-y-1.5">
+            {/* Status */}
+            <div className="flex items-center justify-between">
+              <span className="text-gray-500">Status:</span>
+              <Badge variant="outline" className="text-xs px-1.5 py-0">
+                {deal.project.status.replace('_', ' ')}
+              </Badge>
+            </div>
+            {/* Revenue */}
+            {deal.project.revenue !== null && (
+              <div className="flex items-center justify-between">
+                <span className="text-gray-500">Revenue:</span>
+                <span className="font-medium text-green-600">
+                  {formatCurrency(deal.project.revenue)}
+                </span>
+              </div>
+            )}
+            {/* Costs */}
+            {deal.project.totalCosts > 0 && (
+              <div className="flex items-center justify-between">
+                <span className="text-gray-500">Costs:</span>
+                <span className="font-medium text-red-600">
+                  {formatCurrency(deal.project.totalCosts)}
+                </span>
+              </div>
+            )}
+          </div>
         )}
 
         {/* Archived Badge */}

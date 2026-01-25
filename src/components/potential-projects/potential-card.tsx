@@ -27,6 +27,8 @@ interface PotentialProject {
     title: string
     revenue: number | null
     potentialRevenue: number | null
+    status: string
+    totalCosts: number
   } | null
 }
 
@@ -204,6 +206,37 @@ export function PotentialCard({ project, onClick, isDragging, canEdit = true }: 
             <ArrowRight className="h-3 w-3 mr-1" />
             {project.project.title}
           </Badge>
+        )}
+
+        {/* Project Metrics - Only for CONFIRMED potentials with project */}
+        {project.project && project.stage === 'CONFIRMED' && (
+          <div className="mt-2 p-2 bg-gray-50 rounded-lg text-xs space-y-1.5">
+            {/* Status */}
+            <div className="flex items-center justify-between">
+              <span className="text-gray-500">Status:</span>
+              <Badge variant="outline" className="text-xs px-1.5 py-0">
+                {project.project.status.replace('_', ' ')}
+              </Badge>
+            </div>
+            {/* Revenue */}
+            {project.project.revenue !== null && (
+              <div className="flex items-center justify-between">
+                <span className="text-gray-500">Revenue:</span>
+                <span className="font-medium text-green-600">
+                  {formatCurrency(project.project.revenue)}
+                </span>
+              </div>
+            )}
+            {/* Costs */}
+            {project.project.totalCosts > 0 && (
+              <div className="flex items-center justify-between">
+                <span className="text-gray-500">Costs:</span>
+                <span className="font-medium text-red-600">
+                  {formatCurrency(project.project.totalCosts)}
+                </span>
+              </div>
+            )}
+          </div>
         )}
 
         {/* Archived Badge */}
