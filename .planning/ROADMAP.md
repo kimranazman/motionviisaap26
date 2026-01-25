@@ -69,7 +69,7 @@ Plans:
 **Goal**: Fix documents not showing, replace sliding sheets with centered Dialog/Modal for better UX
 **Depends on**: Phase 36 (v1.4.1 complete)
 **Requirements**: Bug fix + UX improvement
-**Plans**: TBD (run /gsd:plan-phase 37 to break down)
+**Plans**: 2 plans in 1 wave
 **Success Criteria** (what must be TRUE):
   1. Documents display correctly in project detail
   2. Detail panels use centered Dialog/Modal instead of sliding Sheet
@@ -79,7 +79,8 @@ Plans:
   6. Mobile responsive
 
 Plans:
-- [ ] 37-01-PLAN.md - TBD
+- [ ] 37-01-PLAN.md - Debug and fix documents display issue (Wave 1)
+- [ ] 37-02-PLAN.md - Convert detail sheets to modals (Wave 1)
 
 ## Progress
 
@@ -94,10 +95,10 @@ Plans:
 | v1.3.2 Conversion & Archive | 27-28 | 4 | Complete | 2026-01-24 |
 | v1.4 Intelligent Automation | 29-35 | 15 | Complete | 2026-01-25 |
 | v1.4.1 Line Item Categorization | 36 | 2 | Complete | 2026-01-25 |
-| v1.4.2 UI Polish & Bug Fixes | 37 | TBD | In Progress | - |
+| v1.4.2 UI Polish & Bug Fixes | 37 | 2 | In Progress | - |
 
 **Total:** 36 phases complete, 1 in progress
 
 ---
 *Roadmap created: 2026-01-20*
-*Last updated: 2026-01-26 (v1.4.2 phase 37 added)*
+*Last updated: 2026-01-26 (phase 37 planned - 2 plans in 1 wave)*
