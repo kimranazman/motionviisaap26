@@ -18,6 +18,7 @@ import {
   FolderKanban,
   Briefcase,
   Truck,
+  Scale,
 } from 'lucide-react'
 
 const navigation = [
@@ -131,6 +132,18 @@ export function Sidebar() {
         >
           <Truck className="h-5 w-5" />
           Suppliers
+        </Link>
+        <Link
+          href="/supplier-items"
+          className={cn(
+            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+            pathname.startsWith('/supplier-items')
+              ? 'bg-gray-100 text-gray-900'
+              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+          )}
+        >
+          <Scale className="h-5 w-5" />
+          Price Comparison
         </Link>
 
         {/* Admin Section */}
