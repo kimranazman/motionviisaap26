@@ -452,10 +452,9 @@ export function ProjectDetailSheet({
       setCosts(project.costs || [])
       setShowAddCostForm(false)
       setEditingCost(null)
-      setDeliverables([])
+      // Note: deliverables and tasks are reset in their respective fetch effects
       setShowAddDeliverableForm(false)
       setEditingDeliverable(null)
-      setTasks([])
 
       // Initialize dates
       if (project.startDate) {
@@ -468,8 +467,7 @@ export function ProjectDetailSheet({
       }
       setEndDate(project.endDate ? new Date(project.endDate) : null)
 
-      // Reset document state
-      setDocuments([])
+      // Reset document-related UI state (documents array is reset in fetch effect)
       setPreviewDocument(null)
       setIsPreviewOpen(false)
 
@@ -494,6 +492,8 @@ export function ProjectDetailSheet({
   useEffect(() => {
     const fetchDocuments = async () => {
       if (!project || !open) return
+      // Reset documents before fetching to ensure fresh state
+      setDocuments([])
       try {
         const response = await fetch(`/api/projects/${project.id}/documents`)
         if (response.ok) {
@@ -511,6 +511,8 @@ export function ProjectDetailSheet({
   useEffect(() => {
     const fetchDeliverables = async () => {
       if (!project || !open) return
+      // Reset deliverables before fetching to ensure fresh state
+      setDeliverables([])
       try {
         const response = await fetch(`/api/projects/${project.id}/deliverables`)
         if (response.ok) {
@@ -528,6 +530,8 @@ export function ProjectDetailSheet({
   useEffect(() => {
     const fetchTasks = async () => {
       if (!project || !open) return
+      // Reset tasks before fetching to ensure fresh state
+      setTasks([])
       try {
         const response = await fetch(`/api/projects/${project.id}/tasks`)
         if (response.ok) {
