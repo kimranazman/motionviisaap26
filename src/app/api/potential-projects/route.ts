@@ -29,6 +29,10 @@ export async function GET(request: NextRequest) {
             title: true,
             revenue: true,
             potentialRevenue: true,
+            status: true,
+            costs: {
+              select: { amount: true },
+            },
           },
         },
       },
@@ -43,9 +47,12 @@ export async function GET(request: NextRequest) {
       ...pp,
       estimatedValue: pp.estimatedValue ? Number(pp.estimatedValue) : null,
       project: pp.project ? {
-        ...pp.project,
+        id: pp.project.id,
+        title: pp.project.title,
         revenue: pp.project.revenue ? Number(pp.project.revenue) : null,
         potentialRevenue: pp.project.potentialRevenue ? Number(pp.project.potentialRevenue) : null,
+        status: pp.project.status,
+        totalCosts: pp.project.costs.reduce((sum, c) => sum + Number(c.amount), 0),
       } : null,
     }))
 
