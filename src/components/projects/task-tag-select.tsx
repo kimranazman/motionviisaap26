@@ -102,17 +102,41 @@ export function TaskTagSelect({
   const handleToggleTag = async (tag: Tag) => {
     const isSelected = selectedTagIds.has(tag.id)
 
-    // TODO: Implement in Plan 33-03
-    // if (isSelected) {
-    //   // Remove tag: DELETE /api/projects/[id]/tasks/[taskId]/tags/[tagId]
-    // } else {
-    //   // Add tag: POST /api/projects/[id]/tasks/[taskId]/tags with { tagId }
-    // }
+    try {
+      if (isSelected) {
+        // Remove tag: DELETE /api/projects/[id]/tasks/[taskId]/tags/[tagId]
+        const response = await fetch(
+          `/api/projects/${projectId}/tasks/${taskId}/tags/${tag.id}`,
+          { method: 'DELETE' }
+        )
 
-    console.log(`TODO: ${isSelected ? 'Remove' : 'Add'} tag ${tag.id} ${isSelected ? 'from' : 'to'} task ${taskId} in project ${projectId}`)
+        if (!response.ok) {
+          const error = await response.json()
+          console.error('Failed to remove tag:', error)
+          return
+        }
+      } else {
+        // Add tag: POST /api/projects/[id]/tasks/[taskId]/tags with { tagId }
+        const response = await fetch(
+          `/api/projects/${projectId}/tasks/${taskId}/tags`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tagId: tag.id }),
+          }
+        )
 
-    // For now, just call onTagsChange to refresh
-    onTagsChange()
+        if (!response.ok) {
+          const error = await response.json()
+          console.error('Failed to add tag:', error)
+          return
+        }
+      }
+
+      onTagsChange()
+    } catch (error) {
+      console.error('Error toggling tag:', error)
+    }
   }
 
   const handleCreateTag = async () => {
@@ -137,9 +161,20 @@ export function TaskTagSelect({
         setNewTagColor(TAG_COLORS[0])
 
         // Automatically add the new tag to the task
-        // TODO: Implement in Plan 33-03
-        // POST /api/projects/[id]/tasks/[taskId]/tags with { tagId: newTag.id }
-        console.log(`TODO: Add new tag ${newTag.id} to task ${taskId}`)
+        const addResponse = await fetch(
+          `/api/projects/${projectId}/tasks/${taskId}/tags`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tagId: newTag.id }),
+          }
+        )
+
+        if (!addResponse.ok) {
+          const error = await addResponse.json()
+          console.error('Failed to add new tag to task:', error)
+        }
+
         onTagsChange()
       } else {
         const error = await response.json()
