@@ -524,6 +524,9 @@ model Cost {
   // AI embedding for semantic matching (1536 floats for text-embedding-3-small)
   embedding Json? @db.Json
 
+  // AI-assigned normalized item name for price comparison
+  normalizedItem String? @map("normalized_item") @db.VarChar(100)
+
   supplierId String?   @map("supplier_id")
   supplier   Supplier? @relation(fields: [supplierId], references: [id])
 
@@ -534,6 +537,7 @@ model Cost {
   @@index([categoryId])
   @@index([date])
   @@index([supplierId])
+  @@index([normalizedItem])
   @@map("costs")
 }
 
