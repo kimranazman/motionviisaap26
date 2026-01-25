@@ -9,7 +9,7 @@
 - [x] **v1.3 Document Management & Dashboard Customization** - Phases 21-25 (shipped 2026-01-24)
 - [x] **v1.3.1 Revenue Model Refinement** - Phase 26 (shipped 2026-01-24)
 - [x] **v1.3.2 Conversion Visibility & Archive** - Phases 27-28 (shipped 2026-01-24)
-- [ ] **v1.4 Intelligent Automation & Organization** - Phases 29-35 (in progress)
+- [x] **v1.4 Intelligent Automation & Organization** - Phases 29-35 (shipped 2026-01-25)
 
 ## Phases
 
@@ -136,8 +136,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 35-01-PLAN.md - Schema & embedding infrastructure (Cost.embedding, OpenAI SDK, lib/embeddings.ts)
-- [ ] 35-02-PLAN.md - Comparison API & UI (fire-and-forget embedding, /api/suppliers/compare, PriceComparisonSheet)
+- [x] 35-01-PLAN.md - Schema & embedding infrastructure (Cost.embedding, OpenAI SDK, lib/embeddings.ts)
+- [x] 35-02-PLAN.md - Comparison API & UI (fire-and-forget embedding, /api/suppliers/compare, PriceComparisonSheet)
 
 ## Progress
 
@@ -152,10 +152,10 @@ Phases execute in numeric order: 29 -> 30 -> 31 -> 32 -> 33 -> 34 -> 35
 | 32. Project Deliverables | v1.4 | 2/2 | ✓ Complete | 2026-01-25 |
 | 33. Task Management | v1.4 | 4/4 | ✓ Complete | 2026-01-25 |
 | 34. Activity Logging & Sync | v1.4 | 2/2 | ✓ Complete | 2026-01-25 |
-| 35. AI Price Comparison | v1.4 | 0/2 | Ready to execute | - |
+| 35. AI Price Comparison | v1.4 | 2/2 | ✓ Complete | 2026-01-25 |
 
-**v1.4 Total:** 13/15 plans complete
+**v1.4 Total:** 15/15 plans complete
 
 ---
 *Roadmap created: 2026-01-24*
-*Last updated: 2026-01-25 (Phase 35 planned)*
+*Last updated: 2026-01-25 (Phase 35 complete, v1.4 milestone complete)*

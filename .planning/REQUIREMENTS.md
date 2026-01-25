@@ -27,8 +27,8 @@ Requirements for v1.4 Intelligent Automation & Organization milestone.
 - [ ] **SUPP-07**: Supplier detail page shows total spend (sum of linked costs)
 - [ ] **SUPP-08**: Supplier detail page shows price list (all linked cost line items)
 - [ ] **SUPP-09**: Supplier detail page shows projects worked on
-- [ ] **SUPP-10**: AI semantic matching finds similar line items across suppliers
-- [ ] **SUPP-11**: Price comparison view shows suppliers' prices for similar items
+- [x] **SUPP-10**: AI semantic matching finds similar line items across suppliers
+- [x] **SUPP-11**: Price comparison view shows suppliers' prices for similar items
 
 ### Company Departments
 
@@ -124,8 +124,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SUPP-07 | 30 | Complete |
 | SUPP-08 | 30 | Complete |
 | SUPP-09 | 30 | Complete |
-| SUPP-10 | 35 | Pending |
-| SUPP-11 | 35 | Pending |
+| SUPP-10 | 35 | Complete |
+| SUPP-11 | 35 | Complete |
 | DEPT-01 | 31 | Complete |
 | DEPT-02 | 31 | Complete |
 | DEPT-03 | 31 | Complete |
@@ -161,4 +161,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-24*
-*Last updated: 2026-01-25 Phase 34 complete*
+*Last updated: 2026-01-25 Phase 35 complete, v1.4 milestone complete*
