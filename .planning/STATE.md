@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 33 of 35 (Task Management)
-Plan: 03 of 04 complete
-Status: In progress
-Last activity: 2026-01-25 - Completed 33-03-PLAN.md (Task Tree View and Tag APIs)
+Plan: 04 of 04 complete
+Status: Phase complete
+Last activity: 2026-01-25 - Completed 33-04-PLAN.md (Task Comments and Detail Sheet)
 
-Progress: v1.4 [███████████████░░░░░░░░░░░░░░░░] 77% (10/13 plans)
+Progress: v1.4 [██████████████████░░░░░░░░░░░░░] 85% (11/13 plans)
 
 ## Milestone History
 
@@ -82,6 +82,8 @@ Recent decisions from v1.4:
 - Admin role required for tag deletion (shared resource protection)
 - Expand state stored in parent TaskTree to preserve across data refreshes
 - Inherited tags cannot be removed directly - must remove from parent task
+- Detail sheet state managed in TaskTree parent component
+- Comments ordered newest first with formatDistanceToNow for relative time
 
 ### Pending Todos
 
@@ -93,6 +95,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-25 01:10 UTC
-Stopped at: Completed 33-03-PLAN.md
-Resume: Continue with `/gsd:execute-phase` for 33-04-PLAN.md
+Last session: 2026-01-25 01:21 UTC
+Stopped at: Completed 33-04-PLAN.md (Phase 33 complete)
+Resume: Continue with `/gsd:plan-phase` for Phase 34 (Activity Logging)
