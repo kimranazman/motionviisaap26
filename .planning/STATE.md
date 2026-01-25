@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-24)
 ## Current Position
 
 Phase: 34 of 35 (Activity Logging & Bidirectional Sync)
-Plan: 01 of 02 complete
-Status: In progress
-Last activity: 2026-01-25 - Completed 34-01-PLAN.md (activity logging & title sync)
+Plan: 02 of 02 complete
+Status: Phase complete
+Last activity: 2026-01-25 - Completed 34-02-PLAN.md (live metrics & auto-refresh)
 
-Progress: v1.4 [████████████████████░░░░░░░░░░░] 86% (12/14 plans)
+Progress: v1.4 [█████████████████████░░░░░░░░░░] 93% (13/14 plans)
 
 ## Milestone History
 
@@ -86,6 +86,9 @@ Recent decisions from v1.4:
 - Comments ordered newest first with formatDistanceToNow for relative time
 - Title sync done in $transaction for atomicity
 - Activity logs created inline (not via utility) for transaction consistency
+- JSON.stringify comparison before state update to prevent flicker on polling
+- 60-second poll interval balances freshness with server load
+- Activity logs fetched for converted items only
 
 ### Pending Todos
 
@@ -98,5 +101,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-25
-Stopped at: Completed 34-01-PLAN.md
-Resume: Execute 34-02-PLAN.md with `/gsd:execute-phase`
+Stopped at: Completed 34-02-PLAN.md (Phase 34 complete)
+Resume: Execute Phase 35 with `/gsd:execute-phase`
