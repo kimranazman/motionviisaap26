@@ -122,16 +122,16 @@ export function SupplierItemsTable({
 
           {/* Category Filter */}
           <Select
-            value={categoryFilter ?? ''}
+            value={categoryFilter ?? 'all'}
             onValueChange={(value) =>
-              setCategoryFilter(value === '' ? null : value)
+              setCategoryFilter(value === 'all' ? null : value)
             }
           >
             <SelectTrigger className="w-full sm:w-48">
               <SelectValue placeholder="All Categories" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Categories</SelectItem>
+              <SelectItem value="all">All Categories</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category} value={category}>
                   {category}
@@ -142,16 +142,16 @@ export function SupplierItemsTable({
 
           {/* Supplier Filter */}
           <Select
-            value={supplierFilter ?? ''}
+            value={supplierFilter ?? 'all'}
             onValueChange={(value) =>
-              setSupplierFilter(value === '' ? null : value)
+              setSupplierFilter(value === 'all' ? null : value)
             }
           >
             <SelectTrigger className="w-full sm:w-48">
               <SelectValue placeholder="All Suppliers" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Suppliers</SelectItem>
+              <SelectItem value="all">All Suppliers</SelectItem>
               {suppliers.map((supplier) => (
                 <SelectItem key={supplier.id} value={supplier.id}>
                   {supplier.name}

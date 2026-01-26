@@ -288,12 +288,12 @@ export function TaskDetailSheet({
 
               <div className="space-y-2">
                 <Label>Assignee</Label>
-                <Select value={assignee} onValueChange={setAssignee}>
+                <Select value={assignee || '__unassigned__'} onValueChange={(v) => setAssignee(v === '__unassigned__' ? '' : v)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select assignee" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Unassigned</SelectItem>
+                    <SelectItem value="__unassigned__">Unassigned</SelectItem>
                     {TEAM_MEMBER_OPTIONS.map((opt) => (
                       <SelectItem key={opt.value} value={opt.value}>
                         {opt.label}
