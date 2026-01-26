@@ -25,10 +25,10 @@ Fix critical bugs (Price Comparison crash, Timeline rendering), reduce UX fricti
   1. Price Comparison page (/supplier-items) loads and displays supplier item data without crashing
   2. Timeline page (/timeline) renders Gantt chart bars for initiatives that have both start and end dates
   3. Timeline page shows a clear "No initiatives scheduled" message when filters produce no results
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 43-01: Fix bugs across Price Comparison and Timeline pages
+- [ ] 43-01-PLAN.md -- Fix Radix Select crashes, Gantt bar rendering, and empty state message
 
 ### Phase 44: UX Polish
 **Goal**: Users can click into detail views from any list and see properly formatted data
