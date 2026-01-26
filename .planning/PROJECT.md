@@ -10,9 +10,21 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 ## Current State
 
-**Version:** v1.4.2 UI Polish & Bug Fixes (shipped 2026-01-26)
+**Version:** v1.5 Initiative Intelligence & Export (in progress)
 **Codebase:** ~34,000 LOC TypeScript
 **Tech stack:** Next.js 14, Prisma, MariaDB, Tailwind/shadcn, NextAuth.js, OpenAI
+
+## Current Milestone: v1.5 Initiative Intelligence & Export
+
+**Goal:** Transform the initiatives view into an objective-driven hierarchy with KPI tracking, date intelligence, linked project visibility, and Excel export.
+
+**Target features:**
+- By Objective view as default initiatives page (Objective → KR → Initiatives hierarchy)
+- Full text wrapping (no truncation) for initiative titles
+- KPI metrics per initiative (target vs actual, auto-calculated from linked projects, manually overridable)
+- Linked project status visible inline (status, revenue, costs)
+- Date intelligence: duration analysis, date validation, timeline overlap warnings
+- Export initiatives data to Excel/CSV
 
 ## Requirements
 
@@ -153,9 +165,13 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 ### Active
 
-<!-- No active milestone — run /gsd:new-milestone to start next -->
-
-(None — next milestone not yet defined)
+**v1.5 Initiative Intelligence & Export:**
+- By Objective view: three-level hierarchy (Objective → Key Result → Initiatives) as default view
+- Full text display: initiative titles wrap instead of truncating
+- KPI tracking: target/actual metrics per initiative, auto-calculated from linked projects, manual override
+- Linked project status: inline display of connected projects with status, revenue, costs
+- Date intelligence: flag too-long durations, validate date logic, highlight timeline overlaps
+- Excel export: export initiatives data with objectives, KRs, status, metrics, dates
 
 ### Out of Scope
 
@@ -187,6 +203,7 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - Data seeded from Excel file (MotionVii_SAAP_2026.xlsx)
 - 28 initiatives, 38 events currently in database
 - v1.4.2 shipped — all major features complete through intelligent automation, supplier management, and UI polish
+- v1.5 in progress — initiative intelligence, KPI tracking, and export
 - Primary admin: khairul@talenta.com.my
 
 ## Infrastructure
@@ -265,4 +282,4 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | Dialog width per component type | 650px default, 512px task, 768px AI review | ✓ Good |
 
 ---
-*Last updated: 2026-01-26 after v1.4.2 milestone*
+*Last updated: 2026-01-26 after starting v1.5 milestone*
