@@ -37,14 +37,14 @@
 
 ### Date Intelligence (DATE)
 
-- [ ] **DATE-01**: Overdue initiatives flagged with red badge showing "X days overdue" (endDate < today, status not COMPLETED/CANCELLED)
-- [ ] **DATE-02**: Ending-soon initiatives flagged with orange badge showing "Ends in X days" (endDate within 14 days, not completed)
-- [ ] **DATE-03**: Late-start initiatives flagged with yellow badge (startDate < today, status NOT_STARTED)
-- [ ] **DATE-04**: Invalid date combinations flagged with red error badge (endDate < startDate)
-- [ ] **DATE-05**: Long-duration initiatives flagged with gray info badge (>180 days span)
-- [ ] **DATE-06**: Owner overlap detection warns when same personInCharge has >3 concurrent active initiatives (orange badge "Workload: X concurrent")
-- [ ] **DATE-07**: Date intelligence badges display inline in the By Objective hierarchy view per initiative row
-- [ ] **DATE-08**: System suggests better timeline adjustments for initiatives with date issues (e.g., overlapping timelines or unrealistic durations)
+- [x] **DATE-01**: Overdue initiatives flagged with red badge showing "X days overdue" (endDate < today, status not COMPLETED/CANCELLED)
+- [x] **DATE-02**: Ending-soon initiatives flagged with orange badge showing "Ends in X days" (endDate within 14 days, not completed)
+- [x] **DATE-03**: Late-start initiatives flagged with yellow badge (startDate < today, status NOT_STARTED)
+- [x] **DATE-04**: Invalid date combinations flagged with red error badge (endDate < startDate)
+- [x] **DATE-05**: Long-duration initiatives flagged with gray info badge (>180 days span)
+- [x] **DATE-06**: Owner overlap detection warns when same personInCharge has >3 concurrent active initiatives (orange badge "Workload: X concurrent")
+- [x] **DATE-07**: Date intelligence badges display inline in the By Objective hierarchy view per initiative row
+- [x] **DATE-08**: System suggests better timeline adjustments for initiatives with date issues (e.g., overlapping timelines or unrealistic durations)
 
 ### Excel Export (EXPORT)
 
@@ -118,14 +118,14 @@
 | PROJ-02 | Phase 40 | Complete |
 | PROJ-03 | Phase 40 | Complete |
 | PROJ-04 | Phase 40 | Complete |
-| DATE-01 | Phase 41 | Pending |
-| DATE-02 | Phase 41 | Pending |
-| DATE-03 | Phase 41 | Pending |
-| DATE-04 | Phase 41 | Pending |
-| DATE-05 | Phase 41 | Pending |
-| DATE-06 | Phase 41 | Pending |
-| DATE-07 | Phase 41 | Pending |
-| DATE-08 | Phase 41 | Pending |
+| DATE-01 | Phase 41 | Complete |
+| DATE-02 | Phase 41 | Complete |
+| DATE-03 | Phase 41 | Complete |
+| DATE-04 | Phase 41 | Complete |
+| DATE-05 | Phase 41 | Complete |
+| DATE-06 | Phase 41 | Complete |
+| DATE-07 | Phase 41 | Complete |
+| DATE-08 | Phase 41 | Complete |
 | EXPORT-01 | Phase 42 | Pending |
 | EXPORT-02 | Phase 42 | Pending |
 | EXPORT-03 | Phase 42 | Pending |
