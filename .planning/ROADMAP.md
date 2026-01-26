@@ -40,10 +40,11 @@ Plans:
   3. Clicking any pipeline row in Pipeline list views opens the deal/potential detail dialog
   4. Pipeline/Deal value inputs display formatted as "RM 200,000" while storing raw numbers
   5. Initiative titles in table views wrap to multiple lines instead of being truncated
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 44-01: Add clickable rows and data formatting to list views
+- [ ] 44-01-PLAN.md -- Clickable initiative rows and title wrapping
+- [ ] 44-02-PLAN.md -- Currency input formatting for deal and potential project values
 
 ### Phase 45: Detail View System
 **Goal**: Users control how detail views appear -- choosing between centered dialog and slide-over drawer -- with settings that persist across sessions
@@ -68,5 +69,5 @@ Plans:
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 43. Bug Fixes | v1.5.1 | 1/1 | Complete | 2026-01-26 |
-| 44. UX Polish | v1.5.1 | 0/1 | Not started | - |
+| 44. UX Polish | v1.5.1 | 0/2 | Not started | - |
 | 45. Detail View System | v1.5.1 | 0/2 | Not started | - |
