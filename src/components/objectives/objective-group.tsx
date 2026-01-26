@@ -10,6 +10,7 @@ import { formatObjective, cn } from '@/lib/utils'
 import { KeyResultGroup } from '@/components/objectives/key-result-group'
 import type { GroupedObjective } from '@/lib/initiative-group-utils'
 import type { Initiative } from '@/components/objectives/objective-hierarchy'
+import { aggregateKpiTotals } from '@/lib/initiative-kpi-utils'
 
 interface ObjectiveGroupProps {
   group: GroupedObjective
@@ -34,6 +35,17 @@ export function ObjectiveGroup({
     group.inProgressCount -
     group.atRiskCount
 
+  // Aggregate KPI from all initiatives across all KRs
+  const allInitiatives = group.keyResults.flatMap(kr => kr.initiatives)
+  const kpiAgg = aggregateKpiTotals(allInitiatives)
+  const kpiColorClass = kpiAgg.percentage !== null
+    ? kpiAgg.percentage >= 80
+      ? 'text-green-600'
+      : kpiAgg.percentage >= 50
+        ? 'text-yellow-600'
+        : 'text-red-600'
+    : ''
+
   return (
     <Collapsible open={isExpanded} onOpenChange={onToggleObjective}>
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
@@ -50,6 +62,16 @@ export function ObjectiveGroup({
           <span className="text-sm text-gray-500 shrink-0">
             {group.totalInitiatives} initiative{group.totalInitiatives !== 1 ? 's' : ''}
           </span>
+          {kpiAgg.hasData && (
+            <span className={cn('text-xs shrink-0', kpiColorClass)}>
+              {kpiAgg.mixedUnits
+                ? 'Mixed KPIs'
+                : kpiAgg.percentage !== null
+                  ? `KPI: ${Math.round(kpiAgg.totalActual)}/${Math.round(kpiAgg.totalTarget)} ${kpiAgg.unit} (${Math.round(kpiAgg.percentage)}%)`
+                  : `KPI: ${Math.round(kpiAgg.totalActual)} ${kpiAgg.unit}`
+              }
+            </span>
+          )}
           <div className="flex flex-wrap items-center gap-1.5 ml-auto">
             {group.inProgressCount > 0 && (
               <span className="inline-flex items-center rounded-full bg-blue-100 text-blue-700 px-2 py-0.5 text-xs font-medium">

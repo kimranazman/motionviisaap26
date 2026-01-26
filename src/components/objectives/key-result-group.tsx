@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils'
 import { InitiativeRow } from '@/components/objectives/initiative-row'
 import type { GroupedKeyResult } from '@/lib/initiative-group-utils'
 import type { Initiative } from '@/components/objectives/objective-hierarchy'
+import { aggregateKpiTotals } from '@/lib/initiative-kpi-utils'
 
 interface KeyResultGroupProps {
   keyResult: GroupedKeyResult
@@ -32,6 +33,16 @@ export function KeyResultGroup({
     i => i.status === 'AT_RISK'
   ).length
 
+  // Aggregated KPI totals for the header
+  const kpiAgg = aggregateKpiTotals(keyResult.initiatives)
+  const kpiColorClass = kpiAgg.percentage !== null
+    ? kpiAgg.percentage >= 80
+      ? 'text-green-600'
+      : kpiAgg.percentage >= 50
+        ? 'text-yellow-600'
+        : 'text-red-600'
+    : ''
+
   return (
     <Collapsible open={isExpanded} onOpenChange={onToggle}>
       <div className="bg-gray-50/50 rounded-lg border border-gray-100">
@@ -48,6 +59,16 @@ export function KeyResultGroup({
           <span className="text-sm text-gray-500 shrink-0">
             {keyResult.totalInitiatives} initiative{keyResult.totalInitiatives !== 1 ? 's' : ''}
           </span>
+          {kpiAgg.hasData && (
+            <span className={cn('text-xs shrink-0', kpiColorClass)}>
+              {kpiAgg.mixedUnits
+                ? 'Mixed KPIs'
+                : kpiAgg.percentage !== null
+                  ? `KPI: ${Math.round(kpiAgg.totalActual)}/${Math.round(kpiAgg.totalTarget)} ${kpiAgg.unit} (${Math.round(kpiAgg.percentage)}%)`
+                  : `KPI: ${Math.round(kpiAgg.totalActual)} ${kpiAgg.unit}`
+              }
+            </span>
+          )}
           <div className="flex items-center gap-2 ml-auto text-xs">
             {inProgressCount > 0 && (
               <span className="text-blue-600">

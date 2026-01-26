@@ -53,7 +53,17 @@ export interface AggregatedKpi {
  * If units differ, sets mixedUnits to true.
  */
 export function aggregateKpiTotals(
-  initiatives: Array<Partial<InitiativeWithKpiAndProjects> & { kpiLabel?: string | null; kpiTarget?: number | null; kpiActual?: number | null; kpiUnit?: string | null; kpiManualOverride?: boolean; projects?: ProjectForKpi[] }>
+  // Accept any array of objects with id + optional KPI fields
+  // id is required for structural overlap with InitiativeForGrouping
+  initiatives: Array<{
+    id: string
+    kpiLabel?: string | null
+    kpiTarget?: number | null
+    kpiActual?: number | null
+    kpiUnit?: string | null
+    kpiManualOverride?: boolean
+    projects?: ProjectForKpi[] | Array<{ id: string; revenue: number | null }>
+  }>
 ): AggregatedKpi {
   let totalTarget = 0
   let totalActual = 0

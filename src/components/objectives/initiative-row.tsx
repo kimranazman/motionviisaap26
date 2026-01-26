@@ -9,6 +9,8 @@ import {
   cn,
 } from '@/lib/utils'
 import type { Initiative } from '@/components/objectives/objective-hierarchy'
+import { KpiProgressBar } from '@/components/objectives/kpi-progress-bar'
+import { calculateKpi, type InitiativeWithKpiAndProjects } from '@/lib/initiative-kpi-utils'
 
 interface InitiativeRowProps {
   initiative: Initiative
@@ -16,6 +18,17 @@ interface InitiativeRowProps {
 }
 
 export function InitiativeRow({ initiative, onClick }: InitiativeRowProps) {
+  // Build KPI data from initiative (fields are optional)
+  const kpiInput: InitiativeWithKpiAndProjects = {
+    kpiLabel: initiative.kpiLabel ?? null,
+    kpiTarget: initiative.kpiTarget ?? null,
+    kpiActual: initiative.kpiActual ?? null,
+    kpiUnit: initiative.kpiUnit ?? null,
+    kpiManualOverride: initiative.kpiManualOverride ?? false,
+    projects: initiative.projects?.map(p => ({ id: p.id, revenue: p.revenue })),
+  }
+  const kpi = calculateKpi(kpiInput)
+
   return (
     <div
       onClick={onClick}
@@ -32,6 +45,14 @@ export function InitiativeRow({ initiative, onClick }: InitiativeRowProps) {
         <p className="font-medium text-gray-900">
           {initiative.title}
         </p>
+
+        {/* KPI Progress Bar */}
+        <KpiProgressBar
+          label={kpi.label}
+          percentage={kpi.percentage}
+          displayText={kpi.displayText}
+          source={kpi.source}
+        />
 
         {/* Metadata row */}
         <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-gray-500">
