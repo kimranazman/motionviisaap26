@@ -1,5 +1,44 @@
 # Milestone History
 
+## v1.5.1: Site Audit Fixes & Detail View Preferences
+
+**Shipped:** 2026-01-27
+**Duration:** 2 days
+**Phases:** 3 (Phases 43-45)
+**Plans:** 5
+**Stats:** 28 commits, 47 files changed, +4,525 / -644 lines
+
+### Summary
+
+Fixed critical bugs from site audit (Price Comparison crash, Timeline Gantt rendering), improved UX friction points (clickable initiative rows, currency formatting with RM prefix, title wrapping), and built a user-configurable detail view system allowing users to choose between centered dialog and slide-over drawer modes with persistent preferences.
+
+### Key Accomplishments
+
+- Fixed Radix Select empty value crashes (Price Comparison + 2 latent bugs) using sentinel value pattern
+- Fixed Timeline Gantt bar rendering (container height) and empty state messaging
+- Added clickable initiative rows with detail sheet integration and title wrapping
+- Created reusable CurrencyInput component with RM prefix and format-on-blur pattern
+- Built DetailView wrapper system with Dialog/Sheet mode switching based on user preference context
+- Created settings page (/settings) and header quick-toggle for one-click mode switching
+
+### Requirements Delivered
+
+| Category | Count | IDs |
+|----------|-------|-----|
+| Bug Fixes (BUG) | 3 | BUG-01 to BUG-03 |
+| Clickable Rows (ROW) | 3 | ROW-01 to ROW-03 |
+| Data Formatting (FMT) | 3 | FMT-01 to FMT-03 |
+| Detail View System (VIEW) | 7 | VIEW-01 to VIEW-07 |
+| **Total** | **16** | |
+
+### Artifacts
+
+- Roadmap: `.planning/milestones/v1.5.1-ROADMAP.md`
+- Requirements: `.planning/milestones/v1.5.1-REQUIREMENTS.md`
+- Audit: `.planning/milestones/v1.5.1-MILESTONE-AUDIT.md`
+
+---
+
 ## v1.5: Initiative Intelligence & Export
 
 **Shipped:** 2026-01-26

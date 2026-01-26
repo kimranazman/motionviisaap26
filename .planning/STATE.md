@@ -2,21 +2,21 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-01-26)
+See: .planning/PROJECT.md (updated 2026-01-27)
 
 **Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, and AI-powered intelligence.
-**Current focus:** v1.5.1 Site Audit Fixes & Detail View Preferences
+**Current focus:** Planning next milestone
 
 ## Current Position
 
-Phase: 45 of 45 (Detail View System)
-Plan: 2 of 2 in current phase
-Status: Phase complete — verified ✓
-Last activity: 2026-01-27 -- Completed Phase 45 (Detail View System)
+Phase: Milestone complete
+Plan: N/A
+Status: v1.5.1 shipped -- ready for next milestone
+Last activity: 2026-01-27 -- Completed v1.5.1 milestone (Site Audit Fixes & Detail View Preferences)
 
 Progress: [██████████] 100%
 
-**Milestone v1.5.1 complete — all 3 phases verified ✓**
+**v1.5.1 shipped -- use `/gsd:new-milestone` to start next version**
 
 ## Milestone History
 
@@ -33,6 +33,7 @@ Progress: [██████████] 100%
 | v1.4.1 | Line Item Categorization | 36 | 2026-01-25 |
 | v1.4.2 | UI Polish & Bug Fixes | 37 | 2026-01-26 |
 | v1.5 | Initiative Intelligence & Export | 38-42 | 2026-01-26 |
+| v1.5.1 | Site Audit Fixes & Detail View Preferences | 43-45 | 2026-01-27 |
 
 **Archives:** `.planning/milestones/`
 
@@ -49,16 +50,6 @@ Progress: [██████████] 100%
 
 Decisions are logged in PROJECT.md Key Decisions table.
 
-- Format-on-blur pattern chosen for CurrencyInput (avoids cursor jumping)
-- Intl.NumberFormat('en-MY') for Malaysian locale formatting
-- Reused InitiativeDetailSheet for row click detail view, matching company-list pattern
-- Refresh full list on detail sheet update for data consistency
-- DetailViewMode stored as String column with fire-and-forget PATCH persistence
-- Responsive drawer uses matchMedia for side switching (right desktop, bottom mobile)
-- Footer content extracted to DetailView footer prop for all 7 detail views
-- Settings page uses visual radio card selector for dialog/drawer mode
-- Header quick-toggle visible on desktop only (mobile always uses bottom sheet)
-
 ### Pending Todos
 
 None.
@@ -70,5 +61,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-27
-Stopped at: Completed Phase 45 (Detail View System) — milestone v1.5.1 complete
+Stopped at: Completed v1.5.1 milestone -- archived and tagged
 Resume file: None
