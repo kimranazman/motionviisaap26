@@ -28,6 +28,15 @@ export interface DateIntelligence {
   flags: DateFlag[]
   isOverdue: boolean
   daysUntilEnd: number | null
+  daysOverdue: number | null
+}
+
+export interface InitiativeForOverlap {
+  id: string
+  personInCharge: string | null
+  startDate: string | Date
+  endDate: string | Date
+  status: string
 }
 
 // ---------------------------------------------------------------------------
@@ -63,6 +72,7 @@ export function analyzeDates(
       flags,
       isOverdue: false,
       daysUntilEnd: null,
+      daysOverdue: null,
     }
   }
 
@@ -108,5 +118,120 @@ export function analyzeDates(
     flags,
     isOverdue,
     daysUntilEnd: isPast(end) ? null : daysUntilEnd,
+    daysOverdue: isOverdue ? differenceInDays(today, end) : null,
   }
+}
+
+// ---------------------------------------------------------------------------
+// Overlap detection
+// ---------------------------------------------------------------------------
+
+function datesOverlap(
+  start1: number,
+  end1: number,
+  start2: number,
+  end2: number
+): boolean {
+  return start1 <= end2 && start2 <= end1
+}
+
+/**
+ * Detect owner workload overlap across initiatives.
+ *
+ * Returns a Map where key is initiative ID and value is the count of
+ * concurrent active initiatives for that owner (including self).
+ * Only active initiatives (not COMPLETED/CANCELLED) with a personInCharge are counted.
+ */
+export function detectOwnerOverlap(
+  initiatives: InitiativeForOverlap[]
+): Map<string, number> {
+  const result = new Map<string, number>()
+
+  // Filter to active initiatives with a person assigned
+  const active = initiatives.filter(
+    i =>
+      i.personInCharge &&
+      i.status !== 'COMPLETED' &&
+      i.status !== 'CANCELLED'
+  )
+
+  // Group by personInCharge for efficiency
+  const byOwner = new Map<string, InitiativeForOverlap[]>()
+  for (const init of active) {
+    const owner = init.personInCharge!
+    const list = byOwner.get(owner) ?? []
+    list.push(init)
+    byOwner.set(owner, list)
+  }
+
+  // For each group, count overlapping initiatives per initiative
+  byOwner.forEach(group => {
+    // Pre-compute timestamps
+    const timestamps = group.map((init: InitiativeForOverlap) => ({
+      id: init.id,
+      start: new Date(init.startDate).getTime(),
+      end: new Date(init.endDate).getTime(),
+    }))
+
+    for (let i = 0; i < timestamps.length; i++) {
+      let count = 1 // include self
+      for (let j = 0; j < timestamps.length; j++) {
+        if (i === j) continue
+        if (
+          datesOverlap(
+            timestamps[i].start,
+            timestamps[i].end,
+            timestamps[j].start,
+            timestamps[j].end
+          )
+        ) {
+          count++
+        }
+      }
+      result.set(timestamps[i].id, count)
+    }
+  })
+
+  return result
+}
+
+// ---------------------------------------------------------------------------
+// Timeline suggestions
+// ---------------------------------------------------------------------------
+
+/**
+ * Generate human-readable timeline suggestions based on flags and overlap.
+ */
+export function generateTimelineSuggestions(
+  flags: DateFlag[],
+  durationDays: number,
+  overlapCount: number
+): string[] {
+  const suggestions: string[] = []
+
+  if (flags.includes('overdue')) {
+    suggestions.push(
+      'Consider extending the end date or marking as completed/cancelled'
+    )
+  }
+  if (flags.includes('late-start')) {
+    suggestions.push(
+      'Initiative has not started despite start date passing. Update status or adjust start date'
+    )
+  }
+  if (flags.includes('long-duration')) {
+    suggestions.push(
+      `Duration is ${durationDays} days. Consider breaking into smaller initiatives`
+    )
+  }
+  if (flags.includes('invalid-dates')) {
+    suggestions.push('End date is before start date. Correct the date range')
+  }
+  if (overlapCount > 3) {
+    suggestions.push(
+      `Owner has ${overlapCount} concurrent initiatives. Consider redistributing workload`
+    )
+  }
+
+  return suggestions
 }
