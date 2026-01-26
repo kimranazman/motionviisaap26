@@ -8,6 +8,20 @@ Strategic Annual Action Plan (SAAP) application for Motionvii to track 2026 busi
 
 Team can visualize and track initiative progress across multiple views (Kanban, timeline, calendar) and update status through intuitive drag-and-drop — with secure access restricted to authorized @talenta.com.my users. Full CRM enables tracking sales pipeline, organizing contacts by department, converting deals to projects with live bidirectional sync, managing project scope (deliverables and tasks), tracking suppliers with AI-powered price comparison, and managing project documents with AI-extracted financials.
 
+## Current Milestone: v1.5.1 Site Audit Fixes & Detail View Preferences
+
+**Goal:** Fix critical bugs identified in site audit (Price Comparison crash, Timeline rendering), improve UX friction points (clickable rows, currency formatting, title visibility), and add a user-configurable detail view system (drawer vs dialog preference with expand-to-full-page option).
+
+**Target features:**
+- Fix Price Comparison page crash (Select.Item empty value)
+- Fix Timeline Gantt chart not rendering bars + empty state message
+- Clickable table rows on Initiatives, Companies, Pipeline list views (opens detail modal)
+- Currency formatting with "RM" prefix and thousand separators on value inputs
+- Initiative title visibility (remove truncation, allow text wrapping)
+- "Expand to full page" button in detail modals
+- User preference setting: drawer vs dialog mode for detail views
+- Settings page (/settings) + quick toggle in user menu
+
 ## Current State
 
 **Version:** v1.5 Initiative Intelligence & Export (shipped 2026-01-26)
@@ -161,7 +175,18 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 ### Active
 
-(No active requirements — next milestone not yet defined)
+<!-- v1.5.1 Site Audit Fixes & Detail View Preferences -->
+
+- [ ] Fix Price Comparison page crash (Select.Item with empty value)
+- [ ] Fix Timeline Gantt chart bar rendering + empty state
+- [ ] Clickable table rows on Initiatives, Companies, Pipeline lists
+- [ ] Currency formatting (RM prefix + thousand separators) on value inputs
+- [ ] Initiative title text wrapping (remove truncation)
+- [ ] Expand-to-full-page button in detail modals
+- [ ] Drawer variant for detail views (alternative to Dialog)
+- [ ] User preference: drawer vs dialog mode
+- [ ] Settings page (/settings) for user preferences
+- [ ] Quick toggle in user menu for view mode
 
 ### Out of Scope
 
@@ -277,4 +302,4 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | Revenue/costs as plain numbers in export | Enables Excel arithmetic, not formatted strings | ✓ Good |
 
 ---
-*Last updated: 2026-01-26 after shipping v1.5 milestone*
+*Last updated: 2026-01-26 after starting v1.5.1 milestone*
