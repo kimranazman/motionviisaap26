@@ -25,6 +25,7 @@ import { cn } from '@/lib/utils'
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+  { name: 'By Objective', href: '/objectives', icon: Target },
   { name: 'Timeline', href: '/timeline', icon: GanttChart },
   { name: 'Kanban', href: '/kanban', icon: KanbanSquare },
   { name: 'Calendar', href: '/calendar', icon: Calendar },
