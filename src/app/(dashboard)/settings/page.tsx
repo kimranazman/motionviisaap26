@@ -2,7 +2,6 @@
 
 import { Header } from '@/components/layout/header'
 import { Card } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { useDetailViewMode } from '@/lib/hooks/use-detail-view-mode'
 import type { DetailViewMode } from '@/lib/hooks/use-detail-view-mode'
