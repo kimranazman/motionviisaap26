@@ -59,7 +59,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 45-01-PLAN.md -- DetailView component, context provider, schema/API update, provider wiring
+- [x] 45-01-PLAN.md -- DetailView component, context provider, schema/API update, provider wiring
 - [ ] 45-02-PLAN.md -- Refactor 7 detail views, settings page, user menu toggle
 
 ## Progress
@@ -70,4 +70,4 @@ Plans:
 |-------|-----------|----------------|--------|-----------|
 | 43. Bug Fixes | v1.5.1 | 1/1 | Complete | 2026-01-26 |
 | 44. UX Polish | v1.5.1 | 2/2 | Complete | 2026-01-26 |
-| 45. Detail View System | v1.5.1 | 0/2 | Not started | - |
+| 45. Detail View System | v1.5.1 | 1/2 | In progress | - |
