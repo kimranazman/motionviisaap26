@@ -25,6 +25,7 @@ export async function GET() {
   return NextResponse.json({
     dashboardLayout: prefs?.dashboardLayout ?? null,
     dateFilter: prefs?.dateFilter ?? null,
+    detailViewMode: prefs?.detailViewMode ?? 'dialog',
   })
 }
 
@@ -40,9 +41,10 @@ export async function PATCH(request: NextRequest) {
   }
 
   const body = await request.json()
-  const { dashboardLayout, dateFilter } = body as {
+  const { dashboardLayout, dateFilter, detailViewMode } = body as {
     dashboardLayout?: DashboardLayout
     dateFilter?: DateFilter
+    detailViewMode?: string
   }
 
   // Build update data with only provided fields
@@ -52,6 +54,9 @@ export async function PATCH(request: NextRequest) {
   }
   if (dateFilter !== undefined) {
     data.dateFilter = dateFilter
+  }
+  if (detailViewMode !== undefined) {
+    data.detailViewMode = detailViewMode
   }
 
   // Upsert: create if not exists, update if exists

@@ -129,7 +129,7 @@ export function InitiativesList({ initialData }: InitiativesListProps) {
     setIsSheetOpen(true)
   }
 
-  const handleInitiativeUpdate = async (_updated: any) => {
+  const handleInitiativeUpdate = async () => {
     const response = await fetch('/api/initiatives')
     if (response.ok) {
       const data = await response.json()
