@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { Header } from '@/components/layout/header'
 import { GanttChart } from '@/components/timeline/gantt-chart'
+import { ViewModeToggle } from '@/components/objectives/view-mode-toggle'
 import prisma from '@/lib/prisma'
 
 async function getInitiatives() {
@@ -42,6 +43,9 @@ export default async function TimelinePage() {
       />
 
       <div className="p-4 md:p-6">
+        <div className="mb-6">
+          <ViewModeToggle />
+        </div>
         {/* Mobile scroll hint */}
         <p className="text-xs text-gray-500 mb-3 md:hidden">
           ← Scroll horizontally to see timeline →

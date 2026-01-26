@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { Header } from '@/components/layout/header'
 import { KanbanBoard } from '@/components/kanban/kanban-board'
+import { ViewModeToggle } from '@/components/objectives/view-mode-toggle'
 import prisma from '@/lib/prisma'
 
 async function getInitiatives() {
@@ -37,6 +38,10 @@ export default async function KanbanPage() {
         title="Kanban Board"
         description="Drag and drop to update initiative status"
       />
+
+      <div className="mb-6 px-6">
+        <ViewModeToggle />
+      </div>
 
       <div className="p-6 overflow-x-auto">
         <KanbanBoard initialData={initiatives} />

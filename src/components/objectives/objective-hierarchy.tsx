@@ -6,6 +6,7 @@ import { groupInitiativesByObjective } from '@/lib/initiative-group-utils'
 import { OBJECTIVE_OPTIONS } from '@/lib/utils'
 import { ObjectiveGroup } from '@/components/objectives/objective-group'
 import { InitiativeDetailSheet } from '@/components/kanban/initiative-detail-sheet'
+import { ViewModeToggle } from '@/components/objectives/view-mode-toggle'
 
 export interface Initiative {
   id: string
@@ -91,6 +92,9 @@ export function ObjectiveHierarchy({ initialData }: ObjectiveHierarchyProps) {
 
   return (
     <div className="space-y-4">
+      <div className="mb-6">
+        <ViewModeToggle />
+      </div>
       {grouped.map(group => (
         <ObjectiveGroup
           key={group.objective}

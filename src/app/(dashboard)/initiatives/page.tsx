@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { Header } from '@/components/layout/header'
 import { InitiativesList } from '@/components/initiatives/initiatives-list'
+import { ViewModeToggle } from '@/components/objectives/view-mode-toggle'
 import prisma from '@/lib/prisma'
 
 async function getInitiatives() {
@@ -30,6 +31,9 @@ export default async function InitiativesPage() {
       />
 
       <div className="p-6">
+        <div className="mb-6">
+          <ViewModeToggle />
+        </div>
         <InitiativesList initialData={initiatives} />
       </div>
     </div>

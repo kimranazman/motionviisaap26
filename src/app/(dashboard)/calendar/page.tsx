@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { Header } from '@/components/layout/header'
 import { CalendarView } from '@/components/calendar/calendar-view'
+import { ViewModeToggle } from '@/components/objectives/view-mode-toggle'
 import prisma from '@/lib/prisma'
 
 async function getInitiatives() {
@@ -53,6 +54,9 @@ export default async function CalendarPage() {
       />
 
       <div className="p-6">
+        <div className="mb-6">
+          <ViewModeToggle />
+        </div>
         <CalendarView initiatives={initiatives} events={events} />
       </div>
     </div>
