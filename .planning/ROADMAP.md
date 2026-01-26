@@ -43,11 +43,11 @@ Plans:
   3. User can expand/collapse any section and the state persists when data refreshes (no reset on re-render)
   4. Initiative titles display with full text wrapping -- no truncation anywhere in the hierarchy
   5. User can toggle between By Objective, List, Kanban, Timeline, and Calendar views
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 39-01: Hierarchy route and components
-- [ ] 39-02: View mode toggle integration
+- [ ] 39-01-PLAN.md -- Objectives route, hierarchy components (Objective/KR/Initiative), sidebar navigation
+- [ ] 39-02-PLAN.md -- ViewModeToggle component integrated into all 5 view pages
 
 ### Phase 40: KPI Tracking & Linked Projects
 **Goal**: Each initiative row shows KPI progress (auto-calculated or manual) and inline linked project details, enabling users to assess initiative health at a glance
