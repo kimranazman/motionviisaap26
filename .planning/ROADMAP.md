@@ -90,10 +90,10 @@ Plans:
   2. Export contains all 20 columns: objective, key result, title, department, status, owner, dates, duration, KPI fields, linked project count, revenue, costs, monthly objective, weekly tasks, remarks
   3. File is named SAAP_Initiatives_YYYY-MM-DD.xlsx with today's date
   4. Dates display as readable dates (not ISO strings), currency shows 2 decimal places, status shows readable text
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 42-01: Server-side XLSX export API and UI button
+- [ ] 42-01-PLAN.md -- Server-side XLSX export API route and export button in initiatives list toolbar
 
 ## Progress
 
