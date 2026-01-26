@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-26)
 
 ## Current Position
 
-Phase: 43 of 45 (Bug Fixes)
-Plan: 1 of 1 in current phase
-Status: Phase complete
-Last activity: 2026-01-26 -- Completed 43-01-PLAN.md (Bug Fixes)
+Phase: 44 of 45 (UX Polish)
+Plan: 2 of 2 in current phase
+Status: In progress (plan 1 pending)
+Last activity: 2026-01-26 -- Completed 44-02-PLAN.md (Currency Input Formatting)
 
-Progress: [███░░░░░░░] 33%
+Progress: [████░░░░░░] 40%
 
 ## Milestone History
 
@@ -37,15 +37,18 @@ Progress: [███░░░░░░░] 33%
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: ~6 minutes
-- Total execution time: ~6 minutes
+- Total plans completed: 2
+- Average duration: ~4 minutes
+- Total execution time: ~8 minutes
 
 ## Accumulated Context
 
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table.
+
+- Format-on-blur pattern chosen for CurrencyInput (avoids cursor jumping)
+- Intl.NumberFormat('en-MY') for Malaysian locale formatting
 
 ### Pending Todos
 
@@ -57,6 +60,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-26T13:40Z
-Stopped at: Completed 43-01-PLAN.md (Bug Fixes)
+Last session: 2026-01-26T14:52Z
+Stopped at: Completed 44-02-PLAN.md (Currency Input Formatting)
 Resume file: None
