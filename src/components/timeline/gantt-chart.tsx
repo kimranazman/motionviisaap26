@@ -202,7 +202,7 @@ export function GanttChart({ initiatives }: GanttChartProps) {
                       </div>
 
                       {/* Timeline Bar */}
-                      <div className="flex-1 relative py-2 min-w-[600px]">
+                      <div className="flex-1 relative min-h-[2.5rem] min-w-[600px]">
                         {/* Month grid lines */}
                         <div className="absolute inset-0 grid grid-cols-12">
                           {MONTHS.map((_, index) => (
@@ -248,8 +248,13 @@ export function GanttChart({ initiatives }: GanttChartProps) {
               ))}
 
               {filteredInitiatives.length === 0 && (
-                <div className="p-8 text-center text-gray-500">
-                  No initiatives found
+                <div className="p-12 text-center">
+                  <p className="text-gray-900 font-medium">No initiatives scheduled</p>
+                  {filterDepartment !== 'all' && (
+                    <p className="text-sm text-gray-500 mt-1">
+                      Try adjusting your filters
+                    </p>
+                  )}
                 </div>
               )}
             </div>
