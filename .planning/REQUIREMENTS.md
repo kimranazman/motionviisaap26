@@ -13,15 +13,15 @@
 
 ### Clickable Rows
 
-- [ ] **ROW-01**: Clicking an initiative row in the Initiatives list opens the initiative detail dialog
-- [ ] **ROW-02**: Clicking a company row in the Companies list opens the company detail dialog
-- [ ] **ROW-03**: Clicking a pipeline row in Pipeline list views opens the deal/potential detail dialog
+- [x] **ROW-01**: Clicking an initiative row in the Initiatives list opens the initiative detail dialog
+- [x] **ROW-02**: Clicking a company row in the Companies list opens the company detail dialog
+- [x] **ROW-03**: Clicking a pipeline row in Pipeline list views opens the deal/potential detail dialog
 
 ### Data Formatting
 
-- [ ] **FMT-01**: Pipeline/Deal value inputs display with "RM" prefix and thousand separators (e.g., "RM 200,000")
-- [ ] **FMT-02**: Value stored as raw number, formatting is display-only
-- [ ] **FMT-03**: Initiative titles in table views wrap to multiple lines instead of truncating
+- [x] **FMT-01**: Pipeline/Deal value inputs display with "RM" prefix and thousand separators (e.g., "RM 200,000")
+- [x] **FMT-02**: Value stored as raw number, formatting is display-only
+- [x] **FMT-03**: Initiative titles in table views wrap to multiple lines instead of truncating
 
 ### Detail View System
 
@@ -53,12 +53,12 @@ None — this is a focused bug fix and UX polish milestone.
 | BUG-01 | Phase 43 | Complete |
 | BUG-02 | Phase 43 | Complete |
 | BUG-03 | Phase 43 | Complete |
-| ROW-01 | Phase 44 | Pending |
-| ROW-02 | Phase 44 | Pending |
-| ROW-03 | Phase 44 | Pending |
-| FMT-01 | Phase 44 | Pending |
-| FMT-02 | Phase 44 | Pending |
-| FMT-03 | Phase 44 | Pending |
+| ROW-01 | Phase 44 | Complete |
+| ROW-02 | Phase 44 | Complete |
+| ROW-03 | Phase 44 | Complete |
+| FMT-01 | Phase 44 | Complete |
+| FMT-02 | Phase 44 | Complete |
+| FMT-03 | Phase 44 | Complete |
 | VIEW-01 | Phase 45 | Pending |
 | VIEW-02 | Phase 45 | Pending |
 | VIEW-03 | Phase 45 | Pending |
@@ -74,4 +74,4 @@ None — this is a focused bug fix and UX polish milestone.
 
 ---
 *Requirements defined: 2026-01-26*
-*Last updated: 2026-01-26 after Phase 43 completion*
+*Last updated: 2026-01-26 after Phase 44 completion*

@@ -12,7 +12,7 @@ Fix critical bugs (Price Comparison crash, Timeline rendering), reduce UX fricti
 ## Phases
 
 - [x] **Phase 43: Bug Fixes** - Fix crashing and non-rendering pages
-- [ ] **Phase 44: UX Polish** - Clickable rows and data formatting improvements
+- [x] **Phase 44: UX Polish** - Clickable rows and data formatting improvements
 - [ ] **Phase 45: Detail View System** - Drawer variant with user preference and settings
 
 ## Phase Details
@@ -43,8 +43,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 44-01-PLAN.md -- Clickable initiative rows and title wrapping
-- [ ] 44-02-PLAN.md -- Currency input formatting for deal and potential project values
+- [x] 44-01-PLAN.md -- Clickable initiative rows and title wrapping
+- [x] 44-02-PLAN.md -- Currency input formatting for deal and potential project values
 
 ### Phase 45: Detail View System
 **Goal**: Users control how detail views appear -- choosing between centered dialog and slide-over drawer -- with settings that persist across sessions
@@ -69,5 +69,5 @@ Plans:
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 43. Bug Fixes | v1.5.1 | 1/1 | Complete | 2026-01-26 |
-| 44. UX Polish | v1.5.1 | 0/2 | Not started | - |
+| 44. UX Polish | v1.5.1 | 2/2 | Complete | 2026-01-26 |
 | 45. Detail View System | v1.5.1 | 0/2 | Not started | - |
