@@ -25,13 +25,13 @@
 
 ### Detail View System
 
-- [ ] **VIEW-01**: Drawer (slide-over) component variant exists as alternative to centered Dialog for detail views
-- [ ] **VIEW-02**: Detail views include an "Expand" button that navigates to the full detail page
-- [ ] **VIEW-03**: User preference (drawer vs dialog) stored in database via UserPreferences
-- [ ] **VIEW-04**: Detail view components respect user's drawer/dialog preference
-- [ ] **VIEW-05**: Settings page at /settings allows user to configure detail view mode
-- [ ] **VIEW-06**: User menu dropdown includes quick toggle for drawer/dialog mode
-- [ ] **VIEW-07**: Drawer slides from right on desktop, slides from bottom on mobile (consistent with v1.2.1 patterns)
+- [x] **VIEW-01**: Drawer (slide-over) component variant exists as alternative to centered Dialog for detail views
+- [x] **VIEW-02**: Detail views include an "Expand" button that navigates to the full detail page
+- [x] **VIEW-03**: User preference (drawer vs dialog) stored in database via UserPreferences
+- [x] **VIEW-04**: Detail view components respect user's drawer/dialog preference
+- [x] **VIEW-05**: Settings page at /settings allows user to configure detail view mode
+- [x] **VIEW-06**: User menu dropdown includes quick toggle for drawer/dialog mode
+- [x] **VIEW-07**: Drawer slides from right on desktop, slides from bottom on mobile (consistent with v1.2.1 patterns)
 
 ## v2 Requirements
 
@@ -59,13 +59,13 @@ None — this is a focused bug fix and UX polish milestone.
 | FMT-01 | Phase 44 | Complete |
 | FMT-02 | Phase 44 | Complete |
 | FMT-03 | Phase 44 | Complete |
-| VIEW-01 | Phase 45 | Pending |
-| VIEW-02 | Phase 45 | Pending |
-| VIEW-03 | Phase 45 | Pending |
-| VIEW-04 | Phase 45 | Pending |
-| VIEW-05 | Phase 45 | Pending |
-| VIEW-06 | Phase 45 | Pending |
-| VIEW-07 | Phase 45 | Pending |
+| VIEW-01 | Phase 45 | Complete |
+| VIEW-02 | Phase 45 | Complete |
+| VIEW-03 | Phase 45 | Complete |
+| VIEW-04 | Phase 45 | Complete |
+| VIEW-05 | Phase 45 | Complete |
+| VIEW-06 | Phase 45 | Complete |
+| VIEW-07 | Phase 45 | Complete |
 
 **Coverage:**
 - v1 requirements: 16 total
@@ -74,4 +74,4 @@ None — this is a focused bug fix and UX polish milestone.
 
 ---
 *Requirements defined: 2026-01-26*
-*Last updated: 2026-01-26 after Phase 44 completion*
+*Last updated: 2026-01-27 after Phase 45 completion*

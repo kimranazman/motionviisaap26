@@ -3,7 +3,7 @@
 ## Milestones
 
 - v1.0 through v1.5: See `.planning/milestones/` (shipped)
-- **v1.5.1 Site Audit Fixes & Detail View Preferences** - Phases 43-45 (in progress)
+- **v1.5.1 Site Audit Fixes & Detail View Preferences** - Phases 43-45 (complete)
 
 ## Overview
 
@@ -13,7 +13,7 @@ Fix critical bugs (Price Comparison crash, Timeline rendering), reduce UX fricti
 
 - [x] **Phase 43: Bug Fixes** - Fix crashing and non-rendering pages
 - [x] **Phase 44: UX Polish** - Clickable rows and data formatting improvements
-- [ ] **Phase 45: Detail View System** - Drawer variant with user preference and settings
+- [x] **Phase 45: Detail View System** - Drawer variant with user preference and settings
 
 ## Phase Details
 
@@ -60,7 +60,7 @@ Plans:
 
 Plans:
 - [x] 45-01-PLAN.md -- DetailView component, context provider, schema/API update, provider wiring
-- [ ] 45-02-PLAN.md -- Refactor 7 detail views, settings page, user menu toggle
+- [x] 45-02-PLAN.md -- Refactor 7 detail views, settings page, user menu toggle
 
 ## Progress
 
@@ -70,4 +70,4 @@ Plans:
 |-------|-----------|----------------|--------|-----------|
 | 43. Bug Fixes | v1.5.1 | 1/1 | Complete | 2026-01-26 |
 | 44. UX Polish | v1.5.1 | 2/2 | Complete | 2026-01-26 |
-| 45. Detail View System | v1.5.1 | 1/2 | In progress | - |
+| 45. Detail View System | v1.5.1 | 2/2 | Complete | 2026-01-27 |
