@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-26)
 
 **Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, and AI-powered intelligence.
-**Current focus:** v1.5 Initiative Intelligence & Export -- Phase 42 complete
+**Current focus:** Planning next milestone
 
 ## Current Position
 
-Phase: 42 of 42 (Excel Export)
-Plan: 1 of 1 in current phase
-Status: Phase complete
-Last activity: 2026-01-26 -- Completed 42-01-PLAN.md
+Phase: N/A -- between milestones
+Plan: N/A
+Status: v1.5 shipped, ready for next milestone
+Last activity: 2026-01-26 -- v1.5 milestone completed and archived
 
-Progress: [██████████] 100% (8/8 plans)
+Progress: Complete
 
 ## Milestone History
 
@@ -34,42 +34,11 @@ Progress: [██████████] 100% (8/8 plans)
 
 **Archives:** `.planning/milestones/`
 
-## Performance Metrics
-
-**Velocity:**
-- Total plans completed: 8 (v1.5)
-- Average duration: 5min
-- Total execution time: 42min
-
 ## Accumulated Context
 
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
-
-- Zero new npm dependencies for v1.5 -- existing shadcn/ui, date-fns, xlsx cover all needs
-- Separate /objectives route (not tabs on existing page) -- distinct data requirements
-- xlsx export-only use is safe per SheetJS CVE advisory
-- kpiUnit uses VarChar(50) per REQUIREMENTS.md SCHEMA-01 (not VarChar(20) from architecture doc)
-- New KPI fields use @map("snake_case") convention for column mapping
-- Each utility file defines its own TypeScript interfaces (no shared types directory)
-- Added position field to objectives Initiative interface to satisfy InitiativeDetailSheet type contract
-- ViewModeToggle uses route-based navigation (Link + usePathname), not tabs or state management
-- Kanban toggle placed outside overflow-x-auto wrapper to prevent scrolling with board
-- aggregateKpiTotals uses inline object type with required id field for structural overlap with InitiativeForGrouping
-- KpiProgressBar shows label prefix only for custom KPI labels (not 'No data' or 'Revenue' defaults)
-- Hide project count badge entirely for 0 projects (clean row density)
-- Linked projects use Next.js Link; dialog unmounts naturally on navigation
-- DateBadges placed between title and KPI bar (contextual to timeline)
-- Overlap map computed once via useMemo at ObjectiveHierarchy root level
-- No Tooltip wrappers on date badges -- text labels are descriptive enough
-- TimelineSuggestions placed between date fields and KPI section in detail sheet
-- allInitiatives passed from ObjectiveHierarchy root to detail sheet for overlap computation
-- Uses local status state so suggestions reflect unsaved status changes
-- Export API route has its own Prisma query (not reusing GET /api/initiatives which lacks projects)
-- Revenue/costs exported as plain numbers with 2 decimal precision for Excel arithmetic
-- Buffer converted to Uint8Array for Response constructor type compatibility
 
 ### Pending Todos
 
@@ -77,10 +46,10 @@ None.
 
 ### Blockers/Concerns
 
-None -- v1.5 milestone complete.
+None -- v1.5 shipped and deployed.
 
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 42-01-PLAN.md -- v1.5 milestone complete
-Resume: Run /gsd:complete-milestone
+Stopped at: v1.5 milestone completed and archived
+Resume: Run /gsd:new-milestone to start v1.5.1

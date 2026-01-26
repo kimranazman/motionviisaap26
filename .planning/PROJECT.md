@@ -10,21 +10,9 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 ## Current State
 
-**Version:** v1.5 Initiative Intelligence & Export (in progress)
-**Codebase:** ~34,000 LOC TypeScript
+**Version:** v1.5 Initiative Intelligence & Export (shipped 2026-01-26)
+**Codebase:** ~34,800 LOC TypeScript
 **Tech stack:** Next.js 14, Prisma, MariaDB, Tailwind/shadcn, NextAuth.js, OpenAI
-
-## Current Milestone: v1.5 Initiative Intelligence & Export
-
-**Goal:** Transform the initiatives view into an objective-driven hierarchy with KPI tracking, date intelligence, linked project visibility, and Excel export.
-
-**Target features:**
-- By Objective view as default initiatives page (Objective → KR → Initiatives hierarchy)
-- Full text wrapping (no truncation) for initiative titles
-- KPI metrics per initiative (target vs actual, auto-calculated from linked projects, manually overridable)
-- Linked project status visible inline (status, revenue, costs)
-- Date intelligence: duration analysis, date validation, timeline overlap warnings
-- Export initiatives data to Excel/CSV
 
 ## Requirements
 
@@ -163,15 +151,17 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - ✓ All detail panels converted from Sheet to centered Dialog modal — v1.4.2
 - ✓ Proper modal sizing (650px default, responsive mobile slide-from-bottom) — v1.4.2
 
+**v1.5 Initiative Intelligence & Export:**
+- ✓ By Objective view: three-level hierarchy (Objective → Key Result → Initiatives) as default view — v1.5
+- ✓ Full text display: initiative titles wrap instead of truncating — v1.5
+- ✓ KPI tracking: target/actual metrics per initiative, auto-calculated from linked projects, manual override — v1.5
+- ✓ Linked project status: inline display of connected projects with status, revenue, costs — v1.5
+- ✓ Date intelligence: flag too-long durations, validate date logic, highlight timeline overlaps — v1.5
+- ✓ Excel export: export initiatives data to XLSX with all 20 columns — v1.5
+
 ### Active
 
-**v1.5 Initiative Intelligence & Export:**
-- By Objective view: three-level hierarchy (Objective → Key Result → Initiatives) as default view
-- Full text display: initiative titles wrap instead of truncating
-- KPI tracking: target/actual metrics per initiative, auto-calculated from linked projects, manual override
-- Linked project status: inline display of connected projects with status, revenue, costs
-- Date intelligence: flag too-long durations, validate date logic, highlight timeline overlaps
-- Excel export: export initiatives data with objectives, KRs, status, metrics, dates
+(No active requirements — next milestone not yet defined)
 
 ### Out of Scope
 
@@ -202,8 +192,7 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - Accessible at https://saap.motionvii.com (Cloudflare tunnel)
 - Data seeded from Excel file (MotionVii_SAAP_2026.xlsx)
 - 28 initiatives, 38 events currently in database
-- v1.4.2 shipped — all major features complete through intelligent automation, supplier management, and UI polish
-- v1.5 in progress — initiative intelligence, KPI tracking, and export
+- v1.5 shipped — initiative intelligence, KPI tracking, date intelligence, and Excel export
 - Primary admin: khairul@talenta.com.my
 
 ## Infrastructure
@@ -280,6 +269,12 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | Dialog modal for detail views | Better UX than sliding sheet — centered, discoverable | ✓ Good |
 | Keep *-sheet.tsx file names | Minimizes import changes across codebase | ✓ Good |
 | Dialog width per component type | 650px default, 512px task, 768px AI review | ✓ Good |
+| Separate /objectives route | Distinct data requirements from /initiatives | ✓ Good |
+| ViewModeToggle route-based navigation | Link + usePathname, not tabs or state | ✓ Good |
+| KPI auto-calc from project revenue | Manual override flag prevents overwrite | ✓ Good |
+| Overlap map at hierarchy root | useMemo once, prop-drill to rows | ✓ Good |
+| Export API own Prisma query | Existing GET /api/initiatives lacks projects | ✓ Good |
+| Revenue/costs as plain numbers in export | Enables Excel arithmetic, not formatted strings | ✓ Good |
 
 ---
-*Last updated: 2026-01-26 after starting v1.5 milestone*
+*Last updated: 2026-01-26 after shipping v1.5 milestone*

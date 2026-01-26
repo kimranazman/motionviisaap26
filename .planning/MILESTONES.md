@@ -1,5 +1,45 @@
 # Milestone History
 
+## v1.5: Initiative Intelligence & Export
+
+**Shipped:** 2026-01-26
+**Duration:** 1 day
+**Phases:** 5 (Phases 38-42)
+**Plans:** 8
+**Stats:** 39 commits, 54 files changed, +7,350 / -118 lines
+
+### Summary
+
+Transformed the initiatives view from a flat list into an objective-driven intelligence layer. Added three-level hierarchy (Objective > Key Result > Initiative), KPI tracking with auto-calculation from linked projects, date intelligence badges, owner overlap detection, timeline suggestions, and single-click Excel export.
+
+### Key Accomplishments
+
+- Three-level Objective > Key Result > Initiative hierarchy as default view with expand/collapse and view mode toggle across 5 pages
+- KPI tracking with auto-calculation from linked project revenue, manual override with AlertDialog confirmation, color-coded progress bars
+- Linked project inline visibility with navigation, count badges, revenue/costs aggregation in hierarchy and detail sheet
+- Date intelligence badges (overdue, ending-soon, late-start, invalid dates, long duration, owner overlap) with timeline suggestions
+- Single-click Excel export with 20-column formatted XLSX via server-side API route
+
+### Requirements Delivered
+
+| Category | Count | IDs |
+|----------|-------|-----|
+| Schema (SCHEMA) | 2 | SCHEMA-01, SCHEMA-02 |
+| Hierarchy & Views (VIEW) | 7 | VIEW-01 to VIEW-07 |
+| KPI Tracking (KPI) | 7 | KPI-01 to KPI-07 |
+| Linked Projects (PROJ) | 4 | PROJ-01 to PROJ-04 |
+| Date Intelligence (DATE) | 8 | DATE-01 to DATE-08 |
+| Excel Export (EXPORT) | 5 | EXPORT-01 to EXPORT-05 |
+| **Total** | **34** | |
+
+### Artifacts
+
+- Roadmap: `.planning/milestones/v1.5-ROADMAP.md`
+- Requirements: `.planning/milestones/v1.5-REQUIREMENTS.md`
+- Audit: `.planning/milestones/v1.5-MILESTONE-AUDIT.md`
+
+---
+
 ## v1.4.2: UI Polish & Bug Fixes
 
 **Shipped:** 2026-01-26
