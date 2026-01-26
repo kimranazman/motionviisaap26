@@ -7,7 +7,7 @@ Transform the initiatives view from a flat list into an objective-driven intelli
 ## Milestones
 
 - v1.0 through v1.4.2: See `.planning/milestones/` (shipped)
-- v1.5 Initiative Intelligence & Export: Phases 38-42 (in progress)
+- v1.5 Initiative Intelligence & Export: Phases 38-42 (complete)
 
 ## Phases
 
@@ -15,7 +15,7 @@ Transform the initiatives view from a flat list into an objective-driven intelli
 - [x] **Phase 39: By Objective Hierarchy View** - Three-level expandable hierarchy as default initiatives view
 - [x] **Phase 40: KPI Tracking & Linked Projects** - KPI metrics with auto-calculation, inline project visibility
 - [x] **Phase 41: Date Intelligence** - Overdue, ending-soon, late-start, and overlap detection badges
-- [ ] **Phase 42: Excel Export** - Single-click server-side XLSX export with all columns
+- [x] **Phase 42: Excel Export** - Single-click server-side XLSX export with all columns
 
 ## Phase Details
 
@@ -93,7 +93,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 42-01-PLAN.md -- Server-side XLSX export API route and export button in initiatives list toolbar
+- [x] 42-01-PLAN.md -- Server-side XLSX export API route and export button in initiatives list toolbar
 
 ## Progress
 
@@ -105,4 +105,4 @@ Plans:
 | 39. By Objective Hierarchy View | 2/2 | Complete | 2026-01-26 |
 | 40. KPI Tracking & Linked Projects | 2/2 | Complete | 2026-01-26 |
 | 41. Date Intelligence | 2/2 | Complete | 2026-01-26 |
-| 42. Excel Export | 0/1 | Not started | - |
+| 42. Excel Export | 1/1 | Complete | 2026-01-26 |

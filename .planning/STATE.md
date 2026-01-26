@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-26)
 
 **Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, and AI-powered intelligence.
-**Current focus:** v1.5 Initiative Intelligence & Export -- Phase 42 (Excel Export)
+**Current focus:** v1.5 Initiative Intelligence & Export -- Phase 42 complete
 
 ## Current Position
 
 Phase: 42 of 42 (Excel Export)
-Plan: 0 of 1 in current phase
-Status: Ready to plan
-Last activity: 2026-01-26 -- Phase 41 complete (verified)
+Plan: 1 of 1 in current phase
+Status: Phase complete
+Last activity: 2026-01-26 -- Completed 42-01-PLAN.md
 
-Progress: [████████░░] 88% (7/8 plans)
+Progress: [██████████] 100% (8/8 plans)
 
 ## Milestone History
 
@@ -30,16 +30,16 @@ Progress: [████████░░] 88% (7/8 plans)
 | v1.4 | Intelligent Automation & Organization | 29-35 | 2026-01-25 |
 | v1.4.1 | Line Item Categorization | 36 | 2026-01-25 |
 | v1.4.2 | UI Polish & Bug Fixes | 37 | 2026-01-26 |
-| v1.5 | Initiative Intelligence & Export | 38-42 | In progress |
+| v1.5 | Initiative Intelligence & Export | 38-42 | 2026-01-26 |
 
 **Archives:** `.planning/milestones/`
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7 (v1.5)
+- Total plans completed: 8 (v1.5)
 - Average duration: 5min
-- Total execution time: 37min
+- Total execution time: 42min
 
 ## Accumulated Context
 
@@ -67,6 +67,9 @@ Recent decisions affecting current work:
 - TimelineSuggestions placed between date fields and KPI section in detail sheet
 - allInitiatives passed from ObjectiveHierarchy root to detail sheet for overlap computation
 - Uses local status state so suggestions reflect unsaved status changes
+- Export API route has its own Prisma query (not reusing GET /api/initiatives which lacks projects)
+- Revenue/costs exported as plain numbers with 2 decimal precision for Excel arithmetic
+- Buffer converted to Uint8Array for Response constructor type compatibility
 
 ### Pending Todos
 
@@ -74,10 +77,10 @@ None.
 
 ### Blockers/Concerns
 
-None -- Phase 41 verified, ready for Phase 42.
+None -- v1.5 milestone complete.
 
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Phase 41 complete (verified)
-Resume: Run /gsd:plan-phase 42
+Stopped at: Completed 42-01-PLAN.md -- v1.5 milestone complete
+Resume: Run /gsd:complete-milestone
