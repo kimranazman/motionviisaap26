@@ -20,6 +20,22 @@ export interface Initiative {
   startDate: string
   endDate: string
   position: number
+  // KPI fields (optional for backward compat with other views)
+  kpiLabel?: string | null
+  kpiTarget?: number | null
+  kpiActual?: number | null
+  kpiUnit?: string | null
+  kpiManualOverride?: boolean
+  projects?: Array<{
+    id: string
+    title: string
+    status: string
+    revenue: number | null
+    totalCosts: number
+    companyName: string | null
+    startDate: string | null
+    endDate: string | null
+  }>
 }
 
 interface ObjectiveHierarchyProps {

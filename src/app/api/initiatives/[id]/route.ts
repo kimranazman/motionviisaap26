@@ -121,6 +121,27 @@ export async function PATCH(
       updateData.personInCharge = body.personInCharge
     }
 
+    // KPI fields
+    if (body.kpiLabel !== undefined) {
+      updateData.kpiLabel = body.kpiLabel || null
+    }
+    if (body.kpiTarget !== undefined) {
+      updateData.kpiTarget = body.kpiTarget !== null && body.kpiTarget !== ''
+        ? parseFloat(String(body.kpiTarget))
+        : null
+    }
+    if (body.kpiActual !== undefined) {
+      updateData.kpiActual = body.kpiActual !== null && body.kpiActual !== ''
+        ? parseFloat(String(body.kpiActual))
+        : null
+    }
+    if (body.kpiUnit !== undefined) {
+      updateData.kpiUnit = body.kpiUnit || null
+    }
+    if (body.kpiManualOverride !== undefined) {
+      updateData.kpiManualOverride = body.kpiManualOverride
+    }
+
     const initiative = await prisma.initiative.update({
       where: { id },
       data: updateData,

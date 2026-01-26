@@ -34,9 +34,69 @@ export interface KpiResult {
   displayText: string // human-readable: "RM 50,000 / RM 100,000" or "No data"
 }
 
+export interface AggregatedKpi {
+  totalTarget: number
+  totalActual: number
+  percentage: number | null
+  hasData: boolean
+  mixedUnits: boolean
+  unit: string
+}
+
 // ---------------------------------------------------------------------------
 // Functions
 // ---------------------------------------------------------------------------
+
+/**
+ * Aggregate KPI totals across multiple initiatives.
+ * Only includes initiatives with a kpiLabel set.
+ * If units differ, sets mixedUnits to true.
+ */
+export function aggregateKpiTotals(
+  initiatives: Array<Partial<InitiativeWithKpiAndProjects> & { kpiLabel?: string | null; kpiTarget?: number | null; kpiActual?: number | null; kpiUnit?: string | null; kpiManualOverride?: boolean; projects?: ProjectForKpi[] }>
+): AggregatedKpi {
+  let totalTarget = 0
+  let totalActual = 0
+  let hasData = false
+  const units = new Set<string>()
+
+  for (const init of initiatives) {
+    // Only count initiatives with a KPI label set
+    if (!init.kpiLabel) continue
+
+    const kpi = calculateKpi({
+      kpiLabel: init.kpiLabel ?? null,
+      kpiTarget: init.kpiTarget ?? null,
+      kpiActual: init.kpiActual ?? null,
+      kpiUnit: init.kpiUnit ?? null,
+      kpiManualOverride: init.kpiManualOverride ?? false,
+      projects: init.projects,
+    })
+
+    hasData = true
+    if (kpi.target !== null) {
+      totalTarget += kpi.target
+    }
+    totalActual += kpi.actual
+    if (kpi.unit) {
+      units.add(kpi.unit)
+    }
+  }
+
+  const mixedUnits = units.size > 1
+  const unit = units.size === 1 ? Array.from(units)[0] : ''
+
+  return {
+    totalTarget,
+    totalActual,
+    percentage: hasData && totalTarget > 0
+      ? (totalActual / totalTarget) * 100
+      : null,
+    hasData,
+    mixedUnits,
+    unit,
+  }
+}
 
 /**
  * Calculate KPI metrics for an initiative.

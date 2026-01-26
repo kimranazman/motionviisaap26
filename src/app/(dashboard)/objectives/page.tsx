@@ -23,6 +23,25 @@ async function getInitiatives() {
       startDate: true,
       endDate: true,
       position: true,
+      // KPI fields
+      kpiLabel: true,
+      kpiTarget: true,
+      kpiActual: true,
+      kpiUnit: true,
+      kpiManualOverride: true,
+      // Linked projects with revenue + cost aggregation
+      projects: {
+        select: {
+          id: true,
+          title: true,
+          status: true,
+          revenue: true,
+          startDate: true,
+          endDate: true,
+          company: { select: { id: true, name: true } },
+          costs: { select: { amount: true } },
+        },
+      },
     },
   })
 
@@ -30,6 +49,18 @@ async function getInitiatives() {
     ...i,
     startDate: i.startDate.toISOString(),
     endDate: i.endDate.toISOString(),
+    kpiTarget: i.kpiTarget ? Number(i.kpiTarget) : null,
+    kpiActual: i.kpiActual ? Number(i.kpiActual) : null,
+    projects: i.projects.map(p => ({
+      id: p.id,
+      title: p.title,
+      status: p.status,
+      revenue: p.revenue ? Number(p.revenue) : null,
+      totalCosts: p.costs.reduce((sum, c) => sum + Number(c.amount), 0),
+      companyName: p.company?.name || null,
+      startDate: p.startDate ? p.startDate.toISOString() : null,
+      endDate: p.endDate ? p.endDate.toISOString() : null,
+    })),
   }))
 }
 
