@@ -45,7 +45,7 @@ import {
   STATUS_OPTIONS,
   DEPARTMENT_OPTIONS,
 } from '@/lib/utils'
-import { Plus, Search, Filter, Eye, MoreHorizontal } from 'lucide-react'
+import { Plus, Search, Filter, Eye, MoreHorizontal, Download, Loader2 } from 'lucide-react'
 
 interface Initiative {
   id: string
@@ -70,6 +70,32 @@ export function InitiativesList({ initialData }: InitiativesListProps) {
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [departmentFilter, setDepartmentFilter] = useState<string>('all')
   const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [isExporting, setIsExporting] = useState(false)
+
+  const handleExport = async () => {
+    setIsExporting(true)
+    try {
+      const response = await fetch('/api/initiatives/export')
+      if (!response.ok) {
+        console.error('Export failed:', response.statusText)
+        return
+      }
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download =
+        response.headers
+          .get('content-disposition')
+          ?.match(/filename="(.+)"/)?.[1] || 'export.xlsx'
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (err) {
+      console.error('Export failed:', err)
+    } finally {
+      setIsExporting(false)
+    }
+  }
 
   const filteredInitiatives = initiatives.filter((initiative) => {
     const matchesSearch =
@@ -139,20 +165,36 @@ export function InitiativesList({ initialData }: InitiativesListProps) {
           </Select>
         </div>
 
-        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-          <DialogTrigger asChild>
-            <Button className="w-full sm:w-auto">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Initiative
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Create New Initiative</DialogTitle>
-            </DialogHeader>
-            <InitiativeForm onSuccess={handleCreateSuccess} />
-          </DialogContent>
-        </Dialog>
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-2 w-full sm:w-auto">
+          <Button
+            variant="outline"
+            onClick={handleExport}
+            disabled={isExporting}
+            className="w-full sm:w-auto"
+          >
+            {isExporting ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="mr-2 h-4 w-4" />
+            )}
+            Export
+          </Button>
+
+          <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+            <DialogTrigger asChild>
+              <Button className="w-full sm:w-auto">
+                <Plus className="mr-2 h-4 w-4" />
+                Add Initiative
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Create New Initiative</DialogTitle>
+              </DialogHeader>
+              <InitiativeForm onSuccess={handleCreateSuccess} />
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       {/* Table */}
