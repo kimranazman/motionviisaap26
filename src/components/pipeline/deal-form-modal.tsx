@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { CurrencyInput } from '@/components/ui/currency-input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Loader2 } from 'lucide-react'
@@ -243,14 +244,11 @@ export function DealFormModal({
             {/* Value */}
             <div className="space-y-2">
               <Label htmlFor="value">Value</Label>
-              <Input
+              <CurrencyInput
                 id="value"
-                type="number"
-                step="0.01"
-                min="0"
                 value={value}
-                onChange={(e) => setValue(e.target.value)}
-                placeholder="0.00"
+                onChange={setValue}
+                placeholder="0"
               />
             </div>
 

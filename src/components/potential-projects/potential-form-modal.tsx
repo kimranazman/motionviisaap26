@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { CurrencyInput } from '@/components/ui/currency-input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Loader2 } from 'lucide-react'
@@ -243,14 +244,11 @@ export function PotentialFormModal({
             {/* Estimated Value */}
             <div className="space-y-2">
               <Label htmlFor="estimatedValue">Estimated Value</Label>
-              <Input
+              <CurrencyInput
                 id="estimatedValue"
-                type="number"
-                step="0.01"
-                min="0"
                 value={estimatedValue}
-                onChange={(e) => setEstimatedValue(e.target.value)}
-                placeholder="0.00"
+                onChange={setEstimatedValue}
+                placeholder="0"
               />
             </div>
 

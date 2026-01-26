@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { CurrencyInput } from '@/components/ui/currency-input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
@@ -331,14 +332,11 @@ export function PotentialDetailSheet({
             {/* Estimated Value */}
             <div className="space-y-2">
               <Label htmlFor="edit-estimatedValue">Estimated Value</Label>
-              <Input
+              <CurrencyInput
                 id="edit-estimatedValue"
-                type="number"
-                step="0.01"
-                min="0"
                 value={estimatedValue}
-                onChange={(e) => setEstimatedValue(e.target.value)}
-                placeholder="0.00"
+                onChange={setEstimatedValue}
+                placeholder="0"
                 disabled={isReadOnly}
                 className={cn(isReadOnly && "bg-gray-50 cursor-not-allowed")}
               />
