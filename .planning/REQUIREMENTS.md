@@ -50,28 +50,28 @@ None — this is a focused bug fix and UX polish milestone.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BUG-01 | TBD | Pending |
-| BUG-02 | TBD | Pending |
-| BUG-03 | TBD | Pending |
-| ROW-01 | TBD | Pending |
-| ROW-02 | TBD | Pending |
-| ROW-03 | TBD | Pending |
-| FMT-01 | TBD | Pending |
-| FMT-02 | TBD | Pending |
-| FMT-03 | TBD | Pending |
-| VIEW-01 | TBD | Pending |
-| VIEW-02 | TBD | Pending |
-| VIEW-03 | TBD | Pending |
-| VIEW-04 | TBD | Pending |
-| VIEW-05 | TBD | Pending |
-| VIEW-06 | TBD | Pending |
-| VIEW-07 | TBD | Pending |
+| BUG-01 | Phase 43 | Pending |
+| BUG-02 | Phase 43 | Pending |
+| BUG-03 | Phase 43 | Pending |
+| ROW-01 | Phase 44 | Pending |
+| ROW-02 | Phase 44 | Pending |
+| ROW-03 | Phase 44 | Pending |
+| FMT-01 | Phase 44 | Pending |
+| FMT-02 | Phase 44 | Pending |
+| FMT-03 | Phase 44 | Pending |
+| VIEW-01 | Phase 45 | Pending |
+| VIEW-02 | Phase 45 | Pending |
+| VIEW-03 | Phase 45 | Pending |
+| VIEW-04 | Phase 45 | Pending |
+| VIEW-05 | Phase 45 | Pending |
+| VIEW-06 | Phase 45 | Pending |
+| VIEW-07 | Phase 45 | Pending |
 
 **Coverage:**
 - v1 requirements: 16 total
-- Mapped to phases: 0
-- Unmapped: 16
+- Mapped to phases: 16
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-26*
-*Last updated: 2026-01-26 after initial definition*
+*Last updated: 2026-01-26 after roadmap creation*

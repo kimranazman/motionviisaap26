@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-26)
 
 **Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, and AI-powered intelligence.
-**Current focus:** Planning next milestone
+**Current focus:** v1.5.1 Site Audit Fixes & Detail View Preferences
 
 ## Current Position
 
-Phase: N/A -- between milestones
-Plan: N/A
-Status: v1.5 shipped, ready for next milestone
-Last activity: 2026-01-26 -- v1.5 milestone completed and archived
+Phase: 43 of 45 (Bug Fixes)
+Plan: 0 of 1 in current phase
+Status: Ready to plan
+Last activity: 2026-01-26 -- Roadmap created for v1.5.1 milestone
 
-Progress: Complete
+Progress: [░░░░░░░░░░] 0%
 
 ## Milestone History
 
@@ -34,6 +34,13 @@ Progress: Complete
 
 **Archives:** `.planning/milestones/`
 
+## Performance Metrics
+
+**Velocity:**
+- Total plans completed: 0
+- Average duration: -
+- Total execution time: -
+
 ## Accumulated Context
 
 ### Decisions
@@ -46,10 +53,10 @@ None.
 
 ### Blockers/Concerns
 
-None -- v1.5 shipped and deployed.
+None.
 
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: v1.5 milestone completed and archived
-Resume: Run /gsd:new-milestone to start v1.5.1
+Stopped at: Roadmap created for v1.5.1 milestone
+Resume: Run /gsd:plan-phase 43
