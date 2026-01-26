@@ -29,6 +29,18 @@ export async function GET(
             },
           },
         },
+        projects: {
+          select: {
+            id: true,
+            title: true,
+            status: true,
+            revenue: true,
+            startDate: true,
+            endDate: true,
+            company: { select: { id: true, name: true } },
+            costs: { select: { amount: true } },
+          },
+        },
       },
     })
 
@@ -39,7 +51,25 @@ export async function GET(
       )
     }
 
-    return NextResponse.json(initiative)
+    // Serialize Decimal fields and aggregate project costs
+    const serializedProjects = (initiative.projects || []).map(p => ({
+      id: p.id,
+      title: p.title,
+      status: p.status,
+      revenue: p.revenue ? Number(p.revenue) : null,
+      totalCosts: p.costs.reduce((sum: number, c: { amount: unknown }) => sum + Number(c.amount), 0),
+      companyName: p.company?.name || null,
+      startDate: p.startDate ? p.startDate.toISOString() : null,
+      endDate: p.endDate ? p.endDate.toISOString() : null,
+    }))
+
+    return NextResponse.json({
+      ...initiative,
+      // Convert Decimal fields to numbers
+      kpiTarget: initiative.kpiTarget ? Number(initiative.kpiTarget) : null,
+      kpiActual: initiative.kpiActual ? Number(initiative.kpiActual) : null,
+      projects: serializedProjects,
+    })
   } catch (error) {
     console.error('Error fetching initiative:', error)
     return NextResponse.json(

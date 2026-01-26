@@ -56,6 +56,7 @@ import {
   BarChart3,
   RotateCcw,
 } from 'lucide-react'
+import { LinkedProjectsSection, type LinkedProject } from '@/components/objectives/linked-projects-section'
 
 interface CommentUser {
   id: string
@@ -130,6 +131,7 @@ export function InitiativeDetailSheet({
   const [status, setStatus] = useState(initiative?.status || '')
   const [personInCharge, setPersonInCharge] = useState(initiative?.personInCharge || '')
   const [comments, setComments] = useState<Comment[]>([])
+  const [projects, setProjects] = useState<LinkedProject[]>([])
   const [newComment, setNewComment] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
@@ -158,6 +160,7 @@ export function InitiativeDetailSheet({
           setStatus(data.status)
           setPersonInCharge(data.personInCharge || '')
           setComments(data.comments || [])
+          setProjects(data.projects || [])
           // Initialize KPI state from fetched data
           const label = data.kpiLabel || ''
           const target = data.kpiTarget != null ? String(data.kpiTarget) : ''
@@ -533,6 +536,11 @@ export function InitiativeDetailSheet({
                 Save Changes
               </Button>
             )}
+
+            <Separator />
+
+            {/* Linked Projects Section */}
+            <LinkedProjectsSection projects={projects} />
 
             <Separator />
 
