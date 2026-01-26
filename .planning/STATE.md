@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-26)
 
 **Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, and AI-powered intelligence.
-**Current focus:** v1.5 Initiative Intelligence & Export -- Phase 40 (KPI Tracking & Linked Projects)
+**Current focus:** v1.5 Initiative Intelligence & Export -- Phase 41 (Excel Export)
 
 ## Current Position
 
 Phase: 40 of 42 (KPI Tracking & Linked Projects)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-01-26 -- Completed 40-01-PLAN.md
+Plan: 2 of 2 in current phase
+Status: Phase complete
+Last activity: 2026-01-26 -- Completed 40-02-PLAN.md
 
-Progress: [█████░░░░░] 57% (4/7 plans)
+Progress: [███████░░░] 71% (5/7 plans)
 
 ## Milestone History
 
@@ -37,9 +37,9 @@ Progress: [█████░░░░░] 57% (4/7 plans)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4 (v1.5)
-- Average duration: 6min
-- Total execution time: 24min
+- Total plans completed: 5 (v1.5)
+- Average duration: 5min
+- Total execution time: 28min
 
 ## Accumulated Context
 
@@ -59,6 +59,8 @@ Recent decisions affecting current work:
 - Kanban toggle placed outside overflow-x-auto wrapper to prevent scrolling with board
 - aggregateKpiTotals uses inline object type with required id field for structural overlap with InitiativeForGrouping
 - KpiProgressBar shows label prefix only for custom KPI labels (not 'No data' or 'Revenue' defaults)
+- Hide project count badge entirely for 0 projects (clean row density)
+- Linked projects use Next.js Link; dialog unmounts naturally on navigation
 
 ### Pending Todos
 
@@ -66,10 +68,10 @@ None.
 
 ### Blockers/Concerns
 
-None -- Plan 40-01 complete, ready for Plan 40-02.
+None -- Phase 40 complete, ready for Phase 41.
 
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 40-01-PLAN.md
+Stopped at: Completed 40-02-PLAN.md
 Resume file: None
