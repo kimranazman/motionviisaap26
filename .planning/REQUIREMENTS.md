@@ -20,20 +20,20 @@
 
 ### KPI Tracking (KPI)
 
-- [ ] **KPI-01**: Each initiative has optional KPI fields: label (text), target (decimal), actual (decimal), unit (text), with manual override flag
-- [ ] **KPI-02**: KPI actual value auto-calculates from linked project revenue when manual override is not set
-- [ ] **KPI-03**: User can manually set KPI actual value, which sets the manual override flag and prevents auto-calculation from overwriting
-- [ ] **KPI-04**: KPI progress displays visually as a progress bar or percentage with color coding (green >80%, yellow 50-80%, red <50%)
-- [ ] **KPI-05**: KR-level and Objective-level headers show aggregated KPI totals (sum of child initiative targets and actuals)
-- [ ] **KPI-06**: Null/zero edge cases handled gracefully: no linked projects shows "No data" (not 0%), zero target shows absolute value (no division), null revenue treated as 0 for sums
-- [ ] **KPI-07**: Manual vs auto-calculated values are visually distinguished (indicator icon or label)
+- [x] **KPI-01**: Each initiative has optional KPI fields: label (text), target (decimal), actual (decimal), unit (text), with manual override flag
+- [x] **KPI-02**: KPI actual value auto-calculates from linked project revenue when manual override is not set
+- [x] **KPI-03**: User can manually set KPI actual value, which sets the manual override flag and prevents auto-calculation from overwriting
+- [x] **KPI-04**: KPI progress displays visually as a progress bar or percentage with color coding (green >80%, yellow 50-80%, red <50%)
+- [x] **KPI-05**: KR-level and Objective-level headers show aggregated KPI totals (sum of child initiative targets and actuals)
+- [x] **KPI-06**: Null/zero edge cases handled gracefully: no linked projects shows "No data" (not 0%), zero target shows absolute value (no division), null revenue treated as 0 for sums
+- [x] **KPI-07**: Manual vs auto-calculated values are visually distinguished (indicator icon or label)
 
 ### Linked Projects (PROJ)
 
-- [ ] **PROJ-01**: Each initiative row shows inline list of linked projects with title, status badge, revenue, and costs
-- [ ] **PROJ-02**: User can click a linked project to navigate to the project detail view
-- [ ] **PROJ-03**: Initiative row shows a project count badge (e.g., "3 projects") when projects are linked
-- [ ] **PROJ-04**: Initiatives with no linked projects show appropriate empty state (not broken UI)
+- [x] **PROJ-01**: Each initiative row shows inline list of linked projects with title, status badge, revenue, and costs
+- [x] **PROJ-02**: User can click a linked project to navigate to the project detail view
+- [x] **PROJ-03**: Initiative row shows a project count badge (e.g., "3 projects") when projects are linked
+- [x] **PROJ-04**: Initiatives with no linked projects show appropriate empty state (not broken UI)
 
 ### Date Intelligence (DATE)
 
@@ -107,17 +107,17 @@
 | VIEW-04 | Phase 39 | Complete |
 | VIEW-05 | Phase 39 | Complete |
 | VIEW-06 | Phase 39 | Complete |
-| KPI-01 | Phase 40 | Pending |
-| KPI-02 | Phase 40 | Pending |
-| KPI-03 | Phase 40 | Pending |
-| KPI-04 | Phase 40 | Pending |
-| KPI-05 | Phase 40 | Pending |
-| KPI-06 | Phase 40 | Pending |
-| KPI-07 | Phase 40 | Pending |
-| PROJ-01 | Phase 40 | Pending |
-| PROJ-02 | Phase 40 | Pending |
-| PROJ-03 | Phase 40 | Pending |
-| PROJ-04 | Phase 40 | Pending |
+| KPI-01 | Phase 40 | Complete |
+| KPI-02 | Phase 40 | Complete |
+| KPI-03 | Phase 40 | Complete |
+| KPI-04 | Phase 40 | Complete |
+| KPI-05 | Phase 40 | Complete |
+| KPI-06 | Phase 40 | Complete |
+| KPI-07 | Phase 40 | Complete |
+| PROJ-01 | Phase 40 | Complete |
+| PROJ-02 | Phase 40 | Complete |
+| PROJ-03 | Phase 40 | Complete |
+| PROJ-04 | Phase 40 | Complete |
 | DATE-01 | Phase 41 | Pending |
 | DATE-02 | Phase 41 | Pending |
 | DATE-03 | Phase 41 | Pending |
