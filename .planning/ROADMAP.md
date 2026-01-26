@@ -11,7 +11,7 @@ Transform the initiatives view from a flat list into an objective-driven intelli
 
 ## Phases
 
-- [ ] **Phase 38: Schema & Utilities Foundation** - KPI fields migration, grouping/date/KPI utility modules
+- [x] **Phase 38: Schema & Utilities Foundation** - KPI fields migration, grouping/date/KPI utility modules
 - [ ] **Phase 39: By Objective Hierarchy View** - Three-level expandable hierarchy as default initiatives view
 - [ ] **Phase 40: KPI Tracking & Linked Projects** - KPI metrics with auto-calculation, inline project visibility
 - [ ] **Phase 41: Date Intelligence** - Overdue, ending-soon, late-start, and overlap detection badges
@@ -31,7 +31,7 @@ Transform the initiatives view from a flat list into an objective-driven intelli
 **Plans**: 1 plan
 
 Plans:
-- [ ] 38-01-PLAN.md -- Schema migration (5 KPI fields) and 3 utility modules (group, KPI, date)
+- [x] 38-01-PLAN.md -- Schema migration (5 KPI fields) and 3 utility modules (group, KPI, date)
 
 ### Phase 39: By Objective Hierarchy View
 **Goal**: Users land on an objective-driven hierarchy that groups all 28 initiatives by Objective and Key Result with expand/collapse and full text display
@@ -100,7 +100,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|---------------|--------|-----------|
-| 38. Schema & Utilities Foundation | 0/1 | Not started | - |
+| 38. Schema & Utilities Foundation | 1/1 | Complete | 2026-01-26 |
 | 39. By Objective Hierarchy View | 0/2 | Not started | - |
 | 40. KPI Tracking & Linked Projects | 0/2 | Not started | - |
 | 41. Date Intelligence | 0/1 | Not started | - |

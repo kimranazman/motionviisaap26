@@ -16,7 +16,7 @@
 - [ ] **VIEW-04**: User can expand/collapse individual Objective and Key Result sections, with state preserved across data refreshes
 - [ ] **VIEW-05**: Initiative titles display with full text wrapping (no truncation) in all views
 - [ ] **VIEW-06**: User can toggle between view modes: By Objective (default), List, Kanban, Timeline, Calendar
-- [ ] **VIEW-07**: Key Result grouping normalizes free-text `keyResult` field values (trim, case-insensitive) to prevent duplicate groups
+- [x] **VIEW-07**: Key Result grouping normalizes free-text `keyResult` field values (trim, case-insensitive) to prevent duplicate groups
 
 ### KPI Tracking (KPI)
 
@@ -56,8 +56,8 @@
 
 ### Schema Changes (SCHEMA)
 
-- [ ] **SCHEMA-01**: Initiative model extended with nullable KPI fields: kpiLabel (VarChar 100), kpiTarget (Decimal 12,2), kpiActual (Decimal 12,2), kpiUnit (VarChar 50), kpiManualOverride (Boolean default false)
-- [ ] **SCHEMA-02**: Migration is additive only — no breaking changes to existing data
+- [x] **SCHEMA-01**: Initiative model extended with nullable KPI fields: kpiLabel (VarChar 100), kpiTarget (Decimal 12,2), kpiActual (Decimal 12,2), kpiUnit (VarChar 50), kpiManualOverride (Boolean default false)
+- [x] **SCHEMA-02**: Migration is additive only — no breaking changes to existing data
 
 ---
 
@@ -98,9 +98,9 @@
 
 | REQ-ID | Phase | Status |
 |--------|-------|--------|
-| SCHEMA-01 | Phase 38 | Pending |
-| SCHEMA-02 | Phase 38 | Pending |
-| VIEW-07 | Phase 38 | Pending |
+| SCHEMA-01 | Phase 38 | Complete |
+| SCHEMA-02 | Phase 38 | Complete |
+| VIEW-07 | Phase 38 | Complete |
 | VIEW-01 | Phase 39 | Pending |
 | VIEW-02 | Phase 39 | Pending |
 | VIEW-03 | Phase 39 | Pending |
