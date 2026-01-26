@@ -56,11 +56,11 @@ Plans:
   3. User can set their preferred detail view mode (drawer or dialog) on the Settings page at /settings
   4. User can quickly toggle between drawer and dialog mode from the user menu dropdown
   5. Detail view components automatically use whichever mode the user has chosen, with the preference persisted in the database
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 45-01: Build drawer component and expand button
-- [ ] 45-02: User preference system and settings page
+- [ ] 45-01-PLAN.md -- DetailView component, context provider, schema/API update, provider wiring
+- [ ] 45-02-PLAN.md -- Refactor 7 detail views, settings page, user menu toggle
 
 ## Progress
 
