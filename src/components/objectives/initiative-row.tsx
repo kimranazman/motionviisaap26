@@ -8,6 +8,7 @@ import {
   formatDateRange,
   cn,
 } from '@/lib/utils'
+import { FolderOpen } from 'lucide-react'
 import type { Initiative } from '@/components/objectives/objective-hierarchy'
 import { KpiProgressBar } from '@/components/objectives/kpi-progress-bar'
 import { calculateKpi, type InitiativeWithKpiAndProjects } from '@/lib/initiative-kpi-utils'
@@ -61,6 +62,12 @@ export function InitiativeRow({ initiative, onClick }: InitiativeRowProps) {
           </span>
           <span>{formatTeamMember(initiative.personInCharge)}</span>
           <span>{formatDateRange(initiative.startDate, initiative.endDate)}</span>
+          {initiative.projects && initiative.projects.length > 0 && (
+            <span className="inline-flex items-center gap-1 text-blue-600">
+              <FolderOpen className="h-3 w-3" />
+              {initiative.projects.length} project{initiative.projects.length !== 1 ? 's' : ''}
+            </span>
+          )}
         </div>
       </div>
 
