@@ -59,11 +59,11 @@ Plans:
   3. KPI progress bar displays with color coding (green >80%, yellow 50-80%, red <50%) and manual vs auto values are visually distinguished
   4. Each initiative row shows linked project count badge and expandable inline list with project title, status, revenue, and costs
   5. Clicking a linked project navigates to the project detail view
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 40-01: KPI fields, auto-calculation, and progress display
-- [ ] 40-02: Linked projects inline display
+- [ ] 40-01-PLAN.md -- KPI data layer, progress bar component, header aggregation, and detail sheet KPI editing
+- [ ] 40-02-PLAN.md -- Linked projects section component, count badge on rows, detail sheet integration
 
 ### Phase 41: Date Intelligence
 **Goal**: Initiative rows display contextual date badges that flag overdue, ending-soon, late-start, invalid-date, long-duration, and owner overlap situations
