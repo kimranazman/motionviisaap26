@@ -58,6 +58,13 @@ model Initiative {
   remarks               String?          @db.Text
   position              Int              @default(0) // For Kanban ordering
 
+  // KPI fields (v1.5 - Initiative Intelligence)
+  kpiLabel          String?  @map("kpi_label") @db.VarChar(100)
+  kpiTarget         Decimal? @map("kpi_target") @db.Decimal(12, 2)
+  kpiActual         Decimal? @map("kpi_actual") @db.Decimal(12, 2)
+  kpiUnit           String?  @map("kpi_unit") @db.VarChar(50)
+  kpiManualOverride Boolean  @default(false) @map("kpi_manual_override")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
