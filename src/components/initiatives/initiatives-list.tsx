@@ -35,6 +35,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { InitiativeForm } from './initiative-form'
+import { InitiativeDetailSheet } from '@/components/kanban/initiative-detail-sheet'
 import {
   cn,
   formatStatus,
@@ -58,6 +59,7 @@ interface Initiative {
   personInCharge: string | null
   startDate: string
   endDate: string
+  position: number
 }
 
 interface InitiativesListProps {
@@ -71,6 +73,8 @@ export function InitiativesList({ initialData }: InitiativesListProps) {
   const [departmentFilter, setDepartmentFilter] = useState<string>('all')
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [isExporting, setIsExporting] = useState(false)
+  const [selectedInitiative, setSelectedInitiative] = useState<Initiative | null>(null)
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
 
   const handleExport = async () => {
     setIsExporting(true)
@@ -118,6 +122,19 @@ export function InitiativesList({ initialData }: InitiativesListProps) {
     const response = await fetch('/api/initiatives')
     const data = await response.json()
     setInitiatives(data)
+  }
+
+  const handleRowClick = (initiative: Initiative) => {
+    setSelectedInitiative(initiative)
+    setIsSheetOpen(true)
+  }
+
+  const handleInitiativeUpdate = async (_updated: any) => {
+    const response = await fetch('/api/initiatives')
+    if (response.ok) {
+      const data = await response.json()
+      setInitiatives(data)
+    }
   }
 
   return (
@@ -217,7 +234,7 @@ export function InitiativesList({ initialData }: InitiativesListProps) {
             </TableHeader>
             <TableBody>
               {filteredInitiatives.map((initiative) => (
-                <TableRow key={initiative.id} className="group hover:bg-gray-50">
+                <TableRow key={initiative.id} className="group cursor-pointer hover:bg-gray-50" onClick={() => handleRowClick(initiative)}>
                   <TableCell className="text-gray-500">
                     {initiative.sequenceNumber}
                   </TableCell>
@@ -271,6 +288,7 @@ export function InitiativesList({ initialData }: InitiativesListProps) {
                             "md:opacity-0 md:group-hover:opacity-100",
                             "focus:opacity-100 transition-opacity"
                           )}
+                          onClick={(e) => e.stopPropagation()}
                         >
                           <MoreHorizontal className="h-4 w-4" />
                           <span className="sr-only">Actions</span>
@@ -307,6 +325,15 @@ export function InitiativesList({ initialData }: InitiativesListProps) {
         {filteredInitiatives.length} of {initiatives.length}
         <span className="hidden sm:inline"> initiatives</span>
       </div>
+
+      {/* Detail Sheet */}
+      <InitiativeDetailSheet
+        initiative={selectedInitiative}
+        open={isSheetOpen}
+        onOpenChange={setIsSheetOpen}
+        onUpdate={handleInitiativeUpdate}
+        allInitiatives={initiatives}
+      />
     </div>
   )
 }
