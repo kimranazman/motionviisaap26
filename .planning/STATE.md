@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-26)
 
 **Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, and AI-powered intelligence.
-**Current focus:** v1.5 Initiative Intelligence & Export -- Phase 39 (By Objective Hierarchy View)
+**Current focus:** v1.5 Initiative Intelligence & Export -- Phase 39 complete, ready for Phase 40
 
 ## Current Position
 
 Phase: 39 of 42 (By Objective Hierarchy View)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-01-26 -- Completed 39-01-PLAN.md
+Plan: 2 of 2 in current phase
+Status: Phase complete
+Last activity: 2026-01-26 -- Completed 39-02-PLAN.md
 
-Progress: [██░░░░░░░░] 29% (2/7 plans)
+Progress: [████░░░░░░] 43% (3/7 plans)
 
 ## Milestone History
 
@@ -37,9 +37,9 @@ Progress: [██░░░░░░░░] 29% (2/7 plans)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2 (v1.5)
+- Total plans completed: 3 (v1.5)
 - Average duration: 6min
-- Total execution time: 13min
+- Total execution time: 18min
 
 ## Accumulated Context
 
@@ -55,6 +55,8 @@ Recent decisions affecting current work:
 - New KPI fields use @map("snake_case") convention for column mapping
 - Each utility file defines its own TypeScript interfaces (no shared types directory)
 - Added position field to objectives Initiative interface to satisfy InitiativeDetailSheet type contract
+- ViewModeToggle uses route-based navigation (Link + usePathname), not tabs or state management
+- Kanban toggle placed outside overflow-x-auto wrapper to prevent scrolling with board
 
 ### Pending Todos
 
@@ -62,10 +64,10 @@ None.
 
 ### Blockers/Concerns
 
-None -- 39-01 complete, ready for 39-02.
+None -- Phase 39 complete, ready for Phase 40.
 
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 39-01-PLAN.md
-Resume: Run /gsd:execute-phase 39
+Stopped at: Completed 39-02-PLAN.md (Phase 39 complete)
+Resume: Run /gsd:plan-phase 40

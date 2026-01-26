@@ -12,7 +12,7 @@ Transform the initiatives view from a flat list into an objective-driven intelli
 ## Phases
 
 - [x] **Phase 38: Schema & Utilities Foundation** - KPI fields migration, grouping/date/KPI utility modules
-- [ ] **Phase 39: By Objective Hierarchy View** - Three-level expandable hierarchy as default initiatives view
+- [x] **Phase 39: By Objective Hierarchy View** - Three-level expandable hierarchy as default initiatives view
 - [ ] **Phase 40: KPI Tracking & Linked Projects** - KPI metrics with auto-calculation, inline project visibility
 - [ ] **Phase 41: Date Intelligence** - Overdue, ending-soon, late-start, and overlap detection badges
 - [ ] **Phase 42: Excel Export** - Single-click server-side XLSX export with all columns
@@ -47,7 +47,7 @@ Plans:
 
 Plans:
 - [x] 39-01-PLAN.md -- Objectives route, hierarchy components (Objective/KR/Initiative), sidebar navigation
-- [ ] 39-02-PLAN.md -- ViewModeToggle component integrated into all 5 view pages
+- [x] 39-02-PLAN.md -- ViewModeToggle component integrated into all 5 view pages
 
 ### Phase 40: KPI Tracking & Linked Projects
 **Goal**: Each initiative row shows KPI progress (auto-calculated or manual) and inline linked project details, enabling users to assess initiative health at a glance
@@ -101,7 +101,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|---------------|--------|-----------|
 | 38. Schema & Utilities Foundation | 1/1 | Complete | 2026-01-26 |
-| 39. By Objective Hierarchy View | 1/2 | In progress | - |
+| 39. By Objective Hierarchy View | 2/2 | Complete | 2026-01-26 |
 | 40. KPI Tracking & Linked Projects | 0/2 | Not started | - |
 | 41. Date Intelligence | 0/1 | Not started | - |
 | 42. Excel Export | 0/1 | Not started | - |
