@@ -75,10 +75,11 @@ Plans:
   3. Long-duration initiatives (>180 days) show gray info badge
   4. Owner overlap detection shows orange "Workload: X concurrent" badge when same person has >3 active concurrent initiatives
   5. System suggests timeline adjustments for initiatives with date issues
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 41-01: Date intelligence badges and suggestions
+- [ ] 41-01-PLAN.md -- Date badges component, overlap detection utility, hierarchy integration
+- [ ] 41-02-PLAN.md -- Timeline suggestions component in initiative detail sheet
 
 ### Phase 42: Excel Export
 **Goal**: Users can export all initiative data to a formatted Excel file with a single click
@@ -103,5 +104,5 @@ Plans:
 | 38. Schema & Utilities Foundation | 1/1 | Complete | 2026-01-26 |
 | 39. By Objective Hierarchy View | 2/2 | Complete | 2026-01-26 |
 | 40. KPI Tracking & Linked Projects | 2/2 | Complete | 2026-01-26 |
-| 41. Date Intelligence | 0/1 | Not started | - |
+| 41. Date Intelligence | 0/2 | Not started | - |
 | 42. Excel Export | 0/1 | Not started | - |
