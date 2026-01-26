@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-26)
 
 **Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, and AI-powered intelligence.
-**Current focus:** v1.5 Initiative Intelligence & Export -- Phase 41 (Date Intelligence)
+**Current focus:** v1.5 Initiative Intelligence & Export -- Phase 41 (Date Intelligence) complete
 
 ## Current Position
 
 Phase: 41 of 42 (Date Intelligence)
-Plan: 1 of 1 in current phase
+Plan: 2 of 2 in current phase
 Status: Phase complete
-Last activity: 2026-01-26 -- Completed 41-01-PLAN.md
+Last activity: 2026-01-26 -- Completed 41-02-PLAN.md
 
-Progress: [████████░░] 86% (6/7 plans)
+Progress: [████████░░] 88% (7/8 plans)
 
 ## Milestone History
 
@@ -37,9 +37,9 @@ Progress: [████████░░] 86% (6/7 plans)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6 (v1.5)
+- Total plans completed: 7 (v1.5)
 - Average duration: 5min
-- Total execution time: 34min
+- Total execution time: 37min
 
 ## Accumulated Context
 
@@ -64,6 +64,9 @@ Recent decisions affecting current work:
 - DateBadges placed between title and KPI bar (contextual to timeline)
 - Overlap map computed once via useMemo at ObjectiveHierarchy root level
 - No Tooltip wrappers on date badges -- text labels are descriptive enough
+- TimelineSuggestions placed between date fields and KPI section in detail sheet
+- allInitiatives passed from ObjectiveHierarchy root to detail sheet for overlap computation
+- Uses local status state so suggestions reflect unsaved status changes
 
 ### Pending Todos
 
@@ -71,10 +74,10 @@ None.
 
 ### Blockers/Concerns
 
-None -- Phase 41 complete, ready for Phase 42.
+None -- Phase 41 complete (both plans), ready for Phase 42.
 
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Completed 41-01-PLAN.md (Phase 41 complete)
+Stopped at: Completed 41-02-PLAN.md (Phase 41 fully complete)
 Resume: Run /gsd:plan-phase 42
