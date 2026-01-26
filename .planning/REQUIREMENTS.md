@@ -94,40 +94,40 @@
 
 ## Traceability
 
-> Filled during roadmap creation — maps requirements to phases.
+> Filled during roadmap creation -- maps requirements to phases.
 
-| REQ-ID | Phase | Plan |
-|--------|-------|------|
-| VIEW-01 | | |
-| VIEW-02 | | |
-| VIEW-03 | | |
-| VIEW-04 | | |
-| VIEW-05 | | |
-| VIEW-06 | | |
-| VIEW-07 | | |
-| KPI-01 | | |
-| KPI-02 | | |
-| KPI-03 | | |
-| KPI-04 | | |
-| KPI-05 | | |
-| KPI-06 | | |
-| KPI-07 | | |
-| PROJ-01 | | |
-| PROJ-02 | | |
-| PROJ-03 | | |
-| PROJ-04 | | |
-| DATE-01 | | |
-| DATE-02 | | |
-| DATE-03 | | |
-| DATE-04 | | |
-| DATE-05 | | |
-| DATE-06 | | |
-| DATE-07 | | |
-| DATE-08 | | |
-| EXPORT-01 | | |
-| EXPORT-02 | | |
-| EXPORT-03 | | |
-| EXPORT-04 | | |
-| EXPORT-05 | | |
-| SCHEMA-01 | | |
-| SCHEMA-02 | | |
+| REQ-ID | Phase | Status |
+|--------|-------|--------|
+| SCHEMA-01 | Phase 38 | Pending |
+| SCHEMA-02 | Phase 38 | Pending |
+| VIEW-07 | Phase 38 | Pending |
+| VIEW-01 | Phase 39 | Pending |
+| VIEW-02 | Phase 39 | Pending |
+| VIEW-03 | Phase 39 | Pending |
+| VIEW-04 | Phase 39 | Pending |
+| VIEW-05 | Phase 39 | Pending |
+| VIEW-06 | Phase 39 | Pending |
+| KPI-01 | Phase 40 | Pending |
+| KPI-02 | Phase 40 | Pending |
+| KPI-03 | Phase 40 | Pending |
+| KPI-04 | Phase 40 | Pending |
+| KPI-05 | Phase 40 | Pending |
+| KPI-06 | Phase 40 | Pending |
+| KPI-07 | Phase 40 | Pending |
+| PROJ-01 | Phase 40 | Pending |
+| PROJ-02 | Phase 40 | Pending |
+| PROJ-03 | Phase 40 | Pending |
+| PROJ-04 | Phase 40 | Pending |
+| DATE-01 | Phase 41 | Pending |
+| DATE-02 | Phase 41 | Pending |
+| DATE-03 | Phase 41 | Pending |
+| DATE-04 | Phase 41 | Pending |
+| DATE-05 | Phase 41 | Pending |
+| DATE-06 | Phase 41 | Pending |
+| DATE-07 | Phase 41 | Pending |
+| DATE-08 | Phase 41 | Pending |
+| EXPORT-01 | Phase 42 | Pending |
+| EXPORT-02 | Phase 42 | Pending |
+| EXPORT-03 | Phase 42 | Pending |
+| EXPORT-04 | Phase 42 | Pending |
+| EXPORT-05 | Phase 42 | Pending |
