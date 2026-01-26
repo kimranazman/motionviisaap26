@@ -18,6 +18,7 @@ import {
   FolderKanban,
   Briefcase,
   Truck,
+  Settings,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
@@ -110,6 +111,11 @@ export function MobileSidebar() {
               <NavLink item={{ name: 'Users', href: '/admin/users', icon: Users }} />
             </>
           )}
+
+          {/* Settings */}
+          <div className="mt-6 pt-4 border-t border-gray-200">
+            <NavLink item={{ name: 'Settings', href: '/settings', icon: Settings }} />
+          </div>
         </nav>
       </SheetContent>
     </Sheet>

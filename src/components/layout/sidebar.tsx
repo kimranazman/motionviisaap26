@@ -19,6 +19,7 @@ import {
   Briefcase,
   Truck,
   Scale,
+  Settings,
 } from 'lucide-react'
 
 const navigation = [
@@ -167,6 +168,22 @@ export function Sidebar() {
             </Link>
           </>
         )}
+
+        {/* Settings */}
+        <div className="mt-6 pt-4 border-t border-gray-200">
+          <Link
+            href="/settings"
+            className={cn(
+              'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+              pathname.startsWith('/settings')
+                ? 'bg-gray-100 text-gray-900'
+                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+            )}
+          >
+            <Settings className="h-5 w-5" />
+            Settings
+          </Link>
+        </div>
       </nav>
     </aside>
   )
