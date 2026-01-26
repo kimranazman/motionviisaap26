@@ -28,10 +28,10 @@ Transform the initiatives view from a flat list into an objective-driven intelli
   2. Group utility normalizes free-text keyResult values so "KR1.1", " kr1.1 ", and "KR 1.1" all resolve to the same group
   3. KPI utility correctly handles null/zero edge cases: no projects returns "No data", zero target avoids division, null revenue treated as 0
   4. Date utility computes overdue, ending-soon, late-start, invalid-date, and long-duration flags from initiative date fields
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 38-01: Schema migration and utility modules
+- [ ] 38-01-PLAN.md -- Schema migration (5 KPI fields) and 3 utility modules (group, KPI, date)
 
 ### Phase 39: By Objective Hierarchy View
 **Goal**: Users land on an objective-driven hierarchy that groups all 28 initiatives by Objective and Key Result with expand/collapse and full text display
