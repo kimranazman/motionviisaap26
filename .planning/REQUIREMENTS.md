@@ -48,11 +48,11 @@
 
 ### Excel Export (EXPORT)
 
-- [ ] **EXPORT-01**: User can export all initiatives to Excel (.xlsx) with a single click from the initiatives page
-- [ ] **EXPORT-02**: Export includes all columns: #, Objective, Key Result, Title, Department, Status, Owner, Start Date, End Date, Duration, KPI Label, KPI Target, KPI Actual, % Achievement, Linked Projects count, Total Revenue, Total Costs, Monthly Objective, Weekly Tasks, Remarks
-- [ ] **EXPORT-03**: File downloads with date-stamped filename (SAAP_Initiatives_YYYY-MM-DD.xlsx)
-- [ ] **EXPORT-04**: Export generates server-side via API route for reliability on NAS deployment
-- [ ] **EXPORT-05**: Export formats data for readability: dates as dates (not ISO strings), status as readable text, currency with 2 decimal places
+- [x] **EXPORT-01**: User can export all initiatives to Excel (.xlsx) with a single click from the initiatives page
+- [x] **EXPORT-02**: Export includes all columns: #, Objective, Key Result, Title, Department, Status, Owner, Start Date, End Date, Duration, KPI Label, KPI Target, KPI Actual, % Achievement, Linked Projects count, Total Revenue, Total Costs, Monthly Objective, Weekly Tasks, Remarks
+- [x] **EXPORT-03**: File downloads with date-stamped filename (SAAP_Initiatives_YYYY-MM-DD.xlsx)
+- [x] **EXPORT-04**: Export generates server-side via API route for reliability on NAS deployment
+- [x] **EXPORT-05**: Export formats data for readability: dates as dates (not ISO strings), status as readable text, currency with 2 decimal places
 
 ### Schema Changes (SCHEMA)
 
@@ -126,8 +126,8 @@
 | DATE-06 | Phase 41 | Complete |
 | DATE-07 | Phase 41 | Complete |
 | DATE-08 | Phase 41 | Complete |
-| EXPORT-01 | Phase 42 | Pending |
-| EXPORT-02 | Phase 42 | Pending |
-| EXPORT-03 | Phase 42 | Pending |
-| EXPORT-04 | Phase 42 | Pending |
-| EXPORT-05 | Phase 42 | Pending |
+| EXPORT-01 | Phase 42 | Complete |
+| EXPORT-02 | Phase 42 | Complete |
+| EXPORT-03 | Phase 42 | Complete |
+| EXPORT-04 | Phase 42 | Complete |
+| EXPORT-05 | Phase 42 | Complete |
