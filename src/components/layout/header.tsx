@@ -15,6 +15,7 @@ import { HeaderSearch } from './header-search'
 import { NotificationBell } from './notification-bell'
 import { MobileSidebar } from './mobile-sidebar'
 import { SignOutButton } from '@/components/auth/sign-out-button'
+import { DetailViewToggle } from './detail-view-toggle'
 
 interface HeaderProps {
   title: string
@@ -66,6 +67,9 @@ export function Header({ title, description }: HeaderProps) {
         <div className="hidden md:block">
           <HeaderSearch />
         </div>
+
+        {/* Detail View Toggle */}
+        <DetailViewToggle />
 
         {/* Notifications */}
         <NotificationBell />
