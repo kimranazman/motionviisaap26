@@ -239,8 +239,8 @@ export function InitiativesList({ initialData }: InitiativesListProps) {
                     {initiative.sequenceNumber}
                   </TableCell>
                   <TableCell>
-                    <div className="max-w-md">
-                      <p className="font-medium text-gray-900 truncate">
+                    <div>
+                      <p className="font-medium text-gray-900">
                         {initiative.title}
                       </p>
                       <Badge
