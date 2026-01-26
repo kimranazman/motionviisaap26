@@ -989,6 +989,7 @@ export function ProjectDetailSheet({
     <DetailView
       open={open}
       onOpenChange={onOpenChange}
+      expandHref={`/projects/${project.id}`}
       title={
         <div className="flex items-center gap-3">
           <Badge className={cn('shrink-0', getProjectStatusColor(project.status))}>

@@ -16,6 +16,9 @@ import { NotificationBell } from './notification-bell'
 import { MobileSidebar } from './mobile-sidebar'
 import { SignOutButton } from '@/components/auth/sign-out-button'
 import { DetailViewToggle } from './detail-view-toggle'
+import { useDetailViewMode } from '@/lib/hooks/use-detail-view-mode'
+import { PanelRight, Columns2, Settings } from 'lucide-react'
+import Link from 'next/link'
 
 interface HeaderProps {
   title: string
@@ -24,6 +27,7 @@ interface HeaderProps {
 
 export function Header({ title, description }: HeaderProps) {
   const { data: session } = useSession()
+  const { mode, toggle } = useDetailViewMode()
 
   // Get initials from name or email
   const getInitials = () => {
@@ -96,6 +100,26 @@ export function Header({ title, description }: HeaderProps) {
                 </p>
               </div>
             </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={(e) => { e.preventDefault(); toggle(); }}>
+              {mode === 'dialog' ? (
+                <>
+                  <PanelRight className="h-4 w-4 mr-2" />
+                  Switch to Drawer
+                </>
+              ) : (
+                <>
+                  <Columns2 className="h-4 w-4 mr-2" />
+                  Switch to Dialog
+                </>
+              )}
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/settings">
+                <Settings className="h-4 w-4 mr-2" />
+                Settings
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <SignOutButton
