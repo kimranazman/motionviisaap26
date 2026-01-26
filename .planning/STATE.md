@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-26)
 ## Current Position
 
 Phase: 41 of 42 (Date Intelligence)
-Plan: 0 of 1 in current phase
-Status: Ready to plan
-Last activity: 2026-01-26 -- Phase 40 complete (verified)
+Plan: 1 of 1 in current phase
+Status: Phase complete
+Last activity: 2026-01-26 -- Completed 41-01-PLAN.md
 
-Progress: [███████░░░] 71% (5/7 plans)
+Progress: [████████░░] 86% (6/7 plans)
 
 ## Milestone History
 
@@ -37,9 +37,9 @@ Progress: [███████░░░] 71% (5/7 plans)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5 (v1.5)
+- Total plans completed: 6 (v1.5)
 - Average duration: 5min
-- Total execution time: 28min
+- Total execution time: 34min
 
 ## Accumulated Context
 
@@ -61,6 +61,9 @@ Recent decisions affecting current work:
 - KpiProgressBar shows label prefix only for custom KPI labels (not 'No data' or 'Revenue' defaults)
 - Hide project count badge entirely for 0 projects (clean row density)
 - Linked projects use Next.js Link; dialog unmounts naturally on navigation
+- DateBadges placed between title and KPI bar (contextual to timeline)
+- Overlap map computed once via useMemo at ObjectiveHierarchy root level
+- No Tooltip wrappers on date badges -- text labels are descriptive enough
 
 ### Pending Todos
 
@@ -68,10 +71,10 @@ None.
 
 ### Blockers/Concerns
 
-None -- Phase 40 verified, ready for Phase 41.
+None -- Phase 41 complete, ready for Phase 42.
 
 ## Session Continuity
 
 Last session: 2026-01-26
-Stopped at: Phase 40 complete (verified)
-Resume: Run /gsd:plan-phase 41
+Stopped at: Completed 41-01-PLAN.md (Phase 41 complete)
+Resume: Run /gsd:plan-phase 42
