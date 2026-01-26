@@ -10,12 +10,12 @@
 
 ### Hierarchy & Views (VIEW)
 
-- [ ] **VIEW-01**: User can see initiatives grouped by Objective → Key Result → Initiative in an expandable hierarchy view
-- [ ] **VIEW-02**: By Objective view is the default landing view for the initiatives page
-- [ ] **VIEW-03**: Each Objective and Key Result section header shows initiative count and status summary (e.g., "5 On Track, 2 At Risk")
-- [ ] **VIEW-04**: User can expand/collapse individual Objective and Key Result sections, with state preserved across data refreshes
-- [ ] **VIEW-05**: Initiative titles display with full text wrapping (no truncation) in all views
-- [ ] **VIEW-06**: User can toggle between view modes: By Objective (default), List, Kanban, Timeline, Calendar
+- [x] **VIEW-01**: User can see initiatives grouped by Objective → Key Result → Initiative in an expandable hierarchy view
+- [x] **VIEW-02**: By Objective view is the default landing view for the initiatives page
+- [x] **VIEW-03**: Each Objective and Key Result section header shows initiative count and status summary (e.g., "5 On Track, 2 At Risk")
+- [x] **VIEW-04**: User can expand/collapse individual Objective and Key Result sections, with state preserved across data refreshes
+- [x] **VIEW-05**: Initiative titles display with full text wrapping (no truncation) in all views
+- [x] **VIEW-06**: User can toggle between view modes: By Objective (default), List, Kanban, Timeline, Calendar
 - [x] **VIEW-07**: Key Result grouping normalizes free-text `keyResult` field values (trim, case-insensitive) to prevent duplicate groups
 
 ### KPI Tracking (KPI)
@@ -101,12 +101,12 @@
 | SCHEMA-01 | Phase 38 | Complete |
 | SCHEMA-02 | Phase 38 | Complete |
 | VIEW-07 | Phase 38 | Complete |
-| VIEW-01 | Phase 39 | Pending |
-| VIEW-02 | Phase 39 | Pending |
-| VIEW-03 | Phase 39 | Pending |
-| VIEW-04 | Phase 39 | Pending |
-| VIEW-05 | Phase 39 | Pending |
-| VIEW-06 | Phase 39 | Pending |
+| VIEW-01 | Phase 39 | Complete |
+| VIEW-02 | Phase 39 | Complete |
+| VIEW-03 | Phase 39 | Complete |
+| VIEW-04 | Phase 39 | Complete |
+| VIEW-05 | Phase 39 | Complete |
+| VIEW-06 | Phase 39 | Complete |
 | KPI-01 | Phase 40 | Pending |
 | KPI-02 | Phase 40 | Pending |
 | KPI-03 | Phase 40 | Pending |
