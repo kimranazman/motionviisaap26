@@ -777,3 +777,233 @@ Research verified against official Prisma documentation, OpenAI API docs, databa
 
 *v1.4 Research completed: 2026-01-24*
 *Ready for roadmap: yes*
+
+---
+---
+
+# v1.5 Research Summary: Initiative Intelligence & Export
+
+**Project:** SAAP 2026 v2 -- v1.5 Initiative Intelligence & Export
+**Domain:** OKR/Initiative Management with KPI Tracking, Date Intelligence & Excel Export
+**Researched:** 2026-01-26
+**Confidence:** HIGH
+
+---
+
+## Executive Summary
+
+v1.5 transforms the existing flat initiative list into a strategic intelligence layer. The milestone adds five capabilities: a "By Objective" hierarchical view (Objective > Key Result > Initiative), KPI tracking with target/actual metrics auto-calculated from linked projects, inline linked project visibility, date intelligence with overdue/overlap flags, and Excel export. The target is a 3-person team managing 28 initiatives across 2 objectives with ~50 linked projects -- a small, well-scoped dataset that eliminates most scalability concerns and keeps every feature buildable with the existing stack.
+
+The recommended approach requires **zero new npm dependencies**. The existing stack -- shadcn/ui (Table, Collapsible, Progress, Badge), Recharts v3, date-fns v4, and SheetJS xlsx v0.18.5 -- covers all needs. The architecture is additive: a new `/objectives` route with its own server-side data fetch, 14 new files (components + utilities), and 5 new nullable fields on the Initiative Prisma model. No existing views, routes, or components require breaking changes. The schema migration is safe -- all new fields are nullable or have defaults.
+
+The key risks are: (1) free-text `keyResult` field fragility causing broken grouping if users type inconsistent values -- mitigated by normalizing on read and switching the input to a ComboBox; (2) KPI auto-calculation edge cases with null/zero values causing NaN or misleading percentages -- mitigated by explicit null-handling rules designed before any UI work; (3) the xlsx v0.18.5 CVE-2023-30533 vulnerability -- which does NOT affect export-only usage (confirmed by SheetJS advisory). Server-side export via API route is the correct approach for the NAS deployment.
+
+---
+
+## Key Findings
+
+### Recommended Stack
+
+Zero new packages. Every technology needed is already installed and proven in the codebase.
+
+**Core technologies leveraged:**
+- **shadcn/ui Table + Collapsible**: Hierarchy view -- custom collapsible table rows for 3-level grouping, proven pattern from community (GitHub issue #4736, DEV article). TanStack Table rejected as overkill for ~50 rows.
+- **shadcn/ui Progress + Recharts v3**: KPI visualization -- inline progress bars and radial gauges for target/actual comparison. Already used in 3+ dashboard components.
+- **date-fns v4**: Date intelligence -- `areIntervalsOverlapping`, `differenceInDays`, `isPast`, `intervalToDuration`. Already used in 12+ files. v4 handles reversed intervals gracefully.
+- **xlsx (SheetJS) v0.18.5**: Excel export -- server-side XLSX generation via `json_to_sheet` + `write`. Export-only use is explicitly safe per SheetJS CVE advisory. No need for ExcelJS.
+- **Prisma + MariaDB**: 5 new nullable fields on Initiative model. Single query with `include: { projects }` for hierarchy data. Performance is trivial at this scale (~28 initiatives, ~50 projects).
+
+**Critical version note:** xlsx v0.18.5 CVE-2023-30533 affects read/parse operations only. Export workflows are unaffected. Do not use xlsx to parse untrusted files.
+
+See: `.planning/research/v1.5-STACK.md`
+
+### Expected Features
+
+**Must have (table stakes -- P0):**
+- By Objective hierarchy view (Objective > KR > Initiative with expand/collapse)
+- KPI target/actual fields on Initiative model
+- Overdue detection (endDate < today for non-completed initiatives)
+- Full text display for initiative titles (remove truncation)
+
+**Should have (ship with milestone -- P1):**
+- KPI auto-calculation from linked project revenue
+- KPI manual override with visual indicator
+- KPI progress bar with color coding (green >80%, yellow 50-80%, red <50%)
+- Linked project inline display (title, status, revenue, cost)
+- Ending soon / late start date warnings
+- Excel export with all columns (hierarchy, KPIs, dates, linked projects)
+
+**Nice to have (if time allows -- P2):**
+- KR/Objective level KPI rollup
+- Long duration flag, invalid date validation
+- Owner overlap/workload detection (>3 concurrent initiatives)
+- Date intelligence summary banner
+
+**Defer (v2+):**
+- KeyResult as first-class entity (separate model)
+- Objective progress dashboard widget
+- Cross-initiative dependency mapping
+- Quarter-over-quarter comparison
+- KPI history/trending
+
+**Anti-features (do NOT build):**
+- Visual tree diagram (overkill for 2 objectives)
+- Weighted KPI scoring (3-person team does not need formulas)
+- OKR confidence voting (absurd for 3 people)
+- PDF export with charts (Excel is more useful)
+- Real-time KPI updates (page refresh is fine)
+- Drag-and-drop reordering in hierarchy
+
+See: `.planning/research/v1.5-FEATURES.md`
+
+### Architecture Approach
+
+The architecture is additive -- a new `/objectives` sidebar route with its own Server Component data fetch, a tree of 8 new client components under `components/objectives/`, 3 new utility modules, and one new API endpoint (`/api/initiatives/export`). Existing initiative views (list, kanban, timeline, calendar) remain untouched. The "By Objective" view is a separate route, NOT a tab on the existing page, because it has a distinct data requirement (must include `projects` relation) and follows the established pattern where each view is a top-level sidebar entry. Schema changes are 5 nullable fields on Initiative, with a single additive migration.
+
+**Major components:**
+1. **`/objectives` route (Server Component)** -- fetches initiatives + projects, serializes Decimals/Dates, passes to client hierarchy component
+2. **ObjectiveHierarchy (Client)** -- groups data by Objective > KR, manages expand/collapse state (Set-based, following TaskTree pattern), renders hierarchy
+3. **Leaf components (KpiInline, DateIntelligenceBadge, LinkedProjectsInline)** -- stateless presentational components consuming data from parent
+4. **Utility modules (date-utils, kpi-utils, group-utils)** -- pure functions for business logic, testable without rendering
+5. **Export API route (`/api/initiatives/export`)** -- server-side XLSX generation, returns binary Response with Content-Disposition header
+
+**Key architecture decisions:**
+- Server Component fetch (NOT client-side useEffect) -- consistent with all existing pages
+- Separate route (NOT tabs) -- avoids refactoring existing views and respects distinct data requirements
+- No KeyResult model -- `keyResult` VarChar grouping via client-side `groupBy` is sufficient for ~8 KRs
+- No stored computed KPIs -- auto-calculated values computed at query time, only manual overrides stored
+- Server-side export -- avoids 200KB xlsx client bundle, cleaner error handling, NAS-appropriate
+
+See: `.planning/research/v1.5-ARCHITECTURE.md`
+
+### Critical Pitfalls
+
+1. **Free-text keyResult grouping fragility** -- The `keyResult` VarChar(20) field has no input constraints. Inconsistent casing/spacing ("KR1.1" vs "KR 1.1") will break hierarchy grouping. **Avoid:** Normalize on read (`trim().toUpperCase()`), replace Input with ComboBox showing existing values as suggestions. Address in Phase 2 before building any hierarchy components.
+
+2. **KPI auto-calculation edge cases** -- Initiatives with 0 linked projects, null revenue, or zero targets will produce NaN/Infinity/misleading percentages. **Avoid:** Define explicit null-handling rules upfront: no projects = "No data" (not 0%), zero target = show absolute only (never divide), null revenue = treat as 0 for sum but display "No data" distinctly. Guard every division. Address in Phase 3.
+
+3. **Manual KPI override silently overwritten** -- Auto-calculation could overwrite user-set values. **Avoid:** `kpiManualOverride` boolean flag on the model. When true, skip auto-calculation entirely. Show visual indicator "(manual)" vs "(auto)". Never auto-write to `kpiActual` when override is true. Address in Phase 3.
+
+4. **Expand/collapse state lost on data refresh** -- Naive implementation resets tree state when parent re-renders. **Avoid:** Store expand state in parent component using Set<string> with stable IDs (objective enum + KR string), following the proven TaskTree pattern. Default all expanded for ~28 items. Address in Phase 2.
+
+5. **Timeline overlap detection ambiguity** -- "Overlap" is undefined: same person? same KR? same department? Without scope, the feature flags everything or the wrong things. **Avoid:** Start with person-overlap only (same `personInCharge` with overlapping date ranges) -- most concrete and actionable for a 3-person team. Defer KR and department overlap to v1.5.x. Address in Phase 4.
+
+See: `.planning/research/PITFALLS.md`
+
+---
+
+## Implications for Roadmap
+
+Based on combined research, the milestone has a clear dependency chain that dictates build order. The FEATURES research identified the dependency graph (Hierarchy View -> KPI + Dates -> Linked Projects -> Export), the ARCHITECTURE research validated it with component dependencies, and the PITFALLS research flagged which phases need upfront design decisions.
+
+### Phase 1: Schema + Utilities Foundation
+
+**Rationale:** Every subsequent phase depends on the KPI fields existing in the schema and the utility functions being available. This is the irreducible foundation.
+**Delivers:** Prisma migration with 5 KPI fields, 3 utility modules (date-utils, kpi-utils, group-utils), and the `/api/initiatives/export` route stub.
+**Addresses:** Schema changes from FEATURES (KPI fields), utility modules from ARCHITECTURE.
+**Avoids:** Pitfall #2 (KPI edge cases) by designing null-handling rules in kpi-utils upfront, Pitfall #9 (manual override overwrite) by implementing the override flag correctly from day one.
+
+### Phase 2: By Objective Hierarchy View
+
+**Rationale:** The hierarchy view is the visual foundation that all other features attach to. KPI progress bars, date badges, and linked project chips all render inside initiative rows within this hierarchy. Cannot build those features without the container.
+**Delivers:** `/objectives` route, ObjectiveHierarchy component, ObjectiveGroup, KeyResultGroup, InitiativeRow, HierarchySummaryBar, sidebar navigation update.
+**Addresses:** By Objective view (P0), full text wrapping (P0), view navigation.
+**Avoids:** Pitfall #1 (keyResult grouping fragility) by normalizing on read and using ComboBox for input, Pitfall #3 (tight coupling) by making it a separate route with its own data fetch, Pitfall #5 (expand state loss) by following TaskTree pattern.
+
+### Phase 3: KPI Tracking + Linked Projects
+
+**Rationale:** KPI display and linked project visibility are tightly coupled -- auto-calculation derives KPI values from linked project data. Building them together ensures the data flow is coherent. Both attach to InitiativeRow built in Phase 2.
+**Delivers:** KpiInline component, LinkedProjectsInline component, KPI section in initiative-form.tsx, auto-calculation logic, manual override toggle, PATCH/PUT API enhancements for KPI fields.
+**Addresses:** KPI target/actual (P0), auto-calc (P1), manual override (P1), progress bars (P1), linked project display (P1).
+**Avoids:** Pitfall #2 (null/zero edge cases) with pre-designed null-handling, Pitfall #9 (override overwrite) with kpiManualOverride boolean, Pitfall #8 (N+1 queries) with Prisma include in single query.
+
+### Phase 4: Date Intelligence
+
+**Rationale:** Date flags are independent of KPI but depend on initiative rows existing in the hierarchy (Phase 2). They enrich the view with operational intelligence.
+**Delivers:** DateIntelligenceBadge component, overdue/ending-soon/late-start/invalid-date flags, owner overlap detection (person-scoped).
+**Addresses:** Overdue flag (P0), ending soon (P1), late start (P1), long duration (P2), invalid dates (P2), owner overlap (P2).
+**Avoids:** Pitfall #6 (arbitrary thresholds) by analyzing actual initiative duration distribution before setting thresholds, Pitfall #10 (overlap ambiguity) by scoping to person-overlap only.
+
+### Phase 5: Excel Export
+
+**Rationale:** Export comes last because it serializes ALL data from the other features. Building it last means all columns are known and the export route does not need rework as features add data.
+**Delivers:** ExportButton component, `/api/initiatives/export` route (full implementation), XLSX file with all columns (hierarchy, KPIs, dates, linked projects).
+**Addresses:** Excel export (P1) with all 20 recommended columns.
+**Avoids:** Pitfall #4 (xlsx vulnerability) -- export-only use is safe per SheetJS advisory, Pitfall #7 (NAS resource) -- server-side generation of 28 rows completes in <100ms even on NAS.
+
+### Phase 6: Polish + Detail View Enhancement
+
+**Rationale:** Final integration phase -- adding KPI display and linked projects to existing detail views (initiative-detail.tsx, initiative-detail-sheet.tsx), moving shared components, and ensuring cross-view consistency.
+**Delivers:** KPI section in initiative detail view, linked project display in kanban detail sheet, initiative-detail-sheet moved to shared location, date intelligence in detail views.
+**Addresses:** Cross-view consistency, existing component enhancements.
+
+### Phase Ordering Rationale
+
+- **Schema first** because all features depend on KPI fields existing in the database
+- **Hierarchy view second** because it is the visual container for all subsequent features (KPI bars, date badges, project chips all render inside hierarchy rows)
+- **KPI + linked projects together** because auto-calculation requires project data, making them a natural unit of work
+- **Date intelligence fourth** because it is independently testable and enriches the hierarchy but does not block other features
+- **Export last** because it serializes the output of all other features -- building it last avoids rework
+- **Polish last** because cross-view integration is optional refinement, not core functionality
+
+### Research Flags
+
+Phases likely needing review during planning:
+- **Phase 3 (KPI + Linked Projects):** Define auto-calculation rules explicitly (which label maps to which aggregation). Document null-handling matrix as acceptance criteria.
+- **Phase 4 (Date Intelligence):** Run a quick query on actual initiative durations to set data-driven thresholds. 15-minute data analysis task.
+
+Phases with standard patterns (skip research-phase):
+- **Phase 1 (Schema + Utilities):** Prisma migration + TypeScript utility modules. Fully established patterns.
+- **Phase 2 (Hierarchy View):** Collapsible + Table pattern documented in shadcn/ui community. TaskTree expand state pattern already proven in codebase.
+- **Phase 5 (Excel Export):** SheetJS json_to_sheet + write is a 3-step pattern. Already used in seed script.
+- **Phase 6 (Polish):** Additive UI changes to existing components.
+
+---
+
+## Confidence Assessment
+
+| Area | Confidence | Notes |
+|------|------------|-------|
+| Stack | HIGH | Zero new dependencies. All libraries already installed, versioned, and used in the codebase. Stack research verified against package.json and existing usage in 12+ files. |
+| Features | HIGH | Feature scope derived from OKR domain research (8+ tools surveyed), validated against existing schema and 28-initiative dataset. Anti-features clearly scoped for 3-person team context. |
+| Architecture | HIGH | Architecture is additive -- new route, new components, schema additions. All patterns (Server Component fetch, Collapsible, TaskTree state) already proven in the codebase. |
+| Pitfalls | HIGH | Pitfalls identified from domain research (KPI edge cases, free-text grouping) and codebase analysis (expand state, N+1 queries). Prevention strategies reference existing codebase patterns. |
+
+**Overall confidence: HIGH**
+
+All four research dimensions converge on the same conclusion: this milestone is well-scoped, low-risk, and buildable with existing tools. The dataset is small (28 initiatives, ~50 projects), the architecture is additive, and every technology is already installed.
+
+### Gaps to Address
+
+- **keyResult data quality:** Before Phase 2, run a query to check actual `keyResult` values in the database for consistency. If inconsistencies already exist from the import, decide on a normalization strategy (one-time cleanup vs. on-read normalization).
+- **Auto-calculation label routing:** The FEATURES research suggests label-based sum routing ("revenue" in label -> sum project revenue). This needs explicit specification during Phase 3 planning -- which labels map to which aggregations, and what is the default.
+- **Duration threshold calibration:** Before Phase 4 implementation, query actual initiative durations to determine data-driven thresholds. The PITFALLS research warns against arbitrary round-number thresholds.
+- **SheetJS vs ExcelJS resolution:** The STACK and PITFALLS research disagree on whether to use xlsx or ExcelJS. The STACK research conclusively resolves this: xlsx export-only use is safe per SheetJS CVE advisory, and ExcelJS adds ~500KB for features not needed. **Recommendation: Use xlsx (already installed).**
+- **View routing resolution:** The ARCHITECTURE research recommends a separate `/objectives` route. The PITFALLS research warns about tight coupling and suggests a shared data layer with view-as-state. **Recommendation: Separate route.** The ARCHITECTURE rationale is stronger -- distinct data requirements (projects include), consistency with existing sidebar pattern, and no refactoring of existing views.
+
+---
+
+## Sources
+
+### Primary (HIGH confidence)
+- shadcn/ui documentation and GitHub issues (#4736) -- Collapsible + Table pattern
+- date-fns v4 official documentation -- interval/overlap functions
+- SheetJS CVE-2023-30533 advisory (git.sheetjs.com) -- export-only safety confirmation
+- SheetJS export documentation (docs.sheetjs.com) -- json_to_sheet API
+- Prisma documentation -- include/select patterns
+- Existing SAAP codebase analysis -- TaskTree, kanban, timeline, calendar patterns
+
+### Secondary (MEDIUM confidence)
+- OKR tool surveys (Synergita, Viva Goals, Jira Align, Weekdone, Mooncamp) -- hierarchy view patterns
+- KPI tool surveys (Cascade, BSC Designer, PPM Express, monday.com) -- target/actual patterns
+- DEV Community article on expandable data tables -- shadcn/ui Collapsible + Table without TanStack
+- Power BI KPI Matrix zero-target issue -- edge case documentation
+
+### Tertiary (LOW confidence)
+- Duration threshold calibration -- needs validation against actual SAAP data
+- Auto-calculation label routing -- needs explicit specification, not just pattern inference
+
+---
+
+*v1.5 Research completed: 2026-01-26*
+*Ready for roadmap: yes*

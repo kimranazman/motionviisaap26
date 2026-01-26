@@ -1,1132 +1,414 @@
-# Pitfalls Research: Document Management & Dashboard Customization (v1.3)
+# Pitfalls Research: Initiative Intelligence & Export (v1.5)
 
+**Domain:** OKR/Initiative Management with KPI Tracking, Date Intelligence & Excel Export
 **Project:** SAAP 2026 v2
-**Context:** Adding document uploads (receipts/invoices) and customizable per-user dashboards to existing Next.js 14 App Router application deployed on NAS via Docker
-**Researched:** 2026-01-23
-**Overall Confidence:** HIGH (verified with official Next.js docs, Docker documentation, and industry patterns)
+**Context:** Adding objective hierarchy views, KPI metrics, date analysis, and Excel export to existing Next.js 14 app (~34K LOC) deployed on NAS. 28 initiatives, 2 objectives, ~8 key results, ~50 projects.
+**Researched:** 2026-01-26
+**Confidence:** HIGH (verified against codebase analysis, existing schema, and domain research)
 
 ---
 
-## Document Upload Pitfalls
+## Critical Pitfalls
 
-Common mistakes when implementing file uploads in Next.js with Docker/NAS deployment.
+Mistakes that cause rewrites or major architectural issues.
 
-### Pitfall 1: Server Action 1MB Body Limit
+### Pitfall 1: Free-Text keyResult Grouping Fragility
 
-**What goes wrong:** File uploads via Server Actions fail with "Body exceeded 1MB limit" error, even for small receipt images (2-3MB).
+**What goes wrong:** The `keyResult` field is a free-text `VarChar(20)` input, not an enum or normalized lookup. Grouping initiatives by key result for the Objective -> KR -> Initiative hierarchy will produce fragile, inconsistent groups if users type slightly different values (e.g., "KR1.1" vs "KR 1.1" vs "KR1.1 " vs "kr1.1").
 
-**Why it happens:** By default, Next.js Server Actions limit request body to 1MB to prevent DDoS attacks and server resource exhaustion. This limit applies to all Server Action requests, not just file uploads.
+**Why it happens:** The original Excel import populated keyResult from a spreadsheet column with consistent values. But the initiative form (`initiative-form.tsx` line 128-135) is a plain `<Input>` with no validation, no autocomplete, and placeholder "e.g., KR1.1". Users can type anything up to 20 characters. Over time, inconsistencies accumulate. Research shows free-text fields produce redundant data -- "expressing the same thing in multiple ways" (e.g., "India" vs "Bharat" vs "IND") which is more problematic than duplicate data and harder to fix.
 
-**Consequences:**
-- Users cannot upload typical receipt photos (phone cameras produce 2-5MB images)
-- Silent failures with cryptic 413 errors
-- Workarounds lead to fragmented upload approaches
+**How to avoid:**
+1. **Best approach:** Create a `KeyResult` lookup table or enum mapping that defines the canonical KR identifiers per objective. Replace the free-text input with a Select/ComboBox constrained to known values. This is a schema change but prevents the problem entirely.
+2. **Pragmatic approach (recommended for v1.5):** Keep VarChar(20) but add a normalized grouping strategy. When building the hierarchy view, normalize keyResult values for grouping: trim whitespace, uppercase, strip periods/spaces. Add a ComboBox (not free Input) that shows existing keyResult values as suggestions while allowing new values. This avoids schema migration while preventing most inconsistencies.
+3. **Minimum viable:** Normalize on read only -- `keyResult.trim().toUpperCase()` -- and accept that some manual cleanup may be needed.
 
 **Warning signs:**
-- Error: "[Error: Body exceeded 1 MB limit.]" with statusCode 413
-- Uploads work locally but fail in production
-- Small files upload fine, larger ones fail
+- Hierarchy view shows duplicate KR groups (e.g., "KR1.1" and "KR 1.1" as separate rows)
+- Initiative count under objectives does not match total count
+- Users report "my initiative is under the wrong key result"
 
-**Prevention:**
-```typescript
-// next.config.mjs - MUST be configured before deployment
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  experimental: {
-    serverActions: {
-      bodySizeLimit: '10mb', // Increase to reasonable limit for receipts
-    },
-  },
-  output: 'standalone',
-}
-
-export default nextConfig
-```
-
-**Known Issue:** In some Next.js versions (up to 15.2.2), this configuration may not work properly in production. Fallback: use API Routes instead of Server Actions for file uploads.
-
-**Phase to address:** Phase 1 (Schema & Infrastructure) - Configure before any upload code is written
-
-**Sources:**
-- [Next.js serverActions Config](https://nextjs.org/docs/app/api-reference/config/next-config-js/serverActions)
-- [GitHub Discussion #53989](https://github.com/vercel/next.js/discussions/53989)
-- [GitHub Discussion #49891](https://github.com/vercel/next.js/discussions/49891)
+**Phase to address:** Phase 1 (By Objective view). Must decide on grouping strategy before building the hierarchy component.
 
 ---
 
-### Pitfall 2: Docker Container File Persistence Loss
+### Pitfall 2: KPI Auto-Calculation Edge Cases with Null/Zero/Missing Data
 
-**What goes wrong:** Uploaded files disappear after container restart or redeployment. Files saved inside the container's filesystem are ephemeral.
+**What goes wrong:** Auto-calculating KPI metrics (target vs actual) from linked projects breaks when initiatives have no linked projects, projects have null revenue, or target values are zero. Division-by-zero errors, misleading percentages, and NaN values appear in the UI.
 
-**Why it happens:** Docker containers are stateless by design. When a container is removed and recreated (during updates or restarts), everything inside it is lost. This is a feature for application code but a disaster for user uploads.
+**Why it happens:** The calculation chain is: Initiative -> Projects (via `initiativeId`) -> Sum(revenue) and Sum(costs). But:
+- Many initiatives have 0 linked projects (most of the 28 likely have no projects yet)
+- Projects may have `null` revenue (only populated via AI invoice import)
+- Projects may have `null` potentialRevenue
+- The target value for a KPI could be zero or unset
+- Percentage calculations like `(actual / target) * 100` fail when target is 0
 
-**Consequences:**
-- All uploaded receipts and invoices lost on next deployment
-- "File not found" errors after container restart
-- Database references point to non-existent files
-- Users must re-upload all documents
+Research from KPI tools confirms: "Zero is going to be tough if it's the TARGET because so many formulas divide by the Target." Power BI KPI Matrix displays blank when target value is zero. Standard score formulas (Reduction, Absolute, Deviation) all divide by the Target.
+
+**How to avoid:**
+1. Define explicit null-handling rules before writing any calculation logic:
+   - No linked projects -> Show "No data" or "0 / [target]", not "0%"
+   - Null revenue -> Treat as 0 for summing, but distinguish "no data" from "actually zero"
+   - Zero target -> Show absolute value only (actual - target), never divide
+   - All nulls -> Show "Not configured" state, not broken percentages
+2. Use `Decimal` type math throughout (already in Prisma schema), convert to Number only at display
+3. Provide manual override that takes precedence over auto-calculation, with visual indicator showing "manual" vs "calculated"
+4. Never show `NaN`, `Infinity`, or `-Infinity` in UI -- guard every division
 
 **Warning signs:**
-- Files exist after upload, gone after `docker-compose down && up`
-- "File exists: true" locally but "false" in production after deploy
-- Growing database with missing file references
+- KPI cards showing "NaN%" or "Infinity%"
+- Revenue showing RM 0.00 when it should show "No data"
+- Progress bars at 0% for initiatives that are genuinely progressing but have no linked projects
+- Manual override values being overwritten by auto-calculation
 
-**Prevention:**
-```yaml
-# docker-compose.nas.yml - Add volume mount for uploads
-services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      # Mount NAS directory for persistent file storage
-      - /volume1/Motionvii/saap2026v2/uploads:/app/uploads
-    # ... rest of config
-
-# Directory structure on NAS:
-# /volume1/Motionvii/saap2026v2/
-#   uploads/
-#     receipts/
-#       2026/
-#         01/
-#           {projectId}/{filename}
-#     invoices/
-#       2026/
-#         01/
-#           {projectId}/{filename}
-```
-
-```typescript
-// File paths must be relative to mounted volume
-const UPLOAD_BASE = process.env.NODE_ENV === 'production'
-  ? '/app/uploads'  // Docker volume mount point
-  : './uploads';    // Local development
-
-async function saveUpload(file: File, type: 'receipt' | 'invoice', projectId: string) {
-  const date = new Date();
-  const dir = `${type}s/${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${projectId}`;
-  const fullDir = path.join(UPLOAD_BASE, dir);
-
-  await fs.mkdir(fullDir, { recursive: true });
-  // ... save file
-}
-```
-
-**Phase to address:** Phase 1 (Infrastructure) - Set up volume mount before any upload implementation
-
-**Sources:**
-- [Docker Volumes Documentation](https://docs.docker.com/engine/storage/volumes/)
-- [Docker Data Persistence Guide](https://www.bibekgupta.com/blog/2025/04/docker-volumes-data-persistence-guide)
+**Phase to address:** Phase 3 (KPI metrics). Design the calculation model and null-handling rules before any UI work.
 
 ---
 
-### Pitfall 3: File Serving from Uploaded Location in Next.js
+### Pitfall 3: Tight Coupling Between View Mode and Data Fetching
 
-**What goes wrong:** Files uploaded to a custom directory (not `/public`) cannot be served to browsers. Next.js only serves static files from the `/public` folder at build time.
+**What goes wrong:** Building the "By Objective" view as a separate page with its own data fetching creates duplicate data loading logic, inconsistent state between views, and confusing navigation. Users switching between list/kanban/timeline/objective views see different data because each view fetches independently.
 
-**Why it happens:** Next.js static file serving is designed for build-time assets, not runtime uploads. Files added after build are not automatically served.
+**Why it happens:** The existing initiatives page (`/initiatives/page.tsx`) fetches flat initiative data. The natural impulse is to create a new page (`/initiatives/by-objective/page.tsx`) with a more complex query that includes projects. This leads to separate data sources, separate filter logic, and separate refresh mechanisms.
 
-**Consequences:**
-- Uploaded files exist on disk but return 404 when accessed
-- Cannot display receipt images or allow invoice downloads
-- Workarounds like symlinking are fragile
+**How to avoid:**
+1. **Shared data layer:** The initiatives list page should fetch ALL data needed by any view mode (initiatives with projects included). The "By Objective" view is a different rendering of the same data, not a different page.
+2. **View mode as state, not route:** Use a tab/toggle component on the existing initiatives page. Store view preference in local state or URL params (`?view=objective`), not as separate routes.
+3. **Include projects in the initiatives API response:** Extend the existing `/api/initiatives` endpoint to include linked projects when needed (`?include=projects`), rather than creating a new endpoint.
 
 **Warning signs:**
-- File saves successfully, but URL returns 404
-- Works in development, fails in production
-- `/uploads/file.pdf` returns "Not Found"
+- Creating `/initiatives/by-objective/page.tsx` as a separate page
+- Duplicating filter logic across view components
+- Users see different initiative counts in different views
+- Switching views causes full page reload
 
-**Prevention:**
-```typescript
-// Option 1: API Route to serve files (recommended for security)
-// src/app/api/files/[...path]/route.ts
-
-import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
-import fs from 'fs/promises';
-import path from 'path';
-
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { path: string[] } }
-) {
-  // Require authentication
-  const session = await auth();
-  if (!session) {
-    return new NextResponse('Unauthorized', { status: 401 });
-  }
-
-  const filePath = params.path.join('/');
-  const fullPath = path.join(process.cwd(), 'uploads', filePath);
-
-  // Security: Prevent directory traversal
-  const normalizedPath = path.normalize(fullPath);
-  if (!normalizedPath.startsWith(path.join(process.cwd(), 'uploads'))) {
-    return new NextResponse('Forbidden', { status: 403 });
-  }
-
-  try {
-    const file = await fs.readFile(normalizedPath);
-    const ext = path.extname(filePath).toLowerCase();
-    const mimeTypes: Record<string, string> = {
-      '.pdf': 'application/pdf',
-      '.jpg': 'image/jpeg',
-      '.jpeg': 'image/jpeg',
-      '.png': 'image/png',
-    };
-
-    return new NextResponse(file, {
-      headers: {
-        'Content-Type': mimeTypes[ext] || 'application/octet-stream',
-        'Cache-Control': 'private, max-age=3600',
-      },
-    });
-  } catch {
-    return new NextResponse('Not Found', { status: 404 });
-  }
-}
-```
-
-**Phase to address:** Phase 1 (Infrastructure) - Implement file serving API route before upload UI
-
-**Sources:**
-- [Next.js Public Folder](https://nextjs.org/docs/pages/api-reference/file-conventions/public-folder)
-- [GitHub Discussion #14769](https://github.com/vercel/next.js/discussions/14769)
+**Phase to address:** Phase 1 (By Objective view). Architecture decision must be made upfront.
 
 ---
 
-### Pitfall 4: Missing File Validation (MIME Type Spoofing)
+### Pitfall 4: SheetJS (xlsx) npm Package Is Outdated and Vulnerable
 
-**What goes wrong:** Malicious files uploaded by renaming extensions (e.g., `malware.exe` renamed to `receipt.pdf`). Client-side validation easily bypassed.
+**What goes wrong:** The project already has `"xlsx": "^0.18.5"` in dependencies (used by seed script). This version from the npm public registry is 2+ years old and has a high-severity vulnerability. Using it for the Excel export feature exposes the app to security issues and limits functionality.
 
-**Why it happens:** Only checking file extension or trusting browser-provided MIME type. Both can be trivially manipulated.
+**Why it happens:** SheetJS stopped publishing to the npm public registry after version 0.18.5. The current version (available from their CDN/website) is significantly newer. Developers who run `npm install xlsx` unknowingly get the outdated, vulnerable version.
 
-**Consequences:**
-- Security vulnerabilities
-- Stored XSS if serving user-uploaded HTML
-- Potential for executable upload attacks
-- Corrupted data if non-image processed as image
+**How to avoid:**
+1. **Recommended: Use ExcelJS instead.** ExcelJS (`exceljs` on npm) is actively maintained, has a straightforward API, works well with Next.js Route Handlers via `workbook.xlsx.writeBuffer()`, and does not have the registry versioning problem. It also supports streaming for large files (not needed for 28 initiatives, but future-proof).
+2. **If keeping SheetJS:** Install from the official source, not npm: `npm install --save https://cdn.sheetjs.com/xlsx-latest/xlsx-latest.tgz`. But this complicates CI/CD and Docker builds.
+3. **Regardless:** Remove or isolate the existing `xlsx` dependency to the seed script only. Do not use it for new export functionality.
 
 **Warning signs:**
-- No server-side validation
-- Trusting `file.type` from FormData
-- Only checking extension string
+- `npm audit` showing high-severity vulnerability in `xlsx`
+- Excel export producing corrupted files
+- Missing features in generated Excel files (styling, merged cells)
+- Build warnings about deprecated APIs
 
-**Prevention:**
-```typescript
-import { fileTypeFromBuffer } from 'file-type';
-
-const ALLOWED_TYPES = {
-  'application/pdf': ['.pdf'],
-  'image/jpeg': ['.jpg', '.jpeg'],
-  'image/png': ['.png'],
-};
-
-async function validateUpload(file: File): Promise<{ valid: boolean; error?: string }> {
-  // 1. Check file size (max 10MB for receipts)
-  const MAX_SIZE = 10 * 1024 * 1024;
-  if (file.size > MAX_SIZE) {
-    return { valid: false, error: 'File too large (max 10MB)' };
-  }
-
-  // 2. Read file buffer for actual type detection
-  const buffer = Buffer.from(await file.arrayBuffer());
-  const detected = await fileTypeFromBuffer(buffer);
-
-  if (!detected) {
-    return { valid: false, error: 'Could not determine file type' };
-  }
-
-  // 3. Verify detected MIME type is allowed
-  if (!ALLOWED_TYPES[detected.mime]) {
-    return { valid: false, error: `File type ${detected.mime} not allowed` };
-  }
-
-  // 4. Verify extension matches detected type
-  const ext = path.extname(file.name).toLowerCase();
-  if (!ALLOWED_TYPES[detected.mime].includes(ext)) {
-    return { valid: false, error: 'File extension does not match content' };
-  }
-
-  return { valid: true };
-}
-```
-
-**Phase to address:** Phase 2 (Receipt Upload) - Implement validation in upload Server Action
-
-**Sources:**
-- [File Upload Security Best Practices](https://moldstud.com/articles/p-handling-file-uploads-in-nextjs-best-practices-and-security-considerations)
-- [file-type npm package](https://www.npmjs.com/package/file-type)
+**Phase to address:** Phase 5 (Excel export). Choose library before implementation. Consider removing xlsx dependency from main project and using ExcelJS for export.
 
 ---
 
-### Pitfall 5: Storing Files in Database as BLOB
+## Moderate Pitfalls
 
-**What goes wrong:** Saving file bytes directly to database column causes massive database bloat, slow backups, and degraded query performance.
+Mistakes that cause delays, bugs, or technical debt.
 
-**Why it happens:** Simplest implementation path - no external storage to configure. Works for tiny files but doesn't scale.
+### Pitfall 5: Tree View Performance with Expand/Collapse State Management
 
-**Consequences:**
-- Database size explodes (5MB receipt x 100 projects = 500MB+ database)
-- MariaDB backups become slow and unreliable
-- NAS storage fills up faster than expected
-- All queries slow down as database grows
-- Cannot use CDN or browser caching for files
+**What goes wrong:** The Objective -> KR -> Initiative hierarchy view re-renders the entire tree when any node is expanded/collapsed. For 28 initiatives grouped under 2 objectives and ~8 KRs, performance is fine now, but state management bugs emerge: expand state resets on data refresh, all nodes collapse when a single initiative is updated, or expand state conflicts between views.
+
+**Why it happens:** Naive implementation stores expand state inside the tree component. When parent re-renders (e.g., after an initiative status update triggering data refresh), expand state is lost. The existing TaskTree component already solved this -- "Expand state in parent TaskTree: Preserves state across data refreshes" (from Key Decisions) -- but the pattern may not be replicated.
+
+**How to avoid:**
+1. Follow the existing TaskTree pattern: store expand state in the parent component, pass down as props
+2. Use stable IDs for tree nodes (objective enum + keyResult string, not array indices)
+3. Default to all expanded (only 2 objectives, ~8 KRs -- everything visible is better for 28 items)
+4. Persist expand state in URL params or localStorage for session continuity
 
 **Warning signs:**
-- Database backup taking 10x longer than expected
-- `SHOW TABLE STATUS` shows huge data_length
-- Simple queries becoming slow
-- Disk space alerts on NAS
+- Tree collapses to top level after editing an initiative
+- Expand/collapse feels "laggy" despite small data set
+- React DevTools showing full tree re-render on single node toggle
 
-**Prevention:**
-```prisma
-// Store path reference only, not file content
-model ProjectDocument {
-  id            String       @id @default(cuid())
-  projectId     String
-  project       Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  type          DocumentType // RECEIPT, INVOICE
-  fileName      String       // Original filename for display
-  filePath      String       // Path relative to uploads dir
-  fileSize      Int          // Size in bytes for display
-  mimeType      String       // application/pdf, image/jpeg, etc.
-  uploadedBy    String
-  uploadedByUser User        @relation(fields: [uploadedBy], references: [id])
-  uploadedAt    DateTime     @default(now())
-
-  // Optional metadata extracted from document
-  documentDate  DateTime?    // Date on receipt/invoice
-  amount        Decimal?     @db.Decimal(12, 2) // Amount if extracted
-
-  @@index([projectId])
-  @@index([type])
-  @@map("project_documents")
-}
-
-enum DocumentType {
-  RECEIPT
-  INVOICE
-}
-```
-
-**Phase to address:** Phase 1 (Schema Design) - Establish file-on-disk pattern from start
-
-**Sources:**
-- [Building File Storage with Next.js and S3](https://www.alexefimenko.com/posts/file-storage-nextjs-postgres-s3)
-- Previous PITFALLS.md (v1.2) Pitfall 5
+**Phase to address:** Phase 1 (By Objective view). Use the same pattern proven in TaskTree.
 
 ---
 
-### Pitfall 6: No Cleanup of Orphaned Files
+### Pitfall 6: Date Intelligence Threshold Arbitrariness
 
-**What goes wrong:** When a project or document record is deleted, the physical file remains on disk. Over time, orphaned files accumulate and consume storage.
+**What goes wrong:** "Flag too-long durations" requires defining what "too long" means. Picking arbitrary thresholds (e.g., >90 days = warning) leads to:
+- Most initiatives flagged (making warnings useless)
+- Or no initiatives flagged (thresholds too lenient)
+- Team ignoring warnings because they feel random
 
-**Why it happens:** Database cascade delete removes records, but application doesn't delete associated files. Easy to forget because deletion "works" from UI perspective.
+**Why it happens:** Without domain context, developers pick round numbers. But the 28 initiatives span a fiscal year -- some are genuinely 6-12 month efforts, others should be 2-4 weeks. A one-size-fits-all threshold does not work.
 
-**Consequences:**
-- Disk space consumed by unreferenced files
-- Cannot reclaim storage without manual cleanup
-- "Where is all this storage going?" confusion
-- Potential data retention compliance issues
+**How to avoid:**
+1. **Analyze actual data first:** Query the existing 28 initiatives to find the distribution of durations. Calculate median, P75, P90. Use data-driven thresholds.
+2. **Use relative thresholds, not absolute:** Flag initiatives whose duration is >2x the median for their objective, or >P90 across all initiatives.
+3. **Make thresholds configurable:** Store duration warning thresholds as admin settings. Start with a reasonable default based on data analysis, allow admin to adjust.
+4. **Graduated severity:** Instead of binary warn/ok, use tiers: "normal", "long" (>P75), "very long" (>P90), with different visual indicators.
+5. **Date validation is more clear-cut:** endDate before startDate is always wrong. Dates outside 2026 fiscal year are likely wrong. These are binary validations, not threshold-based.
 
 **Warning signs:**
-- Upload folder size exceeds expected based on active documents
-- Storage usage grows faster than document count
-- Old deleted project folders still exist
+- "All 28 initiatives are flagged as too long" -- threshold too aggressive
+- "No initiatives flagged" -- threshold too lenient
+- Team asks "why is this flagged?" with no good answer
+- Hardcoded threshold constants scattered in code
 
-**Prevention:**
-```typescript
-// Delete file when document record is deleted
-async function deleteProjectDocument(documentId: string) {
-  const doc = await prisma.projectDocument.findUnique({
-    where: { id: documentId }
-  });
-
-  if (!doc) throw new Error('Document not found');
-
-  // Delete file first (if file delete fails, we still have record)
-  const fullPath = path.join(UPLOAD_BASE, doc.filePath);
-  try {
-    await fs.unlink(fullPath);
-  } catch (err) {
-    // Log but don't fail - file might already be gone
-    console.error(`Failed to delete file: ${fullPath}`, err);
-  }
-
-  // Then delete database record
-  await prisma.projectDocument.delete({
-    where: { id: documentId }
-  });
-}
-
-// For project deletion, delete all documents first
-async function deleteProject(projectId: string) {
-  const documents = await prisma.projectDocument.findMany({
-    where: { projectId }
-  });
-
-  // Delete files
-  await Promise.all(documents.map(async (doc) => {
-    const fullPath = path.join(UPLOAD_BASE, doc.filePath);
-    try {
-      await fs.unlink(fullPath);
-    } catch { /* ignore */ }
-  }));
-
-  // Cascade delete handles DB records
-  await prisma.project.delete({
-    where: { id: projectId }
-  });
-}
-```
-
-**Phase to address:** Phase 2 (Document Operations) - Implement file cleanup in delete operations
+**Phase to address:** Phase 4 (Date Intelligence). Research actual data distribution before choosing thresholds.
 
 ---
 
-## Dashboard Customization Pitfalls
+### Pitfall 7: Excel Export on Server vs Client -- Wrong Choice for NAS
 
-Common mistakes when implementing customizable grid layouts with per-user persistence.
+**What goes wrong:** Generating Excel files server-side on a NAS with low CPU priority (`nice -n 19`) could cause request timeouts or block the event loop. But generating client-side has its own issues (browser compatibility, memory).
 
-### Pitfall 7: React-Grid-Layout Width Configuration
+**Why it happens:** Server-side is the "proper" way for large exports. But the NAS deployment constraint (low resources) means even moderate CPU work is slow. For 28 initiatives, this is not actually a problem -- but the implementation choice affects future scalability and code architecture.
 
-**What goes wrong:** Widgets snap back to original position when dragged because GridLayout doesn't take full container width.
-
-**Why it happens:** React-Grid-Layout requires explicit width configuration. Without it, the grid calculates positions incorrectly.
-
-**Consequences:**
-- Drag operations appear to work then snap back
-- Layout looks correct until interaction
-- User frustration with "broken" drag-and-drop
+**How to avoid:**
+1. **Server-side via API Route (recommended for 28 initiatives):** The data set is tiny. ExcelJS can generate a workbook with 28 rows + headers in milliseconds. Even on a NAS with `nice -n 19`, this completes in <100ms. Server-side is correct for this scale.
+2. **Pattern:** Create `/api/initiatives/export` route that:
+   - Queries all initiatives with included projects
+   - Creates ExcelJS workbook with `writeBuffer()`
+   - Returns `new Response(buffer, { headers })` with Content-Disposition
+3. **Do NOT use streaming** for this data size. The overhead of streaming setup exceeds the benefit for 28 rows.
+4. **Include proper headers:** `Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` and `Content-Disposition: attachment; filename="SAAP_Initiatives_2026.xlsx"`
 
 **Warning signs:**
-- Items snap back after drag release
-- Grid appears narrower than container
-- Resize operations behave unexpectedly
+- Export taking >2 seconds on NAS (something is wrong at 28 rows)
+- Client-side approach requiring complex Blob/FileSaver polyfills
+- Export endpoint blocking other requests
 
-**Prevention:**
-```typescript
-import { Responsive, WidthProvider } from 'react-grid-layout';
-
-// WidthProvider HOC handles width calculation
-const ResponsiveGridLayout = WidthProvider(Responsive);
-
-function Dashboard() {
-  return (
-    <ResponsiveGridLayout
-      className="layout"
-      layouts={layouts}
-      breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-      cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-      rowHeight={100}
-      onLayoutChange={handleLayoutChange}
-      // Important: enable dragging and resizing
-      isDraggable={true}
-      isResizable={true}
-      // Margin between grid items
-      margin={[16, 16]}
-    >
-      {widgets.map((widget) => (
-        <div key={widget.i} data-grid={widget}>
-          <WidgetComponent widget={widget} />
-        </div>
-      ))}
-    </ResponsiveGridLayout>
-  );
-}
-```
-
-**Phase to address:** Phase 3 (Dashboard Layout) - Use WidthProvider from project start
-
-**Sources:**
-- [React-Grid-Layout GitHub](https://github.com/react-grid-layout/react-grid-layout)
-- [Building Dashboard Widgets with React Grid Layout](https://medium.com/@antstack/building-customizable-dashboard-widgets-using-react-grid-layout-234f7857c124)
+**Phase to address:** Phase 5 (Excel export). Implementation is straightforward if library choice is made early.
 
 ---
 
-### Pitfall 8: Layout Persistence Race Condition
+### Pitfall 8: Linked Project Inline Display -- N+1 Query or Over-fetching
 
-**What goes wrong:** Layout saved to database before drag operation completes, or multiple rapid changes create race conditions losing intermediate states.
+**What goes wrong:** Showing linked project status inline for each initiative either causes N+1 queries (one query per initiative to fetch projects) or over-fetches by including full project data for all initiatives on every page load.
 
-**Why it happens:** `onLayoutChange` fires frequently during drag. Saving on every change causes excessive API calls and potential data corruption.
+**Why it happens:** Each initiative can have 0-N linked projects (via `initiativeId` FK on Project). The hierarchy view needs to show project status, revenue, and costs for each initiative. Naive implementation fetches projects separately or includes too much data.
 
-**Consequences:**
-- Layout partially saved
-- Network errors from rapid API calls
-- Database constraint violations
-- User sees different layout after refresh
+**How to avoid:**
+1. **Single query with Prisma include:** Fetch initiatives with `include: { projects: { select: { id, title, status, revenue, potentialRevenue } } }` in one query. Prisma handles the JOIN.
+2. **Aggregate costs server-side:** Projects have a `costs` relation. Rather than including all costs, compute the sum server-side: use `projects: { include: { _count: true, costs: true } }` or better, compute in a raw query or application code.
+3. **Consider a summary endpoint:** For the hierarchy view, create a dedicated API endpoint that returns initiatives pre-aggregated with project summaries. This is better than trying to fit everything into the existing flat initiatives endpoint.
+4. **Cache project summaries:** Since project data changes less frequently than initiatives view is loaded, consider computing summaries on project update and storing them, rather than computing on every page load.
 
 **Warning signs:**
-- Console shows many failed save requests
-- Layout different after page refresh
-- "Save failed" errors during drag operations
-- Inconsistent state between sessions
+- Network tab showing 28+ requests on page load (N+1)
+- Initiatives API response >100KB (over-fetching)
+- Page load time >2 seconds despite small data set
+- `_count` queries running for each initiative separately
 
-**Prevention:**
-```typescript
-import { useDebouncedCallback } from 'use-debounce';
-
-function Dashboard() {
-  const [layouts, setLayouts] = useState(initialLayouts);
-  const [isSaving, setIsSaving] = useState(false);
-
-  // Debounce saves - wait 1 second after last change
-  const saveLayout = useDebouncedCallback(
-    async (newLayouts: Layouts) => {
-      setIsSaving(true);
-      try {
-        await fetch('/api/dashboard/layout', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ layouts: newLayouts }),
-        });
-      } catch (error) {
-        // Show toast notification
-        toast.error('Failed to save layout');
-      } finally {
-        setIsSaving(false);
-      }
-    },
-    1000 // Wait 1 second after last change
-  );
-
-  const handleLayoutChange = (
-    currentLayout: Layout[],
-    allLayouts: Layouts
-  ) => {
-    setLayouts(allLayouts);
-    saveLayout(allLayouts);
-  };
-
-  return (
-    <>
-      {isSaving && <SavingIndicator />}
-      <ResponsiveGridLayout
-        layouts={layouts}
-        onLayoutChange={handleLayoutChange}
-        // ...
-      />
-    </>
-  );
-}
-```
-
-**Phase to address:** Phase 3 (Layout Persistence) - Implement debounced saving from start
-
-**Sources:**
-- [React-Grid-Layout Issue #883](https://github.com/STRML/react-grid-layout/issues/883)
-- [React-Grid-Layout Issue #1583](https://github.com/react-grid-layout/react-grid-layout/issues/1583)
+**Phase to address:** Phase 2 (Linked projects). Design the data fetching strategy alongside the hierarchy view.
 
 ---
 
-### Pitfall 9: Missing CSS Imports for React-Grid-Layout
+### Pitfall 9: Manual KPI Override Being Silently Overwritten
 
-**What goes wrong:** Grid layout renders but items overlap, don't resize properly, or drag handles don't appear.
+**What goes wrong:** User manually sets a KPI target/actual value for an initiative, then the auto-calculation runs (triggered by a project update) and overwrites the manual value without warning.
 
-**Why it happens:** React-Grid-Layout requires two CSS files that are easy to forget to import.
+**Why it happens:** Two data sources competing for the same field. Auto-calculation from linked projects runs on project save/update. Manual override is a direct edit. Without clear precedence rules, the last write wins -- and auto-calculation typically runs more frequently.
 
-**Consequences:**
-- Items render on top of each other
-- No visual feedback during drag
-- Resize handles invisible or non-functional
-- Layout looks broken
+**How to avoid:**
+1. **Separate fields:** Store `calculatedValue` and `manualOverride` separately. Display `manualOverride ?? calculatedValue`.
+2. **Override flag:** Add a boolean `isManualOverride` per KPI field. When true, auto-calculation skips that field. Show a visual indicator (e.g., pencil icon) for manually overridden values.
+3. **Show both:** Display calculated value alongside manual override. "Auto: RM 50,000 | Override: RM 45,000" -- lets user see drift and decide.
+4. **Audit trail:** When auto-calculation detects a difference from the manual override, log it but do not overwrite.
 
 **Warning signs:**
-- Grid items overlapping
-- No cursor change on drag handles
-- Resize corners don't appear
-- Drag preview missing
+- "I set the target to 50K but it keeps resetting to 0"
+- KPI values changing without user action
+- No way to tell if a value is calculated or manual
 
-**Prevention:**
-```typescript
-// In your layout component or global styles
-import 'react-grid-layout/css/styles.css';
-import 'react-resizable/css/styles.css';
-
-// Or add to globals.css
-// @import 'react-grid-layout/css/styles.css';
-// @import 'react-resizable/css/styles.css';
-```
-
-**Phase to address:** Phase 3 (Dashboard Setup) - Import CSS immediately when adding dependency
+**Phase to address:** Phase 3 (KPI metrics). Data model must distinguish manual from calculated before building UI.
 
 ---
 
-### Pitfall 10: Responsive Layout Data Structure Mismatch
+### Pitfall 10: Timeline Overlap Detection Ambiguity
 
-**What goes wrong:** Single layout defined but ResponsiveGridLayout expects different layouts per breakpoint. Widgets work at one screen size but break at others.
+**What goes wrong:** "Detect timeline overlaps" sounds simple but has ambiguous semantics. What constitutes an overlap? Two initiatives under the same KR with overlapping dates? Same person assigned to overlapping initiatives? Same department? All of these produce different results and different UX.
 
-**Why it happens:** Using `GridLayout` patterns with `ResponsiveGridLayout` or not defining all breakpoints.
+**Why it happens:** "Overlap" is not defined precisely in the requirements. Without clear scoping, the feature either flags everything (useless) or the wrong things (confusing).
 
-**Consequences:**
-- Dashboard works on desktop, breaks on mobile
-- Widgets disappear at certain screen sizes
-- Layout resets when resizing browser
-- Inconsistent experience across devices
+**How to avoid:**
+1. **Define overlap scope explicitly before coding:**
+   - **Same person overlap:** Initiatives where the same `personInCharge` has overlapping date ranges. This is the most actionable -- it means someone is double-booked.
+   - **Same KR overlap:** Multiple initiatives under the same key result with overlapping dates. This may be intentional (parallel workstreams) or a planning error.
+   - **Capacity overlap:** Same person with >3 concurrent initiatives. This is resource overloading.
+2. **Start with person overlap only.** It is the most concrete, most actionable, and least ambiguous. Other overlap types can be added incrementally.
+3. **Visual approach:** Show overlaps in the existing Gantt timeline view using color coding or connecting lines, not as a separate alert system.
 
 **Warning signs:**
-- Widget positions change dramatically when resizing
-- Some widgets disappear at smaller screens
-- Console warnings about missing breakpoints
-- Layout "jumps" when crossing breakpoint
+- "Everything is overlapping" -- scope too broad
+- Feature built but nobody uses it -- not actionable
+- Complex overlap algorithm that takes significant development time
 
-**Prevention:**
-```typescript
-// Define layouts for all breakpoints
-const defaultLayouts: Layouts = {
-  lg: [ // 1200px+
-    { i: 'kpi-cards', x: 0, y: 0, w: 12, h: 2 },
-    { i: 'pipeline-chart', x: 0, y: 2, w: 8, h: 3 },
-    { i: 'recent-activity', x: 8, y: 2, w: 4, h: 3 },
-  ],
-  md: [ // 996-1199px
-    { i: 'kpi-cards', x: 0, y: 0, w: 10, h: 2 },
-    { i: 'pipeline-chart', x: 0, y: 2, w: 6, h: 3 },
-    { i: 'recent-activity', x: 6, y: 2, w: 4, h: 3 },
-  ],
-  sm: [ // 768-995px
-    { i: 'kpi-cards', x: 0, y: 0, w: 6, h: 2 },
-    { i: 'pipeline-chart', x: 0, y: 2, w: 6, h: 3 },
-    { i: 'recent-activity', x: 0, y: 5, w: 6, h: 3 },
-  ],
-  xs: [ // 480-767px
-    { i: 'kpi-cards', x: 0, y: 0, w: 4, h: 3 },
-    { i: 'pipeline-chart', x: 0, y: 3, w: 4, h: 3 },
-    { i: 'recent-activity', x: 0, y: 6, w: 4, h: 3 },
-  ],
-  xxs: [ // 0-479px
-    { i: 'kpi-cards', x: 0, y: 0, w: 2, h: 4 },
-    { i: 'pipeline-chart', x: 0, y: 4, w: 2, h: 3 },
-    { i: 'recent-activity', x: 0, y: 7, w: 2, h: 3 },
-  ],
-};
-```
-
-**Phase to address:** Phase 3 (Layout Design) - Define all breakpoint layouts when creating default
+**Phase to address:** Phase 4 (Date Intelligence). Define overlap semantics during planning, not during implementation.
 
 ---
 
-## Settings/Preferences Pitfalls
+## Technical Debt Patterns
 
-Common mistakes when implementing per-user settings with admin defaults.
-
-### Pitfall 11: Wide Settings Table Anti-Pattern
-
-**What goes wrong:** Adding each setting as a new column to the User table creates a massive, sparsely populated table that's hard to maintain and query.
-
-**Why it happens:** Simplest mental model - "user has a theme setting, add theme column." Works for 2-3 settings, becomes unmanageable at 10+.
-
-**Consequences:**
-- User table with 50+ columns, most null
-- Every new setting requires migration
-- Schema changes for simple preference additions
-- Slow queries due to wide rows
-- Cannot easily query "users who customized X"
-
-**Warning signs:**
-- Schema migrations for every new setting
-- User table has columns like `dashboard_layout`, `theme`, `notification_email`, `sidebar_collapsed`
-- Many columns are nullable with no values
-- Adding settings feels heavyweight
-
-**Prevention:**
-```prisma
-// Separate UserSettings table with JSON for layout
-model UserSettings {
-  id                  String   @id @default(cuid())
-  userId              String   @unique
-  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // Dashboard layout as JSON (complex, changes frequently)
-  dashboardLayout     Json?    // Stores react-grid-layout Layouts object
-
-  // Simple preferences (rarely change, worth indexing)
-  theme               String   @default("system") // light, dark, system
-  sidebarCollapsed    Boolean  @default(false)
-
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-
-  @@map("user_settings")
-}
-
-// Access pattern: fall back to defaults if no settings exist
-async function getUserDashboardLayout(userId: string) {
-  const settings = await prisma.userSettings.findUnique({
-    where: { userId }
-  });
-
-  if (!settings?.dashboardLayout) {
-    // Return admin-defined defaults
-    return getAdminDefaultLayout();
-  }
-
-  return settings.dashboardLayout as Layouts;
-}
-```
-
-**Phase to address:** Phase 4 (Settings Schema) - Use separate table from start
-
-**Sources:**
-- [Designing User Settings Database Table](https://basila.medium.com/designing-a-user-settings-database-table-e8084fcd1f67)
-- [Default/Override Schema Pattern](https://double.finance/blog/default_override)
+| Shortcut | Immediate Benefit | Long-term Cost | When Acceptable |
+|----------|-------------------|----------------|-----------------|
+| Hardcoded KR grouping labels | Faster to build hierarchy | New key results require code changes | Acceptable for v1.5 if KRs are stable (they are -- sourced from Excel SAAP) |
+| Computing aggregates client-side | No API changes needed | Slow on mobile, inconsistent calculations | Never -- always aggregate server-side for financial data |
+| Storing KPI in initiative table directly | No new table needed | Manual/calculated distinction impossible | Only if no manual override requirement |
+| Using `xlsx` (0.18.5) for export | Already installed, zero setup | Vulnerable dependency, limited features | Only for seed script (already the case); NOT for user-facing export |
+| Inline threshold constants | Quick to implement | Changing requires code change + deploy | Acceptable for initial launch; make configurable in v1.6 |
 
 ---
 
-### Pitfall 12: No Admin Default Layout Defined
+## Performance Traps
 
-**What goes wrong:** New users see empty dashboard or random widget arrangement because admin default was never configured.
-
-**Why it happens:** Focus on "users can customize" without establishing "what's the starting point."
-
-**Consequences:**
-- New users confused by empty/broken dashboard
-- Each user starts from scratch
-- No consistency in initial experience
-- Admin can't establish standard view
-
-**Warning signs:**
-- "What dashboard should I show new users?"
-- Different users reporting different "default" layouts
-- No way to reset to "standard"
-- New users asking "where are the widgets?"
-
-**Prevention:**
-```prisma
-// Store admin defaults separately
-model AdminDefaults {
-  id                  String   @id @default(cuid())
-  key                 String   @unique // 'dashboard_layout', 'widget_visibility', etc.
-  value               Json
-  updatedBy           String
-  updatedByUser       User     @relation(fields: [updatedBy], references: [id])
-  updatedAt           DateTime @updatedAt
-
-  @@map("admin_defaults")
-}
-```
-
-```typescript
-// Admin UI to set defaults
-async function setAdminDefaultLayout(layout: Layouts, adminId: string) {
-  await prisma.adminDefaults.upsert({
-    where: { key: 'dashboard_layout' },
-    create: {
-      key: 'dashboard_layout',
-      value: layout as unknown as Prisma.JsonValue,
-      updatedBy: adminId,
-    },
-    update: {
-      value: layout as unknown as Prisma.JsonValue,
-      updatedBy: adminId,
-      updatedAt: new Date(),
-    },
-  });
-}
-
-// User can reset to admin default
-async function resetToAdminDefault(userId: string) {
-  const adminDefault = await prisma.adminDefaults.findUnique({
-    where: { key: 'dashboard_layout' }
-  });
-
-  if (!adminDefault) {
-    throw new Error('No admin default configured');
-  }
-
-  await prisma.userSettings.update({
-    where: { userId },
-    data: { dashboardLayout: adminDefault.value },
-  });
-}
-```
-
-**Phase to address:** Phase 4 (Admin Defaults) - Build admin default UI before user customization
+| Trap | Symptoms | Prevention | When It Breaks |
+|------|----------|------------|----------------|
+| N+1 queries for project summaries | Slow page load, many DB queries | Use Prisma `include` with `select` for single query | Immediately if not caught, but masked by small dataset |
+| Full project data in initiative list | Large JSON payloads, slow parse | Select only needed fields (id, title, status, revenue) | When projects accumulate documents/costs |
+| Re-rendering entire tree on expand toggle | Jank during expand/collapse | Memoize tree nodes, stable keys, state in parent | With very deep hierarchies (not a risk at 2 obj + 8 KR) |
+| Excel generation on every click | Server CPU spike, slow response | Cache generated file for 5 minutes, or debounce | Not a real risk at 28 rows; matters if data grows to 100+ |
+| Computing date overlaps on every render | Expensive O(n^2) comparison | Compute once on data load, memoize results | At 28 initiatives, O(n^2) = 784 comparisons -- not actually slow |
 
 ---
 
-### Pitfall 13: Role-Based Widget Visibility Only Client-Side
+## UX Pitfalls
 
-**What goes wrong:** Widget visibility based on role is only enforced in UI. Users can still see restricted data by inspecting network requests or modifying JavaScript.
-
-**Why it happens:** Client-side role checks are easy - just filter the widget list. Server-side validation requires more work.
-
-**Consequences:**
-- Data leakage to unauthorized roles
-- False sense of security
-- Compliance violations
-- Viewers can see Admin-only widgets by manipulating state
-
-**Warning signs:**
-- Widget restriction only in React component
-- No server-side check for widget data endpoints
-- All widget data returned to all users
-- Role check only in `{role === 'ADMIN' && <Widget />}`
-
-**Prevention:**
-```prisma
-// Store role visibility per widget type
-model WidgetVisibility {
-  id          String   @id @default(cuid())
-  widgetKey   String   // 'pipeline_value', 'profit_summary', etc.
-  role        Role     // ADMIN, EDITOR, VIEWER
-  visible     Boolean  @default(true)
-
-  @@unique([widgetKey, role])
-  @@map("widget_visibility")
-}
-```
-
-```typescript
-// Server-side: filter widgets based on role BEFORE sending to client
-async function getVisibleWidgets(userRole: Role): Promise<string[]> {
-  const visibility = await prisma.widgetVisibility.findMany({
-    where: { role: userRole, visible: true },
-    select: { widgetKey: true },
-  });
-
-  return visibility.map(v => v.widgetKey);
-}
-
-// API Route: Only return data for visible widgets
-export async function GET(request: Request) {
-  const session = await auth();
-  if (!session?.user) {
-    return new Response('Unauthorized', { status: 401 });
-  }
-
-  const visibleWidgets = await getVisibleWidgets(session.user.role);
-
-  // Only fetch data for widgets user can see
-  const dashboardData = await Promise.all(
-    visibleWidgets.map(async (widget) => ({
-      key: widget,
-      data: await getWidgetData(widget),
-    }))
-  );
-
-  return Response.json(dashboardData);
-}
-```
-
-**Phase to address:** Phase 4 (Widget Visibility) - Implement server-side filtering from start
-
-**Sources:**
-- [React RBAC Authorization](https://www.permit.io/blog/implementing-react-rbac-authorization)
-- [React-Admin RBAC](https://marmelab.com/react-admin/AuthRBAC.html)
+| Pitfall | User Impact | Better Approach |
+|---------|-------------|-----------------|
+| Hierarchy view collapses completely on data refresh | User loses context, must re-expand | Persist expand state across refreshes (proven pattern in TaskTree) |
+| KPI progress showing 0% for initiatives with no projects | Feels like initiative is failing when it just has no data | Show "No linked projects" or empty state, not 0% |
+| Date warnings as blocking alerts | Interrupts workflow, trains users to dismiss | Non-blocking inline indicators (colored badges, subtle icons) |
+| Export button with no progress feedback | User clicks repeatedly thinking nothing happened | Show loading spinner, disable button during generation |
+| View switcher hidden in navigation | Users do not discover the "By Objective" view | Make it a prominent tab on the initiatives page, default to objective view |
+| Too much information in hierarchy rows | Overwhelming, defeats the purpose of hierarchical organization | Show summary (title, status badge, project count) in hierarchy; details in the existing detail modal |
+| Overlap warnings without context | "Initiatives 5 and 12 overlap" -- user has no idea what to do | Show overlap with person/KR context and visual timeline indicator |
 
 ---
 
-### Pitfall 14: JSON Schema Drift for Layouts
+## "Looks Done But Isn't" Checklist
 
-**What goes wrong:** Layout JSON structure changes over time (new widget properties, renamed keys), but old user settings contain incompatible data.
+Before considering each feature complete:
 
-**Why it happens:** Treating JSON as "just data" without versioning. Schema changes break existing saved layouts.
+**By Objective View:**
+- [ ] keyResult grouping handles whitespace/case variations
+- [ ] Empty KR groups (all initiatives completed/cancelled) still show
+- [ ] Objective totals match flat list totals
+- [ ] Expand/collapse state preserved on data refresh
+- [ ] Mobile responsive (accordion on small screens)
+- [ ] View preference persists across page navigations
 
-**Consequences:**
-- Dashboard crashes for users with old layouts
-- "Cannot read property X of undefined" errors
-- Users must reset layouts after updates
-- Data migration complexity
+**KPI Metrics:**
+- [ ] Zero target handled (no division by zero)
+- [ ] Null revenue treated correctly (not as zero)
+- [ ] No linked projects shows appropriate empty state
+- [ ] Manual override clearly indicated visually
+- [ ] Auto-calculation does not overwrite manual override
+- [ ] Decimal precision maintained (no floating-point display artifacts)
+- [ ] Currency formatting consistent with rest of app (RM)
 
-**Warning signs:**
-- Type errors in layout components after updates
-- Some users' dashboards work, others don't
-- "My dashboard broke after the update"
-- Runtime errors parsing saved layouts
+**Date Intelligence:**
+- [ ] endDate before startDate flagged as error (not warning)
+- [ ] Duration thresholds based on actual data distribution
+- [ ] Overlap scope defined (person? KR? department?)
+- [ ] Warnings are non-blocking (inline indicators)
+- [ ] Past-due initiatives flagged (endDate < today + status != COMPLETED)
+- [ ] Dates outside fiscal year 2026 flagged
 
-**Prevention:**
-```typescript
-// Version your layout schema
-interface LayoutV1 {
-  version: 1;
-  widgets: Array<{ i: string; x: number; y: number; w: number; h: number }>;
-}
+**Excel Export:**
+- [ ] All initiative fields included
+- [ ] Linked project data included (at least count and total revenue)
+- [ ] Column headers human-readable (not enum values)
+- [ ] Status formatted as readable text, not enum
+- [ ] Dates formatted as dates (not ISO strings)
+- [ ] Currency columns formatted with 2 decimal places
+- [ ] File downloads with descriptive filename (includes date)
+- [ ] Works on NAS (server-side generation, tested on deployment)
 
-interface LayoutV2 {
-  version: 2;
-  widgets: Array<{
-    i: string;
-    x: number;
-    y: number;
-    w: number;
-    h: number;
-    minW?: number;  // New in v2
-    minH?: number;  // New in v2
-  }>;
-}
-
-// Migration function
-function migrateLayout(layout: LayoutV1 | LayoutV2): LayoutV2 {
-  if (!layout.version || layout.version === 1) {
-    return {
-      version: 2,
-      widgets: (layout as LayoutV1).widgets.map(w => ({
-        ...w,
-        minW: 2,  // Default values for new fields
-        minH: 2,
-      })),
-    };
-  }
-  return layout as LayoutV2;
-}
-
-// Always migrate when loading
-async function getUserLayout(userId: string): Promise<LayoutV2> {
-  const settings = await prisma.userSettings.findUnique({
-    where: { userId }
-  });
-
-  if (!settings?.dashboardLayout) {
-    return getAdminDefaultLayout();
-  }
-
-  return migrateLayout(settings.dashboardLayout as LayoutV1 | LayoutV2);
-}
-```
-
-**Phase to address:** Phase 3 (Layout Schema) - Include version field from first implementation
+**Linked Projects:**
+- [ ] Handles initiatives with 0 projects
+- [ ] Handles initiatives with multiple projects
+- [ ] Revenue shows potentialRevenue vs actual revenue distinction
+- [ ] Costs aggregated correctly (sum of all project costs)
+- [ ] Project status badges match the project list view styling
+- [ ] Click on project navigates to project detail (not just shows text)
 
 ---
 
-## Deployment Pitfalls (NAS/Docker Specific)
+## Pitfall-to-Phase Mapping
 
-### Pitfall 15: File Permission Mismatch in Docker
-
-**What goes wrong:** Uploaded files created with container user (usually root or node) cannot be read by host system, or vice versa.
-
-**Why it happens:** Docker container runs as different UID than NAS user. Volume mounts preserve ownership, causing permission conflicts.
-
-**Consequences:**
-- "Permission denied" errors on file read/write
-- Files created in container inaccessible from NAS File Station
-- Backups fail due to permission issues
-- Cannot manually manage uploaded files
-
-**Warning signs:**
-- `EACCES: permission denied` in logs
-- Files visible in container, not accessible from NAS
-- Upload succeeds but download fails
-- Manual file deletion from NAS fails
-
-**Prevention:**
-```dockerfile
-# Dockerfile - run as specific UID matching NAS user
-FROM node:20-alpine AS runner
-
-# Create user with specific UID (match NAS user)
-# Replace 1000 with your NAS admin user's UID
-RUN addgroup --system --gid 1000 nodejs
-RUN adduser --system --uid 1000 nextjs
-
-# Set ownership of app directory
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-
-# Create uploads directory with correct ownership
-RUN mkdir -p ./uploads && chown nextjs:nodejs ./uploads
-
-USER nextjs
-
-CMD ["node", "server.js"]
-```
-
-```yaml
-# docker-compose.nas.yml
-services:
-  app:
-    # ... other config
-    user: "1000:1000"  # Run as NAS user UID:GID
-    volumes:
-      - /volume1/Motionvii/saap2026v2/uploads:/app/uploads
-```
-
-**Phase to address:** Phase 1 (Infrastructure) - Set up correct permissions before first upload
-
-**Sources:**
-- [Docker v25.1 Volume Mount Fixes](https://markaicode.com/docker-v25-volume-mount-fixes/)
-- [Docker Volume Permissions](https://docs.docker.com/engine/storage/volumes/)
+| Pitfall | # | Prevention Phase | Verification |
+|---------|---|------------------|--------------|
+| Free-text keyResult grouping fragility | 1 | Phase 1: By Objective view | Test with varied keyResult strings; verify group counts match total |
+| KPI auto-calculation edge cases | 2 | Phase 3: KPI metrics | Test with 0 projects, null revenue, zero target, all-null scenarios |
+| Tight coupling between view mode and data | 3 | Phase 1: Architecture | Ensure single data source for all view modes |
+| SheetJS npm vulnerability | 4 | Phase 5: Library selection | Run `npm audit`; verify using ExcelJS not xlsx |
+| Tree view state management | 5 | Phase 1: Component design | Edit initiative in hierarchy view, verify expand state preserved |
+| Date threshold arbitrariness | 6 | Phase 4: Pre-implementation | Query actual durations before setting thresholds |
+| Excel export NAS resource usage | 7 | Phase 5: Testing | Test export on NAS deployment, verify <1s response |
+| N+1 queries for project data | 8 | Phase 2: API design | Check Prisma query logs, verify single query |
+| Manual KPI override overwrite | 9 | Phase 3: Data model | Set manual value, update project, verify override preserved |
+| Timeline overlap ambiguity | 10 | Phase 4: Requirements | Define overlap scope before any code |
 
 ---
 
-### Pitfall 16: Standalone Build Excludes next.config
+## SAAP-Specific Context Notes
 
-**What goes wrong:** bodySizeLimit and other configurations not applied in production because standalone build doesn't include config.
+These pitfalls account for the specific SAAP constraints:
 
-**Why it happens:** Next.js standalone output is optimized for minimal deployment. Some configurations need to be explicitly included.
+1. **Small dataset (28 initiatives, ~50 projects):** Performance traps exist but will not manifest at current scale. Prevention is about avoiding architectural debt, not immediate performance.
 
-**Consequences:**
-- Upload size limits default to 1MB despite configuration
-- Other `next.config.mjs` settings ignored
-- Works in development, fails in production
+2. **NAS deployment (`nice -n 19`):** Server-side computation is fine for small data. The constraint matters if data grows 10x.
 
-**Warning signs:**
-- "Body exceeded 1MB limit" in production only
-- Configuration changes have no effect after deploy
-- Dev environment works, production doesn't
+3. **keyResult as VarChar(20):** This is the highest-risk structural issue. The field was imported from Excel with consistent values, but the input form has no constraints. Data drift will happen.
 
-**Prevention:**
-```dockerfile
-# Dockerfile - explicitly copy next.config
-FROM node:20-alpine AS runner
+4. **3 users only:** Date overlap detection for resource allocation is highly actionable -- there are only 3 people. If person X has 8 concurrent initiatives, that is a real problem for a 3-person team.
 
-# Copy next.config for runtime access
-COPY --from=builder /app/next.config.mjs ./
+5. **`xlsx: ^0.18.5` already in package.json:** This is used ONLY by the seed script (`prisma/seed.ts`). Do NOT extend its use to user-facing features. Use ExcelJS for export.
 
-# ... rest of Dockerfile
-```
-
-```yaml
-# docker-compose.nas.yml - alternative: mount config
-services:
-  app:
-    volumes:
-      - ./next.config.mjs:/app/next.config.mjs:ro
-```
-
-**Phase to address:** Phase 1 (Docker Setup) - Verify config included in build
-
-**Sources:**
-- [GitHub Discussion #77505](https://github.com/vercel/next.js/discussions/77505)
-- [Next.js Deploying Documentation](https://nextjs.org/docs/app/getting-started/deploying)
-
----
-
-### Pitfall 17: No Backup Strategy for Upload Volume
-
-**What goes wrong:** NAS hardware failure or accidental deletion loses all uploaded documents permanently.
-
-**Why it happens:** Database has backup strategy, but upload directory treated as secondary. "Files are on NAS, NAS is reliable."
-
-**Consequences:**
-- All receipts and invoices lost
-- Cannot regenerate from database (only paths stored)
-- Business records missing for accounting
-- Potential legal/compliance issues
-
-**Warning signs:**
-- No backup job for upload directory
-- "We'll set up backups later"
-- Only database in backup rotation
-- No disaster recovery test
-
-**Prevention:**
-```bash
-# On Synology NAS - create Hyper Backup task for uploads
-# Include: /volume1/Motionvii/saap2026v2/uploads/
-
-# Or via rsync cron job
-0 2 * * * rsync -av /volume1/Motionvii/saap2026v2/uploads/ /volume1/Backups/saap-uploads/
-```
-
-```typescript
-// Optional: Track backup status in database
-model SystemStatus {
-  id          String   @id @default(cuid())
-  key         String   @unique
-  value       String
-  checkedAt   DateTime
-
-  @@map("system_status")
-}
-
-// Backup script updates status
-// SELECT value FROM system_status WHERE key = 'last_upload_backup'
-```
-
-**Phase to address:** Phase 1 (Infrastructure) - Set up backup before any production uploads
-
----
-
-## Phase-Specific Warnings Summary
-
-| Phase | Topic | Likely Pitfall | Mitigation |
-|-------|-------|---------------|------------|
-| Phase 1 | Infrastructure | Docker volume not mounted | Test file persistence before any upload code |
-| Phase 1 | Infrastructure | File permissions mismatch | Set container UID to match NAS user |
-| Phase 1 | Config | 1MB body limit | Configure bodySizeLimit in next.config.mjs |
-| Phase 1 | Schema | Files in database | Store path only, files on disk |
-| Phase 2 | Uploads | MIME type spoofing | Server-side file-type validation |
-| Phase 2 | Uploads | Files not served | Create API route to serve uploads |
-| Phase 2 | Deletion | Orphaned files | Delete file when document deleted |
-| Phase 3 | Layout | Width configuration | Use WidthProvider HOC |
-| Phase 3 | Layout | Race conditions | Debounce layout saves |
-| Phase 3 | Layout | Missing CSS | Import both RGL CSS files |
-| Phase 3 | Layout | Schema drift | Version layout JSON from start |
-| Phase 4 | Settings | Wide table | Separate UserSettings table |
-| Phase 4 | Defaults | No admin default | Build admin default UI first |
-| Phase 4 | Security | Client-only role check | Server-side widget filtering |
-| Phase 5 | Backup | No upload backup | Configure Hyper Backup for uploads |
-
----
-
-## Security Checklist for v1.3
-
-Before deploying document management:
-
-- [ ] Upload size limit configured (not just default 1MB)
-- [ ] File type validation server-side (not just extension check)
-- [ ] Directory traversal prevention in file serving
-- [ ] Authentication required for file access
-- [ ] Files stored outside web root
-- [ ] Volume permissions correctly configured
-- [ ] Backup strategy for upload directory
-
-Before deploying dashboard customization:
-
-- [ ] Widget visibility enforced server-side
-- [ ] Role check on widget data endpoints
-- [ ] Layout JSON validated before rendering
-- [ ] User can only modify their own settings
-- [ ] Admin defaults cannot be modified by non-admins
-- [ ] Layout schema versioned for future migrations
-
----
-
-## Pre-Implementation Checklist
-
-- [ ] Docker volume mount configured in `docker-compose.nas.yml`
-- [ ] Container UID matches NAS user UID
-- [ ] `bodySizeLimit` increased in `next.config.mjs`
-- [ ] File serving API route planned
-- [ ] React-Grid-Layout CSS imports noted
-- [ ] UserSettings schema designed (not on User table)
-- [ ] AdminDefaults table for default layout
-- [ ] WidgetVisibility table for role-based access
-- [ ] Layout version field included
-- [ ] Backup job configured for upload directory
+6. **Existing patterns to reuse:**
+   - TaskTree expand state management (Key Decision: "Expand state in parent TaskTree")
+   - Dialog modal for detail views (Key Decision: "Dialog modal for detail views")
+   - Server-side includes matching client fetches (Key Decision: "Server queries mirror API includes")
 
 ---
 
 ## Sources
 
-### File Uploads
-- [Next.js serverActions Config](https://nextjs.org/docs/app/api-reference/config/next-config-js/serverActions)
-- [GitHub Discussion #53989 - Body Limit Issue](https://github.com/vercel/next.js/discussions/53989)
-- [GitHub Discussion #49891 - Body Size Error](https://github.com/vercel/next.js/discussions/49891)
-- [Next.js Public Folder Documentation](https://nextjs.org/docs/pages/api-reference/file-conventions/public-folder)
-- [File Upload Security Best Practices](https://moldstud.com/articles/p-handling-file-uploads-in-nextjs-best-practices-and-security-considerations)
+### OKR/Hierarchy Patterns
+- [OKR Hierarchy Examples - Broadcom Rally](https://techdocs.broadcom.com/us/en/ca-enterprise-software/valueops/rally/rally-help/planning/objectives-and-key-results-okrs/create-an-okr-hierarchy-in-rally/examples-of-okr-hierarchies.html)
+- [OKR Best Practices 2026 - Synergita](https://www.synergita.com/blog/okr-best-practices/)
+- [OKRs Guide - Mooncamp](https://mooncamp.com/okr)
 
-### Docker/Storage
-- [Docker Volumes Documentation](https://docs.docker.com/engine/storage/volumes/)
-- [Docker Data Persistence Guide](https://www.bibekgupta.com/blog/2025/04/docker-volumes-data-persistence-guide)
-- [Docker Volume Mount Fixes](https://markaicode.com/docker-v25-volume-mount-fixes/)
+### KPI Calculation Edge Cases
+- [Power BI KPI Matrix Zero Target Issue](https://community.fabric.microsoft.com/t5/Power-Query/Power-BI-KPI-Matrix-Displaying-Zero-Target-Value/td-p/2270460)
+- [KPI Score Calculation with Negative Actuals - SAP Community](https://community.sap.com/t5/financial-management-q-a/score-calculation-for-kpis-where-actuals-are-negative/qaq-p/6973692)
+- [How to Calculate KPIs and Create a Scorecard - BSC Designer](https://bscdesigner.com/calculate-metrics.htm)
+- [Target and Actuals KPI Types - CAM Management](https://interplan.cammanagementsolutions.com.au/UserManual/performance_measurement/kpis/kpi_types/target_and_actuals.htm)
 
-### Dashboard Layouts
-- [React-Grid-Layout GitHub](https://github.com/react-grid-layout/react-grid-layout)
-- [Building Dashboard Widgets - AntStack](https://medium.com/@antstack/building-customizable-dashboard-widgets-using-react-grid-layout-234f7857c124)
-- [Interactive Dashboards with React-Grid-Layout - ilert](https://www.ilert.com/blog/building-interactive-dashboards-why-react-grid-layout-was-our-best-choice)
-- [Layout Persistence Issue #883](https://github.com/STRML/react-grid-layout/issues/883)
+### Excel Export in Next.js
+- [How to Download xlsx Files from a Next.js Route Handler - Dave Gray](https://www.davegray.codes/posts/how-to-download-xlsx-files-from-a-nextjs-route-handler)
+- [ExcelJS on npm](https://www.npmjs.com/package/exceljs)
+- [ExcelJS GitHub](https://github.com/exceljs/exceljs)
+- [SheetJS Community Edition - Next.js Docs](https://docs.sheetjs.com/docs/demos/static/nextjs/)
 
-### User Settings
-- [Default/Override Schema Pattern](https://double.finance/blog/default_override)
-- [Designing User Settings Database Table](https://basila.medium.com/designing-a-user-settings-database-table-e8084fcd1f67)
-- [Storing User Customisations - DEV](https://dev.to/imthedeveloper/storing-user-customisations-and-settings-how-do-you-do-it-1017)
+### Tree View / Hierarchy UX
+- [Tree Data in React Tables - Simple Table](https://www.simple-table.com/blog/react-tree-data-hierarchical-tables)
+- [Designing UI for Tree Data - Retool](https://retool.com/blog/designing-a-ui-for-tree-data)
+- [API Design for a React Tree Table - Robin Wieruch](https://www.robinwieruch.de/react-tree-list/)
 
-### Role-Based Access
-- [React RBAC Authorization - Permit.io](https://www.permit.io/blog/implementing-react-rbac-authorization)
-- [React-Admin RBAC](https://marmelab.com/react-admin/AuthRBAC.html)
-- [Conditional React UI Based on Permissions](https://medium.com/geekculture/how-to-conditionally-render-react-ui-based-on-user-permissions-7b9a1c73ffe2)
+### Data Grouping / Normalization
+- [Database Normalization Description - Microsoft Learn](https://learn.microsoft.com/en-us/troubleshoot/microsoft-365-apps/access/database-normalization-description)
+- [Exploring Database Normalization Effects on SQL Generation](https://arxiv.org/html/2510.01989v1)
+
+### Timeline Visualization & Overlap
+- [Timeline Graph Visualization - Handling Overlaps - Tom Sawyer Software](https://blog.tomsawyer.com/timeline-graph-visualization)
+- [KronoGraph Timeline Visualization - Cambridge Intelligence](https://cambridge-intelligence.com/kronograph/)
+
+### KPI Dashboard Design
+- [The Engineering KPI Trap - Appfire](https://appfire.com/resources/blog/engineering-kpis-that-matter)
+- [KPI Dashboards Comprehensive Guide - SimpleKPI](https://www.simplekpi.com/Blog/KPI-Dashboards-a-comprehensive-guide)
+
+---
+*Pitfalls research for: OKR/Initiative Management with KPI Tracking, Date Intelligence & Excel Export*
+*Researched: 2026-01-26*

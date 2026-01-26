@@ -2299,3 +2299,735 @@ model Contact {
 
 *Architecture research for v1.4: 2026-01-24*
 *Confidence: HIGH - verified against existing codebase patterns and official Prisma documentation*
+
+---
+
+# Architecture Research: v1.5 Initiative Intelligence Features
+
+**Domain:** OKR/Initiative Management with KPI Tracking, Date Intelligence & Export
+**Researched:** 2026-01-26
+**Confidence:** HIGH (based on direct codebase analysis + verified patterns)
+
+## Executive Summary
+
+The v1.5 features (By Objective view, KPI tracking, date intelligence, Excel export) integrate naturally into the existing SAAP architecture. The codebase already has: (1) the Initiative model with `objective` enum and `keyResult` string providing the grouping hierarchy, (2) Projects linked to initiatives via `initiativeId` foreign key enabling KPI aggregation, (3) `date-fns` and date utilities already in use, and (4) `xlsx` (SheetJS) already in `package.json` though unused in source code. No new dependencies are required.
+
+The key architectural decision is whether the "By Objective" view replaces the current flat table on `/initiatives` or becomes a new tab/view mode within the existing page. Based on the project context stating it "replaces Table as default," the recommended approach is a tabbed view system on the `/initiatives` page where "By Objective" is the default tab and "Table" becomes a secondary tab.
+
+---
+
+## System Overview
+
+### Current Architecture (As-Is)
+
+```
++------------------+     +-------------------+     +------------------+
+|   Sidebar Nav    |     |  Page (Server)    |     |  API Routes      |
+|                  |     |                   |     |                  |
+| / Dashboard      |---->| RSC: fetch data   |     | /api/initiatives |
+| /timeline        |     | via Prisma        |     | /api/initiatives/|
+| /kanban          |     | serialize dates   |     |   [id]           |
+| /calendar        |     | pass to client    |     | /api/initiatives/|
+| /initiatives     |     | component         |     |   reorder        |
+|   /initiatives/  |     +-------------------+     | /api/dashboard/  |
+|     [id]         |            |                  |   stats          |
++------------------+            v                  +------------------+
+                    +-------------------+                   |
+                    | Client Component  |                   |
+                    |                   |<--fetch()---------+
+                    | - Local state     |   (mutations)
+                    | - Filters         |
+                    | - Render UI       |
+                    +-------------------+
+```
+
+### Proposed Architecture (To-Be) for v1.5
+
+```
++------------------+     +-----------------------------+     +---------------------+
+|   Sidebar Nav    |     |  /initiatives (Server)      |     |  API Routes         |
+|                  |     |                             |     |                     |
+| /initiatives     |---->| RSC: fetch initiatives      |     | /api/initiatives    |
+|   (default view) |     |   + linked project data     |     |   GET (with         |
+|                  |     |   + KPI aggregation         |     |   ?include=projects)|
+|                  |     |   serialize & pass to:      |     |                     |
++------------------+     +-----------------------------+     | /api/initiatives/   |
+                                    |                        |   export            |
+                    +---------------+                        |   (Excel download)  |
+                    v                                        |                     |
+        +---------------------------+                        | /api/initiatives/   |
+        | InitiativesClient         |                        |   date-analysis     |
+        | (Tab Controller)          |                        |   (date intel)      |
+        |                           |                        +---------------------+
+        | [By Objective] [Table]    |
+        +-----|--------|------------+
+              |        |
+     +--------+        +----------+
+     v                            v
++------------------+   +------------------+
+| ObjectiveView    |   | TableView        |
+| (grouped tree)   |   | (existing flat   |
+|                  |   |  table)          |
+| OBJ1_SCALE_EVT   |   +------------------+
+|  KR1.1           |
+|   Initiative A   |
+|   Initiative B   |
+|  KR1.2           |
+|   Initiative C   |
+| OBJ2_BUILD_AI    |
+|  KR2.1           |
+|   Initiative D   |
++------------------+
+```
+
+---
+
+## Component Responsibilities
+
+### New Components
+
+| Component | Location | Responsibility | Communicates With |
+|-----------|----------|----------------|-------------------|
+| `InitiativesClient` | `src/components/initiatives/initiatives-client.tsx` | Tab controller: manages active view, filters, toolbar. Replaces current `InitiativesList` as the top-level client component | Page server component (receives data), child view components |
+| `ObjectiveView` | `src/components/initiatives/objective-view.tsx` | Renders Objective > KR > Initiative hierarchy with collapsible groups, KPI summary per group | `InitiativesClient` (receives filtered data), `ObjectiveGroupCard` |
+| `ObjectiveGroupCard` | `src/components/initiatives/objective-group-card.tsx` | Renders a single Objective section with its KR groups | `ObjectiveView`, `KRGroupCard` |
+| `KRGroupCard` | `src/components/initiatives/kr-group-card.tsx` | Renders a KR group with its initiative rows, shows aggregate KPI | `ObjectiveGroupCard`, `InitiativeRow` |
+| `InitiativeRow` | `src/components/initiatives/initiative-row.tsx` | Compact initiative display with KPI indicators (target, actual, progress bar) | `KRGroupCard` |
+| `KPIDisplay` | `src/components/initiatives/kpi-display.tsx` | Reusable KPI target/actual/progress display | Used in `InitiativeRow`, `KRGroupCard`, `ObjectiveGroupCard` |
+| `DateIntelligencePanel` | `src/components/initiatives/date-intelligence-panel.tsx` | Displays date analysis results: duration, overlaps, gaps, warnings | `InitiativesClient` toolbar area |
+| `ExportButton` | `src/components/initiatives/export-button.tsx` | Triggers Excel download via API route | Toolbar in `InitiativesClient` |
+
+### Modified Existing Components
+
+| Component | Current Location | Modification |
+|-----------|-----------------|--------------|
+| `InitiativesList` | `src/components/initiatives/initiatives-list.tsx` | Rename to `TableView` or keep as-is and embed within `InitiativesClient` as the "Table" tab content |
+| Initiatives page | `src/app/(dashboard)/initiatives/page.tsx` | Expand Prisma query to include `projects` relation (for KPI data); pass enriched data to `InitiativesClient` |
+| Initiative detail | `src/components/initiatives/initiative-detail.tsx` | Add KPI fields display (target, actual, progress) |
+| Initiative form | `src/components/initiatives/initiative-form.tsx` | Add KPI target fields (targetRevenue, targetProjects, etc.) |
+
+### New API Routes
+
+| Route | Method | Purpose |
+|-------|--------|---------|
+| `/api/initiatives/export` | GET | Generate Excel file from initiative data with query param filters |
+| `/api/initiatives/date-analysis` | GET | Return date intelligence (durations, overlaps, warnings) |
+
+### New Utility Modules
+
+| Module | Location | Purpose |
+|--------|----------|---------|
+| `initiative-utils.ts` | `src/lib/initiative-utils.ts` | Group initiatives by objective/KR, calculate KPI aggregations |
+| `date-intelligence.ts` | `src/lib/date-intelligence.ts` | Analyze dates: duration calc, overlap detection, gap analysis, validation |
+| `export-utils.ts` | `src/lib/export-utils.ts` | Transform initiative data to Excel-friendly format, configure worksheets |
+
+---
+
+## Recommended Integration Structure
+
+### File Organization
+
+```
+src/
+  app/
+    (dashboard)/
+      initiatives/
+        page.tsx                    # MODIFY: expand query, pass enriched data
+        [id]/
+          page.tsx                  # MODIFY: include projects in query
+    api/
+      initiatives/
+        route.ts                   # MODIFY: add ?include=projects param
+        [id]/
+          route.ts                 # MODIFY: include project aggregation
+        export/
+          route.ts                 # NEW: Excel export endpoint
+        date-analysis/
+          route.ts                 # NEW: Date intelligence endpoint
+
+  components/
+    initiatives/
+      initiatives-client.tsx       # NEW: Tab controller (replaces InitiativesList as page root)
+      initiatives-list.tsx         # KEEP: becomes "Table" tab content
+      initiative-detail.tsx        # MODIFY: add KPI display
+      initiative-form.tsx          # MODIFY: add KPI target fields
+      objective-view.tsx           # NEW: Objective hierarchy view
+      objective-group-card.tsx     # NEW: Objective section
+      kr-group-card.tsx            # NEW: KR section
+      initiative-row.tsx           # NEW: Compact initiative with KPI
+      kpi-display.tsx              # NEW: Reusable KPI visualization
+      date-intelligence-panel.tsx  # NEW: Date analysis results
+      export-button.tsx            # NEW: Export trigger
+
+  lib/
+    initiative-utils.ts            # NEW: Grouping + KPI calculation
+    date-intelligence.ts           # NEW: Date analysis logic
+    export-utils.ts                # NEW: Excel generation helpers
+    utils.ts                       # MODIFY: add KPI formatting helpers
+
+  types/
+    initiative.ts                  # NEW: Initiative-specific types (KPI, grouped data)
+```
+
+### Database Schema Changes
+
+```prisma
+model Initiative {
+  // ... existing fields ...
+
+  // NEW: KPI target fields
+  targetRevenue         Decimal?     @map("target_revenue") @db.Decimal(12, 2)
+  targetProjects        Int?         @map("target_projects")
+  targetCustomMetric    String?      @map("target_custom_metric") @db.VarChar(500)
+
+  // KPI actuals are COMPUTED from linked Projects, not stored
+  // This follows the existing pattern where Project.revenue exists
+  // and Initiative.projects[] relation provides aggregation source
+}
+```
+
+**Important architectural decision:** KPI "actual" values should be COMPUTED from linked Projects at query time, NOT stored on Initiative. This avoids stale data and follows the existing pattern where `Project.revenue` is the source of truth.
+
+The computed KPIs are:
+- `actualRevenue` = SUM of linked projects' revenue
+- `actualProjects` = COUNT of linked projects
+- `completedProjects` = COUNT of linked projects with status COMPLETED
+- `totalCosts` = SUM of costs across linked projects
+
+---
+
+## Architectural Patterns
+
+### Pattern 1: Server-Side Data Enrichment
+
+**What:** The RSC page component fetches initiatives WITH related project data and pre-computes KPI aggregations before passing to client components.
+
+**Why:** This avoids N+1 API calls from the client. The existing codebase already does this -- see how `/initiatives/page.tsx` fetches via Prisma and serializes, and how `/(dashboard)/page.tsx` pre-computes all dashboard stats server-side.
+
+**Implementation:**
+
+```typescript
+// src/app/(dashboard)/initiatives/page.tsx
+async function getInitiativesWithKPIs() {
+  const initiatives = await prisma.initiative.findMany({
+    orderBy: { sequenceNumber: 'asc' },
+    include: {
+      projects: {
+        select: {
+          id: true,
+          title: true,
+          status: true,
+          revenue: true,
+          costs: {
+            select: { amount: true },
+          },
+        },
+      },
+    },
+  })
+
+  return initiatives.map(i => ({
+    ...i,
+    startDate: i.startDate.toISOString(),
+    endDate: i.endDate.toISOString(),
+    createdAt: i.createdAt.toISOString(),
+    updatedAt: i.updatedAt.toISOString(),
+    resourcesFinancial: i.resourcesFinancial ? Number(i.resourcesFinancial) : null,
+    targetRevenue: i.targetRevenue ? Number(i.targetRevenue) : null,
+    // Computed KPIs
+    kpi: {
+      actualRevenue: i.projects.reduce((sum, p) => sum + (Number(p.revenue) || 0), 0),
+      projectCount: i.projects.length,
+      completedProjects: i.projects.filter(p => p.status === 'COMPLETED').length,
+      totalCosts: i.projects.reduce((sum, p) =>
+        sum + p.costs.reduce((cs, c) => cs + Number(c.amount), 0), 0),
+    },
+    projects: undefined, // Don't send raw project data to client
+  }))
+}
+```
+
+**Existing precedent:** `src/app/(dashboard)/page.tsx` lines 13-111 follow this exact pattern -- server-side aggregation passed to client.
+
+
+### Pattern 2: Client-Side Grouping with Shared Data
+
+**What:** The `InitiativesClient` component receives a flat array of enriched initiatives. Each view tab (Objective, Table, etc.) receives the same filtered data and groups it as needed. The grouping logic lives in a shared utility module.
+
+**Why:** This keeps data fetching centralized (one query), avoids redundant API calls when switching tabs, and allows filters to apply across all views.
+
+**Implementation:**
+
+```typescript
+// src/lib/initiative-utils.ts
+export interface ObjectiveGroup {
+  objective: Objective
+  label: string
+  krGroups: KRGroup[]
+  summary: {
+    total: number
+    completed: number
+    atRisk: number
+    targetRevenue: number
+    actualRevenue: number
+  }
+}
+
+export interface KRGroup {
+  keyResult: string
+  initiatives: EnrichedInitiative[]
+  summary: {
+    total: number
+    completed: number
+    targetRevenue: number
+    actualRevenue: number
+  }
+}
+
+export function groupByObjective(initiatives: EnrichedInitiative[]): ObjectiveGroup[] {
+  // Group by objective enum -> then by keyResult string
+  // Sort objectives by enum order, KRs by natural sort (KR1.1, KR1.2, etc.)
+  // Calculate summary stats per group
+}
+```
+
+**Existing precedent:** The Kanban board groups initiatives by status column. The Timeline page groups by department. The "By Objective" view follows the same pattern but groups by objective then KR.
+
+
+### Pattern 3: API Route for File Generation
+
+**What:** Excel export is handled by a dedicated API route that generates the file server-side and returns it as a binary response. The client triggers download via a simple anchor/fetch.
+
+**Why:** The `xlsx` library is already in dependencies. Server-side generation avoids sending large datasets to the client. The existing API route pattern (`/api/initiatives/route.ts`) provides the template.
+
+**Implementation:**
+
+```typescript
+// src/app/api/initiatives/export/route.ts
+import XLSX from 'xlsx'
+
+export async function GET(request: NextRequest) {
+  const { error } = await requireAuth()
+  if (error) return error
+
+  const initiatives = await prisma.initiative.findMany({
+    orderBy: { sequenceNumber: 'asc' },
+    include: { projects: { select: { revenue: true, status: true } } },
+  })
+
+  const data = initiatives.map(i => ({
+    '#': i.sequenceNumber,
+    'Objective': formatObjective(i.objective),
+    'Key Result': i.keyResult,
+    'Initiative': i.title,
+    'Department': formatDepartment(i.department),
+    'Status': formatStatus(i.status),
+    'Owner': formatTeamMember(i.personInCharge),
+    'Start Date': formatDate(i.startDate),
+    'End Date': formatDate(i.endDate),
+    'Target Revenue': i.targetRevenue ? Number(i.targetRevenue) : '',
+    'Actual Revenue': i.projects.reduce((s, p) => s + (Number(p.revenue) || 0), 0),
+    'Projects': i.projects.length,
+  }))
+
+  const ws = XLSX.utils.json_to_sheet(data)
+  const wb = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(wb, ws, 'Initiatives')
+
+  const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' })
+
+  return new Response(buf, {
+    headers: {
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Disposition': `attachment; filename="SAAP-Initiatives-${new Date().toISOString().slice(0,10)}.xlsx"`,
+    },
+  })
+}
+```
+
+**Existing precedent:** `xlsx` is already in `package.json` (v0.18.5). The API route pattern with `requireAuth()` is used in all existing routes.
+
+
+### Pattern 4: Pure Function Date Intelligence
+
+**What:** Date intelligence is implemented as pure utility functions that take initiative date arrays and return analysis results. This can be called both server-side (for API route) and could be used client-side if needed.
+
+**Why:** Date analysis is stateless computation -- it doesn't need database access beyond the initiative dates. Pure functions are testable and reusable.
+
+**Implementation:**
+
+```typescript
+// src/lib/date-intelligence.ts
+import { differenceInDays, areIntervalsOverlapping, isAfter, isBefore } from 'date-fns'
+
+export interface DateAnalysis {
+  initiatives: InitiativeDateInfo[]
+  overlaps: DateOverlap[]
+  gaps: DateGap[]
+  warnings: DateWarning[]
+  summary: {
+    averageDuration: number      // days
+    shortestDuration: number
+    longestDuration: number
+    totalOverlaps: number
+    criticalWarnings: number
+  }
+}
+
+export interface DateWarning {
+  type: 'PAST_DUE' | 'ZERO_DURATION' | 'END_BEFORE_START' | 'VERY_LONG' | 'VERY_SHORT'
+  initiativeId: string
+  message: string
+  severity: 'error' | 'warning' | 'info'
+}
+
+export function analyzeDates(initiatives: { id: string; title: string; startDate: string; endDate: string; status: string }[]): DateAnalysis {
+  // 1. Calculate duration for each initiative
+  // 2. Detect overlaps between same-owner or same-KR initiatives
+  // 3. Find gaps between sequential initiatives in same KR
+  // 4. Validate date integrity (end > start, not zero-length, etc.)
+  // 5. Flag past-due initiatives that aren't completed
+}
+```
+
+**Existing precedent:** `src/lib/date-utils.ts` already uses `date-fns` for date calculations. The new module extends this pattern for initiative-specific analysis.
+
+---
+
+## Data Flow
+
+### KPI Calculation Flow
+
+```
+Database                     Server Component              Client Component
+--------                     ----------------              ----------------
+Initiative table    --->     Prisma query with             Receives pre-computed
+  + objective                include: { projects }         KPI data per initiative
+  + keyResult
+  + targetRevenue   --->     Compute per-initiative:       Groups by objective/KR
+  + startDate/end            - actualRevenue (SUM)         Aggregates KPI per group
+                             - projectCount
+Project table       --->     - completedProjects           Renders progress bars
+  + revenue                  - totalCosts                  and KPI cards
+  + status
+  + initiativeId    --->     Serialize to JSON    ------>   Display in:
+                                                           - ObjectiveView
+Cost table          --->     (nested in project            - InitiativeRow
+  + amount                    aggregation)                 - KPIDisplay
+  + projectId
+```
+
+**Key principle:** KPI actuals are NEVER stored on Initiative. They are computed from linked Projects at query time. This ensures data consistency.
+
+
+### Date Intelligence Flow
+
+```
+User clicks "Date Analysis"
+         |
+         v
+Client Component (DateIntelligencePanel)
+         |
+         | (uses pre-loaded initiative data from page)
+         v
+Pure function: analyzeDates(initiatives)
+         |
+         | Returns DateAnalysis object
+         v
+Client renders:
+  - Duration bars per initiative
+  - Overlap highlights (same owner, same KR)
+  - Warnings panel (past due, invalid dates)
+  - Summary statistics
+```
+
+**Alternative approach:** If the analysis is expensive (many initiatives), it can be an API route (`/api/initiatives/date-analysis`) that runs server-side. But with 28 initiatives, client-side is fine. The utility is written as a pure function that works in both environments.
+
+
+### Export Flow
+
+```
+User clicks "Export" button
+         |
+         v
+ExportButton component
+         |
+         | window.open('/api/initiatives/export?filters=...')
+         | OR: fetch() + blob download
+         v
+API Route: /api/initiatives/export/route.ts
+         |
+         | 1. requireAuth() check
+         | 2. Parse query params (filters)
+         | 3. Prisma query with includes
+         | 4. Transform to export format
+         | 5. XLSX.utils.json_to_sheet()
+         | 6. XLSX.write(wb, { type: 'buffer' })
+         v
+Response: binary .xlsx file
+  Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+  Content-Disposition: attachment; filename="SAAP-Initiatives-2026-01-26.xlsx"
+```
+
+**Client download pattern:**
+
+```typescript
+// Simple: browser handles download
+const handleExport = () => {
+  const params = new URLSearchParams()
+  if (statusFilter !== 'all') params.set('status', statusFilter)
+  if (departmentFilter !== 'all') params.set('department', departmentFilter)
+  window.open(`/api/initiatives/export?${params.toString()}`)
+}
+```
+
+
+### By Objective View Data Flow
+
+```
+Server Component: initiatives/page.tsx
+         |
+         | Prisma: initiative.findMany({
+         |   include: { projects: { select: { revenue, status, costs } } }
+         | })
+         |
+         | Compute KPI per initiative
+         v
+InitiativesClient (receives flat array)
+         |
+         | Active tab state: 'objective' | 'table' | ...
+         | Applied filters (status, department, search)
+         v
+         +--- Tab: "By Objective" (default)
+         |         |
+         |         | groupByObjective(filteredInitiatives)
+         |         v
+         |    ObjectiveView
+         |         |
+         |         +-- OBJ1_SCALE_EVENTS (ObjectiveGroupCard)
+         |         |     |
+         |         |     +-- KR1.1 (KRGroupCard)
+         |         |     |     +-- Initiative row + KPI
+         |         |     |     +-- Initiative row + KPI
+         |         |     +-- KR1.2 (KRGroupCard)
+         |         |           +-- Initiative row + KPI
+         |         |
+         |         +-- OBJ2_BUILD_AI_TRAINING (ObjectiveGroupCard)
+         |               |
+         |               +-- KR2.1 (KRGroupCard)
+         |                     +-- Initiative row + KPI
+         |
+         +--- Tab: "Table"
+                   |
+                   | (existing InitiativesList component)
+                   v
+              Flat table view (current behavior)
+```
+
+---
+
+## Suggested Build Order
+
+The features have clear dependencies that dictate build order:
+
+### Phase 1: Schema + KPI Foundation (prerequisite for everything)
+
+**What to build:**
+1. Add `targetRevenue`, `targetProjects`, `targetCustomMetric` fields to Initiative schema
+2. Create `src/lib/initiative-utils.ts` with grouping and KPI computation functions
+3. Create `src/types/initiative.ts` with TypeScript interfaces
+4. Modify initiatives page to include projects in Prisma query
+5. Modify initiative form to accept KPI target fields
+6. Modify initiative detail to show KPI actuals
+
+**Why first:** The By Objective view and Date Intelligence both need enriched initiative data. KPI fields need to exist before views can display them.
+
+**Dependencies:** None (foundation layer)
+
+### Phase 2: By Objective View (core new feature)
+
+**What to build:**
+1. Create `InitiativesClient` tab controller
+2. Create `ObjectiveView`, `ObjectiveGroupCard`, `KRGroupCard`, `InitiativeRow`
+3. Create `KPIDisplay` reusable component
+4. Integrate into initiatives page, setting "By Objective" as default tab
+5. Move existing `InitiativesList` to be "Table" tab content
+
+**Why second:** This is the primary new view that users interact with. It uses the KPI data from Phase 1.
+
+**Dependencies:** Phase 1 (KPI data, grouping utils)
+
+### Phase 3: Date Intelligence (analysis layer)
+
+**What to build:**
+1. Create `src/lib/date-intelligence.ts` pure functions
+2. Create `DateIntelligencePanel` component
+3. Add to `InitiativesClient` toolbar (toggle panel)
+4. Optionally create API route for server-side analysis
+
+**Why third:** Date intelligence is an analysis overlay on existing initiative data. It doesn't block other features and adds analytical value on top of the view.
+
+**Dependencies:** Phase 1 (enriched initiative data available in client)
+
+### Phase 4: Excel Export (output layer)
+
+**What to build:**
+1. Create `src/lib/export-utils.ts`
+2. Create API route `/api/initiatives/export/route.ts`
+3. Create `ExportButton` component
+4. Add to `InitiativesClient` toolbar
+5. Support current filter state in export (filtered export)
+
+**Why last:** Export is a read-only output feature. It should include KPI data and respects current filters. Building it last means it can export the richest possible data.
+
+**Dependencies:** Phase 1 (KPI data to include in export), benefits from Phase 2 being done (can export grouped data)
+
+### Dependency Graph
+
+```
+Phase 1: Schema + KPI Foundation
+    |
+    +---> Phase 2: By Objective View
+    |         |
+    +---> Phase 3: Date Intelligence
+    |
+    +---> Phase 4: Excel Export
+              (benefits from Phase 2 but not blocked by it)
+```
+
+Phases 2, 3, and 4 can technically be built in parallel after Phase 1, but the recommended serial order (2, 3, 4) reflects user value priority and testing logistics.
+
+---
+
+## Anti-Patterns to Avoid
+
+### Anti-Pattern 1: Storing Computed KPIs on Initiative
+
+**What:** Adding `actualRevenue`, `actualProjects` fields to the Initiative model.
+
+**Why bad:** Creates stale data. When a Project's revenue changes, the Initiative's stored value becomes incorrect. Requires sync triggers or cron jobs to keep in sync -- error-prone and over-engineered for 28 initiatives.
+
+**Instead:** Compute KPI actuals at query time using Prisma includes. With 28 initiatives and a handful of projects each, the query cost is negligible.
+
+
+### Anti-Pattern 2: Separate Pages for Each View
+
+**What:** Creating `/initiatives/by-objective`, `/initiatives/table`, etc. as separate routes.
+
+**Why bad:** The current codebase already has `/kanban`, `/timeline`, `/calendar` as separate pages that duplicate the initiative data-fetching logic. This has led to subtle inconsistencies (e.g., kanban fetches with `position` ordering, timeline with `department` ordering, calendar with different field selection). Adding more separate pages compounds this.
+
+**Instead:** Consolidate views into a single `/initiatives` page with tab-based view switching. The data is fetched once by the server component and each tab renders a different view of the same data. This is more maintainable and ensures data consistency.
+
+**Note:** The existing separate pages (Kanban, Timeline, Calendar) should ideally be consolidated too in a future refactor, but that is out of scope for v1.5. For v1.5, at minimum the "By Objective" and "Table" views should share the same page.
+
+
+### Anti-Pattern 3: Client-Side KPI Computation
+
+**What:** Sending raw Project data to the client and computing KPIs in React components.
+
+**Why bad:** Increases payload size (all project + cost data sent to browser), duplicates computation on every render, and exposes potentially sensitive financial data to the client that the user may not have permission to see.
+
+**Instead:** Compute KPIs server-side in the RSC page component. Send only the computed summary values to the client.
+
+
+### Anti-Pattern 4: Complex Multi-Sheet Excel with Client-Side Generation
+
+**What:** Using `xlsx` on the client side with `XLSX.writeFile()` to generate multi-tab workbooks.
+
+**Why bad:** Requires sending all raw data to the client, increases bundle size, and the xlsx library is 1MB+ which impacts client performance.
+
+**Instead:** Use a Next.js API route to generate the Excel server-side. The client just triggers a download. This is the recommended pattern per SheetJS documentation for Next.js App Router.
+
+
+### Anti-Pattern 5: Over-Engineering Date Intelligence
+
+**What:** Building a real-time date conflict resolution system with automatic rescheduling.
+
+**Why bad:** With 28 initiatives, the date analysis is informational. Users want to SEE overlaps and issues, not have the system auto-fix them. Auto-rescheduling adds massive complexity for minimal value.
+
+**Instead:** Date intelligence should be READ-ONLY analysis. Show warnings, overlaps, and durations. Let users make manual adjustments based on the insights.
+
+---
+
+## Scalability Considerations
+
+| Concern | At 28 Initiatives (current) | At 100 Initiatives | At 500+ Initiatives |
+|---------|----------------------------|--------------------|--------------------|
+| KPI computation | Inline in RSC, no optimization needed | Still fine inline; consider caching query results | Add database views or materialized aggregation |
+| By Objective grouping | Client-side grouping of flat array | Client-side still fine | Consider server-side grouping, pagination per group |
+| Date intelligence | Client-side pure function | Client-side fine | Move to API route; paginate overlap detection |
+| Excel export | Single query, single sheet | Single query, still fine | Add streaming response; consider chunked export |
+| Page load time | Under 200ms | Under 500ms | Consider selective include, pagination |
+
+**For v1.5 with 28 initiatives:** No scalability optimizations are needed. Simple, straightforward implementation is the right choice.
+
+---
+
+## Integration Points with Existing Codebase
+
+### Reusable Components from shadcn/ui
+
+| shadcn Component | Where Used in v1.5 |
+|------------------|--------------------|
+| `Tabs, TabsList, TabsTrigger, TabsContent` | View switching in `InitiativesClient` (already have `@radix-ui/react-tabs` in deps) |
+| `Collapsible, CollapsibleTrigger, CollapsibleContent` | Expand/collapse Objective and KR groups (already have `@radix-ui/react-collapsible`) |
+| `Progress` | KPI progress bars (already used in `kpi-cards.tsx`) |
+| `Badge` | Status badges, KR labels (already extensively used) |
+| `Card, CardContent, CardHeader` | Group cards for Objective/KR sections (existing pattern) |
+| `Button` | Export button, expand/collapse triggers (existing pattern) |
+| `Tooltip` | Hover details for KPI values (already have `@radix-ui/react-tooltip`) |
+
+### Reusable Utilities from Existing Code
+
+| Utility | Source | Use in v1.5 |
+|---------|--------|-------------|
+| `formatObjective()` | `src/lib/utils.ts` | Objective group headers |
+| `formatStatus()`, `getStatusColor()` | `src/lib/utils.ts` | Initiative status in rows |
+| `formatCurrency()` | `src/lib/utils.ts` | KPI revenue display |
+| `formatDate()` | `src/lib/utils.ts` | Date display in rows |
+| `formatTeamMember()` | `src/lib/utils.ts` | Owner display |
+| `calculateProgress()` | `src/lib/utils.ts` | KPI progress calculation |
+| `OBJECTIVE_OPTIONS` | `src/lib/utils.ts` | Objective enum labels |
+| `requireAuth()`, `requireEditor()` | `src/lib/auth-utils.ts` | API route auth |
+| date-fns functions | `src/lib/date-utils.ts` | Date intelligence calculations |
+
+### Existing Patterns to Follow
+
+1. **Server-side data fetching:** Follow `initiatives/page.tsx` pattern -- RSC fetches via Prisma, serializes, passes to client
+2. **API route structure:** Follow `/api/initiatives/route.ts` pattern -- auth check, try/catch, NextResponse.json()
+3. **Client component state:** Follow `InitiativesList` pattern -- useState for filters, derive filtered list, render
+4. **Dialog/Modal pattern:** Follow existing Dialog usage for initiative detail views
+5. **Color coding:** Follow `getStatusColor()` and `getDepartmentColor()` patterns for consistent styling
+
+---
+
+## Sources
+
+- Direct codebase analysis of the SAAP2026v2 repository (HIGH confidence)
+- Prisma schema: `prisma/schema.prisma` -- Initiative model fields, Project relation, enum definitions
+- Existing patterns: `src/app/(dashboard)/page.tsx`, `src/components/dashboard/dashboard-client.tsx`, `src/components/initiatives/initiatives-list.tsx`
+- [SheetJS Community Edition -- Next.js integration](https://docs.sheetjs.com/docs/demos/static/nextjs/) -- Excel export patterns
+- [How to Download xlsx Files from a Next.js Route Handler](https://www.davegray.codes/posts/how-to-download-xlsx-files-from-a-nextjs-route-handler) -- Route handler export pattern
+- [OKR Hierarchy Tree View patterns (Holaspirit)](https://help.holaspirit.com/en/article/visualize-the-okr-hierarchy-1iarh3u/) -- Visual hierarchy patterns
+- [OKR hub -- Jira Align](https://help.jiraalign.com/hc/en-us/articles/9537263535252-OKR-hub) -- Card-based OKR hierarchy
+- [Microsoft Viva Goals -- Understanding views](https://learn.microsoft.com/en-us/viva/goals/understanding-views) -- List + tree hybrid pattern
+- [Synergita -- Exploring Hierarchy Tree](https://okrsupport.synergita.com/support/solutions/articles/4000201295-exploring-hierarchy-tree) -- Expandable tree pattern
+- package.json already includes `xlsx@0.18.5`, `date-fns@4.1.0`, `@radix-ui/react-tabs`, `@radix-ui/react-collapsible`
+
+---
+
+## Confidence Assessment (v1.5)
+
+| Area | Confidence | Rationale |
+|------|------------|-----------|
+| By Objective View | HIGH | Grouping logic is simple; existing data model has objective + keyResult fields ready |
+| KPI Tracking | HIGH | Project-Initiative FK exists; server-side aggregation follows existing dashboard pattern |
+| Date Intelligence | HIGH | date-fns already in use; pure function analysis is straightforward |
+| Excel Export | HIGH | xlsx already in package.json; API route pattern well-established |
+| Schema Changes | HIGH | Only 3 nullable fields added to Initiative; fully backward compatible |
+| Build Order | HIGH | Clear dependency chain; Phase 1 is foundation for all others |
+
+---
+
+*Architecture research for v1.5: 2026-01-26*
+*Confidence: HIGH -- based on direct analysis of all relevant source files in the codebase*
