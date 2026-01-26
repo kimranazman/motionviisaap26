@@ -12,13 +12,15 @@ import { FolderOpen } from 'lucide-react'
 import type { Initiative } from '@/components/objectives/objective-hierarchy'
 import { KpiProgressBar } from '@/components/objectives/kpi-progress-bar'
 import { calculateKpi, type InitiativeWithKpiAndProjects } from '@/lib/initiative-kpi-utils'
+import { DateBadges } from '@/components/objectives/date-badges'
 
 interface InitiativeRowProps {
   initiative: Initiative
   onClick: () => void
+  overlapCount: number
 }
 
-export function InitiativeRow({ initiative, onClick }: InitiativeRowProps) {
+export function InitiativeRow({ initiative, onClick, overlapCount }: InitiativeRowProps) {
   // Build KPI data from initiative (fields are optional)
   const kpiInput: InitiativeWithKpiAndProjects = {
     kpiLabel: initiative.kpiLabel ?? null,
@@ -46,6 +48,14 @@ export function InitiativeRow({ initiative, onClick }: InitiativeRowProps) {
         <p className="font-medium text-gray-900">
           {initiative.title}
         </p>
+
+        {/* Date intelligence badges */}
+        <DateBadges
+          startDate={initiative.startDate}
+          endDate={initiative.endDate}
+          status={initiative.status}
+          overlapCount={overlapCount}
+        />
 
         {/* KPI Progress Bar */}
         <KpiProgressBar

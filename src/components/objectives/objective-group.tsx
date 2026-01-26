@@ -19,6 +19,7 @@ interface ObjectiveGroupProps {
   onToggleObjective: () => void
   onToggleKR: (key: string) => void
   onInitiativeClick: (initiative: Initiative) => void
+  overlapMap: Map<string, number>
 }
 
 export function ObjectiveGroup({
@@ -28,6 +29,7 @@ export function ObjectiveGroup({
   onToggleObjective,
   onToggleKR,
   onInitiativeClick,
+  overlapMap,
 }: ObjectiveGroupProps) {
   const otherCount =
     group.totalInitiatives -
@@ -106,6 +108,7 @@ export function ObjectiveGroup({
                 isExpanded={expandedKRs.has(group.objective + ':' + kr.keyResult)}
                 onToggle={() => onToggleKR(group.objective + ':' + kr.keyResult)}
                 onInitiativeClick={onInitiativeClick}
+                overlapMap={overlapMap}
               />
             ))}
           </div>

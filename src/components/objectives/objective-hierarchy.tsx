@@ -1,12 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { groupInitiativesByObjective } from '@/lib/initiative-group-utils'
 import { OBJECTIVE_OPTIONS } from '@/lib/utils'
 import { ObjectiveGroup } from '@/components/objectives/objective-group'
 import { InitiativeDetailSheet } from '@/components/kanban/initiative-detail-sheet'
 import { ViewModeToggle } from '@/components/objectives/view-mode-toggle'
+import { detectOwnerOverlap } from '@/lib/initiative-date-utils'
 
 export interface Initiative {
   id: string
@@ -58,6 +59,9 @@ export function ObjectiveHierarchy({ initialData }: ObjectiveHierarchyProps) {
     )
     return krKeys
   })
+
+  // Owner overlap map -- computed once for all initiatives
+  const overlapMap = useMemo(() => detectOwnerOverlap(initialData), [initialData])
 
   // Detail sheet state
   const [selectedInitiative, setSelectedInitiative] = useState<Initiative | null>(null)
@@ -120,6 +124,7 @@ export function ObjectiveHierarchy({ initialData }: ObjectiveHierarchyProps) {
           onToggleObjective={() => toggleObjective(group.objective)}
           onToggleKR={toggleKR}
           onInitiativeClick={handleInitiativeClick}
+          overlapMap={overlapMap}
         />
       ))}
 

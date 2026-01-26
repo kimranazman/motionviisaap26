@@ -18,6 +18,7 @@ interface KeyResultGroupProps {
   isExpanded: boolean
   onToggle: () => void
   onInitiativeClick: (initiative: Initiative) => void
+  overlapMap: Map<string, number>
 }
 
 export function KeyResultGroup({
@@ -25,6 +26,7 @@ export function KeyResultGroup({
   isExpanded,
   onToggle,
   onInitiativeClick,
+  overlapMap,
 }: KeyResultGroupProps) {
   const inProgressCount = keyResult.initiatives.filter(
     i => i.status === 'IN_PROGRESS'
@@ -95,6 +97,7 @@ export function KeyResultGroup({
                 key={initiative.id}
                 initiative={initiative as Initiative}
                 onClick={() => onInitiativeClick(initiative as Initiative)}
+                overlapCount={overlapMap.get(initiative.id) ?? 0}
               />
             ))}
           </div>
