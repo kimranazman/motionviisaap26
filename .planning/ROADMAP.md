@@ -46,7 +46,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 39-01-PLAN.md -- Objectives route, hierarchy components (Objective/KR/Initiative), sidebar navigation
+- [x] 39-01-PLAN.md -- Objectives route, hierarchy components (Objective/KR/Initiative), sidebar navigation
 - [ ] 39-02-PLAN.md -- ViewModeToggle component integrated into all 5 view pages
 
 ### Phase 40: KPI Tracking & Linked Projects
@@ -101,7 +101,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|---------------|--------|-----------|
 | 38. Schema & Utilities Foundation | 1/1 | Complete | 2026-01-26 |
-| 39. By Objective Hierarchy View | 0/2 | Not started | - |
+| 39. By Objective Hierarchy View | 1/2 | In progress | - |
 | 40. KPI Tracking & Linked Projects | 0/2 | Not started | - |
 | 41. Date Intelligence | 0/1 | Not started | - |
 | 42. Excel Export | 0/1 | Not started | - |
