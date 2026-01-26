@@ -1,13 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog'
+import { DetailView } from '@/components/ui/detail-view'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
@@ -162,25 +156,75 @@ export function SupplierDetailModal({
 
   const creditBadge = supplier ? getCreditStatusBadge(supplier.acceptsCredit) : null
 
+  const footerContent = supplier ? (
+    <div className="flex-row flex justify-between sm:justify-between w-full">
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button
+            variant="ghost"
+            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+          >
+            <Trash2 className="mr-2 h-4 w-4" />
+            Delete
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Supplier</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete &quot;{supplier.name}&quot;?
+              This action cannot be undone.
+              {deleteError && (
+                <span className="block mt-2 text-red-600">
+                  {deleteError}
+                </span>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {isDeleting ? 'Deleting...' : 'Delete Supplier'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <Button
+        variant="outline"
+        onClick={() => onOpenChange(false)}
+        className="w-full sm:w-auto"
+      >
+        Close
+      </Button>
+    </div>
+  ) : undefined
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+    <DetailView
+      open={open}
+      onOpenChange={onOpenChange}
+      title={
+        supplier ? (
+          <SupplierInlineField
+            value={supplier.name}
+            onSave={(value) => handleFieldSave('name', value)}
+            placeholder="Supplier name"
+            className="text-xl font-semibold"
+          />
+        ) : 'Supplier'
+      }
+      className="max-w-2xl"
+      footer={footerContent}
+    >
         {isLoading ? (
           <SupplierDetailSkeleton />
         ) : supplier ? (
           <>
-            <DialogHeader>
-              <DialogTitle className="text-xl">
-                <SupplierInlineField
-                  value={supplier.name}
-                  onSave={(value) => handleFieldSave('name', value)}
-                  placeholder="Supplier name"
-                  className="text-xl font-semibold"
-                />
-              </DialogTitle>
-            </DialogHeader>
-
-            <div className="space-y-6 py-4">
+            <div className="space-y-6 py-4 px-6">
               {/* Contact Info */}
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="space-y-1">
@@ -407,59 +451,13 @@ export function SupplierDetailModal({
                 </>
               )}
             </div>
-
-            <DialogFooter className="flex-row justify-between sm:justify-between">
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Supplier</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Are you sure you want to delete &quot;{supplier.name}&quot;?
-                      This action cannot be undone.
-                      {deleteError && (
-                        <span className="block mt-2 text-red-600">
-                          {deleteError}
-                        </span>
-                      )}
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={handleDelete}
-                      disabled={isDeleting}
-                      className="bg-red-600 hover:bg-red-700"
-                    >
-                      {isDeleting ? 'Deleting...' : 'Delete Supplier'}
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-              <Button
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-                className="w-full sm:w-auto"
-              >
-                Close
-              </Button>
-            </DialogFooter>
           </>
         ) : (
           <div className="py-8 text-center text-gray-500">
             Supplier not found
           </div>
         )}
-      </DialogContent>
-    </Dialog>
+    </DetailView>
   )
 }
 

@@ -1,13 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog'
+import { DetailView } from '@/components/ui/detail-view'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,7 +19,6 @@ import { CurrencyInput } from '@/components/ui/currency-input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { Loader2, Trash2, Archive, ArchiveRestore, ExternalLink, Lock } from 'lucide-react'
 import { toast } from 'sonner'
@@ -274,21 +267,95 @@ export function DealDetailSheet({
     value !== (deal.value?.toString() || '') ||
     description !== (deal.description || '')
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="md:max-w-[650px] p-0 flex flex-col">
-        <DialogHeader className="p-6 pb-4 border-b shrink-0 pr-12">
-          <div className="flex items-center gap-3">
-            <Badge className={cn('shrink-0', getStageColor(deal.stage))}>
-              {formatDealStage(deal.stage)}
-            </Badge>
-            <DialogTitle className="text-left text-lg leading-snug truncate">
-              {deal.title}
-            </DialogTitle>
-          </div>
-        </DialogHeader>
+  const footerContent = (
+    <div className="flex-row flex gap-2 justify-between sm:justify-between w-full">
+      <div className="flex gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleArchive}
+          disabled={isArchiving}
+          className={deal.isArchived ? 'text-blue-600' : 'text-gray-600'}
+        >
+          {deal.isArchived ? (
+            <>
+              <ArchiveRestore className="mr-2 h-4 w-4" />
+              Unarchive
+            </>
+          ) : (
+            <>
+              <Archive className="mr-2 h-4 w-4" />
+              Archive
+            </>
+          )}
+        </Button>
 
-        <ScrollArea className="flex-1 min-h-0">
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+              disabled={isDeleting}
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Delete
+            </Button>
+          </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Deal</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete &quot;{deal.title}&quot;? This
+              action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {isDeleting ? 'Deleting...' : 'Delete Deal'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+        </AlertDialog>
+      </div>
+
+      {isReadOnly ? (
+        <div className="text-sm text-muted-foreground text-center py-2 px-4">
+          {isConverted ? 'Converted deals cannot be edited' : 'Lost deals cannot be edited'}
+        </div>
+      ) : (
+        <Button
+          onClick={handleSave}
+          disabled={isSaving || !hasChanges}
+          className="w-full sm:w-auto"
+        >
+          {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          Save Changes
+        </Button>
+      )}
+    </div>
+  )
+
+  return (
+    <DetailView
+      open={open}
+      onOpenChange={onOpenChange}
+      title={
+        <div className="flex items-center gap-3">
+          <Badge className={cn('shrink-0', getStageColor(deal.stage))}>
+            {formatDealStage(deal.stage)}
+          </Badge>
+          <span className="truncate">{deal.title}</span>
+        </div>
+      }
+      className="md:max-w-[650px]"
+      footer={footerContent}
+    >
           <div className="p-6 space-y-4">
             {/* Title */}
             <div className="space-y-2">
@@ -447,80 +514,6 @@ export function DealDetailSheet({
               <p className="text-sm text-red-500">{error}</p>
             )}
           </div>
-        </ScrollArea>
-
-        <DialogFooter className="p-4 border-t shrink-0 flex-row gap-2 justify-between sm:justify-between">
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleArchive}
-              disabled={isArchiving}
-              className={deal.isArchived ? 'text-blue-600' : 'text-gray-600'}
-            >
-              {deal.isArchived ? (
-                <>
-                  <ArchiveRestore className="mr-2 h-4 w-4" />
-                  Unarchive
-                </>
-              ) : (
-                <>
-                  <Archive className="mr-2 h-4 w-4" />
-                  Archive
-                </>
-              )}
-            </Button>
-
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  disabled={isDeleting}
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Delete
-                </Button>
-              </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Delete Deal</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Are you sure you want to delete &quot;{deal.title}&quot;? This
-                  action cannot be undone.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleDelete}
-                  disabled={isDeleting}
-                  className="bg-red-600 hover:bg-red-700"
-                >
-                  {isDeleting ? 'Deleting...' : 'Delete Deal'}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-            </AlertDialog>
-          </div>
-
-          {isReadOnly ? (
-            <div className="text-sm text-muted-foreground text-center py-2 px-4">
-              {isConverted ? 'Converted deals cannot be edited' : 'Lost deals cannot be edited'}
-            </div>
-          ) : (
-            <Button
-              onClick={handleSave}
-              disabled={isSaving || !hasChanges}
-              className="w-full sm:w-auto"
-            >
-              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Save Changes
-            </Button>
-          )}
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    </DetailView>
   )
 }

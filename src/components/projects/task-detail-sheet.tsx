@@ -1,13 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog'
+import { DetailView } from '@/components/ui/detail-view'
 import {
   Select,
   SelectContent,
@@ -20,7 +14,6 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { Loader2, CalendarIcon } from 'lucide-react'
 import { TaskComments } from './task-comments'
@@ -179,29 +172,40 @@ export function TaskDetailSheet({
     formatDateForCompare(dueDate) !== taskDueDateForCompare ||
     assignee !== (task.assignee || '')
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="md:max-w-lg p-0 flex flex-col">
-        <DialogHeader className="p-6 pb-4 border-b shrink-0 pr-12">
-          <div className="flex items-center gap-3">
-            <Badge
-              className={cn('shrink-0', getTaskStatusColor(task.status))}
-            >
-              {formatTaskStatus(task.status)}
-            </Badge>
-            <Badge
-              variant="outline"
-              className={cn('shrink-0', getTaskPriorityColor(task.priority))}
-            >
-              {formatTaskPriority(task.priority)}
-            </Badge>
-            <DialogTitle className="text-left text-lg leading-snug truncate">
-              {task.title}
-            </DialogTitle>
-          </div>
-        </DialogHeader>
+  const footerContent = (
+    <Button
+      onClick={handleSave}
+      disabled={isSaving || !hasChanges}
+      className="w-full"
+    >
+      {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+      Save Changes
+    </Button>
+  )
 
-        <ScrollArea className="flex-1 min-h-0">
+  return (
+    <DetailView
+      open={open}
+      onOpenChange={onOpenChange}
+      title={
+        <div className="flex items-center gap-3">
+          <Badge
+            className={cn('shrink-0', getTaskStatusColor(task.status))}
+          >
+            {formatTaskStatus(task.status)}
+          </Badge>
+          <Badge
+            variant="outline"
+            className={cn('shrink-0', getTaskPriorityColor(task.priority))}
+          >
+            {formatTaskPriority(task.priority)}
+          </Badge>
+          <span className="truncate">{task.title}</span>
+        </div>
+      }
+      className="md:max-w-lg"
+      footer={footerContent}
+    >
           <div className="p-6 space-y-4">
             {/* Title */}
             <div className="space-y-2">
@@ -335,19 +339,6 @@ export function TaskDetailSheet({
             {/* Comments Section */}
             <TaskComments projectId={projectId} taskId={task.id} />
           </div>
-        </ScrollArea>
-
-        <DialogFooter className="p-4 border-t shrink-0">
-          <Button
-            onClick={handleSave}
-            disabled={isSaving || !hasChanges}
-            className="w-full"
-          >
-            {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Save Changes
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    </DetailView>
   )
 }

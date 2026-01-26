@@ -4,12 +4,7 @@ import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { canEdit } from '@/lib/permissions'
 import { PermissionDeniedDialog } from '@/components/permission-denied-dialog'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { DetailView } from '@/components/ui/detail-view'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -22,7 +17,6 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -346,20 +340,21 @@ export function InitiativeDetailSheet({
     kpiManualOverride !== loadedKpi.manualOverride
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="md:max-w-[650px] p-0 flex flex-col">
-        <DialogHeader className="p-6 pb-4 border-b shrink-0 pr-12">
-          <div className="flex items-start gap-3">
-            <Badge variant="outline" className="shrink-0 mt-1">
-              {initiative.keyResult}
-            </Badge>
-            <DialogTitle className="text-left text-lg leading-snug">
-              {initiative.title}
-            </DialogTitle>
-          </div>
-        </DialogHeader>
-
-        <ScrollArea className="flex-1 min-h-0">
+    <>
+    <DetailView
+      open={open}
+      onOpenChange={onOpenChange}
+      title={
+        <div className="flex items-start gap-3">
+          <Badge variant="outline" className="shrink-0 mt-1">
+            {initiative.keyResult}
+          </Badge>
+          <span>{initiative.title}</span>
+        </div>
+      }
+      expandHref={`/initiatives/${initiative.id}`}
+      className="md:max-w-[650px]"
+    >
           <div className="p-6 space-y-6">
             {/* Quick Info Grid */}
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -684,31 +679,30 @@ export function InitiativeDetailSheet({
               )}
             </div>
           </div>
-        </ScrollArea>
-      </DialogContent>
+    </DetailView>
 
-      <PermissionDeniedDialog
-        open={showPermissionDenied}
-        onOpenChange={setShowPermissionDenied}
-      />
+    <PermissionDeniedDialog
+      open={showPermissionDenied}
+      onOpenChange={setShowPermissionDenied}
+    />
 
-      <AlertDialog open={showOverrideConfirm} onOpenChange={setShowOverrideConfirm}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Override auto-calculated value?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will set the KPI actual value manually and stop auto-calculation
-              from linked project revenue. You can revert to auto-calculation later.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={handleCancelOverride}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmOverride}>
-              Override
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </Dialog>
+    <AlertDialog open={showOverrideConfirm} onOpenChange={setShowOverrideConfirm}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Override auto-calculated value?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This will set the KPI actual value manually and stop auto-calculation
+            from linked project revenue. You can revert to auto-calculation later.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={handleCancelOverride}>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={handleConfirmOverride}>
+            Override
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </>
   )
 }
