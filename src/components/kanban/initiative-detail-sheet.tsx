@@ -57,6 +57,7 @@ import {
   RotateCcw,
 } from 'lucide-react'
 import { LinkedProjectsSection, type LinkedProject } from '@/components/objectives/linked-projects-section'
+import { TimelineSuggestions } from '@/components/objectives/timeline-suggestions'
 
 interface CommentUser {
   id: string
@@ -102,6 +103,13 @@ interface InitiativeDetailSheetProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onUpdate?: (updated: Initiative) => void
+  allInitiatives?: Array<{
+    id: string
+    personInCharge: string | null
+    startDate: string | Date
+    endDate: string | Date
+    status: string
+  }>
 }
 
 // Helper to get initials from name or email
@@ -124,6 +132,7 @@ export function InitiativeDetailSheet({
   open,
   onOpenChange,
   onUpdate,
+  allInitiatives = [],
 }: InitiativeDetailSheetProps) {
   const { data: session } = useSession()
   const userCanEdit = canEdit(session?.user?.role)
@@ -438,6 +447,17 @@ export function InitiativeDetailSheet({
                 </div>
               </div>
             </div>
+
+            {/* Timeline Suggestions */}
+            {allInitiatives.length > 0 && initiative && (
+              <TimelineSuggestions
+                startDate={initiative.startDate}
+                endDate={initiative.endDate}
+                status={status}
+                allInitiatives={allInitiatives}
+                currentInitiativeId={initiative.id}
+              />
+            )}
 
             {/* KPI Tracking Section */}
             <Separator />

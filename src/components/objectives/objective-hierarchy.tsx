@@ -134,6 +134,7 @@ export function ObjectiveHierarchy({ initialData }: ObjectiveHierarchyProps) {
         open={isSheetOpen}
         onOpenChange={setIsSheetOpen}
         onUpdate={handleInitiativeUpdate}
+        allInitiatives={initialData}
       />
     </div>
   )
