@@ -11,7 +11,7 @@ Fix critical bugs (Price Comparison crash, Timeline rendering), reduce UX fricti
 
 ## Phases
 
-- [ ] **Phase 43: Bug Fixes** - Fix crashing and non-rendering pages
+- [x] **Phase 43: Bug Fixes** - Fix crashing and non-rendering pages
 - [ ] **Phase 44: UX Polish** - Clickable rows and data formatting improvements
 - [ ] **Phase 45: Detail View System** - Drawer variant with user preference and settings
 
@@ -28,7 +28,7 @@ Fix critical bugs (Price Comparison crash, Timeline rendering), reduce UX fricti
 **Plans**: 1 plan
 
 Plans:
-- [ ] 43-01-PLAN.md -- Fix Radix Select crashes, Gantt bar rendering, and empty state message
+- [x] 43-01-PLAN.md -- Fix Radix Select crashes, Gantt bar rendering, and empty state message
 
 ### Phase 44: UX Polish
 **Goal**: Users can click into detail views from any list and see properly formatted data
@@ -67,6 +67,6 @@ Plans:
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 43. Bug Fixes | v1.5.1 | 0/1 | Not started | - |
+| 43. Bug Fixes | v1.5.1 | 1/1 | Complete | 2026-01-26 |
 | 44. UX Polish | v1.5.1 | 0/1 | Not started | - |
 | 45. Detail View System | v1.5.1 | 0/2 | Not started | - |

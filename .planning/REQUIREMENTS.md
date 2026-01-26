@@ -7,9 +7,9 @@
 
 ### Bug Fixes
 
-- [ ] **BUG-01**: Price Comparison page (/supplier-items) renders without crashing — fix Select.Item empty value error
-- [ ] **BUG-02**: Timeline page (/timeline) renders Gantt chart bars for initiatives with valid date ranges
-- [ ] **BUG-03**: Timeline page shows "No initiatives scheduled" message when no data matches current filters
+- [x] **BUG-01**: Price Comparison page (/supplier-items) renders without crashing — fix Select.Item empty value error
+- [x] **BUG-02**: Timeline page (/timeline) renders Gantt chart bars for initiatives with valid date ranges
+- [x] **BUG-03**: Timeline page shows "No initiatives scheduled" message when no data matches current filters
 
 ### Clickable Rows
 
@@ -50,9 +50,9 @@ None — this is a focused bug fix and UX polish milestone.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BUG-01 | Phase 43 | Pending |
-| BUG-02 | Phase 43 | Pending |
-| BUG-03 | Phase 43 | Pending |
+| BUG-01 | Phase 43 | Complete |
+| BUG-02 | Phase 43 | Complete |
+| BUG-03 | Phase 43 | Complete |
 | ROW-01 | Phase 44 | Pending |
 | ROW-02 | Phase 44 | Pending |
 | ROW-03 | Phase 44 | Pending |
@@ -74,4 +74,4 @@ None — this is a focused bug fix and UX polish milestone.
 
 ---
 *Requirements defined: 2026-01-26*
-*Last updated: 2026-01-26 after roadmap creation*
+*Last updated: 2026-01-26 after Phase 43 completion*
