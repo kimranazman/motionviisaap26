@@ -95,17 +95,17 @@ These features are expected but deferred to a future milestone.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| NAV-01 | Phase 54 | Pending |
-| NAV-02 | Phase 54 | Pending |
-| NAV-03 | Phase 54 | Pending |
-| NAV-04 | Phase 54 | Pending |
-| NAV-05 | Phase 54 | Pending |
-| NAV-06 | Phase 54 | Pending |
-| NAV-07 | Phase 54 | Pending |
-| NAV-08 | Phase 54 | Pending |
-| NAV-09 | Phase 54 | Pending |
-| NAV-10 | Phase 54 | Pending |
-| NAV-11 | Phase 54 | Pending |
+| NAV-01 | Phase 54 | Complete |
+| NAV-02 | Phase 54 | Complete |
+| NAV-03 | Phase 54 | Complete |
+| NAV-04 | Phase 54 | Complete |
+| NAV-05 | Phase 54 | Complete |
+| NAV-06 | Phase 54 | Complete |
+| NAV-07 | Phase 54 | Complete |
+| NAV-08 | Phase 54 | Complete |
+| NAV-09 | Phase 54 | Complete |
+| NAV-10 | Phase 54 | Complete |
+| NAV-11 | Phase 54 | Complete |
 | TASK-01 | Phase 55 | Pending |
 | TASK-02 | Phase 55 | Pending |
 | TASK-03 | Phase 55 | Pending |
