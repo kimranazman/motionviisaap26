@@ -118,6 +118,11 @@ Plans:
 
 **Requirements:** UI-ST-01, UI-ST-02, UI-ST-03, UI-ST-04
 
+**Plans:** 1 plan
+
+Plans:
+- [ ] 50-01-PLAN.md -- Support tasks page with category grouping, filtering, KR badge links, and sidebar navigation
+
 **Success Criteria:**
 1. /support-tasks page displays all 30 support tasks grouped into 4 categories (Design & Creative, Business & Admin, Talenta Ideas, Operations) with each task showing taskId, description, owner, frequency, priority, and linked KR badges
 2. Category filter lets users show all categories or filter to a single category; default shows all
