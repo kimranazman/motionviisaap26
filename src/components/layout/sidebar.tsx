@@ -12,6 +12,7 @@ import {
   ListTodo,
   Target,
   Ticket,
+  ClipboardList,
   Users,
   Building2,
   Funnel,
@@ -29,6 +30,7 @@ const navigation = [
   { name: 'Kanban', href: '/kanban', icon: KanbanSquare },
   { name: 'Calendar', href: '/calendar', icon: Calendar },
   { name: 'Initiatives', href: '/initiatives', icon: ListTodo },
+  { name: 'Support Tasks', href: '/support-tasks', icon: ClipboardList },
   { name: 'Events to Attend', href: '/events', icon: Ticket },
 ]
 
