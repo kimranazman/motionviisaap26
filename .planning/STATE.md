@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-27)
 
 **Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, and AI-powered intelligence.
-**Current focus:** v2.0 Phase 49 complete -- OKR Hierarchy UI fully migrated, build passes
+**Current focus:** v2.0 Phase 51 complete -- Revenue Target Widget shipped, build passes
 
 ## Current Position
 
-Phase: 49 of 52 (OKR Hierarchy UI)
-Plan: 3 of 3 in Phase 49
-Status: Phase 49 complete -- all 3 plans done
-Last activity: 2026-01-27 -- Completed 49-03-PLAN.md
+Phase: 51 of 52 (Revenue Target Widget)
+Plan: 1 of 1 in Phase 51
+Status: Phase 51 complete
+Last activity: 2026-01-27 -- Completed 51-01-PLAN.md
 
-Progress: [#######---] ~71% (5/7 phases: 46-49 complete, 50-51 pending)
+Progress: [########--] ~86% (6/7 phases: 46-49, 51 complete, 50 pending)
 
 ## v2.0 Phase Overview
 
@@ -25,7 +25,7 @@ Progress: [#######---] ~71% (5/7 phases: 46-49 complete, 50-51 pending)
 | 48 | API Layer + Utilities | 47 | Complete |
 | 49 | OKR Hierarchy UI | 48 (parallel with 50, 51) | Complete (3/3 plans) |
 | 50 | Support Tasks UI | 48 (parallel with 49, 51) | Pending |
-| 51 | Revenue Target Widget | 48 (parallel with 49, 50) | Pending |
+| 51 | Revenue Target Widget | 48 (parallel with 49, 50) | Complete (1/1 plan) |
 | 52 | Cleanup & Polish | 49, 50, 51 | Pending |
 
 ## Milestone History
@@ -51,9 +51,9 @@ Progress: [#######---] ~71% (5/7 phases: 46-49 complete, 50-51 pending)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13
+- Total plans completed: 14
 - Average duration: ~5 minutes
-- Total execution time: ~75 minutes
+- Total execution time: ~78 minutes
 
 ## Accumulated Context
 
@@ -78,6 +78,8 @@ Decisions are logged in PROJECT.md Key Decisions table.
 | Server pages flatten keyResult to string for list/kanban | 49-02 | List and kanban use keyResult as string for search/filter/display; detail pages pass full object |
 | Detail sheet uses union type for keyResult | 49-02 | Accepts both string (list/kanban) and object (hierarchy); prevents type errors across consumers |
 | Server components flatten keyResult relation at server layer | 49-03 | Client components receive keyResult: string unchanged; zero client interface changes needed |
+| Used 'kri' category for revenue-target widget | 51-01 | Revenue targets are Key Result metrics; avoids updating WidgetDefinition category union |
+| minRole EDITOR for revenue-target | 51-01 | Revenue data is sensitive; consistent with crm-kpi-cards |
 
 ### Pending Todos
 
@@ -90,7 +92,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-27
-Stopped at: Completed 49-03-PLAN.md (Phase 49 complete)
+Stopped at: Completed 51-01-PLAN.md (Phase 51 complete)
 Resume file: None
 
-**Next: Execute Phase 50 (Support Tasks UI) or Phase 51 (Revenue Target Widget) -- can run in parallel**
+**Next: Execute Phase 50 (Support Tasks UI) -- then Phase 52 (Cleanup and Polish)**
