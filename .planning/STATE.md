@@ -11,7 +11,7 @@ See: .planning/PROJECT.md (updated 2026-01-27)
 
 Phase: 47 of 52 (Seed Script Rewrite) -- COMPLETE
 Plan: All plans complete (1/1)
-Status: Phase 47 complete -- seed runs, all counts verified
+Status: Phase 47 verified — 8/8 must-haves passed
 Last activity: 2026-01-27 -- Completed 47-01-PLAN.md
 
 Progress: [####------] ~29% (2/7 phases complete)
