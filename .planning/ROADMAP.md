@@ -44,7 +44,7 @@ Plans:
 **Plans:** 1 plan
 
 Plans:
-- [ ] 47-01-PLAN.md -- Rewrite seed.ts to parse v2 Excel (KeyResults, Initiatives, SupportTasks + join table) and v1 Excel (Events), with validation summary
+- [x] 47-01-PLAN.md -- Rewrite seed.ts to parse v2 Excel (KeyResults, Initiatives, SupportTasks + join table) and v1 Excel (Events), with validation summary
 
 **Success Criteria:**
 1. Seed wipes OKR data cleanly (using FK_CHECKS=0 and correct deletion order) without destroying non-OKR production data (projects, companies, costs, documents)
@@ -147,7 +147,7 @@ Plans:
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
 | 46 | Schema Migration | SCHEMA-01..08 | Complete |
-| 47 | Seed Script Rewrite | SEED-01..06 | Pending |
+| 47 | Seed Script Rewrite | SEED-01..06 | Complete |
 | 48 | API Layer + Utilities | API-01..04, UTIL-01..03 | Pending |
 | 49 | OKR Hierarchy UI | UI-OKR-01..07 | Pending |
 | 50 | Support Tasks UI | UI-ST-01..04 | Pending |

@@ -5,25 +5,25 @@
 See: .planning/PROJECT.md (updated 2026-01-27)
 
 **Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, and AI-powered intelligence.
-**Current focus:** v2.0 Phase 46 complete, verified ✓ — ready for Phase 47
+**Current focus:** v2.0 Phase 47 complete -- ready for Phase 48
 
 ## Current Position
 
-Phase: 46 of 52 (Schema Migration) — COMPLETE ✓
+Phase: 47 of 52 (Seed Script Rewrite) -- COMPLETE
 Plan: All plans complete (1/1)
-Status: Phase 46 verified — 8/8 must-haves passed
-Last activity: 2026-01-27 -- Phase 46 executed and verified
+Status: Phase 47 complete -- seed runs, all counts verified
+Last activity: 2026-01-27 -- Completed 47-01-PLAN.md
 
-Progress: [##--------] ~14% (1/7 phases complete)
+Progress: [####------] ~29% (2/7 phases complete)
 
-**Next: `/gsd:plan-phase 47` to start Seed Script Rewrite**
+**Next: `/gsd:plan-phase 48` to start API Layer + Utilities**
 
 ## v2.0 Phase Overview
 
 | Phase | Name | Dependencies | Status |
 |-------|------|--------------|--------|
 | 46 | Schema Migration | None | Complete |
-| 47 | Seed Script Rewrite | 46 | Pending |
+| 47 | Seed Script Rewrite | 46 | Complete |
 | 48 | API Layer + Utilities | 47 | Pending |
 | 49 | OKR Hierarchy UI | 48 (parallel with 50, 51) | Pending |
 | 50 | Support Tasks UI | 48 (parallel with 49, 51) | Pending |
@@ -53,9 +53,9 @@ Progress: [##--------] ~14% (1/7 phases complete)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: ~7 minutes
-- Total execution time: ~40 minutes
+- Total plans completed: 7
+- Average duration: ~6 minutes
+- Total execution time: ~44 minutes
 
 ## Accumulated Context
 
@@ -68,6 +68,8 @@ Decisions are logged in PROJECT.md Key Decisions table.
 | Used `prisma db push` not `prisma migrate dev` | 46-01 | Avoids MariaDB FK drift loop (C3); project always used db push; wipe-and-reseed means no migration history value |
 | Kept resourcesFinancial/resourcesNonFinancial alongside new budget/resources | 46-01 | Deferred cleanup to Phase 52; new budget field is String (may contain non-numeric text) |
 | String owner fields on KeyResult/SupportTask (not TeamMember enum) | 46-01 | Per requirements; owners may include team names or external contributors |
+| Join table count is 59 (not 58 from research) | 47-01 | Actual Excel data has 8 multi-KR tasks and 13 single-KR tasks; research estimated 7 and 14 |
+| Budget stored as plain number string | 47-01 | String(value) = "1400"; no formatting in seed; UI handles display |
 
 ### Pending Todos
 
@@ -76,11 +78,10 @@ None.
 ### Blockers/Concerns
 
 - C3 (MariaDB drift detection loop): Use `--create-only` flag and batch all FK changes into one migration
-- C4 (Premature KPI removal): Acceptable for v2.0 since wipe-and-reseed from Excel means no data loss concern
-- H2 ("All KRs" parsing): Seed must build KR lookup map before processing support tasks
+- H2 resolved: KR lookup map built before processing support tasks and initiatives
 
 ## Session Continuity
 
 Last session: 2026-01-27
-Stopped at: Phase 46 complete and verified — ready for Phase 47 planning
+Stopped at: Completed 47-01-PLAN.md -- Phase 47 complete
 Resume file: .planning/ROADMAP.md
