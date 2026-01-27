@@ -6,6 +6,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Table2 as TableIcon, KanbanSquare } from 'lucide-react'
 import { TaskFilterBar, type DueDateFilter } from './task-filter-bar'
 import { TaskTableView } from './task-table-view'
+import { TaskKanbanView } from './task-kanban-view'
 import { TaskDetailSheet } from '@/components/projects/task-detail-sheet'
 
 export interface CrossProjectTask {
@@ -71,7 +72,7 @@ export function TasksPageClient({ initialTasks, projects }: TasksPageClientProps
   const router = useRouter()
 
   // Task state
-  const [tasks] = useState<CrossProjectTask[]>(initialTasks)
+  const [tasks, setTasks] = useState<CrossProjectTask[]>(initialTasks)
 
   // Filter state
   const [searchQuery, setSearchQuery] = useState('')
@@ -197,17 +198,19 @@ export function TasksPageClient({ initialTasks, projects }: TasksPageClientProps
         <TaskTableView tasks={filteredTasks} onTaskClick={handleTaskClick} />
       )}
 
-      {/* Kanban View Placeholder */}
+      {/* Kanban View */}
       {viewMode === 'kanban' && (
-        <div className="flex items-center justify-center py-16 text-gray-500">
-          <div className="text-center">
-            <KanbanSquare className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-            <p className="text-lg font-medium text-gray-600">Kanban view coming soon</p>
-            <p className="text-sm text-gray-400 mt-1">
-              Drag and drop tasks across status columns
-            </p>
-          </div>
-        </div>
+        <TaskKanbanView
+          tasks={filteredTasks}
+          onTaskClick={handleTaskClick}
+          onTasksChange={(updatedTasks) => {
+            // Merge updated tasks back into full tasks array
+            setTasks(prev => prev.map(t => {
+              const updated = updatedTasks.find(u => u.id === t.id)
+              return updated || t
+            }))
+          }}
+        />
       )}
 
       {/* Summary line */}
