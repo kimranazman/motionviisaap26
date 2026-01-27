@@ -94,9 +94,9 @@ Plans:
 **Plans:** 3 plans
 
 Plans:
-- [ ] 49-01-PLAN.md -- Overhaul objectives page: KR metrics display, objective rollup progress, simplified initiative rows
-- [ ] 49-02-PLAN.md -- Update initiative forms and detail views: KR dropdown, budget/resources, remove KPI
-- [ ] 49-03-PLAN.md -- Update kanban/calendar/timeline views: keyResult string-to-FK migration, full build verification
+- [x] 49-01-PLAN.md -- Overhaul objectives page: KR metrics display, objective rollup progress, simplified initiative rows
+- [x] 49-02-PLAN.md -- Update initiative forms and detail views: KR dropdown, budget/resources, remove KPI
+- [x] 49-03-PLAN.md -- Update kanban/calendar/timeline views: keyResult string-to-FK migration, full build verification
 
 **Success Criteria:**
 1. In the By Objective view, each KeyResult row displays: description, target vs actual, progress bar, unit, status badge, owner, and deadline -- all from the KR model, not aggregated from initiatives
@@ -173,7 +173,7 @@ Plans:
 | 46 | Schema Migration | SCHEMA-01..08 | Complete |
 | 47 | Seed Script Rewrite | SEED-01..06 | Complete |
 | 48 | API Layer + Utilities | API-01..04, UTIL-01..03 | Complete |
-| 49 | OKR Hierarchy UI | UI-OKR-01..07 | Pending |
+| 49 | OKR Hierarchy UI | UI-OKR-01..07 | Complete |
 | 50 | Support Tasks UI | UI-ST-01..04 | Pending |
 | 51 | Revenue Target Widget | UI-REV-01..02 | Pending |
 | 52 | Cleanup & Polish | CLEAN-01..03 | Pending |
