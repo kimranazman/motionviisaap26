@@ -189,6 +189,6 @@ Verify all 22 keyResult string files and 8 KPI files are fully migrated using th
 | UI-ST-04 | Phase 50 | Complete |
 | UI-REV-01 | Phase 51 | Complete |
 | UI-REV-02 | Phase 51 | Complete |
-| CLEAN-01 | Phase 52 | Pending |
-| CLEAN-02 | Phase 52 | Pending |
-| CLEAN-03 | Phase 52 | Pending |
+| CLEAN-01 | Phase 52 | Complete |
+| CLEAN-02 | Phase 52 | Complete |
+| CLEAN-03 | Phase 52 | Complete |

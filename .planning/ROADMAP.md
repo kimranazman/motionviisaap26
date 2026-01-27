@@ -182,7 +182,7 @@ Plans:
 | 49 | OKR Hierarchy UI | UI-OKR-01..07 | Complete |
 | 50 | Support Tasks UI | UI-ST-01..04 | Complete |
 | 51 | Revenue Target Widget | UI-REV-01..02 | Complete |
-| 52 | Cleanup & Polish | CLEAN-01..03 | Pending |
+| 52 | Cleanup & Polish | CLEAN-01..03 | Complete |
 
 ## Dependency Graph
 
