@@ -82,6 +82,15 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     minRole: UserRole.EDITOR, // Editors can trigger analysis
     category: 'operations',
   },
+  'revenue-target': {
+    id: 'revenue-target',
+    title: 'Revenue Target',
+    description: 'RM1M revenue target with Events and AI Training breakdown',
+    defaultSize: { w: 6, h: 3 },
+    minRole: UserRole.EDITOR, // Revenue data is sensitive
+    category: 'kri',
+    dataKey: 'revenueBreakdown',
+  },
 }
 
 /**

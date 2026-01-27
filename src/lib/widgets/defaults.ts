@@ -15,7 +15,7 @@ import { WIDGET_REGISTRY } from './registry'
 export const ADMIN_DEFAULTS_ID = 'singleton'
 
 /**
- * Default dashboard layout with all 7 widgets positioned
+ * Default dashboard layout with all 8 widgets positioned
  * New users inherit this layout
  */
 export const DEFAULT_DASHBOARD_LAYOUT: DashboardLayout = {
@@ -27,6 +27,7 @@ export const DEFAULT_DASHBOARD_LAYOUT: DashboardLayout = {
     { id: 'recent-initiatives', x: 6, y: 5, w: 6, h: 3 },
     { id: 'crm-kpi-cards', x: 0, y: 8, w: 12, h: 2 },
     { id: 'pipeline-stage-chart', x: 0, y: 10, w: 12, h: 3 },
+    { id: 'revenue-target', x: 0, y: 13, w: 6, h: 3 },
   ],
 }
 
