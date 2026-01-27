@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-27)
 
 **Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, and AI-powered intelligence.
-**Current focus:** v2.0 Phase 49 Plan 01 complete -- OKR Hierarchy UI core view
+**Current focus:** v2.0 Phase 49 Plan 02 complete -- Initiative forms & detail views updated
 
 ## Current Position
 
 Phase: 49 of 52 (OKR Hierarchy UI)
-Plan: 1 of 3 in Phase 49
-Status: In progress -- Plan 01 complete, Plans 02-03 pending
-Last activity: 2026-01-27 -- Completed 49-01-PLAN.md
+Plan: 2 of 3 in Phase 49
+Status: In progress -- Plans 01-02 complete, Plan 03 pending
+Last activity: 2026-01-27 -- Completed 49-02-PLAN.md
 
-Progress: [######----] ~57% (4/7 phases: 46-48 complete, 49 in progress)
+Progress: [######----] ~60% (4/7 phases: 46-48 complete, 49 in progress at 2/3 plans)
 
 ## v2.0 Phase Overview
 
@@ -23,7 +23,7 @@ Progress: [######----] ~57% (4/7 phases: 46-48 complete, 49 in progress)
 | 46 | Schema Migration | None | Complete |
 | 47 | Seed Script Rewrite | 46 | Complete |
 | 48 | API Layer + Utilities | 47 | Complete |
-| 49 | OKR Hierarchy UI | 48 (parallel with 50, 51) | In Progress (1/3 plans) |
+| 49 | OKR Hierarchy UI | 48 (parallel with 50, 51) | In Progress (2/3 plans) |
 | 50 | Support Tasks UI | 48 (parallel with 49, 51) | Pending |
 | 51 | Revenue Target Widget | 48 (parallel with 49, 50) | Pending |
 | 52 | Cleanup & Polish | 49, 50, 51 | Pending |
@@ -51,9 +51,9 @@ Progress: [######----] ~57% (4/7 phases: 46-48 complete, 49 in progress)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 11
+- Total plans completed: 12
 - Average duration: ~5 minutes
-- Total execution time: ~57 minutes
+- Total execution time: ~65 minutes
 
 ## Accumulated Context
 
@@ -75,6 +75,8 @@ Decisions are logged in PROJECT.md Key Decisions table.
 | GroupedKeyResult: krId + keyResultId replaces keyResult string | 48-03 | FK-based grouping; consumer component TS errors expected until Phase 49 |
 | InitiativeDetailSheet imports BaseInitiative from hierarchy | 49-01 | Prevents type divergence; detail sheet extends canonical Initiative type |
 | KR data accessed via initiative.keyResult relation | 49-01 | GroupedKeyResult.initiatives[0].keyResult provides metrics; avoids duplicating on GroupedKeyResult interface |
+| Server pages flatten keyResult to string for list/kanban | 49-02 | List and kanban use keyResult as string for search/filter/display; detail pages pass full object |
+| Detail sheet uses union type for keyResult | 49-02 | Accepts both string (list/kanban) and object (hierarchy); prevents type errors across consumers |
 
 ### Pending Todos
 
@@ -83,12 +85,12 @@ None.
 ### Blockers/Concerns
 
 - C3 (MariaDB drift detection loop): Use `--create-only` flag and batch all FK changes into one migration
-- Other pages (calendar, initiatives, kanban, timeline) still have TS errors from old Initiative type -- Plan 02/03 scope
+- Calendar/timeline views may still have TS errors from old Initiative type -- Plan 03 scope
 
 ## Session Continuity
 
 Last session: 2026-01-27
-Stopped at: Completed 49-01-PLAN.md
+Stopped at: Completed 49-02-PLAN.md
 Resume file: None
 
-**Next: Execute 49-02-PLAN.md (fix remaining TS errors in other pages)**
+**Next: Execute 49-03-PLAN.md (remaining TS fixes for calendar/timeline views)**
