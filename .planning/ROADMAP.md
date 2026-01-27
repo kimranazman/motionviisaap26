@@ -121,7 +121,7 @@ Plans:
 **Plans:** 1 plan
 
 Plans:
-- [ ] 50-01-PLAN.md -- Support tasks page with category grouping, filtering, KR badge links, and sidebar navigation
+- [x] 50-01-PLAN.md -- Support tasks page with category grouping, filtering, KR badge links, and sidebar navigation
 
 **Success Criteria:**
 1. /support-tasks page displays all 30 support tasks grouped into 4 categories (Design & Creative, Business & Admin, Talenta Ideas, Operations) with each task showing taskId, description, owner, frequency, priority, and linked KR badges
@@ -143,7 +143,7 @@ Plans:
 **Plans:** 1 plan
 
 Plans:
-- [ ] 51-01-PLAN.md -- Create revenue-target widget component, register in widget registry, wire data flow from server component
+- [x] 51-01-PLAN.md -- Create revenue-target widget component, register in widget registry, wire data flow from server component
 
 **Success Criteria:**
 1. Dashboard displays a revenue-target widget showing RM1,000,000 total target, current actual total, and overall progress -- with breakdown rows for Events (KR1.1, RM800K target) and AI Training (KR2.2, RM200K target)
@@ -174,8 +174,8 @@ Plans:
 | 47 | Seed Script Rewrite | SEED-01..06 | Complete |
 | 48 | API Layer + Utilities | API-01..04, UTIL-01..03 | Complete |
 | 49 | OKR Hierarchy UI | UI-OKR-01..07 | Complete |
-| 50 | Support Tasks UI | UI-ST-01..04 | Pending |
-| 51 | Revenue Target Widget | UI-REV-01..02 | Pending |
+| 50 | Support Tasks UI | UI-ST-01..04 | Complete |
+| 51 | Revenue Target Widget | UI-REV-01..02 | Complete |
 | 52 | Cleanup & Polish | CLEAN-01..03 | Pending |
 
 ## Dependency Graph
