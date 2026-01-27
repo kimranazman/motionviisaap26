@@ -56,7 +56,7 @@ export interface InitiativeForExport {
 export const EXPORT_COLUMNS: ExportColumn[] = [
   { key: 'sequenceNumber', header: '#', wch: 5 },
   { key: 'objective', header: 'Objective', wch: 25 },
-  { key: 'keyResult', header: 'Key Result', wch: 10 },
+  { key: 'keyResult', header: 'Key Result', wch: 40 },
   { key: 'title', header: 'Title', wch: 50 },
   { key: 'department', header: 'Department', wch: 14 },
   { key: 'status', header: 'Status', wch: 14 },
@@ -105,7 +105,9 @@ export function mapInitiativeToExportRow(
   return {
     '#': initiative.sequenceNumber,
     'Objective': formatObjective(initiative.objective),
-    'Key Result': initiative.keyResult?.krId || '-',
+    'Key Result': initiative.keyResult
+      ? `${initiative.keyResult.krId} - ${initiative.keyResult.description}`
+      : '-',
     'Title': initiative.title,
     'Department': formatDepartment(initiative.department),
     'Status': formatStatus(initiative.status),
