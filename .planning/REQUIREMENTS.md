@@ -205,6 +205,6 @@ Timeline defaults to grouping by Objective with KeyResult sub-headers (showing K
 | CLEAN-01 | Phase 52 | Complete |
 | CLEAN-02 | Phase 52 | Complete |
 | CLEAN-03 | Phase 52 | Complete |
-| TIMELINE-01 | Phase 53 | Pending |
-| TIMELINE-02 | Phase 53 | Pending |
-| TIMELINE-03 | Phase 53 | Pending |
+| TIMELINE-01 | Phase 53 | Complete |
+| TIMELINE-02 | Phase 53 | Complete |
+| TIMELINE-03 | Phase 53 | Complete |

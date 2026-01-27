@@ -183,7 +183,7 @@ Plans:
 **Plans:** 1 plan
 
 Plans:
-- [ ] 53-01-PLAN.md -- Extend PATCH API for dates, remove title truncation, add objective/KR grouping hierarchy, implement drag-to-edit bars
+- [x] 53-01-PLAN.md -- Extend PATCH API for dates, remove title truncation, add objective/KR grouping hierarchy, implement drag-to-edit bars
 
 **Success Criteria:**
 1. Dragging a timeline bar center shifts both startDate and endDate (maintaining duration); dragging left/right edges resizes start/end independently; changes persist via API
@@ -205,7 +205,7 @@ Plans:
 | 50 | Support Tasks UI | UI-ST-01..04 | Complete |
 | 51 | Revenue Target Widget | UI-REV-01..02 | Complete |
 | 52 | Cleanup & Polish | CLEAN-01..03 | Complete |
-| 53 | Timeline Enhancements | TIMELINE-01..03 | Planned |
+| 53 | Timeline Enhancements | TIMELINE-01..03 | Complete |
 
 ## Dependency Graph
 
