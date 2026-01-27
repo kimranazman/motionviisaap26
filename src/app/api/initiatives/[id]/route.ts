@@ -147,6 +147,60 @@ export async function PATCH(
       updateData.personInCharge = body.personInCharge
     }
 
+    // Handle date updates with validation
+    if (body.startDate !== undefined || body.endDate !== undefined) {
+      let newStart: Date | undefined
+      let newEnd: Date | undefined
+
+      if (body.startDate !== undefined) {
+        newStart = new Date(body.startDate)
+        if (isNaN(newStart.getTime())) {
+          return NextResponse.json(
+            { error: 'Invalid startDate' },
+            { status: 400 }
+          )
+        }
+        updateData.startDate = newStart
+      }
+
+      if (body.endDate !== undefined) {
+        newEnd = new Date(body.endDate)
+        if (isNaN(newEnd.getTime())) {
+          return NextResponse.json(
+            { error: 'Invalid endDate' },
+            { status: 400 }
+          )
+        }
+        updateData.endDate = newEnd
+      }
+
+      // Validate date ordering
+      if (newStart && newEnd) {
+        if (newStart >= newEnd) {
+          return NextResponse.json(
+            { error: 'startDate must be before endDate' },
+            { status: 400 }
+          )
+        }
+      } else if (newStart || newEnd) {
+        // Only one date provided — fetch the other to validate ordering
+        const existing = await prisma.initiative.findUnique({
+          where: { id },
+          select: { startDate: true, endDate: true },
+        })
+        if (existing) {
+          const effectiveStart = newStart || existing.startDate
+          const effectiveEnd = newEnd || existing.endDate
+          if (effectiveStart >= effectiveEnd) {
+            return NextResponse.json(
+              { error: 'startDate must be before endDate' },
+              { status: 400 }
+            )
+          }
+        }
+      }
+    }
+
     const initiative = await prisma.initiative.update({
       where: { id },
       data: updateData,
