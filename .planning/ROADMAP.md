@@ -18,13 +18,18 @@ Promote KeyResult from a free-text string to a first-class tracked entity with m
 
 **Requirements:** SCHEMA-01, SCHEMA-02, SCHEMA-03, SCHEMA-04, SCHEMA-05, SCHEMA-06, SCHEMA-07, SCHEMA-08
 
+**Plans:** 1 plan
+
+Plans:
+- [ ] 46-01-PLAN.md -- Add KeyResult, SupportTask, SupportTaskKeyResult models + enums, modify Initiative, push to DB
+
 **Success Criteria:**
-1. `npx prisma migrate dev` applies cleanly and `npx prisma generate` produces a client with KeyResult, SupportTask, SupportTaskKeyResult models, MetricType and SupportTaskCategory enums
+1. `npx prisma db push` applies cleanly and `npx prisma generate` produces a client with KeyResult, SupportTask, SupportTaskKeyResult models, MetricType and SupportTaskCategory enums
 2. Initiative model has keyResultId FK and budget/resources fields; kpiTarget, kpiActual, kpiUnit, kpiLabel, kpiManualOverride, monthlyObjective, weeklyTasks fields are removed
 3. KeyResult model has all required fields: krId (unique), objective, description, metricType, target, actual, unit, progress, deadline, status, owner, howWeMeasure, notes, weight
 4. SupportTask model has category (SupportTaskCategory enum), task, owner, frequency, priority, notes; SupportTaskKeyResult join table has composite unique on [supportTaskId, keyResultId]
 
-**Pitfalls to watch:** C3 (MariaDB drift loop -- use `--create-only`, batch all FK changes), C4 (Expand-and-Contract for KPI field removal -- can remove in same migration since seed will repopulate)
+**Pitfalls to watch:** C3 (MariaDB drift loop -- use `prisma db push` instead of `migrate dev`), C4 (KPI field removal -- acceptable since seed will repopulate)
 
 ---
 
@@ -136,7 +141,7 @@ Promote KeyResult from a free-text string to a first-class tracked entity with m
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| 46 | Schema Migration | SCHEMA-01..08 | Pending |
+| 46 | Schema Migration | SCHEMA-01..08 | Planned |
 | 47 | Seed Script Rewrite | SEED-01..06 | Pending |
 | 48 | API Layer + Utilities | API-01..04, UTIL-01..03 | Pending |
 | 49 | OKR Hierarchy UI | UI-OKR-01..07 | Pending |
