@@ -24,7 +24,7 @@ v2.1 consolidates the sidebar navigation into collapsible groups with shared con
 ## Phases
 
 - [x] **Phase 54: Collapsible Sidebar Navigation** - Unified nav config with collapsible groups, persistence, mobile parity, and new top-level links
-- [ ] **Phase 55: Cross-Project Task View** - /tasks page with table and kanban views, filters, sorting, drag-and-drop status changes
+- [x] **Phase 55: Cross-Project Task View** - /tasks page with table and kanban views, filters, sorting, drag-and-drop status changes
 - [ ] **Phase 56: Member Workload Dashboard** - /members overview and /members/[name] detail with cross-model aggregation
 
 ## Phase Details
@@ -57,8 +57,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 55-01-PLAN.md -- Server page, filter bar, table view with sortable columns, detail sheet, view preference (TASK-01, 02, 04-12, 14, 15)
-- [ ] 55-02-PLAN.md -- Kanban view with dnd-kit drag-and-drop status changes (TASK-03, 04, 13)
+- [x] 55-01-PLAN.md -- Server page, filter bar, table view with sortable columns, detail sheet, view preference (TASK-01, 02, 04-12, 14, 15)
+- [x] 55-02-PLAN.md -- Kanban view with dnd-kit drag-and-drop status changes (TASK-03, 04, 13)
 
 ### Phase 56: Member Workload Dashboard
 **Goal**: User can see each team member's workload across all entity types (KRs, initiatives, tasks, support tasks) from overview and detail pages
@@ -82,5 +82,5 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|---------------|--------|-----------|
 | 54. Collapsible Sidebar Navigation | 1/1 | Complete | 2026-01-27 |
-| 55. Cross-Project Task View | 0/2 | Not started | - |
+| 55. Cross-Project Task View | 2/2 | Complete | 2026-01-28 |
 | 56. Member Workload Dashboard | 0/1 | Not started | - |
