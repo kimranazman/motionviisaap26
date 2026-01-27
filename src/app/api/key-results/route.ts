@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma'
 import { requireAuth } from '@/lib/auth-utils'
 
 // GET /api/key-results - List all key results with initiative counts
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(_request: NextRequest) {
   const { error } = await requireAuth()
   if (error) return error

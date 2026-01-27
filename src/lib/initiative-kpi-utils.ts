@@ -51,6 +51,7 @@ export interface AggregatedKpi {
 /**
  * @deprecated Returns safe default. KPI fields removed from Initiative in v2.0.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function calculateKpi(_initiative: InitiativeWithKpiAndProjects): KpiResult {
   return {
     label: 'N/A',
@@ -67,6 +68,7 @@ export function calculateKpi(_initiative: InitiativeWithKpiAndProjects): KpiResu
  * @deprecated Returns safe default. KPI fields removed from Initiative in v2.0.
  */
 export function aggregateKpiTotals(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _initiatives: Array<{
     id: string
     kpiLabel?: string | null
