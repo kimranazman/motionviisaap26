@@ -8,6 +8,9 @@ async function getInitiative(id: string) {
   const initiative = await prisma.initiative.findUnique({
     where: { id },
     include: {
+      keyResult: {
+        select: { id: true, krId: true, description: true },
+      },
       comments: {
         orderBy: { createdAt: 'desc' },
         include: {

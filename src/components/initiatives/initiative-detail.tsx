@@ -60,13 +60,14 @@ interface Initiative {
   sequenceNumber: number
   title: string
   objective: string
-  keyResult: string
+  keyResultId?: string | null
+  keyResult?: { id: string; krId: string; description: string } | null
   department: string
   status: string
   personInCharge: string | null
   accountable: string | null
-  monthlyObjective: string | null
-  weeklyTasks: string | null
+  budget?: string | null
+  resources?: string | null
   startDate: string
   endDate: string
   resourcesFinancial: number | null
@@ -242,7 +243,7 @@ export function InitiativeDetail({ initiative }: InitiativeDetailProps) {
                   #{initiative.sequenceNumber}
                 </Badge>
                 <Badge variant="outline" className="shrink-0">
-                  {initiative.keyResult}
+                  {initiative.keyResult?.krId || 'Unlinked'}
                 </Badge>
               </div>
               <h1 className="text-xl font-semibold text-gray-900 truncate">
@@ -350,7 +351,31 @@ export function InitiativeDetail({ initiative }: InitiativeDetailProps) {
                   Key Result
                 </label>
                 <div className="h-9 px-3 flex items-center text-sm bg-gray-50 rounded-md border">
-                  <Badge variant="outline">{initiative.keyResult}</Badge>
+                  {initiative.keyResult
+                    ? `${initiative.keyResult.krId} - ${initiative.keyResult.description}`
+                    : 'Unlinked'}
+                </div>
+              </div>
+
+              {/* Budget - Read Only */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
+                  <Target className="h-3.5 w-3.5" />
+                  Budget
+                </label>
+                <div className="h-9 px-3 flex items-center text-sm bg-gray-50 rounded-md border">
+                  {initiative.budget || '-'}
+                </div>
+              </div>
+
+              {/* Resources - Read Only */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
+                  <Target className="h-3.5 w-3.5" />
+                  Resources
+                </label>
+                <div className="h-9 px-3 flex items-center text-sm bg-gray-50 rounded-md border">
+                  {initiative.resources || '-'}
                 </div>
               </div>
 

@@ -18,17 +18,6 @@ import {
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import { Input } from '@/components/ui/input'
-import {
   cn,
   formatDate,
   formatDepartment,
@@ -47,12 +36,9 @@ import {
   MessageSquare,
   Clock,
   Trash2,
-  BarChart3,
-  RotateCcw,
 } from 'lucide-react'
 import { LinkedProjectsSection, type LinkedProject } from '@/components/objectives/linked-projects-section'
 import { TimelineSuggestions } from '@/components/objectives/timeline-suggestions'
-import type { Initiative as BaseInitiative } from '@/components/objectives/objective-hierarchy'
 
 interface CommentUser {
   id: string
@@ -68,20 +54,42 @@ interface Comment {
   createdAt: string
 }
 
-type Initiative = BaseInitiative & {
-  // Optional fields loaded from API
+interface Initiative {
+  id: string
+  sequenceNumber: number
+  title: string
+  objective?: string
+  keyResultId?: string | null
+  keyResult: string | { krId: string } | null | undefined
+  department: string
+  status: string
+  personInCharge: string | null
+  startDate: string
+  endDate: string
+  position: number
+  budget?: string | null
+  // Optional fields loaded from API or passed by hierarchy view
   accountable?: string | null
-  monthlyObjective?: string | null
-  weeklyTasks?: string | null
   remarks?: string | null
   comments?: Comment[]
+  projects?: Array<{
+    id: string
+    title: string
+    status: string
+    revenue: number | null
+    totalCosts: number
+    companyName: string | null
+    startDate: string | null
+    endDate: string | null
+  }>
 }
 
 interface InitiativeDetailSheetProps {
   initiative: Initiative | null
   open: boolean
   onOpenChange: (open: boolean) => void
-  onUpdate?: (updated: Initiative) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onUpdate?: (updated: any) => void
   allInitiatives?: Array<{
     id: string
     personInCharge: string | null
@@ -125,19 +133,6 @@ export function InitiativeDetailSheet({
   const [isSaving, setIsSaving] = useState(false)
   const [isSubmittingComment, setIsSubmittingComment] = useState(false)
 
-  // KPI state
-  const [kpiLabel, setKpiLabel] = useState('')
-  const [kpiTarget, setKpiTarget] = useState('')
-  const [kpiActual, setKpiActual] = useState('')
-  const [kpiUnit, setKpiUnit] = useState('')
-  const [kpiManualOverride, setKpiManualOverride] = useState(false)
-  const [showOverrideConfirm, setShowOverrideConfirm] = useState(false)
-  const [pendingActual, setPendingActual] = useState('')
-  // Track loaded KPI values for hasChanges detection
-  const [loadedKpi, setLoadedKpi] = useState({
-    label: '', target: '', actual: '', unit: '', manualOverride: false,
-  })
-
   // Load full initiative data with comments when opened
   useEffect(() => {
     if (open && initiative?.id) {
@@ -149,18 +144,6 @@ export function InitiativeDetailSheet({
           setPersonInCharge(data.personInCharge || '')
           setComments(data.comments || [])
           setProjects(data.projects || [])
-          // Initialize KPI state from fetched data
-          const label = data.kpiLabel || ''
-          const target = data.kpiTarget != null ? String(data.kpiTarget) : ''
-          const actual = data.kpiActual != null ? String(data.kpiActual) : ''
-          const unit = data.kpiUnit || ''
-          const override = data.kpiManualOverride || false
-          setKpiLabel(label)
-          setKpiTarget(target)
-          setKpiActual(actual)
-          setKpiUnit(unit)
-          setKpiManualOverride(override)
-          setLoadedKpi({ label, target, actual, unit, manualOverride: override })
         })
         .catch(console.error)
         .finally(() => setIsLoading(false))
@@ -179,11 +162,6 @@ export function InitiativeDetailSheet({
         body: JSON.stringify({
           status,
           personInCharge: personInCharge || null,
-          kpiLabel: kpiLabel || null,
-          kpiTarget: kpiTarget !== '' ? parseFloat(kpiTarget) : null,
-          kpiActual: kpiActual !== '' ? parseFloat(kpiActual) : null,
-          kpiUnit: kpiUnit || null,
-          kpiManualOverride,
         }),
       })
 
@@ -272,57 +250,10 @@ export function InitiativeDetailSheet({
     return date.toLocaleDateString('en-MY', { month: 'short', day: 'numeric' })
   }
 
-  // Handle KPI actual change -- triggers override confirm if not already overriding
-  const handleKpiActualChange = (value: string) => {
-    if (!kpiManualOverride && value !== '' && value !== kpiActual) {
-      setPendingActual(value)
-      setShowOverrideConfirm(true)
-    } else {
-      setKpiActual(value)
-    }
-  }
-
-  const handleConfirmOverride = () => {
-    setKpiActual(pendingActual)
-    setKpiManualOverride(true)
-    setShowOverrideConfirm(false)
-  }
-
-  const handleCancelOverride = () => {
-    setPendingActual('')
-    setShowOverrideConfirm(false)
-  }
-
-  // Revert to auto-calculation
-  const handleRevertToAuto = async () => {
-    if (!initiative) return
-    try {
-      await fetch(`/api/initiatives/${initiative.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          kpiManualOverride: false,
-          kpiActual: null,
-        }),
-      })
-      setKpiManualOverride(false)
-      setKpiActual('')
-      setLoadedKpi(prev => ({ ...prev, actual: '', manualOverride: false }))
-      onUpdate?.({ ...initiative })
-    } catch (error) {
-      console.error('Failed to revert to auto:', error)
-    }
-  }
-
   if (!initiative) return null
 
   const hasChanges = status !== initiative.status ||
-    (personInCharge || null) !== (initiative.personInCharge || null) ||
-    kpiLabel !== loadedKpi.label ||
-    kpiTarget !== loadedKpi.target ||
-    kpiActual !== loadedKpi.actual ||
-    kpiUnit !== loadedKpi.unit ||
-    kpiManualOverride !== loadedKpi.manualOverride
+    (personInCharge || null) !== (initiative.personInCharge || null)
 
   return (
     <>
@@ -441,92 +372,6 @@ export function InitiativeDetailSheet({
               />
             )}
 
-            {/* KPI Tracking Section */}
-            <Separator />
-            <div className="space-y-4">
-              <h3 className="font-medium flex items-center gap-2">
-                <BarChart3 className="h-4 w-4" />
-                KPI Tracking
-              </h3>
-
-              {kpiManualOverride && (
-                <div className="flex items-center justify-between bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">
-                  <span className="text-xs text-yellow-700">Manual override active</span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-7 text-xs text-yellow-700 hover:text-yellow-900"
-                    onClick={handleRevertToAuto}
-                  >
-                    <RotateCcw className="h-3 w-3 mr-1" />
-                    Revert to Auto
-                  </Button>
-                </div>
-              )}
-
-              {userCanEdit ? (
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-medium text-gray-500">KPI Label</label>
-                    <Input
-                      value={kpiLabel}
-                      onChange={e => setKpiLabel(e.target.value)}
-                      placeholder="e.g., Revenue, Completion"
-                      className="h-9"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-medium text-gray-500">Unit</label>
-                    <Input
-                      value={kpiUnit}
-                      onChange={e => setKpiUnit(e.target.value)}
-                      placeholder="e.g., RM, %, units"
-                      className="h-9"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-medium text-gray-500">Target</label>
-                    <Input
-                      type="number"
-                      value={kpiTarget}
-                      onChange={e => setKpiTarget(e.target.value)}
-                      placeholder="Target value"
-                      className="h-9"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-medium text-gray-500">Actual</label>
-                    <Input
-                      type="number"
-                      value={kpiManualOverride ? kpiActual : kpiActual}
-                      onChange={e => handleKpiActualChange(e.target.value)}
-                      placeholder="Actual value"
-                      className="h-9"
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div>
-                    <span className="text-xs text-gray-500">Label:</span>
-                    <span className="ml-1">{kpiLabel || '-'}</span>
-                  </div>
-                  <div>
-                    <span className="text-xs text-gray-500">Unit:</span>
-                    <span className="ml-1">{kpiUnit || '-'}</span>
-                  </div>
-                  <div>
-                    <span className="text-xs text-gray-500">Target:</span>
-                    <span className="ml-1">{kpiTarget || '-'}</span>
-                  </div>
-                  <div>
-                    <span className="text-xs text-gray-500">Actual:</span>
-                    <span className="ml-1">{kpiActual || '-'}</span>
-                  </div>
-                </div>
-              )}
-            </div>
-
             {/* Save Button */}
             {hasChanges && (
               <Button
@@ -585,7 +430,7 @@ export function InitiativeDetailSheet({
                       }}
                     />
                     <div className="flex justify-between items-center">
-                      <span className="text-xs text-gray-400">⌘ + Enter to submit</span>
+                      <span className="text-xs text-gray-400">Cmd + Enter to submit</span>
                       <Button
                         size="sm"
                         onClick={handleSubmitComment}
@@ -672,24 +517,6 @@ export function InitiativeDetailSheet({
       open={showPermissionDenied}
       onOpenChange={setShowPermissionDenied}
     />
-
-    <AlertDialog open={showOverrideConfirm} onOpenChange={setShowOverrideConfirm}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Override auto-calculated value?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This will set the KPI actual value manually and stop auto-calculation
-            from linked project revenue. You can revert to auto-calculation later.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel onClick={handleCancelOverride}>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleConfirmOverride}>
-            Override
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
     </>
   )
 }

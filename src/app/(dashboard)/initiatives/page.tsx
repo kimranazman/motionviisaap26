@@ -8,6 +8,11 @@ import prisma from '@/lib/prisma'
 async function getInitiatives() {
   const initiatives = await prisma.initiative.findMany({
     orderBy: { sequenceNumber: 'asc' },
+    include: {
+      keyResult: {
+        select: { id: true, krId: true, description: true },
+      },
+    },
   })
 
   return initiatives.map(i => ({
@@ -17,6 +22,7 @@ async function getInitiatives() {
     createdAt: i.createdAt.toISOString(),
     updatedAt: i.updatedAt.toISOString(),
     resourcesFinancial: i.resourcesFinancial ? Number(i.resourcesFinancial) : null,
+    keyResult: i.keyResult?.krId || 'Unlinked',
   }))
 }
 

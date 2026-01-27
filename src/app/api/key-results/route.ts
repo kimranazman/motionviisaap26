@@ -3,7 +3,7 @@ import prisma from '@/lib/prisma'
 import { requireAuth } from '@/lib/auth-utils'
 
 // GET /api/key-results - List all key results with initiative counts
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   const { error } = await requireAuth()
   if (error) return error
 
