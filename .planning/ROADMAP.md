@@ -70,10 +70,11 @@ Plans:
   3. User sees a summary statistics header on the member detail page with total counts per entity type and status breakdowns (e.g., "5 In Progress, 2 Completed, 1 At Risk")
   4. User sees items past their due date or in AT_RISK status displayed with red visual highlighting across all sections
   5. User sees a separate "Accountable For" section listing initiatives where the member is accountable (distinct from the personInCharge initiatives section)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 56-01: Member overview page and detail page with cross-model aggregation
+- [ ] 56-01-PLAN.md -- Member utils, overview page with 3 member cards and aggregated counts (MBR-01, MBR-02, MBR-03)
+- [ ] 56-02-PLAN.md -- Detail page with stats header, 5 sections (KRs, Initiatives, Accountable, Tasks, Support Tasks), and red highlighting (MBR-04 through MBR-11)
 
 ## Progress
 
@@ -83,4 +84,4 @@ Plans:
 |-------|---------------|--------|-----------|
 | 54. Collapsible Sidebar Navigation | 1/1 | Complete | 2026-01-27 |
 | 55. Cross-Project Task View | 2/2 | Complete | 2026-01-28 |
-| 56. Member Workload Dashboard | 0/1 | Not started | - |
+| 56. Member Workload Dashboard | 0/2 | Not started | - |
