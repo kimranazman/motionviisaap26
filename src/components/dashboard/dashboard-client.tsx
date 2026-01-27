@@ -15,6 +15,7 @@ import { RecentInitiatives } from './recent-initiatives';
 import { CRMKPICards } from './crm-kpi-cards';
 import { PipelineStageChart } from './pipeline-stage-chart';
 import { PendingAnalysisWidget } from './pending-analysis-widget';
+import { RevenueTarget } from './revenue-target';
 import type { LayoutWidgetConfig, DateFilter } from '@/types/dashboard';
 import { createDateFilter } from '@/lib/date-utils';
 
@@ -43,6 +44,12 @@ interface DashboardClientProps {
       department: string;
       startDate: string;
       endDate: string;
+    }>;
+    revenueBreakdown: Array<{
+      krId: string;
+      description: string;
+      target: number;
+      actual: number;
     }>;
   };
   crmData: {
@@ -188,6 +195,14 @@ export function DashboardClient({
           return crmData ? <PipelineStageChart data={crmData.stageData} /> : null;
         case 'pending-analysis':
           return <PendingAnalysisWidget />;
+        case 'revenue-target':
+          return (
+            <RevenueTarget
+              breakdown={dashboardData.revenueBreakdown}
+              totalTarget={dashboardData.stats.revenueTarget}
+              totalActual={dashboardData.stats.revenueProgress}
+            />
+          );
         default:
           return <div>Unknown widget: {widgetId}</div>;
       }

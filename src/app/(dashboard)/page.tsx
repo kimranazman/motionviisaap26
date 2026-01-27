@@ -38,7 +38,8 @@ async function getDashboardData() {
   // Real revenue from KeyResult model
   const revenueKRs = await prisma.keyResult.findMany({
     where: { metricType: 'REVENUE' },
-    select: { target: true, actual: true },
+    select: { krId: true, description: true, target: true, actual: true },
+    orderBy: { krId: 'asc' },
   })
   const revenueTarget = revenueKRs.reduce(
     (sum, kr) => sum + Number(kr.target), 0
@@ -46,6 +47,12 @@ async function getDashboardData() {
   const revenueProgress = revenueKRs.reduce(
     (sum, kr) => sum + Number(kr.actual), 0
   )
+  const revenueBreakdown = revenueKRs.map(kr => ({
+    krId: kr.krId,
+    description: kr.description,
+    target: Number(kr.target),
+    actual: Number(kr.actual),
+  }))
 
   // Calculate stats
   const completedCount = statusCounts.find(s => s.status === 'COMPLETED')?._count || 0
@@ -115,6 +122,7 @@ async function getDashboardData() {
       startDate: i.startDate.toISOString(),
       endDate: i.endDate.toISOString(),
     })),
+    revenueBreakdown,
   }
 }
 
