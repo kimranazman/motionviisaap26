@@ -37,12 +37,19 @@ export async function GET() {
       }
     })
 
-    // Calculate revenue progress (completed / total * target)
+    // Real revenue from KeyResult model
+    const revenueKRs = await prisma.keyResult.findMany({
+      where: { metricType: 'REVENUE' },
+      select: { target: true, actual: true },
+    })
+    const revenueTarget = revenueKRs.reduce(
+      (sum, kr) => sum + Number(kr.target), 0
+    )
+    const revenueProgress = revenueKRs.reduce(
+      (sum, kr) => sum + Number(kr.actual), 0
+    )
+
     const completedCount = statusCounts.find(s => s.status === 'COMPLETED')?._count || 0
-    const revenueTarget = 1000000
-    const revenueProgress = totalInitiatives > 0
-      ? Math.round((completedCount / totalInitiatives) * revenueTarget)
-      : 0
 
     // Calculate completion rate
     const completionRate = totalInitiatives > 0
