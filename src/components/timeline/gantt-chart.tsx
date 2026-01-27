@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/tooltip'
 import {
   formatDepartment,
+  formatObjective,
   formatStatus,
   formatTeamMember,
   getDepartmentColor,
@@ -31,7 +32,8 @@ interface Initiative {
   sequenceNumber: number
   title: string
   objective: string
-  keyResult: string
+  keyResultId: string | null
+  keyResult: { krId: string; description: string } | null
   department: string
   status: string
   personInCharge: string | null
@@ -43,13 +45,26 @@ interface GanttChartProps {
   initiatives: Initiative[]
 }
 
+interface TimelineSubGroup {
+  key: string
+  label: string | null  // null = no sub-header (department mode)
+  initiatives: Initiative[]
+}
+
+interface TimelineGroup {
+  key: string
+  label: string
+  subGroups: TimelineSubGroup[]
+  totalInitiatives: number
+}
+
 const MONTHS = [
   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
 ]
 
 export function GanttChart({ initiatives }: GanttChartProps) {
-  const [groupBy, setGroupBy] = useState<'department' | 'objective'>('department')
+  const [groupBy, setGroupBy] = useState<'department' | 'objective'>('objective')
   const [filterDepartment, setFilterDepartment] = useState<string>('all')
 
   // Filter initiatives
@@ -58,17 +73,72 @@ export function GanttChart({ initiatives }: GanttChartProps) {
     return initiatives.filter(i => i.department === filterDepartment)
   }, [initiatives, filterDepartment])
 
-  // Group initiatives
-  const groupedInitiatives = useMemo(() => {
-    const groups: Record<string, Initiative[]> = {}
+  // Build timeline groups with sub-groups
+  const timelineGroups = useMemo(() => {
+    const groups: TimelineGroup[] = []
 
-    filteredInitiatives.forEach(initiative => {
-      const key = groupBy === 'department'
-        ? initiative.department
-        : initiative.objective
-      if (!groups[key]) groups[key] = []
-      groups[key].push(initiative)
-    })
+    if (groupBy === 'department') {
+      // Department mode: each department is a group with one sub-group (no sub-header)
+      const byDept = new Map<string, Initiative[]>()
+      for (const initiative of filteredInitiatives) {
+        const group = byDept.get(initiative.department) || []
+        group.push(initiative)
+        byDept.set(initiative.department, group)
+      }
+      Array.from(byDept.entries()).forEach(([dept, items]) => {
+        groups.push({
+          key: dept,
+          label: formatDepartment(dept),
+          subGroups: [{
+            key: dept,
+            label: null,
+            initiatives: items,
+          }],
+          totalInitiatives: items.length,
+        })
+      })
+    } else {
+      // Objective mode: group by objective, sub-group by keyResult
+      const byObjective = new Map<string, Initiative[]>()
+      for (const initiative of filteredInitiatives) {
+        const group = byObjective.get(initiative.objective) || []
+        group.push(initiative)
+        byObjective.set(initiative.objective, group)
+      }
+      Array.from(byObjective.entries()).forEach(([objective, items]) => {
+        const byKR = new Map<string, Initiative[]>()
+        for (const item of items) {
+          const krId = item.keyResult?.krId || 'Unlinked'
+          const group = byKR.get(krId) || []
+          group.push(item)
+          byKR.set(krId, group)
+        }
+
+        const subGroups = Array.from(byKR.entries())
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([krId, krItems]) => {
+            // Build sub-header label: "KR1.1 - Description"
+            const desc = krItems[0]?.keyResult?.description
+            const label = krId === 'Unlinked'
+              ? 'Unlinked'
+              : desc
+                ? `${krId} - ${desc}`
+                : krId
+            return {
+              key: krId,
+              label,
+              initiatives: krItems,
+            }
+          })
+
+        groups.push({
+          key: objective,
+          label: formatObjective(objective),
+          subGroups,
+          totalInitiatives: items.length,
+        })
+      })
+    }
 
     return groups
   }, [filteredInitiatives, groupBy])
@@ -166,82 +236,94 @@ export function GanttChart({ initiatives }: GanttChartProps) {
 
             {/* Body */}
             <div className="divide-y divide-gray-200">
-              {Object.entries(groupedInitiatives).map(([groupKey, items]) => (
-                <div key={groupKey}>
-                  {/* Group Header */}
+              {timelineGroups.map((group) => (
+                <div key={group.key}>
+                  {/* Group Header (Objective or Department) */}
                   <div className="flex bg-gray-50 border-b border-gray-200">
                     <div className="w-64 md:w-80 shrink-0 px-3 md:px-4 py-2 font-medium text-sm text-gray-700 border-r border-gray-200">
-                      {groupBy === 'department'
-                        ? formatDepartment(groupKey)
-                        : groupKey === 'OBJ1_SCALE_EVENTS'
-                          ? 'Obj 1: Scale Events'
-                          : 'Obj 2: Build AI Training'}
-                      <span className="ml-2 text-gray-400">({items.length})</span>
+                      {group.label}
+                      <span className="ml-2 text-gray-400">({group.totalInitiatives})</span>
                     </div>
                     <div className="flex-1 min-w-[600px]" />
                   </div>
 
-                  {/* Group Items */}
-                  {items.map((initiative) => (
-                    <div key={initiative.id} className="flex hover:bg-gray-50">
-                      {/* Initiative Name */}
-                      <div className="w-64 md:w-80 shrink-0 px-3 md:px-4 py-3 border-r border-gray-200">
-                        <Link
-                          href={`/initiatives/${initiative.id}`}
-                          className="block hover:underline"
-                        >
-                          <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="text-[10px] shrink-0">
-                              {initiative.keyResult}
-                            </Badge>
-                            <span className="text-sm text-gray-900 truncate max-w-[160px] md:max-w-[220px]">
-                              {initiative.title}
-                            </span>
+                  {/* Sub-groups */}
+                  {group.subGroups.map((subGroup) => (
+                    <div key={subGroup.key}>
+                      {/* KR Sub-header (only in objective mode when label is not null) */}
+                      {subGroup.label !== null && (
+                        <div className="flex bg-gray-50/50 border-b border-gray-100">
+                          <div className="w-64 md:w-80 shrink-0 pl-6 md:pl-8 pr-3 md:pr-4 py-1.5 text-xs text-gray-600 border-r border-gray-200">
+                            {subGroup.label}
+                            <span className="ml-2 text-gray-400">({subGroup.initiatives.length})</span>
                           </div>
-                        </Link>
-                      </div>
-
-                      {/* Timeline Bar */}
-                      <div className="flex-1 relative min-h-[2.5rem] min-w-[600px]">
-                        {/* Month grid lines */}
-                        <div className="absolute inset-0 grid grid-cols-12">
-                          {MONTHS.map((_, index) => (
-                            <div
-                              key={index}
-                              className={`${index < 11 ? 'border-r border-gray-100' : ''}`}
-                            />
-                          ))}
+                          <div className="flex-1 min-w-[600px]" />
                         </div>
+                      )}
 
-                        {/* Bar */}
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div
-                              className={`absolute top-1/2 -translate-y-1/2 h-6 rounded ${getDepartmentColor(
-                                initiative.department
-                              )} opacity-90 hover:opacity-100 cursor-pointer transition-opacity`}
-                              style={getBarStyle(initiative.startDate, initiative.endDate)}
-                            />
-                          </TooltipTrigger>
-                          <TooltipContent side="top" className="max-w-xs">
-                            <div className="space-y-1">
-                              <p className="font-medium">{initiative.title}</p>
-                              <div className="flex items-center gap-2 text-xs">
-                                <Badge
-                                  variant="secondary"
-                                  className={getStatusColor(initiative.status)}
-                                >
-                                  {formatStatus(initiative.status)}
+                      {/* Initiative rows */}
+                      {subGroup.initiatives.map((initiative) => (
+                        <div key={initiative.id} className="flex hover:bg-gray-50">
+                          {/* Initiative Name */}
+                          <div className="w-64 md:w-80 shrink-0 px-3 md:px-4 py-3 border-r border-gray-200">
+                            <Link
+                              href={`/initiatives/${initiative.id}`}
+                              className="block hover:underline"
+                            >
+                              <div className="flex items-start gap-2">
+                                <Badge variant="outline" className="text-[10px] shrink-0 mt-0.5">
+                                  {initiative.keyResult?.krId || 'Unlinked'}
                                 </Badge>
-                                <span>{formatTeamMember(initiative.personInCharge)}</span>
+                                <span className="text-sm text-gray-900">
+                                  {initiative.title}
+                                </span>
                               </div>
-                              <p className="text-xs text-gray-500">
-                                {new Date(initiative.startDate).toLocaleDateString()} - {new Date(initiative.endDate).toLocaleDateString()}
-                              </p>
+                            </Link>
+                          </div>
+
+                          {/* Timeline Bar */}
+                          <div className="flex-1 relative min-h-[2.5rem] min-w-[600px]">
+                            {/* Month grid lines */}
+                            <div className="absolute inset-0 grid grid-cols-12">
+                              {MONTHS.map((_, index) => (
+                                <div
+                                  key={index}
+                                  className={`${index < 11 ? 'border-r border-gray-100' : ''}`}
+                                />
+                              ))}
                             </div>
-                          </TooltipContent>
-                        </Tooltip>
-                      </div>
+
+                            {/* Bar */}
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div
+                                  className={`absolute top-1/2 -translate-y-1/2 h-6 rounded ${getDepartmentColor(
+                                    initiative.department
+                                  )} opacity-90 hover:opacity-100 cursor-pointer transition-opacity`}
+                                  style={getBarStyle(initiative.startDate, initiative.endDate)}
+                                />
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="max-w-xs">
+                                <div className="space-y-1">
+                                  <p className="font-medium">{initiative.title}</p>
+                                  <div className="flex items-center gap-2 text-xs">
+                                    <Badge
+                                      variant="secondary"
+                                      className={getStatusColor(initiative.status)}
+                                    >
+                                      {formatStatus(initiative.status)}
+                                    </Badge>
+                                    <span>{formatTeamMember(initiative.personInCharge)}</span>
+                                  </div>
+                                  <p className="text-xs text-gray-500">
+                                    {new Date(initiative.startDate).toLocaleDateString()} - {new Date(initiative.endDate).toLocaleDateString()}
+                                  </p>
+                                </div>
+                              </TooltipContent>
+                            </Tooltip>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   ))}
                 </div>

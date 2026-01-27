@@ -16,7 +16,8 @@ async function getInitiatives() {
       sequenceNumber: true,
       title: true,
       objective: true,
-      keyResult: { select: { krId: true } },
+      keyResultId: true,
+      keyResult: { select: { krId: true, description: true } },
       department: true,
       status: true,
       personInCharge: true,
@@ -29,7 +30,8 @@ async function getInitiatives() {
     ...i,
     startDate: i.startDate.toISOString(),
     endDate: i.endDate.toISOString(),
-    keyResult: i.keyResult?.krId || 'Unlinked',
+    keyResultId: i.keyResultId,
+    keyResult: i.keyResult ? { krId: i.keyResult.krId, description: i.keyResult.description } : null,
   }))
 }
 
