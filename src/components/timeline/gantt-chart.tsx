@@ -1,7 +1,9 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef, useCallback } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -26,6 +28,8 @@ import {
   getStatusColor,
   DEPARTMENT_OPTIONS,
 } from '@/lib/utils'
+import { canEdit } from '@/lib/permissions'
+import { useGanttDrag } from '@/hooks/use-gantt-drag'
 
 interface Initiative {
   id: string
@@ -66,6 +70,31 @@ const MONTHS = [
 export function GanttChart({ initiatives }: GanttChartProps) {
   const [groupBy, setGroupBy] = useState<'department' | 'objective'>('objective')
   const [filterDepartment, setFilterDepartment] = useState<string>('all')
+  const router = useRouter()
+  const { data: session } = useSession()
+  const userCanEdit = canEdit(session?.user?.role)
+  const chartContainerRef = useRef<HTMLDivElement>(null)
+
+  // Drag handler: PATCH API then refresh
+  const handleDatesChange = useCallback(async (id: string, startDate: string, endDate: string) => {
+    try {
+      const res = await fetch(`/api/initiatives/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ startDate, endDate }),
+      })
+      if (res.ok) {
+        router.refresh()
+      }
+    } catch (err) {
+      console.error('Failed to update initiative dates:', err)
+    }
+  }, [router])
+
+  const { dragState, handleMouseDown, isDragging, hasDragged } = useGanttDrag({
+    chartRef: chartContainerRef,
+    onDatesChange: handleDatesChange,
+  })
 
   // Filter initiatives
   const filteredInitiatives = useMemo(() => {
@@ -164,6 +193,17 @@ export function GanttChart({ initiatives }: GanttChartProps) {
     }
   }
 
+  // Use drag state dates when actively dragging, otherwise use initiative dates
+  const getBarStyleForInitiative = (initiative: Initiative) => {
+    if (dragState && dragState.id === initiative.id) {
+      return getBarStyle(
+        dragState.currentStart.toISOString(),
+        dragState.currentEnd.toISOString(),
+      )
+    }
+    return getBarStyle(initiative.startDate, initiative.endDate)
+  }
+
   return (
     <TooltipProvider>
       <div className="space-y-4">
@@ -220,7 +260,7 @@ export function GanttChart({ initiatives }: GanttChartProps) {
               <div className="w-64 md:w-80 shrink-0 px-3 md:px-4 py-3 font-medium text-sm text-gray-700 border-r border-gray-200">
                 Initiative
               </div>
-              <div className="flex-1 grid grid-cols-12 min-w-[600px]">
+              <div ref={chartContainerRef} className="flex-1 grid grid-cols-12 min-w-[600px]">
                 {MONTHS.map((month, index) => (
                   <div
                     key={month}
@@ -235,7 +275,7 @@ export function GanttChart({ initiatives }: GanttChartProps) {
             </div>
 
             {/* Body */}
-            <div className="divide-y divide-gray-200">
+            <div className={`divide-y divide-gray-200 ${isDragging ? 'select-none' : ''}`}>
               {timelineGroups.map((group) => (
                 <div key={group.key}>
                   {/* Group Header (Objective or Department) */}
@@ -262,68 +302,105 @@ export function GanttChart({ initiatives }: GanttChartProps) {
                       )}
 
                       {/* Initiative rows */}
-                      {subGroup.initiatives.map((initiative) => (
-                        <div key={initiative.id} className="flex hover:bg-gray-50">
-                          {/* Initiative Name */}
-                          <div className="w-64 md:w-80 shrink-0 px-3 md:px-4 py-3 border-r border-gray-200">
-                            <Link
-                              href={`/initiatives/${initiative.id}`}
-                              className="block hover:underline"
-                            >
-                              <div className="flex items-start gap-2">
-                                <Badge variant="outline" className="text-[10px] shrink-0 mt-0.5">
-                                  {initiative.keyResult?.krId || 'Unlinked'}
-                                </Badge>
-                                <span className="text-sm text-gray-900">
-                                  {initiative.title}
-                                </span>
-                              </div>
-                            </Link>
-                          </div>
+                      {subGroup.initiatives.map((initiative) => {
+                        const isBeingDragged = dragState?.id === initiative.id
 
-                          {/* Timeline Bar */}
-                          <div className="flex-1 relative min-h-[2.5rem] min-w-[600px]">
-                            {/* Month grid lines */}
-                            <div className="absolute inset-0 grid grid-cols-12">
-                              {MONTHS.map((_, index) => (
-                                <div
-                                  key={index}
-                                  className={`${index < 11 ? 'border-r border-gray-100' : ''}`}
-                                />
-                              ))}
+                        return (
+                          <div key={initiative.id} className="flex hover:bg-gray-50">
+                            {/* Initiative Name */}
+                            <div className="w-64 md:w-80 shrink-0 px-3 md:px-4 py-3 border-r border-gray-200">
+                              <Link
+                                href={`/initiatives/${initiative.id}`}
+                                className="block hover:underline"
+                                onClick={(e) => { if (hasDragged) e.preventDefault() }}
+                              >
+                                <div className="flex items-start gap-2">
+                                  <Badge variant="outline" className="text-[10px] shrink-0 mt-0.5">
+                                    {initiative.keyResult?.krId || 'Unlinked'}
+                                  </Badge>
+                                  <span className="text-sm text-gray-900">
+                                    {initiative.title}
+                                  </span>
+                                </div>
+                              </Link>
                             </div>
 
-                            {/* Bar */}
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <div
-                                  className={`absolute top-1/2 -translate-y-1/2 h-6 rounded ${getDepartmentColor(
-                                    initiative.department
-                                  )} opacity-90 hover:opacity-100 cursor-pointer transition-opacity`}
-                                  style={getBarStyle(initiative.startDate, initiative.endDate)}
-                                />
-                              </TooltipTrigger>
-                              <TooltipContent side="top" className="max-w-xs">
-                                <div className="space-y-1">
-                                  <p className="font-medium">{initiative.title}</p>
-                                  <div className="flex items-center gap-2 text-xs">
-                                    <Badge
-                                      variant="secondary"
-                                      className={getStatusColor(initiative.status)}
-                                    >
-                                      {formatStatus(initiative.status)}
-                                    </Badge>
-                                    <span>{formatTeamMember(initiative.personInCharge)}</span>
+                            {/* Timeline Bar */}
+                            <div className="flex-1 relative min-h-[2.5rem] min-w-[600px]">
+                              {/* Month grid lines */}
+                              <div className="absolute inset-0 grid grid-cols-12">
+                                {MONTHS.map((_, index) => (
+                                  <div
+                                    key={index}
+                                    className={`${index < 11 ? 'border-r border-gray-100' : ''}`}
+                                  />
+                                ))}
+                              </div>
+
+                              {/* Bar */}
+                              <Tooltip open={isDragging ? false : undefined}>
+                                <TooltipTrigger asChild>
+                                  <div
+                                    className={`absolute top-1/2 -translate-y-1/2 h-6 rounded ${getDepartmentColor(
+                                      initiative.department
+                                    )} opacity-90 hover:opacity-100 transition-opacity group ${
+                                      isBeingDragged ? 'ring-2 ring-blue-400 opacity-100' : ''
+                                    }`}
+                                    style={getBarStyleForInitiative(initiative)}
+                                  >
+                                    {/* Drag handles - only for editors */}
+                                    {userCanEdit && (
+                                      <>
+                                        {/* Left resize handle */}
+                                        <div
+                                          className="absolute left-0 top-0 bottom-0 w-2 cursor-ew-resize z-10 rounded-l"
+                                          onMouseDown={(e) => handleMouseDown(e, initiative.id, 'resize-left', initiative.startDate, initiative.endDate)}
+                                        />
+                                        {/* Center move area */}
+                                        <div
+                                          className="absolute inset-0 mx-2 cursor-grab active:cursor-grabbing"
+                                          onMouseDown={(e) => handleMouseDown(e, initiative.id, 'move', initiative.startDate, initiative.endDate)}
+                                        />
+                                        {/* Right resize handle */}
+                                        <div
+                                          className="absolute right-0 top-0 bottom-0 w-2 cursor-ew-resize z-10 rounded-r"
+                                          onMouseDown={(e) => handleMouseDown(e, initiative.id, 'resize-right', initiative.startDate, initiative.endDate)}
+                                        />
+                                      </>
+                                    )}
+
+                                    {/* Date tooltip during drag */}
+                                    {isBeingDragged && dragState && (
+                                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-20 pointer-events-none">
+                                        {dragState.currentStart.toLocaleDateString('en-MY', { day: 'numeric', month: 'short' })}
+                                        {' - '}
+                                        {dragState.currentEnd.toLocaleDateString('en-MY', { day: 'numeric', month: 'short' })}
+                                      </div>
+                                    )}
                                   </div>
-                                  <p className="text-xs text-gray-500">
-                                    {new Date(initiative.startDate).toLocaleDateString()} - {new Date(initiative.endDate).toLocaleDateString()}
-                                  </p>
-                                </div>
-                              </TooltipContent>
-                            </Tooltip>
+                                </TooltipTrigger>
+                                <TooltipContent side="top" className="max-w-xs">
+                                  <div className="space-y-1">
+                                    <p className="font-medium">{initiative.title}</p>
+                                    <div className="flex items-center gap-2 text-xs">
+                                      <Badge
+                                        variant="secondary"
+                                        className={getStatusColor(initiative.status)}
+                                      >
+                                        {formatStatus(initiative.status)}
+                                      </Badge>
+                                      <span>{formatTeamMember(initiative.personInCharge)}</span>
+                                    </div>
+                                    <p className="text-xs text-gray-500">
+                                      {new Date(initiative.startDate).toLocaleDateString()} - {new Date(initiative.endDate).toLocaleDateString()}
+                                    </p>
+                                  </div>
+                                </TooltipContent>
+                              </Tooltip>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        )
+                      })}
                     </div>
                   ))}
                 </div>
