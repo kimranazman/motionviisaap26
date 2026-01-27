@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { cn, formatDate } from '@/lib/utils'
 import { formatTaskStatus, getTaskStatusColor, formatTaskPriority, getTaskPriorityColor } from '@/lib/task-utils'
+import type { TaskStatus, TaskPriority } from '@prisma/client'
 import { shouldHighlightRed } from '@/lib/member-utils'
 import type { SerializedTask } from '@/components/members/member-detail'
 
@@ -58,10 +59,10 @@ export function MemberTasksSection({ tasks, memberName }: MemberTasksSectionProp
                         <Badge
                           className={cn(
                             'text-xs',
-                            getTaskPriorityColor(task.priority as any)
+                            getTaskPriorityColor(task.priority as TaskPriority)
                           )}
                         >
-                          {formatTaskPriority(task.priority as any)}
+                          {formatTaskPriority(task.priority as TaskPriority)}
                         </Badge>
                         {task.dueDate && (
                           <span className="text-xs text-gray-500">
@@ -74,10 +75,10 @@ export function MemberTasksSection({ tasks, memberName }: MemberTasksSectionProp
                     <Badge
                       className={cn(
                         'shrink-0 text-xs',
-                        getTaskStatusColor(task.status as any)
+                        getTaskStatusColor(task.status as TaskStatus)
                       )}
                     >
-                      {formatTaskStatus(task.status as any)}
+                      {formatTaskStatus(task.status as TaskStatus)}
                     </Badge>
                   </div>
                 </div>

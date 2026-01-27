@@ -12,6 +12,7 @@ import { MemberSupportTasksSection } from '@/components/members/member-support-t
 import { getStatusBreakdown, formatKrStatus } from '@/lib/member-utils'
 import { formatStatus } from '@/lib/utils'
 import { formatTaskStatus } from '@/lib/task-utils'
+import type { TaskStatus } from '@prisma/client'
 import type { MemberProfile } from '@/lib/member-utils'
 
 // Serialized types matching server page output
@@ -123,7 +124,7 @@ export function MemberDetail({ data }: MemberDetailProps) {
 
   const taskBreakdown = getStatusBreakdown(tasks).map(b => ({
     ...b,
-    label: formatTaskStatus(b.status as any),
+    label: formatTaskStatus(b.status as TaskStatus),
   }))
 
   // Support tasks have priority, not status -- use priority for breakdown
