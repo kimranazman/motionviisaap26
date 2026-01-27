@@ -10,7 +10,8 @@ import { formatObjective, cn } from '@/lib/utils'
 import { KeyResultGroup } from '@/components/objectives/key-result-group'
 import type { GroupedObjective } from '@/lib/initiative-group-utils'
 import type { Initiative } from '@/components/objectives/objective-hierarchy'
-import { aggregateKpiTotals } from '@/lib/initiative-kpi-utils'
+import { calculateObjectiveProgress } from '@/lib/kr-progress-utils'
+import { Progress } from '@/components/ui/progress'
 
 interface ObjectiveGroupProps {
   group: GroupedObjective
@@ -37,16 +38,34 @@ export function ObjectiveGroup({
     group.inProgressCount -
     group.atRiskCount
 
-  // Aggregate KPI from all initiatives across all KRs
-  const allInitiatives = group.keyResults.flatMap(kr => kr.initiatives)
-  const kpiAgg = aggregateKpiTotals(allInitiatives)
-  const kpiColorClass = kpiAgg.percentage !== null
-    ? kpiAgg.percentage >= 80
-      ? 'text-green-600'
-      : kpiAgg.percentage >= 50
-        ? 'text-yellow-600'
-        : 'text-red-600'
-    : ''
+  // Calculate weighted objective rollup from KR progress data
+  // Each GroupedKeyResult contains initiatives with the keyResult relation
+  const seenKrIds = new Set<string>()
+  const krProgressData: { progress: number; weight: number }[] = []
+  for (const kr of group.keyResults) {
+    if (kr.keyResultId && !seenKrIds.has(kr.keyResultId)) {
+      seenKrIds.add(kr.keyResultId)
+      // Get KR metrics from the first initiative's keyResult relation
+      const firstWithKR = kr.initiatives.find(
+        (i) => (i as Initiative).keyResult != null
+      ) as Initiative | undefined
+      if (firstWithKR?.keyResult) {
+        krProgressData.push({
+          progress: firstWithKR.keyResult.progress,
+          weight: firstWithKR.keyResult.weight,
+        })
+      }
+    }
+  }
+  const objectiveProgress = calculateObjectiveProgress(krProgressData)
+  const hasProgress = krProgressData.length > 0
+
+  const progressColorClass =
+    objectiveProgress >= 80
+      ? '[&>div]:bg-green-500'
+      : objectiveProgress >= 50
+        ? '[&>div]:bg-yellow-500'
+        : '[&>div]:bg-red-500'
 
   return (
     <Collapsible open={isExpanded} onOpenChange={onToggleObjective}>
@@ -64,15 +83,19 @@ export function ObjectiveGroup({
           <span className="text-sm text-gray-500 shrink-0">
             {group.totalInitiatives} initiative{group.totalInitiatives !== 1 ? 's' : ''}
           </span>
-          {kpiAgg.hasData && (
-            <span className={cn('text-xs shrink-0', kpiColorClass)}>
-              {kpiAgg.mixedUnits
-                ? 'Mixed KPIs'
-                : kpiAgg.percentage !== null
-                  ? `KPI: ${Math.round(kpiAgg.totalActual)}/${Math.round(kpiAgg.totalTarget)} ${kpiAgg.unit} (${Math.round(kpiAgg.percentage)}%)`
-                  : `KPI: ${Math.round(kpiAgg.totalActual)} ${kpiAgg.unit}`
-              }
-            </span>
+          {hasProgress && (
+            <div className="flex items-center gap-2 shrink-0">
+              <Progress
+                value={objectiveProgress}
+                className={cn('h-2 w-20', progressColorClass)}
+              />
+              <span className={cn(
+                'text-xs font-medium',
+                objectiveProgress >= 80 ? 'text-green-600' : objectiveProgress >= 50 ? 'text-yellow-600' : 'text-red-600'
+              )}>
+                {Math.round(objectiveProgress)}%
+              </span>
+            </div>
           )}
           <div className="flex flex-wrap items-center gap-1.5 ml-auto">
             {group.inProgressCount > 0 && (
@@ -102,11 +125,11 @@ export function ObjectiveGroup({
           <div className="pl-2 md:pl-4 pr-3 md:pr-4 pb-3 md:pb-4 space-y-2">
             {group.keyResults.map(kr => (
               <KeyResultGroup
-                key={kr.keyResult}
+                key={kr.krId}
                 keyResult={kr}
                 objectiveKey={group.objective}
-                isExpanded={expandedKRs.has(group.objective + ':' + kr.keyResult)}
-                onToggle={() => onToggleKR(group.objective + ':' + kr.keyResult)}
+                isExpanded={expandedKRs.has(group.objective + ':' + kr.krId)}
+                onToggle={() => onToggleKR(group.objective + ':' + kr.krId)}
                 onInitiativeClick={onInitiativeClick}
                 overlapMap={overlapMap}
               />

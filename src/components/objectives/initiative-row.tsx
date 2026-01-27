@@ -10,8 +10,6 @@ import {
 } from '@/lib/utils'
 import { FolderOpen } from 'lucide-react'
 import type { Initiative } from '@/components/objectives/objective-hierarchy'
-import { KpiProgressBar } from '@/components/objectives/kpi-progress-bar'
-import { calculateKpi, type InitiativeWithKpiAndProjects } from '@/lib/initiative-kpi-utils'
 import { DateBadges } from '@/components/objectives/date-badges'
 
 interface InitiativeRowProps {
@@ -21,17 +19,6 @@ interface InitiativeRowProps {
 }
 
 export function InitiativeRow({ initiative, onClick, overlapCount }: InitiativeRowProps) {
-  // Build KPI data from initiative (fields are optional)
-  const kpiInput: InitiativeWithKpiAndProjects = {
-    kpiLabel: initiative.kpiLabel ?? null,
-    kpiTarget: initiative.kpiTarget ?? null,
-    kpiActual: initiative.kpiActual ?? null,
-    kpiUnit: initiative.kpiUnit ?? null,
-    kpiManualOverride: initiative.kpiManualOverride ?? false,
-    projects: initiative.projects?.map(p => ({ id: p.id, revenue: p.revenue })),
-  }
-  const kpi = calculateKpi(kpiInput)
-
   return (
     <div
       onClick={onClick}
@@ -57,14 +44,6 @@ export function InitiativeRow({ initiative, onClick, overlapCount }: InitiativeR
           overlapCount={overlapCount}
         />
 
-        {/* KPI Progress Bar */}
-        <KpiProgressBar
-          label={kpi.label}
-          percentage={kpi.percentage}
-          displayText={kpi.displayText}
-          source={kpi.source}
-        />
-
         {/* Metadata row */}
         <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-gray-500">
           <span className="inline-flex items-center rounded bg-gray-100 px-1.5 py-0.5 text-gray-600">
@@ -76,6 +55,11 @@ export function InitiativeRow({ initiative, onClick, overlapCount }: InitiativeR
             <span className="inline-flex items-center gap-1 text-blue-600">
               <FolderOpen className="h-3 w-3" />
               {initiative.projects.length} project{initiative.projects.length !== 1 ? 's' : ''}
+            </span>
+          )}
+          {initiative.budget && (
+            <span className="inline-flex items-center rounded bg-green-50 px-1.5 py-0.5 text-green-700">
+              RM {initiative.budget}
             </span>
           )}
         </div>
