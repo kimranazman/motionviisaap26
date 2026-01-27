@@ -10,7 +10,7 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 ## Current State
 
-**Version:** v2.0 OKR Restructure & Support Tasks (shipped 2026-01-27)
+**Version:** v2.1 Navigation & Views (in progress)
 **Codebase:** ~36,700 LOC TypeScript
 **Tech stack:** Next.js 14, Prisma, MariaDB, Tailwind/shadcn, NextAuth.js, OpenAI
 
@@ -191,9 +191,16 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 ### Active
 
-<!-- Next milestone requirements go here -->
+<!-- v2.1 Navigation & Views -->
 
-(No active requirements — run `/gsd:new-milestone` to define next milestone)
+## Current Milestone: v2.1 Navigation & Views
+
+**Goal:** Consolidate sidebar navigation into collapsible groups, add cross-project task view, and add per-member workload dashboard.
+
+**Target features:**
+- Navigation consolidation: SAAP and CRM items in collapsible sidebar groups, Tasks and Members as top-level nav items
+- Task view: Standalone /tasks page showing all project tasks cross-project with table and kanban toggle, drag-and-drop status changes
+- Member view: /members overview page with team stats, /members/[name] detail with KRs, initiatives, tasks, and support tasks per member
 
 ### Out of Scope
 
@@ -326,4 +333,4 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | Drag handles conditional on canEdit | Read-only users see bars but cannot drag; consistent with kanban edit gating | ✓ Good |
 
 ---
-*Last updated: 2026-01-27 after v2.0 milestone*
+*Last updated: 2026-01-27 — v2.1 milestone started*
