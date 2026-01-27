@@ -23,7 +23,7 @@ v2.1 consolidates the sidebar navigation into collapsible groups with shared con
 
 ## Phases
 
-- [ ] **Phase 54: Collapsible Sidebar Navigation** - Unified nav config with collapsible groups, persistence, mobile parity, and new top-level links
+- [x] **Phase 54: Collapsible Sidebar Navigation** - Unified nav config with collapsible groups, persistence, mobile parity, and new top-level links
 - [ ] **Phase 55: Cross-Project Task View** - /tasks page with table and kanban views, filters, sorting, drag-and-drop status changes
 - [ ] **Phase 56: Member Workload Dashboard** - /members overview and /members/[name] detail with cross-model aggregation
 
@@ -42,7 +42,7 @@ v2.1 consolidates the sidebar navigation into collapsible groups with shared con
 **Plans**: 1 plan
 
 Plans:
-- [ ] 54-01-PLAN.md -- Unified navigation config, collapse state hook, NavGroup component, and sidebar refactor (NAV-01 through NAV-11)
+- [x] 54-01-PLAN.md -- Unified navigation config, collapse state hook, NavGroup component, and sidebar refactor (NAV-01 through NAV-11)
 
 ### Phase 55: Cross-Project Task View
 **Goal**: User can view, filter, sort, and manage all tasks across all projects from a single /tasks page with table and kanban views
@@ -81,6 +81,6 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|---------------|--------|-----------|
-| 54. Collapsible Sidebar Navigation | 0/1 | Not started | - |
+| 54. Collapsible Sidebar Navigation | 1/1 | Complete | 2026-01-27 |
 | 55. Cross-Project Task View | 0/2 | Not started | - |
 | 56. Member Workload Dashboard | 0/1 | Not started | - |
