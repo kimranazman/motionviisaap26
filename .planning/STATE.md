@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-27)
 
 **Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, and AI-powered intelligence.
-**Current focus:** v2.0 Phase 48 complete -- ready for Phases 49-51
+**Current focus:** v2.0 Phase 49 Plan 01 complete -- OKR Hierarchy UI core view
 
 ## Current Position
 
-Phase: 48 of 52 (API Layer + Utilities) -- COMPLETE
-Plan: All plans complete (3/3)
-Status: Phase 48 verified -- API routes, dashboard revenue, grouping utils, KPI stubs, KR progress calc
-Last activity: 2026-01-27 -- Completed 48-03-PLAN.md
+Phase: 49 of 52 (OKR Hierarchy UI)
+Plan: 1 of 3 in Phase 49
+Status: In progress -- Plan 01 complete, Plans 02-03 pending
+Last activity: 2026-01-27 -- Completed 49-01-PLAN.md
 
-Progress: [#####-----] ~43% (3/7 phases complete)
+Progress: [######----] ~57% (4/7 phases: 46-48 complete, 49 in progress)
 
 ## v2.0 Phase Overview
 
@@ -23,7 +23,7 @@ Progress: [#####-----] ~43% (3/7 phases complete)
 | 46 | Schema Migration | None | Complete |
 | 47 | Seed Script Rewrite | 46 | Complete |
 | 48 | API Layer + Utilities | 47 | Complete |
-| 49 | OKR Hierarchy UI | 48 (parallel with 50, 51) | Pending |
+| 49 | OKR Hierarchy UI | 48 (parallel with 50, 51) | In Progress (1/3 plans) |
 | 50 | Support Tasks UI | 48 (parallel with 49, 51) | Pending |
 | 51 | Revenue Target Widget | 48 (parallel with 49, 50) | Pending |
 | 52 | Cleanup & Polish | 49, 50, 51 | Pending |
@@ -51,9 +51,9 @@ Progress: [#####-----] ~43% (3/7 phases complete)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
+- Total plans completed: 11
 - Average duration: ~5 minutes
-- Total execution time: ~53 minutes
+- Total execution time: ~57 minutes
 
 ## Accumulated Context
 
@@ -73,6 +73,8 @@ Decisions are logged in PROJECT.md Key Decisions table.
 | Export columns 20 to 17 | 48-02 | Removed 7 KPI/text columns, added 3 (budget, resources, accountable) |
 | KPI utils stubbed, not removed | 48-03 | 4 UI components still import; stubs return safe defaults; removal deferred to Phase 52 |
 | GroupedKeyResult: krId + keyResultId replaces keyResult string | 48-03 | FK-based grouping; consumer component TS errors expected until Phase 49 |
+| InitiativeDetailSheet imports BaseInitiative from hierarchy | 49-01 | Prevents type divergence; detail sheet extends canonical Initiative type |
+| KR data accessed via initiative.keyResult relation | 49-01 | GroupedKeyResult.initiatives[0].keyResult provides metrics; avoids duplicating on GroupedKeyResult interface |
 
 ### Pending Todos
 
@@ -81,12 +83,12 @@ None.
 ### Blockers/Concerns
 
 - C3 (MariaDB drift detection loop): Use `--create-only` flag and batch all FK changes into one migration
-- H2 resolved: KR lookup map built before processing support tasks and initiatives
+- Other pages (calendar, initiatives, kanban, timeline) still have TS errors from old Initiative type -- Plan 02/03 scope
 
 ## Session Continuity
 
 Last session: 2026-01-27
-Stopped at: Completed 48-03-PLAN.md -- Phase 48 fully complete
+Stopped at: Completed 49-01-PLAN.md
 Resume file: None
 
-**Next: `/gsd:plan-phase 49` to start OKR Hierarchy UI (parallel with 50, 51)**
+**Next: Execute 49-02-PLAN.md (fix remaining TS errors in other pages)**
