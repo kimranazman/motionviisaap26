@@ -159,6 +159,12 @@ Plans:
 
 **Requirements:** CLEAN-01, CLEAN-02, CLEAN-03
 
+**Plans:** 2 plans
+
+Plans:
+- [ ] 52-01-PLAN.md -- Delete dead code (initiative-kpi-utils.ts, kpi-progress-bar.tsx), remove deprecated resourcesFinancial/resourcesNonFinancial fields, update export KR column to show description
+- [ ] 52-02-PLAN.md -- Comprehensive migration audit: verify all 32 Appendix A+B files migrated, full Next.js build verification
+
 **Success Criteria:**
 1. No remaining references to initiative-level KPI fields or keyResult-as-string in source code; initiative-kpi-utils.ts is removed or fully repurposed; no stale type definitions
 2. Excel export produces correct columns -- keyResult shows KR description instead of string code, budget/resources/accountable are included, KPI columns are removed
