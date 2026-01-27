@@ -8,6 +8,21 @@ Strategic Annual Action Plan (SAAP) application for Motionvii to track 2026 busi
 
 Team can visualize and track initiative progress across multiple views (Kanban, timeline, calendar) and update status through intuitive drag-and-drop — with secure access restricted to authorized @talenta.com.my users. Full CRM enables tracking sales pipeline, organizing contacts by department, converting deals to projects with live bidirectional sync, managing project scope (deliverables and tasks), tracking suppliers with AI-powered price comparison, and managing project documents with AI-extracted financials.
 
+## Current Milestone: v2.0 OKR Restructure & Support Tasks
+
+**Goal:** Promote KeyResult from a string label to a first-class tracked entity with targets/actuals/progress, add support task management with KR linkage, reseed from updated Excel (2 objectives, 6 KRs, 37 initiatives, 30 support tasks, RM1M revenue target), and add a revenue target dashboard widget.
+
+**Target features:**
+- KeyResult as first-class model (target, actual, unit, metricType, progress, status, owner, deadline, weight, howWeMeasure)
+- Initiative linked to KeyResult via FK (replaces free-text keyResult string)
+- Initiative gains budget, resources, accountable fields
+- Initiative KPI fields removed (metrics move to KR level)
+- SupportTask model with category, frequency, priority, notes — linked to KRs (many-to-many)
+- Wipe and reseed from MotionVii_SAAP_2026_v2.xlsx (6 KRs, 37 initiatives, 30 support tasks)
+- OKR hierarchy UI updated: KR rows show target/actual/progress bar/status
+- Support Tasks page with category filtering (Design & Creative, Business & Admin, Talenta Ideas, Operations)
+- Revenue target dashboard widget (RM1M total, RM800K events, RM200K training)
+
 ## Current State
 
 **Version:** v1.5.1 Site Audit Fixes & Detail View Preferences (shipped 2026-01-27)
@@ -173,7 +188,17 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 ### Active
 
-<!-- Next milestone requirements go here -->
+<!-- v2.0 OKR Restructure & Support Tasks -->
+
+- [ ] KeyResult as first-class model with target/actual/progress/status/weight
+- [ ] Initiative linked to KeyResult via FK
+- [ ] Initiative budget, resources, accountable fields
+- [ ] Initiative KPI fields removed (moved to KR level)
+- [ ] SupportTask model with KR linkage (many-to-many)
+- [ ] Wipe and reseed from MotionVii_SAAP_2026_v2.xlsx
+- [ ] OKR hierarchy UI with KR metrics display
+- [ ] Support Tasks page with category filtering
+- [ ] Revenue target dashboard widget
 
 ### Out of Scope
 
@@ -202,8 +227,8 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - Internal tool for Motionvii team (3 people)
 - Deployed on Synology DS925+ NAS via Docker
 - Accessible at https://saap.motionvii.com (Cloudflare tunnel)
-- Data seeded from Excel file (MotionVii_SAAP_2026.xlsx)
-- 28 initiatives, 38 events currently in database
+- Data seeded from Excel file (MotionVii_SAAP_2026.xlsx → migrating to MotionVii_SAAP_2026_v2.xlsx)
+- v2.0 will wipe and reseed: 6 KRs, 37 initiatives, 30 support tasks from new Excel
 - v1.5.1 shipped — bug fixes, UX polish, detail view system with drawer/dialog preference
 - Primary admin: khairul@talenta.com.my
 
@@ -298,4 +323,4 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | Header toggle desktop-only | Mobile always uses bottom sheet regardless of setting | ✓ Good |
 
 ---
-*Last updated: 2026-01-27 after v1.5.1 milestone*
+*Last updated: 2026-01-27 after v2.0 milestone start*
