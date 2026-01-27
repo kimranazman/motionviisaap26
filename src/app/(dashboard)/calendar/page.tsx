@@ -10,7 +10,7 @@ async function getInitiatives() {
     select: {
       id: true,
       title: true,
-      keyResult: true,
+      keyResult: { select: { krId: true } },
       department: true,
       status: true,
       startDate: true,
@@ -22,6 +22,7 @@ async function getInitiatives() {
     ...i,
     startDate: i.startDate.toISOString(),
     endDate: i.endDate.toISOString(),
+    keyResult: i.keyResult?.krId || 'Unlinked',
   }))
 }
 
