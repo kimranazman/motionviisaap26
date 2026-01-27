@@ -54,11 +54,11 @@ Plans:
   3. User filters tasks by any combination of assignee, project, status, priority, due date range, and text search -- results update in real time
   4. User drags a task card between kanban columns (To Do, In Progress, Done) and the status change persists
   5. User clicks a task row or card and sees a detail sheet with full task info including subtasks and comments
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 55-01: Cross-project task API and table view
-- [ ] 55-02: Task kanban view with drag-and-drop and filters
+- [ ] 55-01-PLAN.md -- Server page, filter bar, table view with sortable columns, detail sheet, view preference (TASK-01, 02, 04-12, 14, 15)
+- [ ] 55-02-PLAN.md -- Kanban view with dnd-kit drag-and-drop status changes (TASK-03, 04, 13)
 
 ### Phase 56: Member Workload Dashboard
 **Goal**: User can see each team member's workload across all entity types (KRs, initiatives, tasks, support tasks) from overview and detail pages
