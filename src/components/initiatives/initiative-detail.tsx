@@ -70,8 +70,6 @@ interface Initiative {
   resources?: string | null
   startDate: string
   endDate: string
-  resourcesFinancial: number | null
-  resourcesNonFinancial: string | null
   remarks: string | null
   position: number
   createdAt: string

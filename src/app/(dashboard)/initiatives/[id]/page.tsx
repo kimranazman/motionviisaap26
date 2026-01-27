@@ -38,9 +38,6 @@ async function getInitiative(id: string) {
     endDate: initiative.endDate.toISOString(),
     createdAt: initiative.createdAt.toISOString(),
     updatedAt: initiative.updatedAt.toISOString(),
-    resourcesFinancial: initiative.resourcesFinancial
-      ? Number(initiative.resourcesFinancial)
-      : null,
     comments: initiative.comments.map((c) => ({
       id: c.id,
       content: c.content,

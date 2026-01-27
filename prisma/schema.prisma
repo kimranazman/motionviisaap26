@@ -47,8 +47,6 @@ model Initiative {
   title                 String               @db.VarChar(500)
   startDate             DateTime
   endDate               DateTime
-  resourcesFinancial    Decimal?             @db.Decimal(12, 2)
-  resourcesNonFinancial String?              @db.Text
   personInCharge        TeamMember?
   accountable           TeamMember?
   status                InitiativeStatus     @default(NOT_STARTED)

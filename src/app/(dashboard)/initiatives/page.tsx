@@ -21,7 +21,6 @@ async function getInitiatives() {
     endDate: i.endDate.toISOString(),
     createdAt: i.createdAt.toISOString(),
     updatedAt: i.updatedAt.toISOString(),
-    resourcesFinancial: i.resourcesFinancial ? Number(i.resourcesFinancial) : null,
     keyResult: i.keyResult?.krId || 'Unlinked',
   }))
 }

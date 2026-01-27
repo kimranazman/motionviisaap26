@@ -84,8 +84,6 @@ export async function POST(request: NextRequest) {
         title: body.title,
         startDate: new Date(body.startDate),
         endDate: new Date(body.endDate),
-        resourcesFinancial: body.resourcesFinancial || null,
-        resourcesNonFinancial: body.resourcesNonFinancial || null,
         personInCharge: body.personInCharge || null,
         accountable: body.accountable || null,
         status: body.status || 'NOT_STARTED',

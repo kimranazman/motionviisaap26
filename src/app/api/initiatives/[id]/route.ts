@@ -98,8 +98,6 @@ export async function PUT(
         title: body.title,
         startDate: body.startDate ? new Date(body.startDate) : undefined,
         endDate: body.endDate ? new Date(body.endDate) : undefined,
-        resourcesFinancial: body.resourcesFinancial,
-        resourcesNonFinancial: body.resourcesNonFinancial || null,
         personInCharge: body.personInCharge || null,
         accountable: body.accountable || null,
         status: body.status,

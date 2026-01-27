@@ -37,8 +37,6 @@ interface Initiative {
   endDate: string
   budget: string | null
   resources: string | null
-  resourcesFinancial?: number | null
-  resourcesNonFinancial?: string | null
   personInCharge?: string | null
   accountable?: string | null
   status: string
