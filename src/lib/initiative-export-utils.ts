@@ -2,13 +2,12 @@
  * Initiative Excel export utilities
  *
  * Column definitions, row mapping, and workbook builder for XLSX export.
- * Uses calculateKpi from initiative-kpi-utils.ts for KPI achievement.
- * Used by GET /api/initiatives/export (Phase 42).
+ * Used by GET /api/initiatives/export.
+ * Updated for v2.0: KPI fields removed, budget/resources/accountable added.
  */
 
 import * as XLSX from 'xlsx'
 import { differenceInDays } from 'date-fns'
-import { calculateKpi } from '@/lib/initiative-kpi-utils'
 import {
   formatStatus,
   formatDepartment,
@@ -36,20 +35,16 @@ interface ProjectForExport {
 export interface InitiativeForExport {
   sequenceNumber: number
   objective: string
-  keyResult: string
+  keyResult: { krId: string; description: string } | null
   title: string
   department: string
   status: string
   personInCharge: string | null
+  accountable: string | null
   startDate: Date
   endDate: Date
-  kpiLabel: string | null
-  kpiTarget: unknown // Prisma Decimal
-  kpiActual: unknown // Prisma Decimal
-  kpiUnit: string | null
-  kpiManualOverride: boolean
-  monthlyObjective: string | null
-  weeklyTasks: string | null
+  budget: string | null
+  resources: string | null
   remarks: string | null
   projects: ProjectForExport[]
 }
@@ -66,18 +61,15 @@ export const EXPORT_COLUMNS: ExportColumn[] = [
   { key: 'department', header: 'Department', wch: 14 },
   { key: 'status', header: 'Status', wch: 14 },
   { key: 'owner', header: 'Owner', wch: 12 },
+  { key: 'accountable', header: 'Accountable', wch: 14 },
   { key: 'startDate', header: 'Start Date', wch: 14 },
   { key: 'endDate', header: 'End Date', wch: 14 },
   { key: 'duration', header: 'Duration', wch: 10 },
-  { key: 'kpiLabel', header: 'KPI Label', wch: 20 },
-  { key: 'kpiTarget', header: 'KPI Target', wch: 14 },
-  { key: 'kpiActual', header: 'KPI Actual', wch: 14 },
-  { key: 'achievement', header: '% Achievement', wch: 14 },
+  { key: 'budget', header: 'Budget', wch: 16 },
+  { key: 'resources', header: 'Resources', wch: 20 },
   { key: 'linkedProjects', header: 'Linked Projects', wch: 16 },
   { key: 'totalRevenue', header: 'Total Revenue', wch: 16 },
   { key: 'totalCosts', header: 'Total Costs', wch: 16 },
-  { key: 'monthlyObjective', header: 'Monthly Objective', wch: 40 },
-  { key: 'weeklyTasks', header: 'Weekly Tasks', wch: 40 },
   { key: 'remarks', header: 'Remarks', wch: 30 },
 ]
 
@@ -93,21 +85,6 @@ export function mapInitiativeToExportRow(
     new Date(initiative.endDate),
     new Date(initiative.startDate)
   )
-
-  // KPI achievement via calculateKpi
-  const kpi = calculateKpi({
-    kpiLabel: initiative.kpiLabel ?? null,
-    kpiTarget:
-      initiative.kpiTarget != null ? Number(initiative.kpiTarget) : null,
-    kpiActual:
-      initiative.kpiActual != null ? Number(initiative.kpiActual) : null,
-    kpiUnit: initiative.kpiUnit ?? null,
-    kpiManualOverride: initiative.kpiManualOverride ?? false,
-    projects: (initiative.projects ?? []).map((p) => ({
-      id: p.id,
-      revenue: p.revenue != null ? Number(p.revenue) : null,
-    })),
-  })
 
   // Linked projects count
   const linkedProjects = initiative.projects?.length ?? 0
@@ -128,21 +105,17 @@ export function mapInitiativeToExportRow(
   return {
     '#': initiative.sequenceNumber,
     'Objective': formatObjective(initiative.objective),
-    'Key Result': initiative.keyResult,
+    'Key Result': initiative.keyResult?.krId || '-',
     'Title': initiative.title,
     'Department': formatDepartment(initiative.department),
     'Status': formatStatus(initiative.status),
     'Owner': formatTeamMember(initiative.personInCharge),
+    'Accountable': formatTeamMember(initiative.accountable),
     'Start Date': formatDate(initiative.startDate),
     'End Date': formatDate(initiative.endDate),
     'Duration': `${durationDays}d`,
-    'KPI Label': initiative.kpiLabel || '-',
-    'KPI Target': kpi.target,
-    'KPI Actual': kpi.actual || null,
-    '% Achievement':
-      kpi.percentage != null
-        ? Number(kpi.percentage.toFixed(1))
-        : null,
+    'Budget': initiative.budget || '-',
+    'Resources': initiative.resources || '-',
     'Linked Projects': linkedProjects || null,
     'Total Revenue':
       totalRevenue > 0
@@ -152,8 +125,6 @@ export function mapInitiativeToExportRow(
       totalCosts > 0
         ? Number(totalCosts.toFixed(2))
         : null,
-    'Monthly Objective': initiative.monthlyObjective || '-',
-    'Weekly Tasks': initiative.weeklyTasks || '-',
     'Remarks': initiative.remarks || '-',
   }
 }

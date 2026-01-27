@@ -16,7 +16,7 @@ export async function GET() {
     const initiatives = await prisma.initiative.findMany({
       orderBy: [
         { objective: 'asc' },
-        { keyResult: 'asc' },
+        { keyResultId: 'asc' },
         { sequenceNumber: 'asc' },
       ],
       select: {
@@ -24,21 +24,15 @@ export async function GET() {
         sequenceNumber: true,
         title: true,
         objective: true,
-        keyResult: true,
+        keyResult: { select: { krId: true, description: true } },
         department: true,
         status: true,
         personInCharge: true,
+        accountable: true,
         startDate: true,
         endDate: true,
-        // KPI fields
-        kpiLabel: true,
-        kpiTarget: true,
-        kpiActual: true,
-        kpiUnit: true,
-        kpiManualOverride: true,
-        // Additional text fields for export
-        monthlyObjective: true,
-        weeklyTasks: true,
+        budget: true,
+        resources: true,
         remarks: true,
         // Linked projects with revenue + cost aggregation
         projects: {
