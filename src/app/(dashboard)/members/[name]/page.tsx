@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { notFound } from 'next/navigation'
 import prisma from '@/lib/prisma'
+import { TeamMember } from '@prisma/client'
 import { Header } from '@/components/layout/header'
 import { MemberDetail } from '@/components/members/member-detail'
 import { getMemberBySlug, type MemberProfile } from '@/lib/member-utils'
@@ -14,20 +15,20 @@ async function getMemberDetailData(member: MemberProfile) {
         orderBy: { krId: 'asc' },
       }),
       prisma.initiative.findMany({
-        where: { personInCharge: member.enumValue as any },
+        where: { personInCharge: member.enumValue as TeamMember },
         include: { keyResult: { select: { id: true, krId: true } } },
         orderBy: { sequenceNumber: 'asc' },
       }),
       prisma.initiative.findMany({
         where: {
-          accountable: member.enumValue as any,
-          NOT: { personInCharge: member.enumValue as any },
+          accountable: member.enumValue as TeamMember,
+          NOT: { personInCharge: member.enumValue as TeamMember },
         },
         include: { keyResult: { select: { id: true, krId: true } } },
         orderBy: { sequenceNumber: 'asc' },
       }),
       prisma.task.findMany({
-        where: { assignee: member.enumValue as any, parentId: null },
+        where: { assignee: member.enumValue as TeamMember, parentId: null },
         include: { project: { select: { id: true, title: true } } },
         orderBy: { createdAt: 'desc' },
       }),
