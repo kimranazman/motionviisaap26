@@ -37,8 +37,6 @@ export async function GET(request: NextRequest) {
     if (search) {
       where.OR = [
         { title: { contains: search } },
-        { monthlyObjective: { contains: search } },
-        { weeklyTasks: { contains: search } },
         { remarks: { contains: search } },
       ]
     }
@@ -46,6 +44,11 @@ export async function GET(request: NextRequest) {
     const initiatives = await prisma.initiative.findMany({
       where,
       orderBy: [{ sequenceNumber: 'asc' }],
+      include: {
+        keyResult: {
+          select: { id: true, krId: true, description: true },
+        },
+      },
     })
 
     return NextResponse.json(initiatives)
@@ -76,11 +79,9 @@ export async function POST(request: NextRequest) {
       data: {
         sequenceNumber: nextSeq,
         objective: body.objective,
-        keyResult: body.keyResult,
+        keyResultId: body.keyResultId || null,
         department: body.department,
         title: body.title,
-        monthlyObjective: body.monthlyObjective || null,
-        weeklyTasks: body.weeklyTasks || null,
         startDate: new Date(body.startDate),
         endDate: new Date(body.endDate),
         resourcesFinancial: body.resourcesFinancial || null,
@@ -89,6 +90,8 @@ export async function POST(request: NextRequest) {
         accountable: body.accountable || null,
         status: body.status || 'NOT_STARTED',
         remarks: body.remarks || null,
+        budget: body.budget || null,
+        resources: body.resources || null,
         position: nextSeq,
       },
     })

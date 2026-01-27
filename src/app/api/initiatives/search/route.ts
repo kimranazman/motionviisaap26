@@ -23,8 +23,6 @@ export async function GET(request: NextRequest) {
     const where: Prisma.InitiativeWhereInput = {
       OR: [
         { title: { contains: searchTerm } },
-        { monthlyObjective: { contains: searchTerm } },
-        { weeklyTasks: { contains: searchTerm } },
         { remarks: { contains: searchTerm } },
       ],
     }

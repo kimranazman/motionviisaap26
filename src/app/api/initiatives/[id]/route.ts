@@ -16,6 +16,7 @@ export async function GET(
     const initiative = await prisma.initiative.findUnique({
       where: { id },
       include: {
+        keyResult: true,
         comments: {
           orderBy: { createdAt: 'desc' },
           include: {
@@ -65,9 +66,6 @@ export async function GET(
 
     return NextResponse.json({
       ...initiative,
-      // Convert Decimal fields to numbers
-      kpiTarget: initiative.kpiTarget ? Number(initiative.kpiTarget) : null,
-      kpiActual: initiative.kpiActual ? Number(initiative.kpiActual) : null,
       projects: serializedProjects,
     })
   } catch (error) {
@@ -95,11 +93,9 @@ export async function PUT(
       where: { id },
       data: {
         objective: body.objective,
-        keyResult: body.keyResult,
+        keyResultId: body.keyResultId !== undefined ? (body.keyResultId || null) : undefined,
         department: body.department,
         title: body.title,
-        monthlyObjective: body.monthlyObjective || null,
-        weeklyTasks: body.weeklyTasks || null,
         startDate: body.startDate ? new Date(body.startDate) : undefined,
         endDate: body.endDate ? new Date(body.endDate) : undefined,
         resourcesFinancial: body.resourcesFinancial,
@@ -108,6 +104,8 @@ export async function PUT(
         accountable: body.accountable || null,
         status: body.status,
         remarks: body.remarks || null,
+        budget: body.budget !== undefined ? body.budget : undefined,
+        resources: body.resources !== undefined ? body.resources : undefined,
       },
     })
 
@@ -149,27 +147,6 @@ export async function PATCH(
 
     if (body.personInCharge !== undefined) {
       updateData.personInCharge = body.personInCharge
-    }
-
-    // KPI fields
-    if (body.kpiLabel !== undefined) {
-      updateData.kpiLabel = body.kpiLabel || null
-    }
-    if (body.kpiTarget !== undefined) {
-      updateData.kpiTarget = body.kpiTarget !== null && body.kpiTarget !== ''
-        ? parseFloat(String(body.kpiTarget))
-        : null
-    }
-    if (body.kpiActual !== undefined) {
-      updateData.kpiActual = body.kpiActual !== null && body.kpiActual !== ''
-        ? parseFloat(String(body.kpiActual))
-        : null
-    }
-    if (body.kpiUnit !== undefined) {
-      updateData.kpiUnit = body.kpiUnit || null
-    }
-    if (body.kpiManualOverride !== undefined) {
-      updateData.kpiManualOverride = body.kpiManualOverride
     }
 
     const initiative = await prisma.initiative.update({
