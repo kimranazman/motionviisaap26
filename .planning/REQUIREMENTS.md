@@ -93,42 +93,42 @@ These features are expected but deferred to a future milestone.
 
 <!-- Filled by roadmapper: maps each requirement to a phase -->
 
-| Requirement | Phase |
-|-------------|-------|
-| NAV-01 | - |
-| NAV-02 | - |
-| NAV-03 | - |
-| NAV-04 | - |
-| NAV-05 | - |
-| NAV-06 | - |
-| NAV-07 | - |
-| NAV-08 | - |
-| NAV-09 | - |
-| NAV-10 | - |
-| NAV-11 | - |
-| TASK-01 | - |
-| TASK-02 | - |
-| TASK-03 | - |
-| TASK-04 | - |
-| TASK-05 | - |
-| TASK-06 | - |
-| TASK-07 | - |
-| TASK-08 | - |
-| TASK-09 | - |
-| TASK-10 | - |
-| TASK-11 | - |
-| TASK-12 | - |
-| TASK-13 | - |
-| TASK-14 | - |
-| TASK-15 | - |
-| MBR-01 | - |
-| MBR-02 | - |
-| MBR-03 | - |
-| MBR-04 | - |
-| MBR-05 | - |
-| MBR-06 | - |
-| MBR-07 | - |
-| MBR-08 | - |
-| MBR-09 | - |
-| MBR-10 | - |
-| MBR-11 | - |
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| NAV-01 | Phase 54 | Pending |
+| NAV-02 | Phase 54 | Pending |
+| NAV-03 | Phase 54 | Pending |
+| NAV-04 | Phase 54 | Pending |
+| NAV-05 | Phase 54 | Pending |
+| NAV-06 | Phase 54 | Pending |
+| NAV-07 | Phase 54 | Pending |
+| NAV-08 | Phase 54 | Pending |
+| NAV-09 | Phase 54 | Pending |
+| NAV-10 | Phase 54 | Pending |
+| NAV-11 | Phase 54 | Pending |
+| TASK-01 | Phase 55 | Pending |
+| TASK-02 | Phase 55 | Pending |
+| TASK-03 | Phase 55 | Pending |
+| TASK-04 | Phase 55 | Pending |
+| TASK-05 | Phase 55 | Pending |
+| TASK-06 | Phase 55 | Pending |
+| TASK-07 | Phase 55 | Pending |
+| TASK-08 | Phase 55 | Pending |
+| TASK-09 | Phase 55 | Pending |
+| TASK-10 | Phase 55 | Pending |
+| TASK-11 | Phase 55 | Pending |
+| TASK-12 | Phase 55 | Pending |
+| TASK-13 | Phase 55 | Pending |
+| TASK-14 | Phase 55 | Pending |
+| TASK-15 | Phase 55 | Pending |
+| MBR-01 | Phase 56 | Pending |
+| MBR-02 | Phase 56 | Pending |
+| MBR-03 | Phase 56 | Pending |
+| MBR-04 | Phase 56 | Pending |
+| MBR-05 | Phase 56 | Pending |
+| MBR-06 | Phase 56 | Pending |
+| MBR-07 | Phase 56 | Pending |
+| MBR-08 | Phase 56 | Pending |
+| MBR-09 | Phase 56 | Pending |
+| MBR-10 | Phase 56 | Pending |
+| MBR-11 | Phase 56 | Pending |

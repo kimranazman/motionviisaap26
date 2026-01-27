@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-27)
 
 **Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, and AI-powered intelligence.
-**Current focus:** Planning next milestone
+**Current focus:** v2.1 Navigation & Views
 
 ## Current Position
 
-Phase: Not started (next milestone)
+Phase: 54 of 56 (Collapsible Sidebar Navigation)
 Plan: Not started
 Status: Ready to plan
-Last activity: 2026-01-27 -- v2.0 milestone complete
+Last activity: 2026-01-27 -- v2.1 roadmap created
 
-Progress: Milestone v2.0 shipped. Next milestone not yet defined.
+Progress: [░░░░░░░░░░] 0% (0/4 plans)
 
 ## Milestone History
 
@@ -36,6 +36,21 @@ Progress: Milestone v2.0 shipped. Next milestone not yet defined.
 
 **Archives:** `.planning/milestones/`
 
+## Performance Metrics
+
+**Velocity:**
+- Total plans completed: 0
+- Average duration: -
+- Total execution time: -
+
+**By Phase:**
+
+| Phase | Plans | Total | Avg/Plan |
+|-------|-------|-------|----------|
+| - | - | - | - |
+
+*Updated after each plan completion*
+
 ## Accumulated Context
 
 ### Decisions
@@ -54,7 +69,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-27
-Stopped at: v2.0 milestone archived
+Stopped at: v2.1 roadmap created
 Resume file: None
-
-**v2.0 shipped. Run `/gsd:new-milestone` to start next milestone.**
