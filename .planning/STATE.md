@@ -5,18 +5,30 @@
 See: .planning/PROJECT.md (updated 2026-01-27)
 
 **Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, and AI-powered intelligence.
-**Current focus:** Planning next milestone
+**Current focus:** v2.0 roadmap created -- 7 phases (46-52), ready for phase planning
 
 ## Current Position
 
-Phase: Milestone complete
+Phase: Ready for planning
 Plan: N/A
-Status: v1.5.1 shipped -- ready for next milestone
-Last activity: 2026-01-27 -- Completed v1.5.1 milestone (Site Audit Fixes & Detail View Preferences)
+Status: v2.0 roadmap created -- 7 phases (46-52)
+Last activity: 2026-01-27 -- Created v2.0 roadmap (OKR Restructure & Support Tasks)
 
-Progress: [██████████] 100%
+Progress: [----------] 0%
 
-**v1.5.1 shipped -- use `/gsd:new-milestone` to start next version**
+**Next: `/gsd:plan-phase 46` to start Schema Migration**
+
+## v2.0 Phase Overview
+
+| Phase | Name | Dependencies | Status |
+|-------|------|--------------|--------|
+| 46 | Schema Migration | None | Pending |
+| 47 | Seed Script Rewrite | 46 | Pending |
+| 48 | API Layer + Utilities | 47 | Pending |
+| 49 | OKR Hierarchy UI | 48 (parallel with 50, 51) | Pending |
+| 50 | Support Tasks UI | 48 (parallel with 49, 51) | Pending |
+| 51 | Revenue Target Widget | 48 (parallel with 49, 50) | Pending |
+| 52 | Cleanup & Polish | 49, 50, 51 | Pending |
 
 ## Milestone History
 
@@ -34,6 +46,7 @@ Progress: [██████████] 100%
 | v1.4.2 | UI Polish & Bug Fixes | 37 | 2026-01-26 |
 | v1.5 | Initiative Intelligence & Export | 38-42 | 2026-01-26 |
 | v1.5.1 | Site Audit Fixes & Detail View Preferences | 43-45 | 2026-01-27 |
+| v2.0 | OKR Restructure & Support Tasks | 46-52 | In progress |
 
 **Archives:** `.planning/milestones/`
 
@@ -56,10 +69,12 @@ None.
 
 ### Blockers/Concerns
 
-None.
+- C3 (MariaDB drift detection loop): Use `--create-only` flag and batch all FK changes into one migration
+- C4 (Premature KPI removal): Acceptable for v2.0 since wipe-and-reseed from Excel means no data loss concern
+- H2 ("All KRs" parsing): Seed must build KR lookup map before processing support tasks
 
 ## Session Continuity
 
 Last session: 2026-01-27
-Stopped at: Completed v1.5.1 milestone -- archived and tagged
-Resume file: None
+Stopped at: Created v2.0 roadmap -- 7 phases (46-52) mapped to 37 requirements
+Resume file: .planning/ROADMAP.md
