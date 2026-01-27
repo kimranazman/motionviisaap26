@@ -42,17 +42,17 @@
 
 ### Members (MBR)
 
-- [ ] **MBR-01**: User can navigate to /members to see an overview of all 3 team members
-- [ ] **MBR-02**: Each member card on /members shows name, avatar/initials, and aggregated counts (KRs, initiatives, tasks, support tasks)
-- [ ] **MBR-03**: User can click a member card to navigate to /members/[name] detail page
-- [ ] **MBR-04**: Member detail page shows Key Results section listing KRs owned by the member (KR ID, description, progress bar, target/actual, status)
-- [ ] **MBR-05**: Member detail page shows Initiatives section listing initiatives where member is personInCharge (sequence, title, status, department, date range, KR badge)
-- [ ] **MBR-06**: Member detail page shows Tasks section listing tasks across all projects where member is assignee (title, project, status, priority, due date)
-- [ ] **MBR-07**: Member detail page shows Support Tasks section listing support tasks owned by the member (category, description, frequency, priority, linked KRs)
-- [ ] **MBR-08**: Member detail page shows summary statistics header with total counts per entity type
-- [ ] **MBR-09**: Member detail shows status breakdown per section (e.g., "5 In Progress, 2 Completed, 1 At Risk") not just raw counts
-- [ ] **MBR-10**: Items past due date or in AT_RISK status display with visual highlighting (red accent)
-- [ ] **MBR-11**: Member detail page shows separate "Accountable For" section listing initiatives where member is accountable (distinct from personInCharge)
+- [x] **MBR-01**: User can navigate to /members to see an overview of all 3 team members
+- [x] **MBR-02**: Each member card on /members shows name, avatar/initials, and aggregated counts (KRs, initiatives, tasks, support tasks)
+- [x] **MBR-03**: User can click a member card to navigate to /members/[name] detail page
+- [x] **MBR-04**: Member detail page shows Key Results section listing KRs owned by the member (KR ID, description, progress bar, target/actual, status)
+- [x] **MBR-05**: Member detail page shows Initiatives section listing initiatives where member is personInCharge (sequence, title, status, department, date range, KR badge)
+- [x] **MBR-06**: Member detail page shows Tasks section listing tasks across all projects where member is assignee (title, project, status, priority, due date)
+- [x] **MBR-07**: Member detail page shows Support Tasks section listing support tasks owned by the member (category, description, frequency, priority, linked KRs)
+- [x] **MBR-08**: Member detail page shows summary statistics header with total counts per entity type
+- [x] **MBR-09**: Member detail shows status breakdown per section (e.g., "5 In Progress, 2 Completed, 1 At Risk") not just raw counts
+- [x] **MBR-10**: Items past due date or in AT_RISK status display with visual highlighting (red accent)
+- [x] **MBR-11**: Member detail page shows separate "Accountable For" section listing initiatives where member is accountable (distinct from personInCharge)
 
 ---
 
@@ -121,14 +121,14 @@ These features are expected but deferred to a future milestone.
 | TASK-13 | Phase 55 | Complete |
 | TASK-14 | Phase 55 | Complete |
 | TASK-15 | Phase 55 | Complete |
-| MBR-01 | Phase 56 | Pending |
-| MBR-02 | Phase 56 | Pending |
-| MBR-03 | Phase 56 | Pending |
-| MBR-04 | Phase 56 | Pending |
-| MBR-05 | Phase 56 | Pending |
-| MBR-06 | Phase 56 | Pending |
-| MBR-07 | Phase 56 | Pending |
-| MBR-08 | Phase 56 | Pending |
-| MBR-09 | Phase 56 | Pending |
-| MBR-10 | Phase 56 | Pending |
-| MBR-11 | Phase 56 | Pending |
+| MBR-01 | Phase 56 | Complete |
+| MBR-02 | Phase 56 | Complete |
+| MBR-03 | Phase 56 | Complete |
+| MBR-04 | Phase 56 | Complete |
+| MBR-05 | Phase 56 | Complete |
+| MBR-06 | Phase 56 | Complete |
+| MBR-07 | Phase 56 | Complete |
+| MBR-08 | Phase 56 | Complete |
+| MBR-09 | Phase 56 | Complete |
+| MBR-10 | Phase 56 | Complete |
+| MBR-11 | Phase 56 | Complete |

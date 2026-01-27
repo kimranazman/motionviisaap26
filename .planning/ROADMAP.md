@@ -19,13 +19,13 @@ v2.1 consolidates the sidebar navigation into collapsible groups with shared con
 - ✅ **v1.5 Initiative Intelligence & Export** - Phases 38-42 (shipped 2026-01-26)
 - ✅ **v1.5.1 Site Audit Fixes & Detail View Preferences** - Phases 43-45 (shipped 2026-01-27)
 - ✅ **v2.0 OKR Restructure & Support Tasks** - Phases 46-53 (shipped 2026-01-27)
-- 🚧 **v2.1 Navigation & Views** - Phases 54-56 (in progress)
+- ✅ **v2.1 Navigation & Views** - Phases 54-56 (shipped 2026-01-28)
 
 ## Phases
 
 - [x] **Phase 54: Collapsible Sidebar Navigation** - Unified nav config with collapsible groups, persistence, mobile parity, and new top-level links
 - [x] **Phase 55: Cross-Project Task View** - /tasks page with table and kanban views, filters, sorting, drag-and-drop status changes
-- [ ] **Phase 56: Member Workload Dashboard** - /members overview and /members/[name] detail with cross-model aggregation
+- [x] **Phase 56: Member Workload Dashboard** - /members overview and /members/[name] detail with cross-model aggregation
 
 ## Phase Details
 
@@ -73,8 +73,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 56-01-PLAN.md -- Member utils, overview page with 3 member cards and aggregated counts (MBR-01, MBR-02, MBR-03)
-- [ ] 56-02-PLAN.md -- Detail page with stats header, 5 sections (KRs, Initiatives, Accountable, Tasks, Support Tasks), and red highlighting (MBR-04 through MBR-11)
+- [x] 56-01-PLAN.md -- Member utils, overview page with 3 member cards and aggregated counts (MBR-01, MBR-02, MBR-03)
+- [x] 56-02-PLAN.md -- Detail page with stats header, 5 sections (KRs, Initiatives, Accountable, Tasks, Support Tasks), and red highlighting (MBR-04 through MBR-11)
 
 ## Progress
 
@@ -84,4 +84,4 @@ Plans:
 |-------|---------------|--------|-----------|
 | 54. Collapsible Sidebar Navigation | 1/1 | Complete | 2026-01-27 |
 | 55. Cross-Project Task View | 2/2 | Complete | 2026-01-28 |
-| 56. Member Workload Dashboard | 0/2 | Not started | - |
+| 56. Member Workload Dashboard | 2/2 | Complete | 2026-01-28 |
