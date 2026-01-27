@@ -91,6 +91,13 @@ Plans:
 
 **Requirements:** UI-OKR-01, UI-OKR-02, UI-OKR-03, UI-OKR-04, UI-OKR-05, UI-OKR-06, UI-OKR-07
 
+**Plans:** 3 plans
+
+Plans:
+- [ ] 49-01-PLAN.md -- Overhaul objectives page: KR metrics display, objective rollup progress, simplified initiative rows
+- [ ] 49-02-PLAN.md -- Update initiative forms and detail views: KR dropdown, budget/resources, remove KPI
+- [ ] 49-03-PLAN.md -- Update kanban/calendar/timeline views: keyResult string-to-FK migration, full build verification
+
 **Success Criteria:**
 1. In the By Objective view, each KeyResult row displays: description, target vs actual, progress bar, unit, status badge, owner, and deadline -- all from the KR model, not aggregated from initiatives
 2. Objective headers show weighted rollup progress calculated from child KR weights and progress values
