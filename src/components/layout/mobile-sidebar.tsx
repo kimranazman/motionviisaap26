@@ -5,69 +5,18 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { Menu, Target } from 'lucide-react'
-import {
-  LayoutDashboard,
-  GanttChart,
-  KanbanSquare,
-  Calendar,
-  ListTodo,
-  Ticket,
-  ClipboardList,
-  Users,
-  Building2,
-  Funnel,
-  FolderKanban,
-  Briefcase,
-  Truck,
-  Settings,
-} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
 import { cn } from '@/lib/utils'
-
-const navigation = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { name: 'By Objective', href: '/objectives', icon: Target },
-  { name: 'Timeline', href: '/timeline', icon: GanttChart },
-  { name: 'Kanban', href: '/kanban', icon: KanbanSquare },
-  { name: 'Calendar', href: '/calendar', icon: Calendar },
-  { name: 'Initiatives', href: '/initiatives', icon: ListTodo },
-  { name: 'Support Tasks', href: '/support-tasks', icon: ClipboardList },
-  { name: 'Events to Attend', href: '/events', icon: Ticket },
-]
-
-const crmNavigation = [
-  { name: 'Companies', href: '/companies', icon: Building2 },
-  { name: 'Pipeline', href: '/pipeline', icon: Funnel },
-  { name: 'Potential Projects', href: '/potential-projects', icon: FolderKanban },
-  { name: 'Projects', href: '/projects', icon: Briefcase },
-  { name: 'Suppliers', href: '/suppliers', icon: Truck },
-]
+import { navGroups, topLevelItems, settingsItem } from '@/lib/nav-config'
+import { useNavCollapseState } from '@/lib/hooks/use-nav-collapse-state'
+import { NavGroupComponent } from '@/components/layout/nav-group'
 
 export function MobileSidebar() {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
   const { data: session } = useSession()
-
-  const NavLink = ({ item }: { item: { name: string; href: string; icon: React.ComponentType<{ className?: string }> } }) => {
-    const isActive = pathname === item.href ||
-      (item.href !== '/' && pathname.startsWith(item.href))
-    return (
-      <Link
-        href={item.href}
-        onClick={() => setOpen(false)}
-        className={cn(
-          'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-          isActive
-            ? 'bg-gray-100 text-gray-900'
-            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-        )}
-      >
-        <item.icon className="h-5 w-5" />
-        {item.name}
-      </Link>
-    )
-  }
+  const { expandedGroups, toggleGroup } = useNavCollapseState(pathname)
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -92,31 +41,60 @@ export function MobileSidebar() {
 
         {/* Navigation */}
         <nav className="flex flex-col gap-1 p-4 overflow-y-auto max-h-[calc(100vh-80px)]">
-          {navigation.map((item) => (
-            <NavLink key={item.name} item={item} />
-          ))}
+          {/* Collapsible groups */}
+          {navGroups
+            .filter((group) => !group.requireRole || session?.user?.role === group.requireRole)
+            .map((group) => (
+              <NavGroupComponent
+                key={group.key}
+                group={group}
+                isExpanded={expandedGroups[group.key] ?? true}
+                onToggle={() => toggleGroup(group.key)}
+                pathname={pathname}
+                onLinkClick={() => setOpen(false)}
+              />
+            ))}
 
-          {/* CRM Section */}
-          <div className="mt-6 mb-2 px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-            CRM
+          {/* Top-level items (Tasks, Members) */}
+          <div className="mt-4 flex flex-col gap-1">
+            {topLevelItems.map((item) => {
+              const isActive =
+                pathname === item.href ||
+                (item.href !== '/' && pathname.startsWith(item.href))
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                    isActive
+                      ? 'bg-gray-100 text-gray-900'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  )}
+                >
+                  <item.icon className="h-5 w-5" />
+                  {item.name}
+                </Link>
+              )
+            })}
           </div>
-          {crmNavigation.map((item) => (
-            <NavLink key={item.name} item={item} />
-          ))}
-
-          {/* Admin Section */}
-          {session?.user?.role === "ADMIN" && (
-            <>
-              <div className="mt-6 mb-2 px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                Admin
-              </div>
-              <NavLink item={{ name: 'Users', href: '/admin/users', icon: Users }} />
-            </>
-          )}
 
           {/* Settings */}
           <div className="mt-6 pt-4 border-t border-gray-200">
-            <NavLink item={{ name: 'Settings', href: '/settings', icon: Settings }} />
+            <Link
+              href={settingsItem.href}
+              onClick={() => setOpen(false)}
+              className={cn(
+                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                pathname.startsWith(settingsItem.href)
+                  ? 'bg-gray-100 text-gray-900'
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+              )}
+            >
+              <settingsItem.icon className="h-5 w-5" />
+              {settingsItem.name}
+            </Link>
           </div>
         </nav>
       </SheetContent>

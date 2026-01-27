@@ -4,39 +4,15 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { cn } from '@/lib/utils'
-import {
-  LayoutDashboard,
-  GanttChart,
-  KanbanSquare,
-  Calendar,
-  ListTodo,
-  Target,
-  Ticket,
-  ClipboardList,
-  Users,
-  Building2,
-  Funnel,
-  FolderKanban,
-  Briefcase,
-  Truck,
-  Scale,
-  Settings,
-} from 'lucide-react'
-
-const navigation = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { name: 'By Objective', href: '/objectives', icon: Target },
-  { name: 'Timeline', href: '/timeline', icon: GanttChart },
-  { name: 'Kanban', href: '/kanban', icon: KanbanSquare },
-  { name: 'Calendar', href: '/calendar', icon: Calendar },
-  { name: 'Initiatives', href: '/initiatives', icon: ListTodo },
-  { name: 'Support Tasks', href: '/support-tasks', icon: ClipboardList },
-  { name: 'Events to Attend', href: '/events', icon: Ticket },
-]
+import { Target } from 'lucide-react'
+import { navGroups, topLevelItems, settingsItem } from '@/lib/nav-config'
+import { useNavCollapseState } from '@/lib/hooks/use-nav-collapse-state'
+import { NavGroupComponent } from '@/components/layout/nav-group'
 
 export function Sidebar() {
   const pathname = usePathname()
   const { data: session } = useSession()
+  const { expandedGroups, toggleGroup } = useNavCollapseState(pathname)
 
   return (
     <aside className="hidden md:fixed md:inset-y-0 md:left-0 md:z-50 md:block md:w-64 bg-white border-r border-gray-200">
@@ -53,137 +29,56 @@ export function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex flex-col gap-1 p-4">
-        {navigation.map((item) => {
-          const isActive = pathname === item.href ||
-            (item.href !== '/' && pathname.startsWith(item.href))
-          return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                isActive
-                  ? 'bg-gray-100 text-gray-900'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-              )}
-            >
-              <item.icon className="h-5 w-5" />
-              {item.name}
-            </Link>
-          )
-        })}
+        {/* Collapsible groups */}
+        {navGroups
+          .filter((group) => !group.requireRole || session?.user?.role === group.requireRole)
+          .map((group) => (
+            <NavGroupComponent
+              key={group.key}
+              group={group}
+              isExpanded={expandedGroups[group.key] ?? true}
+              onToggle={() => toggleGroup(group.key)}
+              pathname={pathname}
+            />
+          ))}
 
-        {/* CRM Section */}
-        <div className="mt-6 mb-2 px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-          CRM
+        {/* Top-level items (Tasks, Members) */}
+        <div className="mt-4 flex flex-col gap-1">
+          {topLevelItems.map((item) => {
+            const isActive =
+              pathname === item.href ||
+              (item.href !== '/' && pathname.startsWith(item.href))
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                  isActive
+                    ? 'bg-gray-100 text-gray-900'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                )}
+              >
+                <item.icon className="h-5 w-5" />
+                {item.name}
+              </Link>
+            )
+          })}
         </div>
-        <Link
-          href="/companies"
-          className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-            pathname.startsWith('/companies')
-              ? 'bg-gray-100 text-gray-900'
-              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-          )}
-        >
-          <Building2 className="h-5 w-5" />
-          Companies
-        </Link>
-        <Link
-          href="/pipeline"
-          className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-            pathname.startsWith('/pipeline')
-              ? 'bg-gray-100 text-gray-900'
-              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-          )}
-        >
-          <Funnel className="h-5 w-5" />
-          Pipeline
-        </Link>
-        <Link
-          href="/potential-projects"
-          className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-            pathname.startsWith('/potential-projects')
-              ? 'bg-gray-100 text-gray-900'
-              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-          )}
-        >
-          <FolderKanban className="h-5 w-5" />
-          Potential Projects
-        </Link>
-        <Link
-          href="/projects"
-          className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-            pathname.startsWith('/projects')
-              ? 'bg-gray-100 text-gray-900'
-              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-          )}
-        >
-          <Briefcase className="h-5 w-5" />
-          Projects
-        </Link>
-        <Link
-          href="/suppliers"
-          className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-            pathname.startsWith('/suppliers')
-              ? 'bg-gray-100 text-gray-900'
-              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-          )}
-        >
-          <Truck className="h-5 w-5" />
-          Suppliers
-        </Link>
-        <Link
-          href="/supplier-items"
-          className={cn(
-            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-            pathname.startsWith('/supplier-items')
-              ? 'bg-gray-100 text-gray-900'
-              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-          )}
-        >
-          <Scale className="h-5 w-5" />
-          Price Comparison
-        </Link>
-
-        {/* Admin Section */}
-        {session?.user?.role === "ADMIN" && (
-          <>
-            <div className="mt-6 mb-2 px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-              Admin
-            </div>
-            <Link
-              href="/admin/users"
-              className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                pathname.startsWith('/admin/users')
-                  ? 'bg-gray-100 text-gray-900'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-              )}
-            >
-              <Users className="h-5 w-5" />
-              Users
-            </Link>
-          </>
-        )}
 
         {/* Settings */}
         <div className="mt-6 pt-4 border-t border-gray-200">
           <Link
-            href="/settings"
+            href={settingsItem.href}
             className={cn(
               'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-              pathname.startsWith('/settings')
+              pathname.startsWith(settingsItem.href)
                 ? 'bg-gray-100 text-gray-900'
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
             )}
           >
-            <Settings className="h-5 w-5" />
-            Settings
+            <settingsItem.icon className="h-5 w-5" />
+            {settingsItem.name}
           </Link>
         </div>
       </nav>
