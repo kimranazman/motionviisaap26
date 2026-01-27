@@ -2,19 +2,19 @@
 
 ## What This Is
 
-Strategic Annual Action Plan (SAAP) application for Motionvii to track 2026 business initiatives. A visual planning tool with Kanban boards, Gantt timelines, and calendar views for a small team (Khairul, Azlan, Izyani) to manage strategic objectives, key results, and action items. Includes Google OAuth authentication, role-based access control, complete CRM with sales pipeline and company departments, project management with deliverables, tasks, document uploads and AI-powered intelligence (financial extraction, price comparison), customizable dashboards, supplier management, and bidirectional pipeline-project sync.
+Strategic Annual Action Plan (SAAP) application for Motionvii to track 2026 business initiatives. A visual planning tool with Kanban boards, Gantt timelines, and calendar views for a small team (Khairul, Azlan, Izyani) to manage strategic objectives, key results, and action items. Includes Google OAuth authentication, role-based access control, complete CRM with sales pipeline and company departments, project management with deliverables, tasks, document uploads and AI-powered intelligence (financial extraction, price comparison), customizable dashboards, supplier management, bidirectional pipeline-project sync, cross-project task management with table/kanban views, and per-member workload dashboards.
 
 ## Core Value
 
-Team can visualize and track initiative progress across multiple views (Kanban, timeline, calendar) and update status through intuitive drag-and-drop — with secure access restricted to authorized @talenta.com.my users. Full CRM enables tracking sales pipeline, organizing contacts by department, converting deals to projects with live bidirectional sync, managing project scope (deliverables and tasks), tracking suppliers with AI-powered price comparison, and managing project documents with AI-extracted financials.
+Team can visualize and track initiative progress across multiple views (Kanban, timeline, calendar) and update status through intuitive drag-and-drop — with secure access restricted to authorized @talenta.com.my users. Full CRM enables tracking sales pipeline, organizing contacts by department, converting deals to projects with live bidirectional sync, managing project scope (deliverables and tasks), tracking suppliers with AI-powered price comparison, and managing project documents with AI-extracted financials. Cross-project task management and per-member workload dashboards provide team-wide visibility.
 
 ## Current State
 
-**Version:** v2.1 Navigation & Views (in progress)
-**Codebase:** ~36,700 LOC TypeScript
+**Version:** v2.1 Navigation & Views (shipped 2026-01-28)
+**Codebase:** ~38,400 LOC TypeScript
 **Tech stack:** Next.js 14, Prisma, MariaDB, Tailwind/shadcn, NextAuth.js, OpenAI
 
-**v2.0 delivered:** KeyResult as first-class tracked entity with targets/actuals/progress, support task management with KR linkage, data reseeded from MotionVii_SAAP_2026_v2.xlsx (6 KRs, 37 initiatives, 30 support tasks), revenue target dashboard widget, and timeline drag-to-edit with objective grouping.
+**v2.1 delivered:** Unified collapsible sidebar navigation with shared config, cross-project /tasks page with table/kanban views and drag-and-drop, per-member workload dashboards (/members overview + /members/[name] detail with 5 sections).
 
 ## Requirements
 
@@ -189,18 +189,23 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - ✓ Dead code cleanup (KPI files, deprecated fields) — v2.0
 - ✓ Export updated for v2.0 schema (KR description, budget, resources) — v2.0
 
+**v2.1 Navigation & Views:**
+- ✓ Unified collapsible sidebar groups (SAAP, CRM, Admin) with shared nav config — v2.1
+- ✓ localStorage-persisted collapse state with SSR-safe hydration — v2.1
+- ✓ Auto-expand for active route in collapsed groups — v2.1
+- ✓ Mobile sidebar parity (shared config, Price Comparison fix) — v2.1
+- ✓ Top-level Tasks and Members nav links — v2.1
+- ✓ Cross-project /tasks page with table and kanban views — v2.1
+- ✓ 6-filter bar (search, assignee, project, status, priority, due date) — v2.1
+- ✓ Sortable table columns with overdue highlighting — v2.1
+- ✓ dnd-kit kanban with drag-and-drop status changes — v2.1
+- ✓ /members overview with 3 member cards and aggregated workload counts — v2.1
+- ✓ /members/[name] detail with stats header and 5 sections (KRs, Initiatives, Accountable, Tasks, Support Tasks) — v2.1
+- ✓ Red highlighting for overdue/AT_RISK/HIGH priority items — v2.1
+
 ### Active
 
-<!-- v2.1 Navigation & Views -->
-
-## Current Milestone: v2.1 Navigation & Views
-
-**Goal:** Consolidate sidebar navigation into collapsible groups, add cross-project task view, and add per-member workload dashboard.
-
-**Target features:**
-- Navigation consolidation: SAAP and CRM items in collapsible sidebar groups, Tasks and Members as top-level nav items
-- Task view: Standalone /tasks page showing all project tasks cross-project with table and kanban toggle, drag-and-drop status changes
-- Member view: /members overview page with team stats, /members/[name] detail with KRs, initiatives, tasks, and support tasks per member
+<!-- Next milestone TBD -->
 
 ### Out of Scope
 
@@ -230,8 +235,8 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - Deployed on Synology DS925+ NAS via Docker
 - Accessible at https://saap.motionvii.com (Cloudflare tunnel)
 - Data seeded from MotionVii_SAAP_2026_v2.xlsx (6 KRs, 37 initiatives, 30 support tasks, 59 KR join links)
-- v2.0 shipped — full OKR restructure with KeyResult as first-class entity, support tasks, revenue widget, timeline enhancements
-- 36,700 LOC TypeScript across 53 phases (v1.0-v2.0)
+- v2.1 shipped — collapsible sidebar, cross-project tasks, member workload dashboards
+- 38,400 LOC TypeScript across 56 phases (v1.0-v2.1)
 - Primary admin: khairul@talenta.com.my
 
 ## Infrastructure
@@ -331,6 +336,16 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | 'kri' category for revenue-target widget | Revenue targets are Key Result metrics; avoids updating WidgetDefinition category union | ✓ Good |
 | 3px drag threshold for click vs drag | Prevents accidental drags from clicks; preserves Link navigation on timeline | ✓ Good |
 | Drag handles conditional on canEdit | Read-only users see bars but cannot drag; consistent with kanban edit gating | ✓ Good |
+| localStorage for sidebar collapse state | Device-specific setting; no cross-device sync needed | ✓ Good |
+| All nav groups default expanded | Maximum discoverability on first visit | ✓ Good |
+| findGroupForPath with startsWith matching | Handles sub-routes correctly; exact match for '/' only | ✓ Good |
+| Server component Prisma fetch for /tasks | Follows kanban/page.tsx pattern; no API route needed | ✓ Good |
+| router.refresh() for task data refresh | No GET /api/tasks route needed; re-runs server component | ✓ Good |
+| Project-scoped PATCH for kanban drag | Reuses existing API; task.projectId available on card | ✓ Good |
+| Optimistic update on dragOver | Matches kanban-board.tsx pattern; immediate visual feedback | ✓ Good |
+| Hardcoded MEMBER_PROFILES in member-utils.ts | Matches existing TeamMember enum; 3-person team is static | ✓ Good |
+| Parallel Promise.all for member data | 5 independent Prisma queries run concurrently for fast page load | ✓ Good |
+| NOT clause for Accountable For section | Prevents double-counting members who are both accountable and personInCharge | ✓ Good |
 
 ---
-*Last updated: 2026-01-27 — v2.1 milestone started*
+*Last updated: 2026-01-28 after v2.1 milestone*

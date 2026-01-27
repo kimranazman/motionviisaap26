@@ -1,5 +1,42 @@
 # Milestone History
 
+## v2.1: Navigation & Views
+
+**Shipped:** 2026-01-28
+**Duration:** 2 days
+**Phases:** 3 (Phases 54-56)
+**Plans:** 5
+**Stats:** 24 commits, 41 files changed, +6,002 / -296 lines
+
+### Summary
+
+Consolidated sidebar navigation into collapsible groups with a unified config (fixing mobile drift), added a cross-project task page with table and kanban views (sortable columns, 6 filters, drag-and-drop status changes), and delivered per-member workload dashboards with overview cards and detail pages showing KRs, initiatives, tasks, and support tasks per team member.
+
+### Key Accomplishments
+
+- Unified navigation config eliminating sidebar duplication, with collapsible groups, localStorage persistence, and auto-expand for active routes
+- Cross-project /tasks page with sortable table view (6 columns), 6-filter bar, and detail sheet integration
+- dnd-kit kanban view with 3 status columns, drag-and-drop status changes, and mobile touch support
+- /members overview with 3 member cards showing aggregated workload counts from 4 database models
+- /members/[name] detail page with summary stats header, status breakdowns, and 5 sections (KRs, Initiatives, Accountable For, Tasks, Support Tasks)
+- Red highlighting for overdue, AT_RISK, and HIGH priority items across all member detail sections
+
+### Requirements Delivered
+
+| Category | Count | IDs |
+|----------|-------|-----|
+| Navigation (NAV) | 11 | NAV-01 to NAV-11 |
+| Tasks (TASK) | 15 | TASK-01 to TASK-15 |
+| Members (MBR) | 11 | MBR-01 to MBR-11 |
+| **Total** | **37** | |
+
+### Artifacts
+
+- Roadmap: `.planning/milestones/v2.1-ROADMAP.md`
+- Requirements: `.planning/milestones/v2.1-REQUIREMENTS.md`
+
+---
+
 ## v2.0: OKR Restructure & Support Tasks
 
 **Shipped:** 2026-01-27
