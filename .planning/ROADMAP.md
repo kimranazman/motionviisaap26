@@ -141,7 +141,7 @@ Plans:
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| 46 | Schema Migration | SCHEMA-01..08 | Planned |
+| 46 | Schema Migration | SCHEMA-01..08 | Complete |
 | 47 | Seed Script Rewrite | SEED-01..06 | Pending |
 | 48 | API Layer + Utilities | API-01..04, UTIL-01..03 | Pending |
 | 49 | OKR Hierarchy UI | UI-OKR-01..07 | Pending |

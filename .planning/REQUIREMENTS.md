@@ -155,14 +155,14 @@ Verify all 22 keyResult string files and 8 KPI files are fully migrated using th
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SCHEMA-01 | Phase 46 | Pending |
-| SCHEMA-02 | Phase 46 | Pending |
-| SCHEMA-03 | Phase 46 | Pending |
-| SCHEMA-04 | Phase 46 | Pending |
-| SCHEMA-05 | Phase 46 | Pending |
-| SCHEMA-06 | Phase 46 | Pending |
-| SCHEMA-07 | Phase 46 | Pending |
-| SCHEMA-08 | Phase 46 | Pending |
+| SCHEMA-01 | Phase 46 | Complete |
+| SCHEMA-02 | Phase 46 | Complete |
+| SCHEMA-03 | Phase 46 | Complete |
+| SCHEMA-04 | Phase 46 | Complete |
+| SCHEMA-05 | Phase 46 | Complete |
+| SCHEMA-06 | Phase 46 | Complete |
+| SCHEMA-07 | Phase 46 | Complete |
+| SCHEMA-08 | Phase 46 | Complete |
 | SEED-01 | Phase 47 | Pending |
 | SEED-02 | Phase 47 | Pending |
 | SEED-03 | Phase 47 | Pending |
