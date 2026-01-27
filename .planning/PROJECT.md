@@ -8,26 +8,13 @@ Strategic Annual Action Plan (SAAP) application for Motionvii to track 2026 busi
 
 Team can visualize and track initiative progress across multiple views (Kanban, timeline, calendar) and update status through intuitive drag-and-drop — with secure access restricted to authorized @talenta.com.my users. Full CRM enables tracking sales pipeline, organizing contacts by department, converting deals to projects with live bidirectional sync, managing project scope (deliverables and tasks), tracking suppliers with AI-powered price comparison, and managing project documents with AI-extracted financials.
 
-## Current Milestone: v2.0 OKR Restructure & Support Tasks
-
-**Goal:** Promote KeyResult from a string label to a first-class tracked entity with targets/actuals/progress, add support task management with KR linkage, reseed from updated Excel (2 objectives, 6 KRs, 37 initiatives, 30 support tasks, RM1M revenue target), and add a revenue target dashboard widget.
-
-**Target features:**
-- KeyResult as first-class model (target, actual, unit, metricType, progress, status, owner, deadline, weight, howWeMeasure)
-- Initiative linked to KeyResult via FK (replaces free-text keyResult string)
-- Initiative gains budget, resources, accountable fields
-- Initiative KPI fields removed (metrics move to KR level)
-- SupportTask model with category, frequency, priority, notes — linked to KRs (many-to-many)
-- Wipe and reseed from MotionVii_SAAP_2026_v2.xlsx (6 KRs, 37 initiatives, 30 support tasks)
-- OKR hierarchy UI updated: KR rows show target/actual/progress bar/status
-- Support Tasks page with category filtering (Design & Creative, Business & Admin, Talenta Ideas, Operations)
-- Revenue target dashboard widget (RM1M total, RM800K events, RM200K training)
-
 ## Current State
 
-**Version:** v1.5.1 Site Audit Fixes & Detail View Preferences (shipped 2026-01-27)
-**Codebase:** ~35,700 LOC TypeScript
+**Version:** v2.0 OKR Restructure & Support Tasks (shipped 2026-01-27)
+**Codebase:** ~36,700 LOC TypeScript
 **Tech stack:** Next.js 14, Prisma, MariaDB, Tailwind/shadcn, NextAuth.js, OpenAI
+
+**v2.0 delivered:** KeyResult as first-class tracked entity with targets/actuals/progress, support task management with KR linkage, data reseeded from MotionVii_SAAP_2026_v2.xlsx (6 KRs, 37 initiatives, 30 support tasks), revenue target dashboard widget, and timeline drag-to-edit with objective grouping.
 
 ## Requirements
 
@@ -186,19 +173,27 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - ✓ Settings page (/settings) with visual radio card selector — v1.5.1
 - ✓ Quick toggle in user menu and header for view mode switching — v1.5.1
 
+**v2.0 OKR Restructure & Support Tasks:**
+- ✓ KeyResult as first-class model with target/actual/progress/status/weight — v2.0
+- ✓ Initiative linked to KeyResult via FK — v2.0
+- ✓ Initiative budget, resources, accountable fields — v2.0
+- ✓ Initiative KPI fields removed (moved to KR level) — v2.0
+- ✓ SupportTask model with KR linkage (many-to-many) — v2.0
+- ✓ Wipe and reseed from MotionVii_SAAP_2026_v2.xlsx — v2.0
+- ✓ OKR hierarchy UI with KR metrics display — v2.0
+- ✓ Support Tasks page with category filtering — v2.0
+- ✓ Revenue target dashboard widget — v2.0
+- ✓ Timeline drag-to-edit dates with move/resize handles — v2.0
+- ✓ Full initiative titles without truncation on timeline — v2.0
+- ✓ Default Objective > KeyResult grouping on timeline — v2.0
+- ✓ Dead code cleanup (KPI files, deprecated fields) — v2.0
+- ✓ Export updated for v2.0 schema (KR description, budget, resources) — v2.0
+
 ### Active
 
-<!-- v2.0 OKR Restructure & Support Tasks -->
+<!-- Next milestone requirements go here -->
 
-- [ ] KeyResult as first-class model with target/actual/progress/status/weight
-- [ ] Initiative linked to KeyResult via FK
-- [ ] Initiative budget, resources, accountable fields
-- [ ] Initiative KPI fields removed (moved to KR level)
-- [ ] SupportTask model with KR linkage (many-to-many)
-- [ ] Wipe and reseed from MotionVii_SAAP_2026_v2.xlsx
-- [ ] OKR hierarchy UI with KR metrics display
-- [ ] Support Tasks page with category filtering
-- [ ] Revenue target dashboard widget
+(No active requirements — run `/gsd:new-milestone` to define next milestone)
 
 ### Out of Scope
 
@@ -227,9 +222,9 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - Internal tool for Motionvii team (3 people)
 - Deployed on Synology DS925+ NAS via Docker
 - Accessible at https://saap.motionvii.com (Cloudflare tunnel)
-- Data seeded from Excel file (MotionVii_SAAP_2026.xlsx → migrating to MotionVii_SAAP_2026_v2.xlsx)
-- v2.0 will wipe and reseed: 6 KRs, 37 initiatives, 30 support tasks from new Excel
-- v1.5.1 shipped — bug fixes, UX polish, detail view system with drawer/dialog preference
+- Data seeded from MotionVii_SAAP_2026_v2.xlsx (6 KRs, 37 initiatives, 30 support tasks, 59 KR join links)
+- v2.0 shipped — full OKR restructure with KeyResult as first-class entity, support tasks, revenue widget, timeline enhancements
+- 36,700 LOC TypeScript across 53 phases (v1.0-v2.0)
 - Primary admin: khairul@talenta.com.my
 
 ## Infrastructure
@@ -321,6 +316,14 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | Footer prop on DetailView | Pinned action buttons in both Dialog and Sheet modes | ✓ Good |
 | Visual radio card for settings | Better UX for binary choice with visual previews | ✓ Good |
 | Header toggle desktop-only | Mobile always uses bottom sheet regardless of setting | ✓ Good |
+| `prisma db push` not `prisma migrate dev` | Avoids MariaDB FK drift loop; wipe-and-reseed means no migration history value | ✓ Good |
+| String owner fields on KeyResult/SupportTask | Owners may include team names or external contributors | ✓ Good |
+| KeyResult.id is cuid string, not Int | Schema uses @id @default(cuid()); consistent with Prisma conventions | ✓ Good |
+| KPI utils stubbed then deleted | Stubs during Phase 48 transition, fully removed in Phase 52 | ✓ Good |
+| Server pages flatten keyResult to string for list/kanban | Client components receive keyResult: string unchanged; zero client interface changes | ✓ Good |
+| 'kri' category for revenue-target widget | Revenue targets are Key Result metrics; avoids updating WidgetDefinition category union | ✓ Good |
+| 3px drag threshold for click vs drag | Prevents accidental drags from clicks; preserves Link navigation on timeline | ✓ Good |
+| Drag handles conditional on canEdit | Read-only users see bars but cannot drag; consistent with kanban edit gating | ✓ Good |
 
 ---
-*Last updated: 2026-01-27 after v2.0 milestone start*
+*Last updated: 2026-01-27 after v2.0 milestone*

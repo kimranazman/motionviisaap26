@@ -1,5 +1,49 @@
 # Milestone History
 
+## v2.0: OKR Restructure & Support Tasks
+
+**Shipped:** 2026-01-27
+**Duration:** 8 days
+**Phases:** 8 (Phases 46-53)
+**Plans:** 13
+**Stats:** 58 commits, 83 files changed, +10,289 / -1,110 lines
+
+### Summary
+
+Promoted KeyResult from a free-text string to a first-class tracked entity with targets, actuals, progress, and status. Added support task management with KR linkage, reseeded from updated Excel (6 KRs, 37 initiatives, 30 support tasks), added revenue target dashboard widget, and enhanced the timeline with drag-to-edit dates and objective grouping.
+
+### Key Accomplishments
+
+- KeyResult as first-class entity: 3 new models (KeyResult, SupportTask, SupportTaskKeyResult), 3 new enums, full OKR hierarchy
+- Complete data reseed from MotionVii_SAAP_2026_v2.xlsx: 6 KRs, 37 initiatives, 30 support tasks, 59 join links
+- OKR hierarchy UI with KR metrics display (target/actual/progress/status), weighted objective rollup, simplified initiative rows
+- Support Tasks page with 4-category grouping, filtering, KR badge links, and sidebar navigation
+- Revenue target dashboard widget showing RM1M total with Events (RM800K) and AI Training (RM200K) breakdown
+- Timeline drag-to-edit dates with move/resize handles, full titles, and default Objective > KeyResult grouping
+
+### Requirements Delivered
+
+| Category | Count | IDs |
+|----------|-------|-----|
+| Schema (SCHEMA) | 8 | SCHEMA-01 to SCHEMA-08 |
+| Seed (SEED) | 6 | SEED-01 to SEED-06 |
+| API (API) | 4 | API-01 to API-04 |
+| Utilities (UTIL) | 3 | UTIL-01 to UTIL-03 |
+| OKR UI (UI-OKR) | 7 | UI-OKR-01 to UI-OKR-07 |
+| Support Tasks UI (UI-ST) | 4 | UI-ST-01 to UI-ST-04 |
+| Revenue Widget (UI-REV) | 2 | UI-REV-01 to UI-REV-02 |
+| Cleanup (CLEAN) | 3 | CLEAN-01 to CLEAN-03 |
+| Timeline (TIMELINE) | 3 | TIMELINE-01 to TIMELINE-03 |
+| **Total** | **40** | |
+
+### Artifacts
+
+- Roadmap: `.planning/milestones/v2.0-ROADMAP.md`
+- Requirements: `.planning/milestones/v2.0-REQUIREMENTS.md`
+- Audit: `.planning/milestones/v2.0-MILESTONE-AUDIT.md`
+
+---
+
 ## v1.5.1: Site Audit Fixes & Detail View Preferences
 
 **Shipped:** 2026-01-27
