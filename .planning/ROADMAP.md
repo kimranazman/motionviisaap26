@@ -39,10 +39,10 @@ v2.1 consolidates the sidebar navigation into collapsible groups with shared con
   3. User navigates to a page inside a collapsed group and that group auto-expands to reveal the active item
   4. User opens the mobile sidebar and sees the same collapsible groups with the same items as the desktop sidebar (including Price Comparison, which is currently missing on mobile)
   5. User sees top-level Tasks and Members links in the sidebar (not nested in any group)
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 54-01: Unified navigation config and collapsible sidebar groups
+- [ ] 54-01-PLAN.md -- Unified navigation config, collapse state hook, NavGroup component, and sidebar refactor (NAV-01 through NAV-11)
 
 ### Phase 55: Cross-Project Task View
 **Goal**: User can view, filter, sort, and manage all tasks across all projects from a single /tasks page with table and kanban views
