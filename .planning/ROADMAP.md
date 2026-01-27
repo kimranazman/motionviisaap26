@@ -21,7 +21,7 @@ Promote KeyResult from a free-text string to a first-class tracked entity with m
 **Plans:** 1 plan
 
 Plans:
-- [ ] 46-01-PLAN.md -- Add KeyResult, SupportTask, SupportTaskKeyResult models + enums, modify Initiative, push to DB
+- [x] 46-01-PLAN.md -- Add KeyResult, SupportTask, SupportTaskKeyResult models + enums, modify Initiative, push to DB
 
 **Success Criteria:**
 1. `npx prisma db push` applies cleanly and `npx prisma generate` produces a client with KeyResult, SupportTask, SupportTaskKeyResult models, MetricType and SupportTaskCategory enums
@@ -40,6 +40,11 @@ Plans:
 **Dependencies:** Phase 46 (schema must exist)
 
 **Requirements:** SEED-01, SEED-02, SEED-03, SEED-04, SEED-05, SEED-06
+
+**Plans:** 1 plan
+
+Plans:
+- [ ] 47-01-PLAN.md -- Rewrite seed.ts to parse v2 Excel (KeyResults, Initiatives, SupportTasks + join table) and v1 Excel (Events), with validation summary
 
 **Success Criteria:**
 1. Seed wipes OKR data cleanly (using FK_CHECKS=0 and correct deletion order) without destroying non-OKR production data (projects, companies, costs, documents)
