@@ -135,6 +135,11 @@ Plans:
 
 **Requirements:** UI-REV-01, UI-REV-02
 
+**Plans:** 1 plan
+
+Plans:
+- [ ] 51-01-PLAN.md -- Create revenue-target widget component, register in widget registry, wire data flow from server component
+
 **Success Criteria:**
 1. Dashboard displays a revenue-target widget showing RM1,000,000 total target, current actual total, and overall progress -- with breakdown rows for Events (KR1.1, RM800K target) and AI Training (KR2.2, RM200K target)
 2. Revenue-target widget is registered in the widget registry following the existing pattern, with appropriate role restrictions and default layout position
