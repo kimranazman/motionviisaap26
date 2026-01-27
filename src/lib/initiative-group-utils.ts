@@ -1,8 +1,11 @@
 /**
- * Initiative grouping utilities
+ * Initiative grouping utilities (v2.0)
  *
- * Normalize keyResult strings and group initiatives by objective/keyResult hierarchy.
- * Used by the Objectives page (Phase 39) and export features (Phase 42).
+ * Group initiatives by objective/keyResult hierarchy using FK relations.
+ * Used by the Objectives page (Phase 39+) and export features (Phase 42).
+ *
+ * v2.0 change: Groups by keyResult FK relation (keyResult.krId) instead of
+ * string normalization. The normalizeKeyResult() function has been removed.
  */
 
 // ---------------------------------------------------------------------------
@@ -12,13 +15,15 @@
 export interface InitiativeForGrouping {
   id: string
   objective: string
-  keyResult: string
+  keyResultId: string | null       // FK field (String? in schema)
+  keyResult?: { krId: string } | null  // Included relation
   status: string
   title: string
 }
 
 export interface GroupedKeyResult {
-  keyResult: string
+  keyResultId: string | null
+  krId: string                     // Display label ("KR1.1") or "Unlinked"
   initiatives: InitiativeForGrouping[]
   totalInitiatives: number
   completedCount: number
@@ -38,16 +43,9 @@ export interface GroupedObjective {
 // ---------------------------------------------------------------------------
 
 /**
- * Normalize a keyResult string for grouping purposes.
- * Handles variations: "KR1.1", " kr1.1 ", "KR 1.1", "kr 1.1" -> "KR1.1"
- */
-export function normalizeKeyResult(keyResult: string): string {
-  return keyResult.trim().toUpperCase().replace(/\s+/g, '')
-}
-
-/**
- * Group initiatives by objective, then by normalized keyResult.
+ * Group initiatives by objective, then by keyResult FK relation.
  * KeyResults are sorted naturally (KR1.1 < KR1.2 < KR2.1 via localeCompare).
+ * Initiatives without a linked keyResult are grouped under "Unlinked".
  */
 export function groupInitiativesByObjective(
   initiatives: InitiativeForGrouping[]
@@ -61,22 +59,23 @@ export function groupInitiativesByObjective(
   }
 
   return Array.from(byObjective.entries()).map(([objective, items]) => {
-    // Sub-group by normalized keyResult
-    const byKeyResult = new Map<string, InitiativeForGrouping[]>()
+    // Sub-group by keyResult relation (using krId for display)
+    const byKR = new Map<string, InitiativeForGrouping[]>()
     for (const item of items) {
-      const normalizedKR = normalizeKeyResult(item.keyResult)
-      const group = byKeyResult.get(normalizedKR) || []
+      const krId = item.keyResult?.krId || 'Unlinked'
+      const group = byKR.get(krId) || []
       group.push(item)
-      byKeyResult.set(normalizedKR, group)
+      byKR.set(krId, group)
     }
 
-    const keyResults = Array.from(byKeyResult.entries())
+    const keyResults = Array.from(byKR.entries())
       .sort(([a], [b]) => a.localeCompare(b)) // Natural sort: KR1.1 < KR1.2 < KR2.1
-      .map(([keyResult, initiatives]) => ({
-        keyResult,
-        initiatives,
-        totalInitiatives: initiatives.length,
-        completedCount: initiatives.filter(i => i.status === 'COMPLETED').length,
+      .map(([krId, krInitiatives]) => ({
+        keyResultId: krInitiatives[0]?.keyResultId || null,
+        krId,
+        initiatives: krInitiatives,
+        totalInitiatives: krInitiatives.length,
+        completedCount: krInitiatives.filter(i => i.status === 'COMPLETED').length,
       }))
 
     return {
