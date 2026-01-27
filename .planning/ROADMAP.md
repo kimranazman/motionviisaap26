@@ -4,9 +4,9 @@
 
 Promote KeyResult from a free-text string to a first-class tracked entity with metrics, add support task management with KR linkage, reseed from updated Excel, and add a revenue target dashboard widget. The build follows a strict schema-first, seed-second, UI-last order because every downstream phase depends on the data model and seeded data. Phases 49-51 are parallelizable once the foundation (46-48) is in place.
 
-**Phases:** 7 (46-52)
+**Phases:** 8 (46-53)
 **Depth:** Quick
-**Coverage:** 37/37 requirements mapped
+**Coverage:** 40/40 requirements mapped
 
 ---
 
@@ -172,6 +172,28 @@ Plans:
 
 ---
 
+## Phase 53: Timeline Enhancements
+
+**Goal:** Timeline gantt chart supports drag-to-edit dates, displays full initiative titles, and defaults to Objective > KeyResult grouping hierarchy.
+
+**Dependencies:** Phase 52 (codebase must be clean)
+
+**Requirements:** TIMELINE-01, TIMELINE-02, TIMELINE-03
+
+**Plans:** 1 plan
+
+Plans:
+- [ ] 53-01-PLAN.md -- Extend PATCH API for dates, remove title truncation, add objective/KR grouping hierarchy, implement drag-to-edit bars
+
+**Success Criteria:**
+1. Dragging a timeline bar center shifts both startDate and endDate (maintaining duration); dragging left/right edges resizes start/end independently; changes persist via API
+2. Initiative titles display in full without truncation in the timeline sidebar
+3. Timeline defaults to Objective grouping with KeyResult sub-headers showing KR ID and description; department grouping remains available as alternative
+
+**Pitfalls to watch:** Click vs drag discrimination (must not break Link navigation), permission gating (read-only users cannot drag)
+
+---
+
 ## Progress
 
 | Phase | Name | Requirements | Status |
@@ -183,6 +205,7 @@ Plans:
 | 50 | Support Tasks UI | UI-ST-01..04 | Complete |
 | 51 | Revenue Target Widget | UI-REV-01..02 | Complete |
 | 52 | Cleanup & Polish | CLEAN-01..03 | Complete |
+| 53 | Timeline Enhancements | TIMELINE-01..03 | Planned |
 
 ## Dependency Graph
 
@@ -191,7 +214,7 @@ Plans:
                                                --> 50 (Support Tasks UI)
                                                --> 51 (Revenue Widget)
                                                        |
-                                               49 + 50 + 51 --> 52 (Cleanup)
+                                               49 + 50 + 51 --> 52 (Cleanup) --> 53 (Timeline)
 ```
 
 ---

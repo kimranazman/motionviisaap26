@@ -151,6 +151,19 @@ Verify all 22 keyResult string files and 8 KPI files are fully migrated using th
 
 ---
 
+## TIMELINE: Timeline Enhancements
+
+### TIMELINE-01: Drag-to-Edit Dates
+Timeline bars are draggable: drag the center to shift both dates (maintaining duration), drag left edge to change startDate, drag right edge to change endDate. Changes persist via API. Date tooltip shown during drag. Only users with edit permission can drag.
+
+### TIMELINE-02: Full Initiative Titles
+Initiative titles in the timeline sidebar display in full without truncation. Text wraps within the sidebar column width.
+
+### TIMELINE-03: Objective Grouping Default
+Timeline defaults to grouping by Objective with KeyResult sub-headers (showing KR ID and description). Visual hierarchy: Objective header > KR sub-header > Initiative rows. Department grouping remains available as an alternative.
+
+---
+
 ## Traceability
 
 | Requirement | Phase | Status |
@@ -192,3 +205,6 @@ Verify all 22 keyResult string files and 8 KPI files are fully migrated using th
 | CLEAN-01 | Phase 52 | Complete |
 | CLEAN-02 | Phase 52 | Complete |
 | CLEAN-03 | Phase 52 | Complete |
+| TIMELINE-01 | Phase 53 | Pending |
+| TIMELINE-02 | Phase 53 | Pending |
+| TIMELINE-03 | Phase 53 | Pending |
