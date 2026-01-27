@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -30,13 +30,13 @@ import {
 interface Initiative {
   id?: string
   objective: string
-  keyResult: string
+  keyResultId: string | null
   department: string
   title: string
-  monthlyObjective?: string | null
-  weeklyTasks?: string | null
   startDate: string
   endDate: string
+  budget: string | null
+  resources: string | null
   resourcesFinancial?: number | null
   resourcesNonFinancial?: string | null
   personInCharge?: string | null
@@ -52,22 +52,29 @@ interface InitiativeFormProps {
 
 export function InitiativeForm({ initiative, onSuccess }: InitiativeFormProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const [keyResults, setKeyResults] = useState<Array<{ id: string; krId: string; description: string }>>([])
   const [formData, setFormData] = useState<Initiative>({
     objective: initiative?.objective || 'OBJ1_SCALE_EVENTS',
-    keyResult: initiative?.keyResult || '',
+    keyResultId: initiative?.keyResultId || '',
     department: initiative?.department || 'BIZ_DEV',
     title: initiative?.title || '',
-    monthlyObjective: initiative?.monthlyObjective || '',
-    weeklyTasks: initiative?.weeklyTasks || '',
     startDate: initiative?.startDate || new Date().toISOString(),
     endDate: initiative?.endDate || new Date().toISOString(),
-    resourcesFinancial: initiative?.resourcesFinancial || null,
-    resourcesNonFinancial: initiative?.resourcesNonFinancial || '',
+    budget: initiative?.budget || '',
+    resources: initiative?.resources || '',
     personInCharge: initiative?.personInCharge || null,
     accountable: initiative?.accountable || null,
     status: initiative?.status || 'NOT_STARTED',
     remarks: initiative?.remarks || '',
   })
+
+  // Fetch KR options on mount
+  useEffect(() => {
+    fetch('/api/key-results')
+      .then(res => res.json())
+      .then(data => setKeyResults(data))
+      .catch(console.error)
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -82,7 +89,20 @@ export function InitiativeForm({ initiative, onSuccess }: InitiativeFormProps) {
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          objective: formData.objective,
+          keyResultId: formData.keyResultId || null,
+          department: formData.department,
+          title: formData.title,
+          startDate: formData.startDate,
+          endDate: formData.endDate,
+          budget: formData.budget || null,
+          resources: formData.resources || null,
+          personInCharge: formData.personInCharge || null,
+          accountable: formData.accountable || null,
+          status: formData.status,
+          remarks: formData.remarks || null,
+        }),
       })
 
       if (!response.ok) {
@@ -125,14 +145,23 @@ export function InitiativeForm({ initiative, onSuccess }: InitiativeFormProps) {
 
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Key Result</label>
-          <Input
-            value={formData.keyResult}
-            onChange={(e) =>
-              setFormData({ ...formData, keyResult: e.target.value })
+          <Select
+            value={formData.keyResultId || ''}
+            onValueChange={(value) =>
+              setFormData({ ...formData, keyResultId: value || null })
             }
-            placeholder="e.g., KR1.1"
-            required
-          />
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select Key Result" />
+            </SelectTrigger>
+            <SelectContent>
+              {keyResults.map((kr) => (
+                <SelectItem key={kr.id} value={kr.id}>
+                  {kr.krId} - {kr.description}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -306,70 +335,32 @@ export function InitiativeForm({ initiative, onSuccess }: InitiativeFormProps) {
         </div>
       </div>
 
-      {/* Row 6: Monthly Objective */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">
-          Monthly Objective
-        </label>
-        <Textarea
-          value={formData.monthlyObjective || ''}
-          onChange={(e) =>
-            setFormData({ ...formData, monthlyObjective: e.target.value })
-          }
-          placeholder="Enter monthly objective"
-          rows={2}
-        />
-      </div>
-
-      {/* Row 7: Weekly Tasks */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">Weekly Tasks</label>
-        <Textarea
-          value={formData.weeklyTasks || ''}
-          onChange={(e) =>
-            setFormData({ ...formData, weeklyTasks: e.target.value })
-          }
-          placeholder="Enter weekly tasks"
-          rows={2}
-        />
-      </div>
-
-      {/* Row 8: Resources */}
+      {/* Row 6: Budget & Resources */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">
-            Resources (Financial)
-          </label>
+          <label className="text-sm font-medium text-gray-700">Budget</label>
           <Input
-            type="number"
-            value={formData.resourcesFinancial || ''}
+            value={formData.budget || ''}
             onChange={(e) =>
-              setFormData({
-                ...formData,
-                resourcesFinancial: e.target.value
-                  ? Number(e.target.value)
-                  : null,
-              })
+              setFormData({ ...formData, budget: e.target.value })
             }
-            placeholder="Amount in RM"
+            placeholder="e.g., 1400"
           />
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">
-            Resources (Non-Financial)
-          </label>
+          <label className="text-sm font-medium text-gray-700">Resources</label>
           <Input
-            value={formData.resourcesNonFinancial || ''}
+            value={formData.resources || ''}
             onChange={(e) =>
-              setFormData({ ...formData, resourcesNonFinancial: e.target.value })
+              setFormData({ ...formData, resources: e.target.value })
             }
-            placeholder="e.g., Tools, software"
+            placeholder="e.g., Design team, Canva Pro"
           />
         </div>
       </div>
 
-      {/* Row 9: Remarks */}
+      {/* Row 7: Remarks */}
       <div className="space-y-2">
         <label className="text-sm font-medium text-gray-700">Remarks</label>
         <Textarea
