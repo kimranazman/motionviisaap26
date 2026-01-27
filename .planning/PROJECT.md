@@ -205,7 +205,24 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 ### Active
 
-<!-- Next milestone TBD -->
+<!-- v2.2 Bug Fixes & UX Polish -->
+
+**Bug Fixes:**
+- [ ] Fix project detail error when clicking project cards on /projects page
+- [ ] Fix unscrollable modals when content overflows viewport
+- [ ] Fix unscrollable sidebar menu
+- [ ] Fix dashboard saving mobile layout that overwrites desktop layout (need per-breakpoint persistence)
+- [ ] Fix kanban drag handles: hide dotted handles on desktop, allow drag from anywhere on card
+- [ ] Fix Companies and Suppliers page spacing/whitespace (match Price Comparison layout)
+
+**UI/Discoverability Fixes:**
+- [ ] Fix departments not appearing in company detail UI (code exists from v1.4 but not rendering)
+- [ ] Fix tasks/subtasks not appearing in project detail UI (code exists from v1.4 but not visible)
+
+**New Features:**
+- [ ] Event CRUD: create new events, edit existing events, delete events (currently read-only)
+- [ ] Calendar week view with more space per day (replace "+N more" overflow)
+- [ ] Calendar KR labels show full name (e.g., "KR1.1 - Achieve RM1M Revenue" not just "KR1.1")
 
 ### Out of Scope
 
@@ -236,6 +253,7 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - Accessible at https://saap.motionvii.com (Cloudflare tunnel)
 - Data seeded from MotionVii_SAAP_2026_v2.xlsx (6 KRs, 37 initiatives, 30 support tasks, 59 KR join links)
 - v2.1 shipped — collapsible sidebar, cross-project tasks, member workload dashboards
+- v2.2 in progress — bug fixes, UX polish, event CRUD, calendar enhancements
 - 38,400 LOC TypeScript across 56 phases (v1.0-v2.1)
 - Primary admin: khairul@talenta.com.my
 
@@ -348,4 +366,4 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | NOT clause for Accountable For section | Prevents double-counting members who are both accountable and personInCharge | ✓ Good |
 
 ---
-*Last updated: 2026-01-28 after v2.1 milestone*
+*Last updated: 2026-01-28 after v2.2 milestone start*
