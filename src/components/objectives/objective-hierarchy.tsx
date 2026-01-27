@@ -9,24 +9,34 @@ import { InitiativeDetailSheet } from '@/components/kanban/initiative-detail-she
 import { ViewModeToggle } from '@/components/objectives/view-mode-toggle'
 import { detectOwnerOverlap } from '@/lib/initiative-date-utils'
 
+export interface KeyResultData {
+  id: string
+  krId: string
+  description: string
+  target: number
+  actual: number
+  unit: string
+  progress: number
+  deadline: string
+  status: string
+  owner: string
+  weight: number
+}
+
 export interface Initiative {
   id: string
   sequenceNumber: number
   title: string
   objective: string
-  keyResult: string
+  keyResultId: string | null
+  keyResult: KeyResultData | null
   department: string
   status: string
   personInCharge: string | null
   startDate: string
   endDate: string
   position: number
-  // KPI fields (optional for backward compat with other views)
-  kpiLabel?: string | null
-  kpiTarget?: number | null
-  kpiActual?: number | null
-  kpiUnit?: string | null
-  kpiManualOverride?: boolean
+  budget: string | null
   projects?: Array<{
     id: string
     title: string
@@ -55,7 +65,7 @@ export function ObjectiveHierarchy({ initialData }: ObjectiveHierarchyProps) {
     const grouped = groupInitiativesByObjective(initialData)
     const krKeys = new Set<string>()
     grouped.forEach(g =>
-      g.keyResults.forEach(kr => krKeys.add(g.objective + ':' + kr.keyResult))
+      g.keyResults.forEach(kr => krKeys.add(g.objective + ':' + kr.krId))
     )
     return krKeys
   })

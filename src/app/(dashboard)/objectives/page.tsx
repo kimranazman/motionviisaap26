@@ -8,7 +8,7 @@ async function getInitiatives() {
   const initiatives = await prisma.initiative.findMany({
     orderBy: [
       { objective: 'asc' },
-      { keyResult: 'asc' },
+      { keyResultId: 'asc' },
       { sequenceNumber: 'asc' },
     ],
     select: {
@@ -16,19 +16,29 @@ async function getInitiatives() {
       sequenceNumber: true,
       title: true,
       objective: true,
-      keyResult: true,
+      keyResultId: true,
+      keyResult: {
+        select: {
+          id: true,
+          krId: true,
+          description: true,
+          target: true,
+          actual: true,
+          unit: true,
+          progress: true,
+          deadline: true,
+          status: true,
+          owner: true,
+          weight: true,
+        },
+      },
       department: true,
       status: true,
       personInCharge: true,
       startDate: true,
       endDate: true,
       position: true,
-      // KPI fields
-      kpiLabel: true,
-      kpiTarget: true,
-      kpiActual: true,
-      kpiUnit: true,
-      kpiManualOverride: true,
+      budget: true,
       // Linked projects with revenue + cost aggregation
       projects: {
         select: {
@@ -49,8 +59,15 @@ async function getInitiatives() {
     ...i,
     startDate: i.startDate.toISOString(),
     endDate: i.endDate.toISOString(),
-    kpiTarget: i.kpiTarget ? Number(i.kpiTarget) : null,
-    kpiActual: i.kpiActual ? Number(i.kpiActual) : null,
+    keyResult: i.keyResult
+      ? {
+          ...i.keyResult,
+          target: Number(i.keyResult.target),
+          actual: Number(i.keyResult.actual),
+          progress: Number(i.keyResult.progress),
+          weight: Number(i.keyResult.weight),
+        }
+      : null,
     projects: i.projects.map(p => ({
       id: p.id,
       title: p.title,

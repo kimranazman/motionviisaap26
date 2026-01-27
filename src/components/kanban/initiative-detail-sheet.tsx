@@ -52,6 +52,7 @@ import {
 } from 'lucide-react'
 import { LinkedProjectsSection, type LinkedProject } from '@/components/objectives/linked-projects-section'
 import { TimelineSuggestions } from '@/components/objectives/timeline-suggestions'
+import type { Initiative as BaseInitiative } from '@/components/objectives/objective-hierarchy'
 
 interface CommentUser {
   id: string
@@ -67,29 +68,13 @@ interface Comment {
   createdAt: string
 }
 
-interface Initiative {
-  id: string
-  sequenceNumber: number
-  title: string
-  keyResult: string
-  department: string
-  status: string
-  personInCharge: string | null
-  startDate: string
-  endDate: string
-  position: number
+type Initiative = BaseInitiative & {
   // Optional fields loaded from API
   accountable?: string | null
   monthlyObjective?: string | null
   weeklyTasks?: string | null
   remarks?: string | null
   comments?: Comment[]
-  // KPI fields
-  kpiLabel?: string | null
-  kpiTarget?: number | null
-  kpiActual?: number | null
-  kpiUnit?: string | null
-  kpiManualOverride?: boolean
 }
 
 interface InitiativeDetailSheetProps {
@@ -323,7 +308,7 @@ export function InitiativeDetailSheet({
       setKpiManualOverride(false)
       setKpiActual('')
       setLoadedKpi(prev => ({ ...prev, actual: '', manualOverride: false }))
-      onUpdate?.({ ...initiative, kpiManualOverride: false, kpiActual: null })
+      onUpdate?.({ ...initiative })
     } catch (error) {
       console.error('Failed to revert to auto:', error)
     }
@@ -347,7 +332,9 @@ export function InitiativeDetailSheet({
       title={
         <div className="flex items-start gap-3">
           <Badge variant="outline" className="shrink-0 mt-1">
-            {initiative.keyResult}
+            {typeof initiative.keyResult === 'string'
+              ? initiative.keyResult
+              : initiative.keyResult?.krId || 'Unlinked'}
           </Badge>
           <span>{initiative.title}</span>
         </div>
