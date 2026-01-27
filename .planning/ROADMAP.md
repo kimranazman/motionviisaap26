@@ -67,9 +67,9 @@ Plans:
 **Plans:** 3 plans
 
 Plans:
-- [ ] 48-01-PLAN.md -- Create KeyResult CRUD and SupportTask list API routes (3 new files)
-- [ ] 48-02-PLAN.md -- Fix initiative routes and export to remove deleted field references, use keyResultId FK
-- [ ] 48-03-PLAN.md -- Fix dashboard revenue, rewrite grouping utility, stub KPI utility, add KR progress utility
+- [x] 48-01-PLAN.md -- Create KeyResult CRUD and SupportTask list API routes (3 new files)
+- [x] 48-02-PLAN.md -- Fix initiative routes and export to remove deleted field references, use keyResultId FK
+- [x] 48-03-PLAN.md -- Fix dashboard revenue, rewrite grouping utility, stub KPI utility, add KR progress utility
 
 **Success Criteria:**
 1. GET /api/key-results returns all 6 KRs with initiative counts; GET /api/key-results/[id] returns a single KR with its initiatives and linked support tasks; PATCH /api/key-results/[id] can update actual, progress, and status
@@ -155,7 +155,7 @@ Plans:
 |-------|------|--------------|--------|
 | 46 | Schema Migration | SCHEMA-01..08 | Complete |
 | 47 | Seed Script Rewrite | SEED-01..06 | Complete |
-| 48 | API Layer + Utilities | API-01..04, UTIL-01..03 | Pending |
+| 48 | API Layer + Utilities | API-01..04, UTIL-01..03 | Complete |
 | 49 | OKR Hierarchy UI | UI-OKR-01..07 | Pending |
 | 50 | Support Tasks UI | UI-ST-01..04 | Pending |
 | 51 | Revenue Target Widget | UI-REV-01..02 | Pending |
