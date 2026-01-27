@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-27)
 
 **Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, and AI-powered intelligence.
-**Current focus:** v2.0 Phase 53 -- Timeline enhancements (drag-to-edit, full titles, objective grouping)
+**Current focus:** v2.0 Phase 53 -- Timeline enhancements complete
 
 ## Current Position
 
 Phase: 53 of 53 (Timeline Enhancements)
-Plan: 0 of 1 in Phase 53
-Status: Planning
-Last activity: 2026-01-27 -- Added phase 53 to roadmap
+Plan: 1 of 1 in Phase 53
+Status: Phase complete
+Last activity: 2026-01-27 -- Completed 53-01-PLAN.md
 
-Progress: [#########-] 88% (7/8 phases complete: 46-52 done, 53 planned)
+Progress: [##########] 100% (8/8 phases complete: 46-53 done)
 
 ## v2.0 Phase Overview
 
@@ -27,7 +27,7 @@ Progress: [#########-] 88% (7/8 phases complete: 46-52 done, 53 planned)
 | 50 | Support Tasks UI | 48 (parallel with 49, 51) | Complete (1/1 plan) |
 | 51 | Revenue Target Widget | 48 (parallel with 49, 50) | Complete (1/1 plan) |
 | 52 | Cleanup & Polish | 49, 50, 51 | Complete (2/2 plans) |
-| 53 | Timeline Enhancements | 52 | Planned |
+| 53 | Timeline Enhancements | 52 | Complete (1/1 plan) |
 
 ## Milestone History
 
@@ -52,9 +52,9 @@ Progress: [#########-] 88% (7/8 phases complete: 46-52 done, 53 planned)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 17
+- Total plans completed: 18
 - Average duration: ~5 minutes
-- Total execution time: ~85 minutes
+- Total execution time: ~91 minutes
 
 ## Accumulated Context
 
@@ -81,6 +81,8 @@ Decisions are logged in PROJECT.md Key Decisions table.
 | Server components flatten keyResult relation at server layer | 49-03 | Client components receive keyResult: string unchanged; zero client interface changes needed |
 | Used 'kri' category for revenue-target widget | 51-01 | Revenue targets are Key Result metrics; avoids updating WidgetDefinition category union |
 | minRole EDITOR for revenue-target | 51-01 | Revenue data is sensitive; consistent with crm-kpi-cards |
+| Drag handles conditional on canEdit role check | 53-01 | Read-only users see bars but cannot drag; consistent with kanban edit gating |
+| 3px drag threshold for click vs drag discrimination | 53-01 | Prevents accidental drags from clicks; preserves Link navigation |
 
 ### Pending Todos
 
@@ -93,7 +95,7 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-27
-Stopped at: Added phase 53 (Timeline Enhancements) to roadmap
+Stopped at: Completed 53-01-PLAN.md
 Resume file: None
 
-**v2.0 phases 46-52 shipped. Phase 53 (Timeline Enhancements) added.**
+**v2.0 phases 46-53 complete. Timeline enhancements shipped.**
