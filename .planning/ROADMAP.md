@@ -16,7 +16,7 @@
 - ✅ **v1.5.1 Site Audit Fixes & Detail View Preferences** - Phases 43-45 (shipped 2026-01-27)
 - ✅ **v2.0 OKR Restructure & Support Tasks** - Phases 46-53 (shipped 2026-01-27)
 - ✅ **v2.1 Navigation & Views** - Phases 54-56 (shipped 2026-01-28)
-- 🚧 **v2.2 Bug Fixes & UX Polish** - Phases 57-61 (in progress)
+- ✅ **v2.2 Bug Fixes & UX Polish** - Phases 57-61 (shipped 2026-01-28)
 
 ## Phases
 
@@ -24,11 +24,11 @@
 - [x] **Phase 58: Dashboard & Kanban UX Fixes** - Fix dashboard breakpoint persistence, kanban drag handles, and page spacing
 - [x] **Phase 59: UI Visibility Fixes** - Surface departments in company detail and tasks in project detail
 - [x] **Phase 60: Event CRUD** - Full create, edit, delete for events
-- [ ] **Phase 61: Calendar Enhancements** - Week view and full KR labels
+- [x] **Phase 61: Calendar Enhancements** - Week view and full KR labels
 
 ## Phase Details
 
-### 🚧 v2.2 Bug Fixes & UX Polish (In Progress)
+### v2.2 Bug Fixes & UX Polish (Complete)
 
 **Milestone Goal:** Fix broken/hidden features and enhance calendar + event management for daily use.
 
@@ -100,10 +100,11 @@ Plans:
   1. Calendar page shows a toggle to switch between month view and week view
   2. Week view displays 7 days with expanded vertical space showing all initiatives and events without "+N more" truncation
   3. Calendar labels show full KR names (e.g., "KR1.1 - Achieve RM1M Revenue") instead of just the identifier code
-**Plans**: TBD
+**Plans**: 2 plans, 2 waves (sequential)
 
 Plans:
-- [ ] 61-01: TBD
+- [x] 61-01: Full KR Labels in Calendar Data (CAL-04)
+- [x] 61-02: Week View Toggle & Expanded Display (CAL-01, CAL-02, CAL-03)
 
 ## Progress
 
@@ -116,4 +117,4 @@ Phases execute in numeric order: 57 → 58 → 59 → 60 → 61
 | 58. Dashboard & Kanban UX Fixes | v2.2 | 3/3 | Complete | 2026-01-28 |
 | 59. UI Visibility Fixes | v2.2 | 1/1 | Complete | 2026-01-28 |
 | 60. Event CRUD | v2.2 | 2/2 | Complete | 2026-01-28 |
-| 61. Calendar Enhancements | v2.2 | 0/TBD | Not started | - |
+| 61. Calendar Enhancements | v2.2 | 2/2 | Complete | 2026-01-28 |

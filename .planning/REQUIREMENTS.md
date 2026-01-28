@@ -79,10 +79,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EVT-03 | Phase 60 | Complete |
 | EVT-04 | Phase 60 | Complete |
 | EVT-05 | Phase 60 | Complete |
-| CAL-01 | Phase 61 | Pending |
-| CAL-02 | Phase 61 | Pending |
-| CAL-03 | Phase 61 | Pending |
-| CAL-04 | Phase 61 | Pending |
+| CAL-01 | Phase 61 | Complete |
+| CAL-02 | Phase 61 | Complete |
+| CAL-03 | Phase 61 | Complete |
+| CAL-04 | Phase 61 | Complete |
 
 **Coverage:**
 - v1 requirements: 22 total
@@ -91,4 +91,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-28*
-*Last updated: 2026-01-28 after roadmap creation*
+*Last updated: 2026-01-28 after Phase 61 completion*
