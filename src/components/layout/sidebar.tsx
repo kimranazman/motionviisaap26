@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useSession } from 'next-auth/react'
@@ -15,12 +15,7 @@ export function Sidebar() {
   const pathname = usePathname()
   const { data: session } = useSession()
   const { expandedGroups, toggleGroup } = useNavCollapseState(pathname)
-  const { isVisible, autoReveal } = useNavVisibility()
-
-  // Auto-reveal hidden items when user navigates directly to their URL (NAV-04)
-  useEffect(() => {
-    autoReveal(pathname)
-  }, [pathname, autoReveal])
+  const { isVisible } = useNavVisibility()
 
   // Filter groups and their items by visibility
   const visibleGroups = useMemo(() => {

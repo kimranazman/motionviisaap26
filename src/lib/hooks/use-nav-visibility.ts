@@ -1,17 +1,16 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { isAlwaysVisible } from '@/lib/nav-config'
 
 /**
  * Hook for managing sidebar nav item visibility.
  * Fetches hidden items from the preferences API and provides
- * toggle + auto-reveal functionality.
+ * toggle + batch save functionality.
  */
 export function useNavVisibility() {
   const [hiddenItems, setHiddenItems] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const lastRevealedRef = useRef<string | null>(null)
 
   // Fetch hidden items on mount
   useEffect(() => {
@@ -41,9 +40,9 @@ export function useNavVisibility() {
   )
 
   /**
-   * Toggle a nav item's visibility.
+   * Toggle a nav item's visibility in local state only.
    * Always-visible items cannot be hidden.
-   * Optimistically updates state, then persists to API.
+   * Does NOT persist to API -- use saveHiddenItems for that.
    */
   const toggleItem = useCallback(
     (href: string) => {
@@ -51,53 +50,28 @@ export function useNavVisibility() {
 
       setHiddenItems((prev) => {
         const isHidden = prev.includes(href)
-        const next = isHidden ? prev.filter((h) => h !== href) : [...prev, href]
-
-        // Persist to API (fire-and-forget)
-        fetch('/api/user/preferences', {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ hiddenNavItems: next }),
-        }).catch(console.error)
-
-        return next
+        return isHidden ? prev.filter((h) => h !== href) : [...prev, href]
       })
     },
     []
   )
 
   /**
-   * Auto-reveal a hidden nav item when the user navigates directly to its URL.
-   * Only fires once per pathname to avoid infinite loops.
+   * Persist hidden items to the API in a single batch call.
+   * Updates local state atomically on success.
    */
-  const autoReveal = useCallback(
-    (pathname: string) => {
-      if (isLoading) return
-      if (lastRevealedRef.current === pathname) return
-
-      // Check if any hidden item matches the current pathname
-      const matchedHref = hiddenItems.find((href) => {
-        if (href === '/') return pathname === '/'
-        return pathname === href || pathname.startsWith(href)
+  const saveHiddenItems = useCallback(
+    async (items: string[]) => {
+      const response = await fetch('/api/user/preferences', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ hiddenNavItems: items }),
       })
-
-      if (matchedHref) {
-        lastRevealedRef.current = pathname
-        setHiddenItems((prev) => {
-          const next = prev.filter((h) => h !== matchedHref)
-
-          fetch('/api/user/preferences', {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ hiddenNavItems: next }),
-          }).catch(console.error)
-
-          return next
-        })
-      }
+      if (!response.ok) throw new Error('Failed to save')
+      setHiddenItems(items)
     },
-    [hiddenItems, isLoading]
+    []
   )
 
-  return { hiddenItems, isLoading, isVisible, toggleItem, autoReveal }
+  return { hiddenItems, isLoading, isVisible, toggleItem, saveHiddenItems }
 }

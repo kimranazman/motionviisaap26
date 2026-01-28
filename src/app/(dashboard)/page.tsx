@@ -179,18 +179,23 @@ async function getCRMDashboardData() {
   const totalClosed = closedDeals + closedPotentials
   const totalWon = wonDeals + confirmedPotentials
 
-  // Revenue from completed projects
-  const revenueResult = await prisma.project.aggregate({
-    where: { status: 'COMPLETED' },
-    _sum: { revenue: true }
+  // Revenue: per-project coalesce (prefer actual revenue, fall back to potentialRevenue)
+  // Include both ACTIVE and COMPLETED projects
+  const revenueProjects = await prisma.project.findMany({
+    where: { status: { in: ['ACTIVE', 'COMPLETED'] } },
+    select: { revenue: true, potentialRevenue: true },
   })
+
+  const totalRevenue = revenueProjects.reduce((sum, p) => {
+    const projectRevenue = Number(p.revenue) || Number(p.potentialRevenue) || 0
+    return sum + projectRevenue
+  }, 0)
 
   // Total costs from all projects
   const costsResult = await prisma.cost.aggregate({
     _sum: { amount: true }
   })
 
-  const totalRevenue = Number(revenueResult._sum.revenue) || 0
   const totalCosts = Number(costsResult._sum.amount) || 0
   const profit = totalRevenue - totalCosts
 
