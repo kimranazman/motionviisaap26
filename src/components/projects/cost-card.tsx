@@ -27,6 +27,8 @@ interface Cost {
   category: { id: string; name: string }
   aiImported?: boolean
   supplier?: { id: string; name: string } | null
+  quantity?: number | null
+  unitPrice?: number | null
 }
 
 interface CostCardProps {
@@ -84,9 +86,16 @@ export function CostCard({ cost, projectId, onEdit, onDelete }: CostCardProps) {
       </div>
 
       <div className="flex items-center gap-2 ml-4">
-        <span className="font-medium text-gray-900">
-          {formatCurrency(cost.amount)}
-        </span>
+        <div className="text-right">
+          <span className="font-medium text-gray-900">
+            {formatCurrency(cost.amount)}
+          </span>
+          {cost.quantity != null && cost.unitPrice != null && (
+            <span className="text-xs text-gray-500 block">
+              {cost.quantity} x {formatCurrency(cost.unitPrice)}
+            </span>
+          )}
+        </div>
 
         <Button
           variant="ghost"
