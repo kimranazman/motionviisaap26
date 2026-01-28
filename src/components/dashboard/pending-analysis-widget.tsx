@@ -155,7 +155,7 @@ export function PendingAnalysisWidget() {
                       <div className="font-medium text-sm truncate">{project.title}</div>
                       <div className="flex items-center gap-1 text-xs text-gray-500">
                         <Building2 className="h-3 w-3" />
-                        {project.company}
+                        {project.company || 'Internal'}
                       </div>
                     </div>
                     <div className="flex items-center gap-2 shrink-0 ml-2">
