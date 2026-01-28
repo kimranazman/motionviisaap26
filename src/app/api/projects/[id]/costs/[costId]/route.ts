@@ -48,6 +48,8 @@ export async function PATCH(
       categoryId?: string
       date?: Date
       supplierId?: string | null
+      quantity?: number | null
+      unitPrice?: number | null
     } = {}
 
     if (body.description !== undefined) {
@@ -65,6 +67,12 @@ export async function PATCH(
     if (body.supplierId !== undefined) {
       updateData.supplierId = body.supplierId || null
     }
+    if (body.quantity !== undefined) {
+      updateData.quantity = body.quantity !== null ? parseFloat(body.quantity) : null
+    }
+    if (body.unitPrice !== undefined) {
+      updateData.unitPrice = body.unitPrice !== null ? parseFloat(body.unitPrice) : null
+    }
 
     const cost = await prisma.cost.update({
       where: { id: costId },
@@ -75,10 +83,12 @@ export async function PATCH(
       },
     })
 
-    // Convert Decimal amount to Number
+    // Convert Decimal amounts to Number
     return NextResponse.json({
       ...cost,
       amount: Number(cost.amount),
+      quantity: cost.quantity !== null ? Number(cost.quantity) : null,
+      unitPrice: cost.unitPrice !== null ? Number(cost.unitPrice) : null,
     })
   } catch (error) {
     console.error('Error updating cost:', error)
