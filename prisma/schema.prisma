@@ -482,8 +482,11 @@ model Project {
 
   isArchived Boolean @default(false) @map("is_archived")
 
-  companyId String  @map("company_id")
-  company   Company @relation(fields: [companyId], references: [id])
+  isInternal     Boolean @default(false) @map("is_internal")
+  internalEntity String? @map("internal_entity") @db.VarChar(50)
+
+  companyId String?  @map("company_id")
+  company   Company? @relation(fields: [companyId], references: [id])
 
   contactId String?  @map("contact_id")
   contact   Contact? @relation(fields: [contactId], references: [id])
@@ -511,6 +514,7 @@ model Project {
   @@index([initiativeId])
   @@index([status])
   @@index([isArchived])
+  @@index([isInternal])
   @@map("projects")
 }
 
