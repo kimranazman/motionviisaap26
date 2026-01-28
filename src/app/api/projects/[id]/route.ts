@@ -113,8 +113,13 @@ export async function PATCH(
           ...(body.description !== undefined && { description: body.description || null }),
           // revenue is NOT updateable via API - only set by AI invoice import
           ...(body.status !== undefined && { status: body.status as ProjectStatus }),
-          ...(body.companyId !== undefined && { companyId: body.companyId }),
-          ...(body.contactId !== undefined && { contactId: body.contactId || null }),
+          ...(body.isInternal !== undefined && { isInternal: body.isInternal }),
+          ...(body.internalEntity !== undefined && { internalEntity: body.internalEntity || null }),
+          // When switching to internal, clear company and contact
+          ...(body.isInternal === true && { companyId: null, contactId: null }),
+          // When not switching to internal, allow companyId/contactId updates
+          ...(body.isInternal !== true && body.companyId !== undefined && { companyId: body.companyId || null }),
+          ...(body.isInternal !== true && body.contactId !== undefined && { contactId: body.contactId || null }),
           ...(body.initiativeId !== undefined && { initiativeId: body.initiativeId || null }),
           ...(body.startDate !== undefined && { startDate: body.startDate ? new Date(body.startDate) : null }),
           ...(body.endDate !== undefined && { endDate: body.endDate ? new Date(body.endDate) : null }),
