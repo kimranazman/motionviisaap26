@@ -16,17 +16,17 @@ Requirements for v2.3 release. Each maps to roadmap phases.
 
 ### CRM Entity Browsing
 
-- [ ] **CRM-01**: User can browse all departments on standalone /departments page
-- [ ] **CRM-02**: User can filter departments by company on /departments page
-- [ ] **CRM-03**: User can view department detail modal with contacts, deals, and company link
-- [ ] **CRM-04**: User can create a department (with company selection)
-- [ ] **CRM-05**: User can browse all contacts on standalone /contacts page
-- [ ] **CRM-06**: User can filter contacts by company on /contacts page
-- [ ] **CRM-07**: User can filter contacts by department (cascading from company) on /contacts page
-- [ ] **CRM-08**: User can view contact detail modal with company, department, deals, and projects
-- [ ] **CRM-09**: User can create a contact (with company selection)
-- [ ] **CRM-10**: Cross-entity navigation links (department row links to company, contact row links to company/department)
-- [ ] **CRM-11**: Departments and Contacts appear in sidebar CRM group
+- [x] **CRM-01**: User can browse all departments on standalone /departments page
+- [x] **CRM-02**: User can filter departments by company on /departments page
+- [x] **CRM-03**: User can view department detail modal with contacts, deals, and company link
+- [x] **CRM-04**: User can create a department (with company selection)
+- [x] **CRM-05**: User can browse all contacts on standalone /contacts page
+- [x] **CRM-06**: User can filter contacts by company on /contacts page
+- [x] **CRM-07**: User can filter contacts by department (cascading from company) on /contacts page
+- [x] **CRM-08**: User can view contact detail modal with company, department, deals, and projects
+- [x] **CRM-09**: User can create a contact (with company selection)
+- [x] **CRM-10**: Cross-entity navigation links (department row links to company, contact row links to company/department)
+- [x] **CRM-11**: Departments and Contacts appear in sidebar CRM group
 
 ### Task Management
 
@@ -106,17 +106,17 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UX-02 | Phase 62 | Complete |
 | UX-03 | Phase 62 | Complete |
 | UX-04 | Phase 62 | Complete |
-| CRM-01 | Phase 63 | Pending |
-| CRM-02 | Phase 63 | Pending |
-| CRM-03 | Phase 63 | Pending |
-| CRM-04 | Phase 63 | Pending |
-| CRM-05 | Phase 63 | Pending |
-| CRM-06 | Phase 63 | Pending |
-| CRM-07 | Phase 63 | Pending |
-| CRM-08 | Phase 63 | Pending |
-| CRM-09 | Phase 63 | Pending |
-| CRM-10 | Phase 63 | Pending |
-| CRM-11 | Phase 63 | Pending |
+| CRM-01 | Phase 63 | Complete |
+| CRM-02 | Phase 63 | Complete |
+| CRM-03 | Phase 63 | Complete |
+| CRM-04 | Phase 63 | Complete |
+| CRM-05 | Phase 63 | Complete |
+| CRM-06 | Phase 63 | Complete |
+| CRM-07 | Phase 63 | Complete |
+| CRM-08 | Phase 63 | Complete |
+| CRM-09 | Phase 63 | Complete |
+| CRM-10 | Phase 63 | Complete |
+| CRM-11 | Phase 63 | Complete |
 | TASK-01 | Phase 64 | Pending |
 | TASK-02 | Phase 64 | Pending |
 | TASK-03 | Phase 64 | Pending |
