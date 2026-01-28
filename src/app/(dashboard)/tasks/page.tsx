@@ -26,6 +26,7 @@ async function getAllTasks() {
     priority: t.priority,
     dueDate: t.dueDate?.toISOString() || null,
     assignee: t.assignee,
+    depth: t.depth,
     projectId: t.projectId,
     project: t.project,
     _count: t._count,
@@ -43,14 +44,30 @@ async function getProjects() {
   return projects
 }
 
+async function getAllProjects() {
+  const projects = await prisma.project.findMany({
+    select: { id: true, title: true },
+    orderBy: { title: 'asc' },
+  })
+  return projects
+}
+
 export default async function TasksPage() {
-  const [tasks, projects] = await Promise.all([getAllTasks(), getProjects()])
+  const [tasks, projects, allProjects] = await Promise.all([
+    getAllTasks(),
+    getProjects(),
+    getAllProjects(),
+  ])
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header title="Tasks" description="All tasks across projects" />
       <div className="p-6">
-        <TasksPageClient initialTasks={tasks} projects={projects} />
+        <TasksPageClient
+          initialTasks={tasks}
+          projects={projects}
+          allProjects={allProjects}
+        />
       </div>
     </div>
   )
