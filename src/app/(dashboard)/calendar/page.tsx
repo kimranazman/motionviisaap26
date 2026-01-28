@@ -10,7 +10,7 @@ async function getInitiatives() {
     select: {
       id: true,
       title: true,
-      keyResult: { select: { krId: true } },
+      keyResult: { select: { krId: true, description: true } },
       department: true,
       status: true,
       startDate: true,
@@ -22,7 +22,9 @@ async function getInitiatives() {
     ...i,
     startDate: i.startDate.toISOString(),
     endDate: i.endDate.toISOString(),
-    keyResult: i.keyResult?.krId || 'Unlinked',
+    keyResult: i.keyResult
+      ? `${i.keyResult.krId} - ${i.keyResult.description}`
+      : 'Unlinked',
   }))
 }
 
@@ -51,7 +53,7 @@ export default async function CalendarPage() {
     <div className="min-h-screen bg-gray-50">
       <Header
         title="Calendar"
-        description="Monthly view of initiative timelines and events to attend"
+        description="Initiative timelines and events to attend"
       />
 
       <div className="p-6">
