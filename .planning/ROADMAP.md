@@ -88,7 +88,7 @@ See `.planning/milestones/` for archived phase details.
 - `src/app/(dashboard)/projects/page.tsx` - Add view toggle
 - `src/components/projects/project-card.tsx` - Enhance with new fields
 
-**Status:** Pending
+**Status:** Complete (2026-01-29)
 
 ---
 
@@ -157,9 +157,9 @@ See `.planning/milestones/` for archived phase details.
 
 ## Progress
 
-Phase 75 of 78 | v2.6 in progress
+Phase 76 of 78 | v2.6 in progress
 
-Progress: [#########.] 95% (75/78 phases)
+Progress: [#########.] 97% (76/78 phases)
 
 ---
 

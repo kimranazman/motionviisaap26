@@ -15,16 +15,16 @@ Requirements for v2.6 release. Each maps to roadmap phases.
 
 ### Projects Kanban (PROJ)
 
-- [ ] **PROJ-01**: User can view projects in Kanban board layout
-- [ ] **PROJ-02**: Kanban columns display Draft, Active, Completed, Cancelled statuses
-- [ ] **PROJ-03**: User can drag project card between status columns
-- [ ] **PROJ-04**: Drag-and-drop updates project status via API
-- [ ] **PROJ-05**: Project card shows status badge with color coding
-- [ ] **PROJ-06**: Project card shows client/company name (or "Internal" badge)
-- [ ] **PROJ-07**: Project card shows date range (start to end)
-- [ ] **PROJ-08**: Project card shows task progress (X/Y tasks complete)
-- [ ] **PROJ-09**: Project card shows revenue/cost when available
-- [ ] **PROJ-10**: View toggle between List and Kanban on /projects page
+- [x] **PROJ-01**: User can view projects in Kanban board layout
+- [x] **PROJ-02**: Kanban columns display Draft, Active, Completed, Cancelled statuses
+- [x] **PROJ-03**: User can drag project card between status columns
+- [x] **PROJ-04**: Drag-and-drop updates project status via API
+- [x] **PROJ-05**: Project card shows status badge with color coding
+- [x] **PROJ-06**: Project card shows client/company name (or "Internal" badge)
+- [x] **PROJ-07**: Project card shows date range (start to end)
+- [x] **PROJ-08**: Project card shows task progress (X/Y tasks complete)
+- [x] **PROJ-09**: Project card shows revenue/cost when available
+- [x] **PROJ-10**: View toggle between List and Kanban on /projects page
 
 ### Tasks Kanban Grouping (TASK)
 
@@ -88,16 +88,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | NAV-01 | Phase 75 | Complete |
 | NAV-02 | Phase 75 | Complete |
 | NAV-03 | Phase 75 | Complete |
-| PROJ-01 | Phase 76 | Pending |
-| PROJ-02 | Phase 76 | Pending |
-| PROJ-03 | Phase 76 | Pending |
-| PROJ-04 | Phase 76 | Pending |
-| PROJ-05 | Phase 76 | Pending |
-| PROJ-06 | Phase 76 | Pending |
-| PROJ-07 | Phase 76 | Pending |
-| PROJ-08 | Phase 76 | Pending |
-| PROJ-09 | Phase 76 | Pending |
-| PROJ-10 | Phase 76 | Pending |
+| PROJ-01 | Phase 76 | Complete |
+| PROJ-02 | Phase 76 | Complete |
+| PROJ-03 | Phase 76 | Complete |
+| PROJ-04 | Phase 76 | Complete |
+| PROJ-05 | Phase 76 | Complete |
+| PROJ-06 | Phase 76 | Complete |
+| PROJ-07 | Phase 76 | Complete |
+| PROJ-08 | Phase 76 | Complete |
+| PROJ-09 | Phase 76 | Complete |
+| PROJ-10 | Phase 76 | Complete |
 | TASK-01 | Phase 77 | Pending |
 | TASK-02 | Phase 77 | Pending |
 | TASK-03 | Phase 77 | Pending |
@@ -122,4 +122,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-28*
-*Last updated: 2026-01-29 after Phase 75 completion*
+*Last updated: 2026-01-29 after Phase 76 completion*
