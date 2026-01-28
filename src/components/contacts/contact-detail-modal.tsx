@@ -307,7 +307,7 @@ export function ContactDetailModal({
             {contact.potentials.length > 0 && (
               <div className="space-y-2">
                 <h4 className="text-sm font-medium text-gray-500">
-                  Potential Projects ({contact.potentials.length})
+                  Repeat Clients ({contact.potentials.length})
                 </h4>
                 <div className="space-y-1">
                   {contact.potentials.map((potential) => (
