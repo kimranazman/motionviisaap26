@@ -46,27 +46,20 @@ See `.planning/milestones/` for archived phase details.
 
 ---
 
-#### Phase 73: Rename Potential Projects to Repeat Clients
+#### Phase 73: Rename Potential Projects to Repeat Clients ✓
 
 **Goal:** Rename "Potential Projects" to "Repeat Clients" throughout the application UI.
 
-**Requirements:**
-- RENAME-01: Change nav label to "Repeat Clients"
-- RENAME-02: Update page title
-- RENAME-03: Update component headers/breadcrumbs
-- RENAME-04: Update toast messages and UI text
+**Status:** Complete (2026-01-28)
 
-**Success Criteria:**
-1. Sidebar shows "Repeat Clients" instead of "Potential Projects"
-2. Page title is "Repeat Clients"
-3. All UI references say "Repeat Clients"
-4. URL remains `/potential-projects` (implementation detail)
-5. Database model remains `PotentialProject` (internal)
-
-**Files to modify:**
-- `src/lib/nav-config.ts`
-- `src/app/(protected)/potential-projects/page.tsx`
-- `src/components/potential-project-*.tsx` (headers/titles)
+**Delivered:**
+- Nav label changed to "Repeat Clients" in sidebar
+- Page header updated to "Repeat Clients"
+- Add dialog title says "Add Repeat Client"
+- Toast messages reference "Repeat client"
+- Company/Contact/Department modals show "Repeat Clients" section headers
+- URL `/potential-projects` preserved (implementation detail)
+- Database model `PotentialProject` unchanged (internal)
 
 ---
 
@@ -99,6 +92,6 @@ See `.planning/milestones/` for archived phase details.
 
 ## Progress
 
-Phase 73 of 74 | v2.5 in progress
+Phase 74 of 74 | v2.5 in progress
 
-Progress: [███░░░░░░░] 33% (1/3 v2.5 phases)
+Progress: [██████░░░░] 67% (2/3 v2.5 phases)
