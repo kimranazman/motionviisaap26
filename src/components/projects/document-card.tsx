@@ -117,10 +117,11 @@ export function DocumentCard({
   }
 
   return (
-    <div className="flex items-center justify-between p-3 border rounded-lg bg-white hover:bg-gray-50">
-      <div className="flex items-center gap-3 flex-1 min-w-0">
+    <div className="p-3 border rounded-lg bg-white hover:bg-gray-50 space-y-2">
+      {/* Top row: file info */}
+      <div className="flex items-center gap-3">
         <Icon className="h-8 w-8 text-gray-400 shrink-0" />
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="font-medium truncate">{document.filename}</span>
             <Badge variant="outline" className={getCategoryColor(document.category)}>
@@ -138,14 +139,15 @@ export function DocumentCard({
         </div>
       </div>
 
-      <div className="flex items-center gap-1 ml-2 shrink-0">
+      {/* Bottom row: actions - wraps on mobile */}
+      <div className="flex items-center gap-1 flex-wrap">
         {/* Category select */}
         <Select
           value={document.category}
           onValueChange={handleCategoryChange}
           disabled={isUpdating}
         >
-          <SelectTrigger className="w-[100px] h-10">
+          <SelectTrigger className="w-[90px] h-8 text-xs">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -162,7 +164,7 @@ export function DocumentCard({
           <Button
             variant="ghost"
             size="icon"
-            className="h-10 w-10 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+            className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
             onClick={() => onReview(document)}
             title="Review AI extraction"
           >
@@ -175,7 +177,7 @@ export function DocumentCard({
           <Button
             variant="ghost"
             size="icon"
-            className="h-10 w-10 text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+            className="h-8 w-8 text-purple-600 hover:text-purple-700 hover:bg-purple-50"
             onClick={() => onReviewDeliverable(document)}
             title="Import Deliverables"
           >
@@ -187,7 +189,7 @@ export function DocumentCard({
         <Button
           variant="ghost"
           size="icon"
-          className="h-10 w-10"
+          className="h-8 w-8"
           onClick={handlePreview}
           title={isImage ? 'Preview' : 'Open PDF'}
         >
@@ -198,7 +200,7 @@ export function DocumentCard({
         <Button
           variant="ghost"
           size="icon"
-          className="h-10 w-10"
+          className="h-8 w-8"
           onClick={handleDownload}
           title="Download"
         >
@@ -211,7 +213,7 @@ export function DocumentCard({
             <Button
               variant="ghost"
               size="icon"
-              className="h-10 w-10 text-red-600 hover:text-red-700 hover:bg-red-50"
+              className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
               title="Delete"
             >
               <Trash2 className="h-4 w-4" />

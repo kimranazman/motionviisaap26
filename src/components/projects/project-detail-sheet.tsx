@@ -450,7 +450,7 @@ export function ProjectDetailSheet({
       setInitiativeId(project.initiative?.id || null)
       setDescription(project.description || '')
       setError(null)
-      setCosts(project.costs || [])
+      // Note: costs are now fetched in their own useEffect
       setShowAddCostForm(false)
       setEditingCost(null)
       // Note: deliverables and tasks are reset in their respective fetch effects
@@ -544,6 +544,25 @@ export function ProjectDetailSheet({
       }
     }
     fetchTasks()
+  }, [project?.id, open])
+
+  // Fetch costs when project changes
+  useEffect(() => {
+    const fetchCosts = async () => {
+      if (!project || !open) return
+      // Reset costs before fetching to ensure fresh state
+      setCosts([])
+      try {
+        const response = await fetch(`/api/projects/${project.id}/costs`)
+        if (response.ok) {
+          const data = await response.json()
+          setCosts(data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch costs:', error)
+      }
+    }
+    fetchCosts()
   }, [project?.id, open])
 
   const fetchContacts = async (compId: string) => {

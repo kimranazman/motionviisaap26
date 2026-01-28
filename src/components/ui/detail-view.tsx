@@ -108,7 +108,7 @@ export function DetailView({
   // Default: dialog mode
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={cn('md:max-w-[650px] p-0 flex flex-col', className)}>
+      <DialogContent className={cn('md:max-w-[650px] p-0 flex flex-col max-h-[calc(100vh-2rem)] md:max-h-[85vh]', className)}>
         <DialogHeader className={cn('p-6 pb-4 border-b shrink-0 pr-12', headerClassName)}>
           <div className="flex items-center justify-between">
             <DialogTitle className="text-left text-lg leading-snug flex-1">
@@ -117,9 +117,9 @@ export function DetailView({
             {expandHref && <ExpandButton href={expandHref} />}
           </div>
         </DialogHeader>
-        <ScrollArea className={cn('flex-1 min-h-0', contentClassName)}>
+        <div className={cn('flex-1 min-h-0 overflow-y-auto', contentClassName)}>
           {children}
-        </ScrollArea>
+        </div>
         {footer && (
           <DialogFooter className="p-4 border-t shrink-0">
             {footer}
