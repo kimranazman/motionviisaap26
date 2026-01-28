@@ -87,6 +87,29 @@ export const settingsItem: NavItem = {
   icon: Settings,
 }
 
+/** Hrefs that can never be hidden from the sidebar */
+export const ALWAYS_VISIBLE_HREFS = new Set<string>(['/', '/settings'])
+
+/** Returns true if the given href must always be visible */
+export function isAlwaysVisible(href: string): boolean {
+  return ALWAYS_VISIBLE_HREFS.has(href)
+}
+
+/** Returns all nav item hrefs (groups + top-level + settings) */
+export function getAllNavHrefs(): string[] {
+  const hrefs: string[] = []
+  for (const group of navGroups) {
+    for (const item of group.items) {
+      hrefs.push(item.href)
+    }
+  }
+  for (const item of topLevelItems) {
+    hrefs.push(item.href)
+  }
+  hrefs.push(settingsItem.href)
+  return hrefs
+}
+
 /**
  * Find which nav group contains a route matching the given pathname.
  * Returns the group key or null if no match.
