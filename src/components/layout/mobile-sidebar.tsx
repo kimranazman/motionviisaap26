@@ -18,18 +18,19 @@ export function MobileSidebar() {
   const pathname = usePathname()
   const { data: session } = useSession()
   const { expandedGroups, toggleGroup } = useNavCollapseState(pathname)
-  const { isVisible } = useNavVisibility()
+  const { isVisible, getOrderedItems } = useNavVisibility()
 
-  // Filter groups and their items by visibility
+  // Filter groups and their items by visibility, applying custom order
   const visibleGroups = useMemo(() => {
     return navGroups
       .filter((group) => !group.requireRole || session?.user?.role === group.requireRole)
       .map((group) => {
-        const visibleItems = group.items.filter((item) => isVisible(item.href))
+        const orderedItems = getOrderedItems(group.key, group.items)
+        const visibleItems = orderedItems.filter((item) => isVisible(item.href))
         return { group, visibleItems }
       })
       .filter(({ visibleItems }) => visibleItems.length > 0)
-  }, [session?.user?.role, isVisible])
+  }, [session?.user?.role, isVisible, getOrderedItems])
 
   // Filter top-level items by visibility
   const visibleTopLevel = useMemo(
@@ -70,7 +71,10 @@ export function MobileSidebar() {
               onToggle={() => toggleGroup(group.key)}
               pathname={pathname}
               onLinkClick={() => setOpen(false)}
-              filterVisible={(items) => items.filter((item) => isVisible(item.href))}
+              filterVisible={(items) => {
+                const ordered = getOrderedItems(group.key, items)
+                return ordered.filter((item) => isVisible(item.href))
+              }}
             />
           ))}
 
