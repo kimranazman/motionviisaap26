@@ -13,7 +13,9 @@ Extract structured data from receipt images for automatic expense tracking and c
 
 ### Line Items (per item)
 - **Description**: Item purchased
-- **Amount**: Price (quantity usually embedded)
+- **Quantity**: Number of items (if discernible from receipt)
+- **Unit Price**: Price per unit (if discernible from receipt)
+- **Amount**: Total price for the line item
 
 ### Optional Fields
 - **Receipt Number**: Transaction/receipt ID
@@ -55,7 +57,9 @@ Extract structured data from receipt images for automatic expense tracking and c
 ### To Cost Entry
 ```
 Cost.description = Summarized items or "Purchase from [Merchant]"
-Cost.amount = Total Amount
+Cost.amount = Total Amount (canonical total)
+Cost.quantity = Quantity (if available per line item)
+Cost.unitPrice = Unit Price (if available per line item)
 Cost.date = Receipt Date
 Cost.supplierId = Match merchant to existing supplier (if any)
 ```
@@ -109,11 +113,15 @@ If items span multiple cost categories:
   "lineItems": [
     {
       "description": "Cable Tie 100pcs",
+      "quantity": 1,
+      "unitPrice": 8.90,
       "amount": 8.90,
       "confidence": "high"
     },
     {
       "description": "Electrical Tape",
+      "quantity": 2,
+      "unitPrice": 2.95,
       "amount": 5.90,
       "confidence": "high"
     }
