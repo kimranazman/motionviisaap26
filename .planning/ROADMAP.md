@@ -22,7 +22,7 @@
 
 - [x] **Phase 57: Critical Bug Fixes** - Fix project detail error, unscrollable modals, and sidebar scroll
 - [x] **Phase 58: Dashboard & Kanban UX Fixes** - Fix dashboard breakpoint persistence, kanban drag handles, and page spacing
-- [ ] **Phase 59: UI Visibility Fixes** - Surface departments in company detail and tasks in project detail
+- [x] **Phase 59: UI Visibility Fixes** - Surface departments in company detail and tasks in project detail
 - [ ] **Phase 60: Event CRUD** - Full create, edit, delete for events
 - [ ] **Phase 61: Calendar Enhancements** - Week view and full KR labels
 
@@ -72,10 +72,10 @@ Plans:
   2. User can add, edit, and delete departments directly from the company detail view
   3. Opening a project detail view shows a Tasks section with existing tasks and subtask hierarchy
   4. User can add, edit, delete tasks and change task status directly from the project detail view
-**Plans**: TBD
+**Plans**: 1 plan, 1 wave (verification only - all features already implemented)
 
 Plans:
-- [ ] 59-01: TBD
+- [x] 59-01: Verify UI visibility features (VIS-01 through VIS-05)
 
 #### Phase 60: Event CRUD
 **Goal**: Users can fully manage events (create, edit, delete) instead of read-only viewing
@@ -113,6 +113,6 @@ Phases execute in numeric order: 57 → 58 → 59 → 60 → 61
 |-------|-----------|----------------|--------|-----------|
 | 57. Critical Bug Fixes | v2.2 | 3/3 | Complete | 2026-01-28 |
 | 58. Dashboard & Kanban UX Fixes | v2.2 | 3/3 | Complete | 2026-01-28 |
-| 59. UI Visibility Fixes | v2.2 | 0/TBD | Not started | - |
+| 59. UI Visibility Fixes | v2.2 | 1/1 | Complete | 2026-01-28 |
 | 60. Event CRUD | v2.2 | 0/TBD | Not started | - |
 | 61. Calendar Enhancements | v2.2 | 0/TBD | Not started | - |

@@ -69,11 +69,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BUG-06 | Phase 58 | Complete |
 | BUG-07 | Phase 58 | Complete |
 | BUG-08 | Phase 58 | Complete |
-| VIS-01 | Phase 59 | Pending |
-| VIS-02 | Phase 59 | Pending |
-| VIS-03 | Phase 59 | Pending |
-| VIS-04 | Phase 59 | Pending |
-| VIS-05 | Phase 59 | Pending |
+| VIS-01 | Phase 59 | Complete |
+| VIS-02 | Phase 59 | Complete |
+| VIS-03 | Phase 59 | Complete |
+| VIS-04 | Phase 59 | Complete |
+| VIS-05 | Phase 59 | Complete |
 | EVT-01 | Phase 60 | Pending |
 | EVT-02 | Phase 60 | Pending |
 | EVT-03 | Phase 60 | Pending |
