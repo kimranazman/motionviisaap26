@@ -27,13 +27,13 @@ Requirements for v2.4 release. Each maps to roadmap phases.
 
 ### Sidebar Drag-and-Drop Reorder (REORD)
 
-- [ ] **REORD-01**: Settings page shows nav items with drag handles for each group
-- [ ] **REORD-02**: User can drag to reorder items within a group (SAAP, CRM, Admin)
-- [ ] **REORD-03**: Items cannot be dragged between groups
-- [ ] **REORD-04**: Custom order persisted per-user in UserPreferences (navItemOrder JSON field)
-- [ ] **REORD-05**: Sidebar renders items in user's custom order
-- [ ] **REORD-06**: "Reset Order" button restores default order from nav-config.ts
-- [ ] **REORD-07**: New nav items added in future deploys appear at end for users with custom order
+- [x] **REORD-01**: Settings page shows nav items with drag handles for each group
+- [x] **REORD-02**: User can drag to reorder items within a group (SAAP, CRM, Admin)
+- [x] **REORD-03**: Items cannot be dragged between groups
+- [x] **REORD-04**: Custom order persisted per-user in UserPreferences (navItemOrder JSON field)
+- [x] **REORD-05**: Sidebar renders items in user's custom order
+- [x] **REORD-06**: "Reset Order" button restores default order from nav-config.ts
+- [x] **REORD-07**: New nav items added in future deploys appear at end for users with custom order
 
 ### Revenue Accuracy (REV)
 
@@ -109,13 +109,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | NEST-05 | Phase 69 | Complete |
 | NEST-06 | Phase 69 | Complete |
 | NEST-07 | Phase 69 | Complete |
-| REORD-01 | Phase 70 | Pending |
-| REORD-02 | Phase 70 | Pending |
-| REORD-03 | Phase 70 | Pending |
-| REORD-04 | Phase 70 | Pending |
-| REORD-05 | Phase 70 | Pending |
-| REORD-06 | Phase 70 | Pending |
-| REORD-07 | Phase 70 | Pending |
+| REORD-01 | Phase 70 | Complete |
+| REORD-02 | Phase 70 | Complete |
+| REORD-03 | Phase 70 | Complete |
+| REORD-04 | Phase 70 | Complete |
+| REORD-05 | Phase 70 | Complete |
+| REORD-06 | Phase 70 | Complete |
+| REORD-07 | Phase 70 | Complete |
 | REV-01 | Phase 68 | Pending |
 | REV-02 | Phase 68 | Pending |
 | REV-03 | Phase 68 | Pending |

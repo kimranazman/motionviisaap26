@@ -35,7 +35,7 @@ See `.planning/milestones/` for archived phase details.
 
 - [x] **Phase 68: Sidebar Fixes & Quick Wins** - Fix autoReveal bug, add save button, fix revenue accuracy, enable tasks on completed projects
 - [x] **Phase 69: Nested Sidebar Links** - Company nav item expands to show Departments and Contacts as nested sub-items
-- [ ] **Phase 70: Sidebar Drag-and-Drop Reorder** - Users reorder nav items within groups via Settings page
+- [x] **Phase 70: Sidebar Drag-and-Drop Reorder** - Users reorder nav items within groups via Settings page
 - [ ] **Phase 71: Internal Project Field Config** - Admin configures which fields are hidden for internal projects
 
 ## Phase Details
@@ -80,11 +80,11 @@ Plans:
   2. Custom order persists per-user across sessions and the sidebar renders items in the saved order
   3. Reset Order button restores the default order from nav-config.ts
   4. New nav items added in future deploys appear at the end of the appropriate group for users with custom order
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 70-01: TBD
-- [ ] 70-02: TBD
+- [x] 70-01-PLAN.md — Nav order backend: Prisma schema, API, hook extension, default order helper
+- [x] 70-02-PLAN.md — Settings DnD UI with drag handles, sidebar order rendering, Reset Order button
 
 ### Phase 71: Internal Project Field Config
 **Goal**: Admin can control which fields are visible on internal projects via a system-wide configuration
@@ -110,5 +110,5 @@ Note: Phase 71 is independent and can execute in parallel with 69-70 if desired.
 |-------|-----------|----------------|--------|-----------|
 | 68. Sidebar Fixes & Quick Wins | v2.4 | 2/2 | Complete | 2026-01-28 |
 | 69. Nested Sidebar Links | v2.4 | 2/2 | Complete | 2026-01-28 |
-| 70. Sidebar DnD Reorder | v2.4 | 0/TBD | Not started | - |
+| 70. Sidebar DnD Reorder | v2.4 | 2/2 | Complete | 2026-01-28 |
 | 71. Internal Project Field Config | v2.4 | 0/TBD | Not started | - |

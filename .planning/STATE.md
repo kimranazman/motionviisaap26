@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-28)
 
 **Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, AI-powered intelligence, cross-project task management, per-member workload dashboards, event management, customizable sidebar navigation, internal project support, and line item pricing history.
-**Current focus:** v2.4 Settings, Sidebar & Bug Fixes — Phase 70
+**Current focus:** v2.4 Settings, Sidebar & Bug Fixes — Phase 71
 
 ## Current Position
 
-Phase: 70 of 71 (Sidebar Drag-and-Drop Reorder)
+Phase: 71 of 71 (Internal Project Field Config)
 Plan: N/A — ready to plan
 Status: Ready to plan
-Last activity: 2026-01-28 — Phase 69 complete
+Last activity: 2026-01-28 — Phase 70 complete
 
-Progress: [█████░░░░░] 50% (2/4 v2.4 phases)
+Progress: [███████░░░] 75% (3/4 v2.4 phases)
 
 ## Milestone History
 
@@ -43,9 +43,9 @@ Progress: [█████░░░░░] 50% (2/4 v2.4 phases)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4 (v2.4)
+- Total plans completed: 6 (v2.4)
 - Average duration: ~2 min
-- Total execution time: ~8 min
+- Total execution time: ~12 min
 
 **By Phase:**
 
@@ -53,6 +53,7 @@ Progress: [█████░░░░░] 50% (2/4 v2.4 phases)
 |-------|-------|-------|----------|
 | 68 | 2 | ~4 min | ~2 min |
 | 69 | 2 | ~4 min | ~2 min |
+| 70 | 2 | ~4 min | ~2 min |
 
 ## Accumulated Context
 
@@ -76,5 +77,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Phase 69 complete, ready to plan Phase 70
+Stopped at: Phase 70 complete, ready to plan Phase 71
 Resume file: None
