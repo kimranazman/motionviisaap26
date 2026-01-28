@@ -85,7 +85,7 @@ export async function generateProjectManifest(
     project: {
       id: project.id,
       title: project.title,
-      company: project.company.name,
+      company: project.company?.name || 'Internal',
       startDate: project.startDate?.toISOString().split('T')[0],
       endDate: project.endDate?.toISOString().split('T')[0],
       status: project.status,
