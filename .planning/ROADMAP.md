@@ -23,7 +23,7 @@
 - [x] **Phase 57: Critical Bug Fixes** - Fix project detail error, unscrollable modals, and sidebar scroll
 - [x] **Phase 58: Dashboard & Kanban UX Fixes** - Fix dashboard breakpoint persistence, kanban drag handles, and page spacing
 - [x] **Phase 59: UI Visibility Fixes** - Surface departments in company detail and tasks in project detail
-- [ ] **Phase 60: Event CRUD** - Full create, edit, delete for events
+- [x] **Phase 60: Event CRUD** - Full create, edit, delete for events
 - [ ] **Phase 61: Calendar Enhancements** - Week view and full KR labels
 
 ## Phase Details
@@ -86,10 +86,11 @@ Plans:
   2. User can edit any field on an existing event and save changes
   3. User can delete an event with a confirmation dialog
   4. Event cards show edit and delete action buttons
-**Plans**: TBD
+**Plans**: 2 plans, 2 waves (sequential)
 
 Plans:
-- [ ] 60-01: TBD
+- [x] 60-01: Event API Routes — POST, GET/PATCH/DELETE per-ID
+- [x] 60-02: Event Form Modal & Card Actions — create/edit form, card buttons, delete dialog
 
 #### Phase 61: Calendar Enhancements
 **Goal**: Calendar provides better daily visibility with week view and meaningful KR labels
@@ -114,5 +115,5 @@ Phases execute in numeric order: 57 → 58 → 59 → 60 → 61
 | 57. Critical Bug Fixes | v2.2 | 3/3 | Complete | 2026-01-28 |
 | 58. Dashboard & Kanban UX Fixes | v2.2 | 3/3 | Complete | 2026-01-28 |
 | 59. UI Visibility Fixes | v2.2 | 1/1 | Complete | 2026-01-28 |
-| 60. Event CRUD | v2.2 | 0/TBD | Not started | - |
+| 60. Event CRUD | v2.2 | 2/2 | Complete | 2026-01-28 |
 | 61. Calendar Enhancements | v2.2 | 0/TBD | Not started | - |

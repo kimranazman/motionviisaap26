@@ -74,11 +74,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | VIS-03 | Phase 59 | Complete |
 | VIS-04 | Phase 59 | Complete |
 | VIS-05 | Phase 59 | Complete |
-| EVT-01 | Phase 60 | Pending |
-| EVT-02 | Phase 60 | Pending |
-| EVT-03 | Phase 60 | Pending |
-| EVT-04 | Phase 60 | Pending |
-| EVT-05 | Phase 60 | Pending |
+| EVT-01 | Phase 60 | Complete |
+| EVT-02 | Phase 60 | Complete |
+| EVT-03 | Phase 60 | Complete |
+| EVT-04 | Phase 60 | Complete |
+| EVT-05 | Phase 60 | Complete |
 | CAL-01 | Phase 61 | Pending |
 | CAL-02 | Phase 61 | Pending |
 | CAL-03 | Phase 61 | Pending |
