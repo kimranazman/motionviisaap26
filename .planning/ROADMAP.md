@@ -20,8 +20,8 @@
 
 ## Phases
 
-- [ ] **Phase 57: Critical Bug Fixes** - Fix project detail error, unscrollable modals, and sidebar scroll
-- [ ] **Phase 58: Dashboard & Kanban UX Fixes** - Fix dashboard breakpoint persistence, kanban drag handles, and page spacing
+- [x] **Phase 57: Critical Bug Fixes** - Fix project detail error, unscrollable modals, and sidebar scroll
+- [x] **Phase 58: Dashboard & Kanban UX Fixes** - Fix dashboard breakpoint persistence, kanban drag handles, and page spacing
 - [ ] **Phase 59: UI Visibility Fixes** - Surface departments in company detail and tasks in project detail
 - [ ] **Phase 60: Event CRUD** - Full create, edit, delete for events
 - [ ] **Phase 61: Calendar Enhancements** - Week view and full KR labels
@@ -40,10 +40,12 @@
   1. Clicking a project card on /projects navigates to project detail without console errors or blank page
   2. Opening any modal with content taller than the viewport allows vertical scrolling to reach all content
   3. Sidebar navigation scrolls when menu items exceed the viewport height (especially on smaller screens)
-**Plans**: TBD
+**Plans**: 3 plans, 1 wave (all parallel)
 
 Plans:
-- [ ] 57-01: TBD
+- [x] 57-01: Fix project detail navigation error (BUG-01)
+- [x] 57-02: Fix unscrollable modals (BUG-02)
+- [x] 57-03: Fix sidebar scroll (BUG-03)
 
 #### Phase 58: Dashboard & Kanban UX Fixes
 **Goal**: Dashboard layouts persist correctly across devices and kanban boards have clean drag UX
@@ -54,10 +56,12 @@ Plans:
   2. Kanban cards on desktop can be dragged by clicking anywhere on the card body (no visible dotted drag handles)
   3. Kanban cards on mobile still show drag handles for touch-hold interaction
   4. Companies page and Suppliers page have consistent spacing matching the Price Comparison page layout
-**Plans**: TBD
+**Plans**: 3 plans, 1 wave (all parallel)
 
 Plans:
-- [ ] 58-01: TBD
+- [x] 58-01: Dashboard breakpoint layout persistence (BUG-04)
+- [x] 58-02: Kanban desktop full-card drag & hide handles (BUG-05, BUG-06)
+- [x] 58-03: Companies & suppliers page spacing (BUG-07, BUG-08)
 
 #### Phase 59: UI Visibility Fixes
 **Goal**: Departments and tasks are discoverable and usable from their parent detail views
@@ -107,8 +111,8 @@ Phases execute in numeric order: 57 → 58 → 59 → 60 → 61
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 57. Critical Bug Fixes | v2.2 | 0/TBD | Not started | - |
-| 58. Dashboard & Kanban UX Fixes | v2.2 | 0/TBD | Not started | - |
+| 57. Critical Bug Fixes | v2.2 | 3/3 | Complete | 2026-01-28 |
+| 58. Dashboard & Kanban UX Fixes | v2.2 | 3/3 | Complete | 2026-01-28 |
 | 59. UI Visibility Fixes | v2.2 | 0/TBD | Not started | - |
 | 60. Event CRUD | v2.2 | 0/TBD | Not started | - |
 | 61. Calendar Enhancements | v2.2 | 0/TBD | Not started | - |

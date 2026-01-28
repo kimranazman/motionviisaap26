@@ -64,11 +64,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BUG-01 | Phase 57 | Pending |
 | BUG-02 | Phase 57 | Pending |
 | BUG-03 | Phase 57 | Pending |
-| BUG-04 | Phase 58 | Pending |
-| BUG-05 | Phase 58 | Pending |
-| BUG-06 | Phase 58 | Pending |
-| BUG-07 | Phase 58 | Pending |
-| BUG-08 | Phase 58 | Pending |
+| BUG-04 | Phase 58 | Complete |
+| BUG-05 | Phase 58 | Complete |
+| BUG-06 | Phase 58 | Complete |
+| BUG-07 | Phase 58 | Complete |
+| BUG-08 | Phase 58 | Complete |
 | VIS-01 | Phase 59 | Pending |
 | VIS-02 | Phase 59 | Pending |
 | VIS-03 | Phase 59 | Pending |
