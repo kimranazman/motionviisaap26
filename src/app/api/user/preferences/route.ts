@@ -27,6 +27,7 @@ export async function GET() {
     dateFilter: prefs?.dateFilter ?? null,
     detailViewMode: prefs?.detailViewMode ?? 'dialog',
     hiddenNavItems: (prefs?.hiddenNavItems as string[]) ?? [],
+    navItemOrder: (prefs?.navItemOrder as Record<string, string[]>) ?? null,
   })
 }
 
@@ -42,11 +43,12 @@ export async function PATCH(request: NextRequest) {
   }
 
   const body = await request.json()
-  const { dashboardLayout, dateFilter, detailViewMode, hiddenNavItems } = body as {
+  const { dashboardLayout, dateFilter, detailViewMode, hiddenNavItems, navItemOrder } = body as {
     dashboardLayout?: DashboardLayout
     dateFilter?: DateFilter
     detailViewMode?: string
     hiddenNavItems?: string[]
+    navItemOrder?: Record<string, string[]>
   }
 
   // Build update data with only provided fields
@@ -62,6 +64,9 @@ export async function PATCH(request: NextRequest) {
   }
   if (hiddenNavItems !== undefined) {
     data.hiddenNavItems = hiddenNavItems
+  }
+  if (navItemOrder !== undefined) {
+    data.navItemOrder = navItemOrder
   }
 
   // Upsert: create if not exists, update if exists
