@@ -1,5 +1,43 @@
 # Milestone History
 
+## v2.6: Views & Calendar Enhancement
+
+**Shipped:** 2026-01-29
+**Duration:** 1 day
+**Phases:** 4 (Phases 75-78)
+**Plans:** 11
+**Stats:** 18 files changed, +2,159 / -324 lines
+
+### Summary
+
+Enhanced visualization capabilities with Kanban views for projects and tasks, a unified main calendar showing all entity dates, and richer project card information. Moved Members navigation under Work group for logical organization.
+
+### Key Accomplishments
+
+- Moved Members nav item to Work group in sidebar (consolidated team access)
+- Projects Kanban board with drag-and-drop status columns (Draft, Active, Completed, Cancelled)
+- Enhanced project cards with status badges, client info, date ranges, task progress, revenue/cost summary
+- Tasks Kanban view with project grouping option (collapsible project sections with status columns)
+- Unified Calendar view showing task/project/initiative dates with day/week/month views
+- Date markers only (no spanning between dates) with grey color for completed items
+
+### Requirements Delivered
+
+| Category | Count | IDs |
+|----------|-------|-----|
+| Navigation (NAV) | 3 | NAV-01 to NAV-03 |
+| Projects Kanban (PROJ) | 10 | PROJ-01 to PROJ-10 |
+| Tasks Grouping (TASK) | 4 | TASK-01 to TASK-04 |
+| Main Calendar (CAL) | 12 | CAL-01 to CAL-12 |
+| **Total** | **29** | |
+
+### Artifacts
+
+- Roadmap: `.planning/milestones/v2.6-ROADMAP.md`
+- Requirements: `.planning/milestones/v2.6-REQUIREMENTS.md`
+
+---
+
 ## v2.5: Navigation Reorganization
 
 **Shipped:** 2026-01-28

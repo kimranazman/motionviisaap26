@@ -10,22 +10,15 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 ## Current State
 
-**Version:** v2.5 Navigation Reorganization (shipped 2026-01-28)
-**Codebase:** ~45,153 LOC TypeScript across 74 phases
+**Version:** v2.6 Views & Calendar Enhancement (shipped 2026-01-29)
+**Codebase:** ~47,199 LOC TypeScript across 78 phases
 **Tech stack:** Next.js 14, Prisma, MariaDB, Tailwind/shadcn, NextAuth.js, OpenAI
 
-**v2.5 delivered:** Created "Work" navigation group between SAAP and CRM containing Projects and Tasks together. Renamed "Potential Projects" to "Repeat Clients" throughout UI (nav, headers, dialogs, toasts, modals). Added expandable Members navigation with clickable links to individual team member pages (Khairul, Azlan, Izyani).
+**v2.6 delivered:** Members navigation moved under Work group. Projects Kanban board with drag-and-drop status columns (Draft, Active, Completed, Cancelled) and enhanced project cards showing status badges, client info, date ranges, task progress, and revenue/cost. Tasks Kanban view with project grouping option (collapsible project sections). Unified Calendar view showing task/project/initiative dates with day/week/month views and date markers (no spanning).
 
-## Current Milestone: v2.6 Views & Calendar Enhancement
+## Next Milestone
 
-**Goal:** Enhance visualization capabilities with Kanban views for projects and tasks, a unified main calendar showing all entity dates, and richer project card information.
-
-**Target features:**
-- Move Members navigation under Work group in sidebar
-- Projects Kanban board with drag-and-drop status columns (Draft, Active, Completed, Cancelled)
-- Tasks Kanban view with project grouping option
-- Main Calendar view showing task/project/initiative start and end dates (day/week/month views)
-- Enhanced project cards with status badges, client info, dates, and progress indicators
+Planning next milestone. Run `/gsd:new-milestone` to start.
 
 ## Requirements
 
@@ -257,39 +250,21 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - ✓ Active child route auto-expands parent in sidebar — v2.5
 - ✓ Mobile sidebar parity with desktop expandable behavior — v2.5
 
+**v2.6 Views & Calendar Enhancement:**
+- ✓ Members nav item moved under Work group in sidebar — v2.6
+- ✓ Projects Kanban board with drag-and-drop status columns — v2.6
+- ✓ Enhanced project cards with status badges, client info, date ranges, task progress, revenue/cost — v2.6
+- ✓ Tasks Kanban view with project grouping option (collapsible sections) — v2.6
+- ✓ Unified Calendar view at /calendar with day/week/month views — v2.6
+- ✓ Date markers for task due dates, project start/end, initiative start/end — v2.6
+- ✓ Completed items rendered in grey (no status color) — v2.6
+- ✓ Click-to-open detail for calendar markers — v2.6
+
 ### Active
 
-<!-- v2.6 Views & Calendar Enhancement -->
+<!-- Next milestone - to be defined with /gsd:new-milestone -->
 
-**Navigation:**
-- [ ] Members nav item moved under Work group in sidebar
-- [ ] Nav config updated for both desktop and mobile sidebars
-
-**Projects Kanban:**
-- [ ] Projects Kanban board view at /projects/kanban or view toggle
-- [ ] Columns for Draft, Active, Completed, Cancelled statuses
-- [ ] Drag-and-drop status changes using @dnd-kit
-- [ ] Project cards with enhanced details
-
-**Tasks Views:**
-- [ ] Tasks page supports grouping by project
-- [ ] Project-grouped view shows task status columns per project section
-
-**Main Calendar:**
-- [ ] Unified calendar page at /calendar showing all entity dates
-- [ ] Task start/end date markers
-- [ ] Project start/end date markers
-- [ ] Initiative start/end date markers
-- [ ] Day, week, month view toggles
-- [ ] Completed/done items rendered in grey (no status color)
-- [ ] Only start and end dates marked (no spanning between dates)
-
-**Enhanced Project Cards:**
-- [ ] Status badge with color coding
-- [ ] Client/company name display
-- [ ] Date range (start to end)
-- [ ] Task progress indicator (X/Y tasks complete)
-- [ ] Revenue/cost summary when available
+(No active requirements - run `/gsd:new-milestone` to define next milestone)
 
 ### Out of Scope
 
@@ -324,7 +299,8 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - v2.3 shipped — modal fixes, standalone CRM pages, task creation, internal projects, sidebar customization, pricing history
 - v2.4 shipped — sidebar persistence fixes, nested nav, DnD reorder, revenue fix, internal field config
 - v2.5 shipped — Work nav group, Repeat Clients rename, Members quick nav links
-- 45,153 LOC TypeScript across 74 phases (v1.0-v2.5)
+- v2.6 shipped — Projects/Tasks Kanban views, Main Calendar, enhanced project cards
+- 47,199 LOC TypeScript across 78 phases (v1.0-v2.6)
 - Sister company: Talenta Ideas Sdn. Bhd. (internal projects between Motionvii and Talenta)
 - Primary admin: khairul@talenta.com.my
 
@@ -456,4 +432,4 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | Submit nullifies hidden field values | Prevents stale data from being saved when fields are hidden | ✓ Good |
 
 ---
-*Last updated: 2026-01-28 after v2.6 milestone start*
+*Last updated: 2026-01-29 after v2.6 milestone shipped*

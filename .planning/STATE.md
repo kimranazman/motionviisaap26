@@ -2,17 +2,17 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-01-28)
+See: .planning/PROJECT.md (updated 2026-01-29)
 
-**Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, AI-powered intelligence, cross-project task management, per-member workload dashboards, event management, customizable sidebar navigation with nested links and drag-and-drop reorder, internal project support with configurable field visibility, line item pricing history, and intuitive navigation grouping.
-**Current focus:** v2.6 Views & Calendar Enhancement - COMPLETE
+**Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, AI-powered intelligence, cross-project task management, per-member workload dashboards, event management, customizable sidebar navigation with nested links and drag-and-drop reorder, internal project support with configurable field visibility, line item pricing history, intuitive navigation grouping, Projects/Tasks Kanban boards, and unified Calendar view.
+**Current focus:** Planning next milestone
 
 ## Current Position
 
-Phase: 78 of 78 (v2.6 complete)
-Plan: All complete
-Status: Phase 78 complete, v2.6 milestone complete
-Last activity: 2026-01-29 — Phase 78 executed and verified
+Phase: 78 of 78 (all shipped)
+Plan: Complete
+Status: v2.6 milestone archived
+Last activity: 2026-01-29 — v2.6 Views & Calendar Enhancement shipped
 
 Progress: [##########] 100% (78/78 phases)
 
@@ -48,29 +48,11 @@ Progress: [##########] 100% (78/78 phases)
 - Total phases completed: 78
 - Total milestones shipped: 19
 
-**v2.6 Stats:**
-- Phases: 75-78 (4 phases)
-- Requirements: 29 total
-- Categories: Navigation (3), Projects Kanban (10), Tasks Grouping (4), Main Calendar (12)
-- All requirements complete
-
 ## Accumulated Context
 
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table.
-
-**v2.6 Key Decisions:**
-- Reuse @dnd-kit for projects kanban (already proven in 5+ boards)
-- Build simple custom calendar (no external library)
-- Date markers only, no spanning (user request to avoid clutter)
-- Grey color for completed items
-- View toggle pattern for projects (matches /tasks pattern)
-- Phase 75: Empty topLevelItems after move (no top-level nav items remain)
-- Phase 75: NavGroupComponent already handles nested children (no changes needed)
-- Phase 77: Grouping toggle in tasks-page-client.tsx (not tasks/page.tsx or tasks-kanban-board.tsx)
-- Phase 78: Tasks only have dueDate (no startDate) - shown as single "D" marker
-- Phase 78: Projects navigate to detail page (complex sheet interface avoided)
 
 ### Pending Todos
 
@@ -83,5 +65,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-29
-Stopped at: Phase 78 complete, v2.6 milestone complete
+Stopped at: v2.6 shipped, ready for `/gsd:new-milestone`
 Resume file: None
