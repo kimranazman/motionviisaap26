@@ -60,6 +60,11 @@ export const navGroups: NavGroup[] = [
     items: [
       { name: 'Projects', href: '/projects', icon: Briefcase },
       { name: 'Tasks', href: '/tasks', icon: ListChecks },
+      { name: 'Members', href: '/members', icon: Users2, children: [
+        { name: 'Khairul', href: '/members/khairul', icon: User },
+        { name: 'Azlan', href: '/members/azlan', icon: User },
+        { name: 'Izyani', href: '/members/izyani', icon: User },
+      ]},
     ],
   },
   {
@@ -86,13 +91,7 @@ export const navGroups: NavGroup[] = [
   },
 ]
 
-export const topLevelItems: TopLevelNavItem[] = [
-  { name: 'Members', href: '/members', icon: Users2, children: [
-    { name: 'Khairul', href: '/members/khairul', icon: User },
-    { name: 'Azlan', href: '/members/azlan', icon: User },
-    { name: 'Izyani', href: '/members/izyani', icon: User },
-  ]},
-]
+export const topLevelItems: TopLevelNavItem[] = []
 
 export const settingsItem: NavItem = {
   name: 'Settings',
