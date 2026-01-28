@@ -10,11 +10,23 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 ## Current State
 
-**Version:** v2.2 Bug Fixes & UX Polish (shipped 2026-01-28)
+**Version:** v2.3 CRM & UX Improvements (in progress)
 **Codebase:** ~40,300 LOC TypeScript
 **Tech stack:** Next.js 14, Prisma, MariaDB, Tailwind/shadcn, NextAuth.js, OpenAI
 
 **v2.2 delivered:** Fixed critical UI bugs (project detail navigation, modal scroll, sidebar scroll, dashboard breakpoint persistence, kanban drag handles, page spacing), added full event CRUD, and enhanced calendar with week view and full KR labels.
+
+## Current Milestone: v2.3 CRM & UX Improvements
+
+**Goal:** Fix persistent modal/scroll bugs, improve CRM navigation with standalone Departments and Contacts pages, add task creation UI, support internal projects, enable customizable sidebar, and add line item pricing history.
+
+**Target features:**
+- Fix all modal scroll + expand-to-page issues across the app
+- Standalone Departments and Contacts pages under CRM (independently browsable with relation filtering)
+- Add Task button on /tasks page + subtask creation verification
+- Internal project flag (Motionvii / Talenta) as alternative to external company
+- Customizable sidebar navigation (users choose which links to show/hide)
+- Line item pricing history (by-item and by-client views, with quantity/unit price detail from AI invoice extraction)
 
 ## Requirements
 
@@ -218,7 +230,19 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 ### Active
 
-<!-- Next milestone requirements will be defined via /gsd:new-milestone -->
+<!-- v2.3 CRM & UX Improvements -->
+
+- [ ] Fix modal scroll across all detail modals (content must be scrollable)
+- [ ] Fix expand-to-page navigation (must open dedicated page, not stay in modal)
+- [ ] Standalone Departments page under CRM with company relation filtering
+- [ ] Standalone Contacts page under CRM with company/department relation filtering
+- [ ] Add Task button on /tasks page with project linking
+- [ ] Subtask creation from task detail (bidirectional parent-child link)
+- [ ] Internal project flag (Motionvii / Talenta) as alternative to company selection
+- [ ] Customizable sidebar navigation (show/hide links, persisted per user)
+- [ ] Line item pricing history — by-item view (all prices across clients)
+- [ ] Line item pricing history — by-client view (all items charged to a client)
+- [ ] AI invoice extraction captures quantity and unit price (not just lump sum)
 
 ### Out of Scope
 
@@ -250,7 +274,9 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - Data seeded from MotionVii_SAAP_2026_v2.xlsx (6 KRs, 37 initiatives, 30 support tasks, 59 KR join links)
 - v2.1 shipped — collapsible sidebar, cross-project tasks, member workload dashboards
 - v2.2 shipped — bug fixes, UX polish, event CRUD, calendar enhancements
+- v2.3 in progress — CRM improvements, modal fixes, sidebar customization, line item history
 - 40,300 LOC TypeScript across 61 phases (v1.0-v2.2)
+- Sister company: Talenta Ideas Sdn. Bhd. (internal projects between Motionvii and Talenta)
 - Primary admin: khairul@talenta.com.my
 
 ## Infrastructure
@@ -362,4 +388,4 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | NOT clause for Accountable For section | Prevents double-counting members who are both accountable and personInCharge | ✓ Good |
 
 ---
-*Last updated: 2026-01-28 after v2.2 milestone*
+*Last updated: 2026-01-28 after v2.3 milestone start*
