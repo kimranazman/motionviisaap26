@@ -614,6 +614,7 @@ model UserPreferences {
   dashboardLayout Json?  @db.Json
   dateFilter      Json?  @db.Json
   detailViewMode  String @default("dialog") @map("detail_view_mode") @db.VarChar(20)
+  hiddenNavItems  Json?  @map("hidden_nav_items") @db.Json
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
