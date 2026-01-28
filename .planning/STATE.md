@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-28)
 
 **Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, AI-powered intelligence, cross-project task management, per-member workload dashboards, event management, customizable sidebar navigation with nested links and drag-and-drop reorder, internal project support with configurable field visibility, line item pricing history, and intuitive navigation grouping.
-**Current focus:** v2.6 Views & Calendar Enhancement
+**Current focus:** v2.6 Views & Calendar Enhancement - COMPLETE
 
 ## Current Position
 
-Phase: 78 of 78 (v2.6 in progress)
-Plan: Pending planning
-Status: Phase 77 complete, Phase 78 ready
-Last activity: 2026-01-29 — Phase 77 executed and verified
+Phase: 78 of 78 (v2.6 complete)
+Plan: All complete
+Status: Phase 78 complete, v2.6 milestone complete
+Last activity: 2026-01-29 — Phase 78 executed and verified
 
-Progress: [#########.] 99% (77/78 phases)
+Progress: [##########] 100% (78/78 phases)
 
 ## Milestone History
 
@@ -38,20 +38,21 @@ Progress: [#########.] 99% (77/78 phases)
 | v2.3 | CRM & UX Improvements | 62-67 | 2026-01-28 |
 | v2.4 | Settings, Sidebar & Bug Fixes | 68-71 | 2026-01-28 |
 | v2.5 | Navigation Reorganization | 72-74 | 2026-01-28 |
-| v2.6 | Views & Calendar Enhancement | 75-78 | In Progress |
+| v2.6 | Views & Calendar Enhancement | 75-78 | 2026-01-29 |
 
 **Archives:** `.planning/milestones/`
 
 ## Performance Metrics
 
 **Velocity:**
-- Total phases completed: 76
-- Total milestones shipped: 18
+- Total phases completed: 78
+- Total milestones shipped: 19
 
-**v2.6 Stats (projected):**
+**v2.6 Stats:**
 - Phases: 75-78 (4 phases)
 - Requirements: 29 total
 - Categories: Navigation (3), Projects Kanban (10), Tasks Grouping (4), Main Calendar (12)
+- All requirements complete
 
 ## Accumulated Context
 
@@ -68,6 +69,8 @@ Decisions are logged in PROJECT.md Key Decisions table.
 - Phase 75: Empty topLevelItems after move (no top-level nav items remain)
 - Phase 75: NavGroupComponent already handles nested children (no changes needed)
 - Phase 77: Grouping toggle in tasks-page-client.tsx (not tasks/page.tsx or tasks-kanban-board.tsx)
+- Phase 78: Tasks only have dueDate (no startDate) - shown as single "D" marker
+- Phase 78: Projects navigate to detail page (complex sheet interface avoided)
 
 ### Pending Todos
 
@@ -80,5 +83,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-29
-Stopped at: Phase 77 complete, ready for `/gsd:plan-phase 78`
+Stopped at: Phase 78 complete, v2.6 milestone complete
 Resume file: None

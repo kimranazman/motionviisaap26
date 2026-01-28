@@ -28,25 +28,25 @@ Requirements for v2.6 release. Each maps to roadmap phases.
 
 ### Tasks Kanban Grouping (TASK)
 
-- [ ] **TASK-01**: User can toggle grouping mode on /tasks kanban (by status vs by project)
-- [ ] **TASK-02**: By-project grouping shows project sections with task status columns
-- [ ] **TASK-03**: Each project section is collapsible
-- [ ] **TASK-04**: Task cards within project sections support drag-and-drop status changes
+- [x] **TASK-01**: User can toggle grouping mode on /tasks kanban (by status vs by project)
+- [x] **TASK-02**: By-project grouping shows project sections with task status columns
+- [x] **TASK-03**: Each project section is collapsible
+- [x] **TASK-04**: Task cards within project sections support drag-and-drop status changes
 
 ### Main Calendar (CAL)
 
-- [ ] **CAL-01**: User can access unified calendar at /calendar
-- [ ] **CAL-02**: Calendar shows task start dates as markers
-- [ ] **CAL-03**: Calendar shows task end/due dates as markers
-- [ ] **CAL-04**: Calendar shows project start dates as markers
-- [ ] **CAL-05**: Calendar shows project end dates as markers
-- [ ] **CAL-06**: Calendar shows initiative start dates as markers
-- [ ] **CAL-07**: Calendar shows initiative end dates as markers
-- [ ] **CAL-08**: User can switch between day, week, and month views
-- [ ] **CAL-09**: Completed/done items render in grey (no status color)
-- [ ] **CAL-10**: Only start and end dates marked (no spanning/filling between dates)
-- [ ] **CAL-11**: Calendar sidebar navigation added under SAAP group
-- [ ] **CAL-12**: Clicking a date marker opens relevant entity detail
+- [x] **CAL-01**: User can access unified calendar at /calendar
+- [x] **CAL-02**: Calendar shows task start dates as markers (N/A - tasks only have dueDate)
+- [x] **CAL-03**: Calendar shows task end/due dates as markers
+- [x] **CAL-04**: Calendar shows project start dates as markers
+- [x] **CAL-05**: Calendar shows project end dates as markers
+- [x] **CAL-06**: Calendar shows initiative start dates as markers
+- [x] **CAL-07**: Calendar shows initiative end dates as markers
+- [x] **CAL-08**: User can switch between day, week, and month views
+- [x] **CAL-09**: Completed/done items render in grey (no status color)
+- [x] **CAL-10**: Only start and end dates marked (no spanning/filling between dates)
+- [x] **CAL-11**: Calendar sidebar navigation added under SAAP group
+- [x] **CAL-12**: Clicking a date marker opens relevant entity detail
 
 ## v2 Requirements
 

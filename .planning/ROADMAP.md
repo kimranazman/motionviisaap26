@@ -20,7 +20,7 @@
 - **v2.3 CRM & UX Improvements** - Phases 62-67 (shipped 2026-01-28) - [archive](.planning/milestones/v2.3-ROADMAP.md)
 - **v2.4 Settings, Sidebar & Bug Fixes** - Phases 68-71 (shipped 2026-01-28) - [archive](.planning/milestones/v2.4-ROADMAP.md)
 - **v2.5 Navigation Reorganization** - Phases 72-74 (shipped 2026-01-28) - [archive](.planning/milestones/v2.5-ROADMAP.md)
-- **v2.6 Views & Calendar Enhancement** - Phases 75-78 (in progress)
+- **v2.6 Views & Calendar Enhancement** - Phases 75-78 (shipped 2026-01-29)
 
 ## Phases
 
@@ -151,15 +151,15 @@ See `.planning/milestones/` for archived phase details.
 **Files to modify:**
 - `src/lib/nav-config.ts` - Add Calendar to SAAP group
 
-**Status:** Pending
+**Status:** Complete (2026-01-29)
 
 ---
 
 ## Progress
 
-Phase 77 of 78 | v2.6 in progress
+Phase 78 of 78 | v2.6 complete
 
-Progress: [#########.] 99% (77/78 phases)
+Progress: [##########] 100% (78/78 phases)
 
 ---
 
@@ -183,11 +183,11 @@ All phases are independent and can be built in parallel or any order.
 
 | Decision | Rationale | Status |
 |----------|-----------|--------|
-| Reuse @dnd-kit for projects kanban | Already proven in 5+ kanban boards; no new dependencies | Pending |
-| Build simple custom calendar | Lightweight; no external calendar library needed | Pending |
-| Date markers only (no spanning) | User explicitly requested to avoid clutter | Pending |
-| Grey for completed items | Visual distinction without color distraction | Pending |
-| View toggle pattern for projects | Matches existing table/kanban toggle on /tasks | Pending |
+| Reuse @dnd-kit for projects kanban | Already proven in 5+ kanban boards; no new dependencies | Complete |
+| Build simple custom calendar | Lightweight; no external calendar library needed | Complete |
+| Date markers only (no spanning) | User explicitly requested to avoid clutter | Complete |
+| Grey for completed items | Visual distinction without color distraction | Complete |
+| View toggle pattern for projects | Matches existing table/kanban toggle on /tasks | Complete |
 
 ---
 *Roadmap created: 2026-01-28*
