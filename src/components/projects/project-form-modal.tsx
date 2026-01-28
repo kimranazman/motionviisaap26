@@ -12,6 +12,13 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Loader2 } from 'lucide-react'
 import { CompanySelect } from '@/components/pipeline/company-select'
 import { ContactSelect } from '@/components/pipeline/contact-select'
@@ -31,6 +38,8 @@ interface Project {
   status: string
   startDate: string | null
   endDate: string | null
+  isInternal?: boolean
+  internalEntity?: string | null
   company: { id: string; name: string } | null
   contact: { id: string; name: string } | null
   initiative: { id: string; title: string } | null
@@ -50,6 +59,8 @@ export function ProjectFormModal({
   onSuccess,
 }: ProjectFormModalProps) {
   const [title, setTitle] = useState('')
+  const [isInternal, setIsInternal] = useState(false)
+  const [internalEntity, setInternalEntity] = useState<string | null>(null)
   const [companyId, setCompanyId] = useState<string | null>(null)
   const [contactId, setContactId] = useState<string | null>(null)
   const [contacts, setContacts] = useState<Contact[]>([])
@@ -64,6 +75,8 @@ export function ProjectFormModal({
   useEffect(() => {
     if (!open) {
       setTitle('')
+      setIsInternal(false)
+      setInternalEntity(null)
       setCompanyId(null)
       setContactId(null)
       setContacts([])
@@ -110,9 +123,17 @@ export function ProjectFormModal({
       setError('Title is required')
       return
     }
-    if (!companyId) {
-      setError('Company is required')
-      return
+
+    if (isInternal) {
+      if (!internalEntity) {
+        setError('Entity is required for internal projects')
+        return
+      }
+    } else {
+      if (!companyId) {
+        setError('Company is required')
+        return
+      }
     }
 
     setIsSubmitting(true)
@@ -123,8 +144,10 @@ export function ProjectFormModal({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: title.trim(),
-          companyId,
-          contactId: contactId || null,
+          isInternal,
+          internalEntity: isInternal ? internalEntity : null,
+          companyId: isInternal ? null : companyId,
+          contactId: isInternal ? null : (contactId || null),
           initiativeId: initiativeId || null,
           revenue: revenue ? parseFloat(revenue) : null,
           description: description.trim() || null,
@@ -171,32 +194,78 @@ export function ProjectFormModal({
               />
             </div>
 
-            {/* Company */}
-            <div className="space-y-2">
-              <Label>
-                Company <span className="text-red-500">*</span>
-              </Label>
-              <CompanySelect
-                value={companyId}
-                onValueChange={setCompanyId}
+            {/* Internal Project Toggle */}
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="isInternal"
+                checked={isInternal}
+                onChange={(e) => {
+                  setIsInternal(e.target.checked)
+                  if (e.target.checked) {
+                    setCompanyId(null)
+                    setContactId(null)
+                    setContacts([])
+                  } else {
+                    setInternalEntity(null)
+                  }
+                }}
+                className="rounded border-gray-300"
               />
+              <Label htmlFor="isInternal">Internal Project</Label>
             </div>
 
-            {/* Contact */}
-            <div className="space-y-2">
-              <Label>Contact</Label>
-              <ContactSelect
-                value={contactId}
-                onValueChange={setContactId}
-                contacts={contacts}
-                disabled={!companyId || isLoadingContacts}
-              />
-              {isLoadingContacts && (
-                <p className="text-xs text-muted-foreground">
-                  Loading contacts...
-                </p>
-              )}
-            </div>
+            {/* Entity Selector (when internal) */}
+            {isInternal && (
+              <div className="space-y-2">
+                <Label>
+                  Entity <span className="text-red-500">*</span>
+                </Label>
+                <Select
+                  value={internalEntity || ''}
+                  onValueChange={setInternalEntity}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select entity..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="MOTIONVII">Motionvii</SelectItem>
+                    <SelectItem value="TALENTA">Talenta</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {/* Company (hidden when internal) */}
+            {!isInternal && (
+              <div className="space-y-2">
+                <Label>
+                  Company <span className="text-red-500">*</span>
+                </Label>
+                <CompanySelect
+                  value={companyId}
+                  onValueChange={setCompanyId}
+                />
+              </div>
+            )}
+
+            {/* Contact (hidden when internal) */}
+            {!isInternal && (
+              <div className="space-y-2">
+                <Label>Contact</Label>
+                <ContactSelect
+                  value={contactId}
+                  onValueChange={setContactId}
+                  contacts={contacts}
+                  disabled={!companyId || isLoadingContacts}
+                />
+                {isLoadingContacts && (
+                  <p className="text-xs text-muted-foreground">
+                    Loading contacts...
+                  </p>
+                )}
+              </div>
+            )}
 
             {/* Revenue */}
             <div className="space-y-2">
