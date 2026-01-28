@@ -39,7 +39,7 @@ const DialogContent = React.forwardRef<
       ref={ref}
       className={cn(
         // Base styles
-        "fixed z-50 w-full gap-4 border bg-background p-6 shadow-lg duration-200 overflow-y-auto",
+        "fixed z-50 w-full gap-4 border bg-background p-6 shadow-lg duration-200 overflow-hidden",
         // Mobile: slide from bottom, nearly full-screen
         "inset-x-0 bottom-0 h-[calc(100vh-2rem)] rounded-t-2xl flex flex-col",
         // Mobile animations
