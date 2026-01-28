@@ -16,9 +16,16 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 **v2.5 delivered:** Created "Work" navigation group between SAAP and CRM containing Projects and Tasks together. Renamed "Potential Projects" to "Repeat Clients" throughout UI (nav, headers, dialogs, toasts, modals). Added expandable Members navigation with clickable links to individual team member pages (Khairul, Azlan, Izyani).
 
-## Next Milestone Goals
+## Current Milestone: v2.6 Views & Calendar Enhancement
 
-To be defined via `/gsd:new-milestone`.
+**Goal:** Enhance visualization capabilities with Kanban views for projects and tasks, a unified main calendar showing all entity dates, and richer project card information.
+
+**Target features:**
+- Move Members navigation under Work group in sidebar
+- Projects Kanban board with drag-and-drop status columns (Draft, Active, Completed, Cancelled)
+- Tasks Kanban view with project grouping option
+- Main Calendar view showing task/project/initiative start and end dates (day/week/month views)
+- Enhanced project cards with status badges, client info, dates, and progress indicators
 
 ## Requirements
 
@@ -252,9 +259,37 @@ To be defined via `/gsd:new-milestone`.
 
 ### Active
 
-<!-- Next milestone requirements will go here -->
+<!-- v2.6 Views & Calendar Enhancement -->
 
-(Awaiting next milestone definition)
+**Navigation:**
+- [ ] Members nav item moved under Work group in sidebar
+- [ ] Nav config updated for both desktop and mobile sidebars
+
+**Projects Kanban:**
+- [ ] Projects Kanban board view at /projects/kanban or view toggle
+- [ ] Columns for Draft, Active, Completed, Cancelled statuses
+- [ ] Drag-and-drop status changes using @dnd-kit
+- [ ] Project cards with enhanced details
+
+**Tasks Views:**
+- [ ] Tasks page supports grouping by project
+- [ ] Project-grouped view shows task status columns per project section
+
+**Main Calendar:**
+- [ ] Unified calendar page at /calendar showing all entity dates
+- [ ] Task start/end date markers
+- [ ] Project start/end date markers
+- [ ] Initiative start/end date markers
+- [ ] Day, week, month view toggles
+- [ ] Completed/done items rendered in grey (no status color)
+- [ ] Only start and end dates marked (no spanning between dates)
+
+**Enhanced Project Cards:**
+- [ ] Status badge with color coding
+- [ ] Client/company name display
+- [ ] Date range (start to end)
+- [ ] Task progress indicator (X/Y tasks complete)
+- [ ] Revenue/cost summary when available
 
 ### Out of Scope
 
@@ -421,4 +456,4 @@ To be defined via `/gsd:new-milestone`.
 | Submit nullifies hidden field values | Prevents stale data from being saved when fields are hidden | ✓ Good |
 
 ---
-*Last updated: 2026-01-28 after v2.5 milestone*
+*Last updated: 2026-01-28 after v2.6 milestone start*
