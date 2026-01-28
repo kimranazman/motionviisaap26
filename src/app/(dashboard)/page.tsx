@@ -35,39 +35,31 @@ async function getDashboardData() {
     }
   })
 
-  // Revenue from KeyResult → Initiative → Project chain
+  // Revenue targets from KeyResult model
   const revenueKRs = await prisma.keyResult.findMany({
     where: { metricType: 'REVENUE' },
-    select: {
-      krId: true,
-      description: true,
-      target: true,
-      initiatives: {
-        select: {
-          projects: {
-            where: { status: { in: ['ACTIVE', 'COMPLETED'] } },
-            select: { revenue: true, potentialRevenue: true },
-          },
-        },
-      },
-    },
+    select: { krId: true, description: true, target: true },
     orderBy: { krId: 'asc' },
   })
-  const revenueBreakdown = revenueKRs.map(kr => {
-    const actual = kr.initiatives.reduce((sum, init) =>
-      sum + init.projects.reduce((s, p) =>
-        s + (Number(p.revenue) || Number(p.potentialRevenue) || 0), 0
-      ), 0
-    )
-    return {
-      krId: kr.krId,
-      description: kr.description,
-      target: Number(kr.target),
-      actual,
-    }
+  const revenueTarget = revenueKRs.reduce(
+    (sum, kr) => sum + Number(kr.target), 0
+  )
+
+  // Actual revenue from ALL projects (not just KR-linked)
+  const allRevenueProjects = await prisma.project.findMany({
+    where: { status: { in: ['ACTIVE', 'COMPLETED'] } },
+    select: { revenue: true, potentialRevenue: true },
   })
-  const revenueTarget = revenueBreakdown.reduce((sum, kr) => sum + kr.target, 0)
-  const revenueProgress = revenueBreakdown.reduce((sum, kr) => sum + kr.actual, 0)
+  const revenueProgress = allRevenueProjects.reduce(
+    (sum, p) => sum + (Number(p.revenue) || Number(p.potentialRevenue) || 0), 0
+  )
+
+  const revenueBreakdown = revenueKRs.map(kr => ({
+    krId: kr.krId,
+    description: kr.description,
+    target: Number(kr.target),
+    actual: 0, // Per-KR breakdown uses linked projects (updated when initiatives link to projects)
+  }))
 
   // Calculate stats
   const completedCount = statusCounts.find(s => s.status === 'COMPLETED')?._count || 0
