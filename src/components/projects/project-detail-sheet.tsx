@@ -53,6 +53,7 @@ import { cn, formatCurrency } from '@/lib/utils'
 import { DatePickerCalendar } from '@/components/ui/date-picker-with-presets'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { format } from 'date-fns'
+import { useInternalFieldConfig } from '@/lib/hooks/use-internal-field-config'
 
 interface Contact {
   id: string
@@ -382,6 +383,7 @@ export function ProjectDetailSheet({
   onUpdate,
   onDelete,
 }: ProjectDetailSheetProps) {
+  const { isHidden: isFieldHidden } = useInternalFieldConfig()
   const [title, setTitle] = useState('')
   const [status, setStatus] = useState('')
   const [isInternal, setIsInternal] = useState(false)
@@ -606,7 +608,7 @@ export function ProjectDetailSheet({
           internalEntity: isInternal ? internalEntity : null,
           companyId: isInternal ? null : companyId,
           contactId: isInternal ? null : (contactId || null),
-          initiativeId: initiativeId || null,
+          initiativeId: isFieldHidden('initiativeLink', isInternal) ? null : (initiativeId || null),
           description: description.trim() || null,
           startDate: startDate ? startDate.toISOString() : null,
           endDate: endDate ? endDate.toISOString() : null,
@@ -1126,15 +1128,17 @@ export function ProjectDetailSheet({
               </div>
             )}
 
-            {/* KRI Link */}
-            <div className="space-y-2">
-              <Label>Link to KRI</Label>
-              <InitiativeSelect
-                value={initiativeId}
-                onValueChange={setInitiativeId}
-                initialInitiative={project.initiative}
-              />
-            </div>
+            {/* KRI Link (hidden for internal if configured) */}
+            {!isFieldHidden('initiativeLink', isInternal) && (
+              <div className="space-y-2">
+                <Label>Link to KRI</Label>
+                <InitiativeSelect
+                  value={initiativeId}
+                  onValueChange={setInitiativeId}
+                  initialInitiative={project.initiative}
+                />
+              </div>
+            )}
 
             {/* Description */}
             <div className="space-y-2">
@@ -1212,31 +1216,33 @@ export function ProjectDetailSheet({
 
             <Separator />
 
-            {/* Source Info */}
-            <div className="space-y-2">
-              <Label className="text-muted-foreground">Source</Label>
-              {project.sourceDeal ? (
-                <div className="flex items-center gap-2 text-sm">
-                  <ArrowRight className="h-4 w-4 text-green-500" />
-                  <span>Converted from deal: </span>
-                  <span className="font-medium">{project.sourceDeal.title}</span>
-                </div>
-              ) : project.sourcePotential ? (
-                <div className="flex items-center gap-2 text-sm">
-                  <ArrowRight className="h-4 w-4 text-blue-500" />
-                  <span>Converted from potential: </span>
-                  <span className="font-medium">{project.sourcePotential.title}</span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Plus className="h-4 w-4" />
-                  <span>Created directly</span>
-                </div>
-              )}
-            </div>
+            {/* Source Info (hidden for internal if pipeline source is hidden) */}
+            {!isFieldHidden('pipelineSource', isInternal) && (
+              <div className="space-y-2">
+                <Label className="text-muted-foreground">Source</Label>
+                {project.sourceDeal ? (
+                  <div className="flex items-center gap-2 text-sm">
+                    <ArrowRight className="h-4 w-4 text-green-500" />
+                    <span>Converted from deal: </span>
+                    <span className="font-medium">{project.sourceDeal.title}</span>
+                  </div>
+                ) : project.sourcePotential ? (
+                  <div className="flex items-center gap-2 text-sm">
+                    <ArrowRight className="h-4 w-4 text-blue-500" />
+                    <span>Converted from potential: </span>
+                    <span className="font-medium">{project.sourcePotential.title}</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Plus className="h-4 w-4" />
+                    <span>Created directly</span>
+                  </div>
+                )}
+              </div>
+            )}
 
-            {/* KRI Display */}
-            {project.initiative && (
+            {/* KRI Display (hidden for internal if initiative link is hidden) */}
+            {!isFieldHidden('initiativeLink', isInternal) && project.initiative && (
               <div className="space-y-2">
                 <Label className="text-muted-foreground">Linked KRI</Label>
                 <div className="flex items-center gap-2 text-sm">
@@ -1248,17 +1254,21 @@ export function ProjectDetailSheet({
 
             <Separator />
 
-            {/* Financials Summary */}
-            <FinancialsSummary
-              potentialRevenue={project.potentialRevenue}
-              revenue={project.revenue}
-              totalCosts={totalCosts}
-              profit={profit}
-              costsCount={costs.length}
-              aiImportedCostsCount={costs.filter(c => c.aiImported).length}
-            />
+            {/* Financials Summary (hidden if both revenue fields are hidden for internal) */}
+            {!(isFieldHidden('revenue', isInternal) && isFieldHidden('potentialRevenue', isInternal)) && (
+              <>
+                <FinancialsSummary
+                  potentialRevenue={project.potentialRevenue}
+                  revenue={project.revenue}
+                  totalCosts={totalCosts}
+                  profit={profit}
+                  costsCount={costs.length}
+                  aiImportedCostsCount={costs.filter(c => c.aiImported).length}
+                />
 
-            <Separator />
+                <Separator />
+              </>
+            )}
 
             {/* Deliverables Section */}
             <div className="space-y-3">
