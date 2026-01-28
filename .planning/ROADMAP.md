@@ -75,11 +75,11 @@ Plans:
   2. User can filter the /projects page by type (All / Client / Internal)
   3. Internal projects display a visible "Internal" badge on cards and detail views
   4. All existing project views, cards, and API endpoints work without errors when a project has no company
-**Plans**: TBD
+**Plans**: 2 plans in 2 waves
 
 Plans:
-- [ ] 65-01: TBD
-- [ ] 65-02: TBD
+- [x] 65-01: Schema + API for internal projects (wave 1)
+- [x] 65-02: UI for internal projects (wave 2)
 
 ### Phase 66: Customizable Sidebar Navigation
 **Goal**: Users can personalize which sidebar links are visible

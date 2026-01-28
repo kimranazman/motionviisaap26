@@ -36,11 +36,11 @@ Requirements for v2.3 release. Each maps to roadmap phases.
 
 ### Internal Projects
 
-- [ ] **INT-01**: Project model has isInternal flag with Motionvii / Talenta entity selection
-- [ ] **INT-02**: User can create internal projects without selecting an external company
-- [ ] **INT-03**: User can filter projects by type (All / Client / Internal) on /projects page
-- [ ] **INT-04**: Internal projects display visual "Internal" badge on cards and detail views
-- [ ] **INT-05**: All project.company references handle null safely (26+ files audited)
+- [x] **INT-01**: Project model has isInternal flag with Motionvii / Talenta entity selection
+- [x] **INT-02**: User can create internal projects without selecting an external company
+- [x] **INT-03**: User can filter projects by type (All / Client / Internal) on /projects page
+- [x] **INT-04**: Internal projects display visual "Internal" badge on cards and detail views
+- [x] **INT-05**: All project.company references handle null safely (26+ files audited)
 
 ### Sidebar Customization
 
@@ -120,11 +120,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TASK-01 | Phase 64 | Complete |
 | TASK-02 | Phase 64 | Complete |
 | TASK-03 | Phase 64 | Complete |
-| INT-01 | Phase 65 | Pending |
-| INT-02 | Phase 65 | Pending |
-| INT-03 | Phase 65 | Pending |
-| INT-04 | Phase 65 | Pending |
-| INT-05 | Phase 65 | Pending |
+| INT-01 | Phase 65 | Complete |
+| INT-02 | Phase 65 | Complete |
+| INT-03 | Phase 65 | Complete |
+| INT-04 | Phase 65 | Complete |
+| INT-05 | Phase 65 | Complete |
 | NAV-01 | Phase 66 | Pending |
 | NAV-02 | Phase 66 | Pending |
 | NAV-03 | Phase 66 | Pending |
