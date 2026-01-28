@@ -78,7 +78,7 @@ export function MobileSidebar() {
             />
           ))}
 
-          {/* Top-level items (Tasks, Members) */}
+          {/* Top-level items (Members) */}
           {visibleTopLevel.length > 0 && (
             <div className="mt-4 flex flex-col gap-1">
               {visibleTopLevel.map((item) => {

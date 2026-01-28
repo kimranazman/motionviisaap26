@@ -54,6 +54,14 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
+    key: 'work',
+    label: 'Work',
+    items: [
+      { name: 'Projects', href: '/projects', icon: Briefcase },
+      { name: 'Tasks', href: '/tasks', icon: ListChecks },
+    ],
+  },
+  {
     key: 'crm',
     label: 'CRM',
     items: [
@@ -63,7 +71,6 @@ export const navGroups: NavGroup[] = [
       ]},
       { name: 'Pipeline', href: '/pipeline', icon: Funnel },
       { name: 'Potential Projects', href: '/potential-projects', icon: FolderKanban },
-      { name: 'Projects', href: '/projects', icon: Briefcase },
       { name: 'Suppliers', href: '/suppliers', icon: Truck },
       { name: 'Pricing History', href: '/supplier-items', icon: Scale },
     ],
@@ -79,7 +86,6 @@ export const navGroups: NavGroup[] = [
 ]
 
 export const topLevelItems: TopLevelNavItem[] = [
-  { name: 'Tasks', href: '/tasks', icon: ListChecks },
   { name: 'Members', href: '/members', icon: Users2 },
 ]
 
