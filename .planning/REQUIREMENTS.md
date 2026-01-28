@@ -97,44 +97,44 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SIDE-01 | TBD | Pending |
-| SIDE-02 | TBD | Pending |
-| SIDE-03 | TBD | Pending |
-| SIDE-04 | TBD | Pending |
-| SIDE-05 | TBD | Pending |
-| NEST-01 | TBD | Pending |
-| NEST-02 | TBD | Pending |
-| NEST-03 | TBD | Pending |
-| NEST-04 | TBD | Pending |
-| NEST-05 | TBD | Pending |
-| NEST-06 | TBD | Pending |
-| NEST-07 | TBD | Pending |
-| REORD-01 | TBD | Pending |
-| REORD-02 | TBD | Pending |
-| REORD-03 | TBD | Pending |
-| REORD-04 | TBD | Pending |
-| REORD-05 | TBD | Pending |
-| REORD-06 | TBD | Pending |
-| REORD-07 | TBD | Pending |
-| REV-01 | TBD | Pending |
-| REV-02 | TBD | Pending |
-| REV-03 | TBD | Pending |
-| REV-04 | TBD | Pending |
-| TASK-01 | TBD | Pending |
-| TASK-02 | TBD | Pending |
-| TASK-03 | TBD | Pending |
-| INTL-01 | TBD | Pending |
-| INTL-02 | TBD | Pending |
-| INTL-03 | TBD | Pending |
-| INTL-04 | TBD | Pending |
-| INTL-05 | TBD | Pending |
-| INTL-06 | TBD | Pending |
+| SIDE-01 | Phase 68 | Pending |
+| SIDE-02 | Phase 68 | Pending |
+| SIDE-03 | Phase 68 | Pending |
+| SIDE-04 | Phase 68 | Pending |
+| SIDE-05 | Phase 68 | Pending |
+| NEST-01 | Phase 69 | Pending |
+| NEST-02 | Phase 69 | Pending |
+| NEST-03 | Phase 69 | Pending |
+| NEST-04 | Phase 69 | Pending |
+| NEST-05 | Phase 69 | Pending |
+| NEST-06 | Phase 69 | Pending |
+| NEST-07 | Phase 69 | Pending |
+| REORD-01 | Phase 70 | Pending |
+| REORD-02 | Phase 70 | Pending |
+| REORD-03 | Phase 70 | Pending |
+| REORD-04 | Phase 70 | Pending |
+| REORD-05 | Phase 70 | Pending |
+| REORD-06 | Phase 70 | Pending |
+| REORD-07 | Phase 70 | Pending |
+| REV-01 | Phase 68 | Pending |
+| REV-02 | Phase 68 | Pending |
+| REV-03 | Phase 68 | Pending |
+| REV-04 | Phase 68 | Pending |
+| TASK-01 | Phase 68 | Pending |
+| TASK-02 | Phase 68 | Pending |
+| TASK-03 | Phase 68 | Pending |
+| INTL-01 | Phase 71 | Pending |
+| INTL-02 | Phase 71 | Pending |
+| INTL-03 | Phase 71 | Pending |
+| INTL-04 | Phase 71 | Pending |
+| INTL-05 | Phase 71 | Pending |
+| INTL-06 | Phase 71 | Pending |
 
 **Coverage:**
 - v1 requirements: 32 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 32
+- Mapped to phases: 32
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-28*
-*Last updated: 2026-01-28 after initial definition*
+*Last updated: 2026-01-28 after roadmap creation*

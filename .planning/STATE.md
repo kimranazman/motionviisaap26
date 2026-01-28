@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-28)
 
 **Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, AI-powered intelligence, cross-project task management, per-member workload dashboards, event management, customizable sidebar navigation, internal project support, and line item pricing history.
-**Current focus:** Planning next milestone
+**Current focus:** v2.4 Settings, Sidebar & Bug Fixes — Phase 68
 
 ## Current Position
 
-Phase: 67 of 67 (all phases complete)
-Plan: N/A
-Status: v2.3 milestone complete, ready for next milestone
-Last activity: 2026-01-28 — v2.3 milestone archived
+Phase: 68 of 71 (Sidebar Fixes & Quick Wins)
+Plan: N/A — ready to plan
+Status: Ready to plan
+Last activity: 2026-01-28 — v2.4 roadmap created
 
-Progress: [██████████] 100% (6/6 v2.3 phases)
+Progress: [░░░░░░░░░░] 0% (0/4 v2.4 phases)
 
 ## Milestone History
 
@@ -36,13 +36,14 @@ Progress: [██████████] 100% (6/6 v2.3 phases)
 | v2.1 | Navigation & Views | 54-56 | 2026-01-28 |
 | v2.2 | Bug Fixes & UX Polish | 57-61 | 2026-01-28 |
 | v2.3 | CRM & UX Improvements | 62-67 | 2026-01-28 |
+| v2.4 | Settings, Sidebar & Bug Fixes | 68-71 | In progress |
 
 **Archives:** `.planning/milestones/`
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13 (v2.3)
+- Total plans completed: 0 (v2.4)
 - Average duration: N/A
 - Total execution time: N/A
 
@@ -50,19 +51,18 @@ Progress: [██████████] 100% (6/6 v2.3 phases)
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 62 | 2 | - | - |
-| 63 | 3 | - | - |
-| 64 | 2 | - | - |
-| 65 | 2 | - | - |
-| 66 | 2 | - | - |
-| 67 | 2 | - | - |
+| - | - | - | - |
 
 ## Accumulated Context
 
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table.
-v2.3 decisions: 14 decisions added (DialogContent overflow, full-page detail, cascading filters, isPrimary transaction, ProjectSelect, depth validation, nullable companyId, internalEntity, hiddenNavItems, ALWAYS_VISIBLE_HREFS, autoReveal, optional Decimals, Pricing History rename).
+Key research findings for v2.4:
+- Sidebar dependency chain: autoReveal fix -> save button -> nested links -> DnD reorder
+- Revenue fix and task-on-completed-projects fix are independent of sidebar work
+- Zero new npm packages required
+- "Completed projects editable" is specifically about task CRUD, not general project editing
 
 ### Pending Todos
 
@@ -75,5 +75,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: v2.3 milestone complete and archived
+Stopped at: v2.4 roadmap created, ready to plan Phase 68
 Resume file: None
