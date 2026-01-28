@@ -138,3 +138,12 @@ export function findGroupForPath(pathname: string): string | null {
   }
   return null
 }
+
+/** Returns the default item order (hrefs) for each nav group */
+export function getDefaultNavOrder(): Record<string, string[]> {
+  const order: Record<string, string[]> = {}
+  for (const group of navGroups) {
+    order[group.key] = group.items.map((item) => item.href)
+  }
+  return order
+}
