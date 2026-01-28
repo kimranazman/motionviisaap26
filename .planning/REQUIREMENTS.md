@@ -102,45 +102,45 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| UX-01 | - | Pending |
-| UX-02 | - | Pending |
-| UX-03 | - | Pending |
-| UX-04 | - | Pending |
-| CRM-01 | - | Pending |
-| CRM-02 | - | Pending |
-| CRM-03 | - | Pending |
-| CRM-04 | - | Pending |
-| CRM-05 | - | Pending |
-| CRM-06 | - | Pending |
-| CRM-07 | - | Pending |
-| CRM-08 | - | Pending |
-| CRM-09 | - | Pending |
-| CRM-10 | - | Pending |
-| CRM-11 | - | Pending |
-| TASK-01 | - | Pending |
-| TASK-02 | - | Pending |
-| TASK-03 | - | Pending |
-| INT-01 | - | Pending |
-| INT-02 | - | Pending |
-| INT-03 | - | Pending |
-| INT-04 | - | Pending |
-| INT-05 | - | Pending |
-| NAV-01 | - | Pending |
-| NAV-02 | - | Pending |
-| NAV-03 | - | Pending |
-| NAV-04 | - | Pending |
-| PRICE-01 | - | Pending |
-| PRICE-02 | - | Pending |
-| PRICE-03 | - | Pending |
-| PRICE-04 | - | Pending |
-| PRICE-05 | - | Pending |
-| PRICE-06 | - | Pending |
+| UX-01 | Phase 62 | Pending |
+| UX-02 | Phase 62 | Pending |
+| UX-03 | Phase 62 | Pending |
+| UX-04 | Phase 62 | Pending |
+| CRM-01 | Phase 63 | Pending |
+| CRM-02 | Phase 63 | Pending |
+| CRM-03 | Phase 63 | Pending |
+| CRM-04 | Phase 63 | Pending |
+| CRM-05 | Phase 63 | Pending |
+| CRM-06 | Phase 63 | Pending |
+| CRM-07 | Phase 63 | Pending |
+| CRM-08 | Phase 63 | Pending |
+| CRM-09 | Phase 63 | Pending |
+| CRM-10 | Phase 63 | Pending |
+| CRM-11 | Phase 63 | Pending |
+| TASK-01 | Phase 64 | Pending |
+| TASK-02 | Phase 64 | Pending |
+| TASK-03 | Phase 64 | Pending |
+| INT-01 | Phase 65 | Pending |
+| INT-02 | Phase 65 | Pending |
+| INT-03 | Phase 65 | Pending |
+| INT-04 | Phase 65 | Pending |
+| INT-05 | Phase 65 | Pending |
+| NAV-01 | Phase 66 | Pending |
+| NAV-02 | Phase 66 | Pending |
+| NAV-03 | Phase 66 | Pending |
+| NAV-04 | Phase 66 | Pending |
+| PRICE-01 | Phase 67 | Pending |
+| PRICE-02 | Phase 67 | Pending |
+| PRICE-03 | Phase 67 | Pending |
+| PRICE-04 | Phase 67 | Pending |
+| PRICE-05 | Phase 67 | Pending |
+| PRICE-06 | Phase 67 | Pending |
 
 **Coverage:**
 - v1 requirements: 33 total
-- Mapped to phases: 0
-- Unmapped: 33 (pending roadmap creation)
+- Mapped to phases: 33
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-28*
-*Last updated: 2026-01-28 after initial definition*
+*Last updated: 2026-01-28 after roadmap creation*
