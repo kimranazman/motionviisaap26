@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from 'react'
 import {
   Collapsible,
   CollapsibleTrigger,
@@ -8,7 +9,7 @@ import {
 import { ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
-import type { NavGroup } from '@/lib/nav-config'
+import type { NavGroup, NavItem } from '@/lib/nav-config'
 
 interface NavGroupProps {
   group: NavGroup
@@ -16,6 +17,10 @@ interface NavGroupProps {
   onToggle: () => void
   pathname: string
   onLinkClick?: () => void
+  /** Number of visible items (after filtering). Falls back to group.items.length. */
+  visibleCount?: number
+  /** Filter function applied to group items before rendering. */
+  filterVisible?: (items: NavItem[]) => NavItem[]
 }
 
 export function NavGroupComponent({
@@ -24,12 +29,21 @@ export function NavGroupComponent({
   onToggle,
   pathname,
   onLinkClick,
+  visibleCount,
+  filterVisible,
 }: NavGroupProps) {
+  const displayItems = useMemo(
+    () => (filterVisible ? filterVisible(group.items) : group.items),
+    [filterVisible, group.items]
+  )
+
+  const count = visibleCount ?? group.items.length
+
   return (
     <Collapsible open={isExpanded} onOpenChange={onToggle}>
       <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-2 mt-4 hover:text-gray-600 transition-colors">
         <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-          {group.label} ({group.items.length})
+          {group.label} ({count})
         </span>
         <ChevronRight
           className={cn(
@@ -40,7 +54,7 @@ export function NavGroupComponent({
       </CollapsibleTrigger>
       <CollapsibleContent>
         <div className="flex flex-col gap-1">
-          {group.items.map((item) => {
+          {displayItems.map((item) => {
             const isActive =
               pathname === item.href ||
               (item.href !== '/' && pathname.startsWith(item.href))
