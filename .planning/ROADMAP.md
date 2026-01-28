@@ -114,7 +114,7 @@ See `.planning/milestones/` for archived phase details.
 **Files to create:**
 - `src/components/tasks/project-tasks-section.tsx` - Collapsible project section with task columns
 
-**Status:** Pending
+**Status:** Complete (2026-01-29)
 
 ---
 
@@ -157,9 +157,9 @@ See `.planning/milestones/` for archived phase details.
 
 ## Progress
 
-Phase 76 of 78 | v2.6 in progress
+Phase 77 of 78 | v2.6 in progress
 
-Progress: [#########.] 97% (76/78 phases)
+Progress: [#########.] 99% (77/78 phases)
 
 ---
 

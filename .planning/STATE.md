@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 
 ## Current Position
 
-Phase: 77 of 78 (v2.6 in progress)
+Phase: 78 of 78 (v2.6 in progress)
 Plan: Pending planning
-Status: Phase 76 complete, Phase 77 ready
-Last activity: 2026-01-29 — Phase 76 executed and verified
+Status: Phase 77 complete, Phase 78 ready
+Last activity: 2026-01-29 — Phase 77 executed and verified
 
-Progress: [#########.] 97% (76/78 phases)
+Progress: [#########.] 99% (77/78 phases)
 
 ## Milestone History
 
@@ -67,6 +67,7 @@ Decisions are logged in PROJECT.md Key Decisions table.
 - View toggle pattern for projects (matches /tasks pattern)
 - Phase 75: Empty topLevelItems after move (no top-level nav items remain)
 - Phase 75: NavGroupComponent already handles nested children (no changes needed)
+- Phase 77: Grouping toggle in tasks-page-client.tsx (not tasks/page.tsx or tasks-kanban-board.tsx)
 
 ### Pending Todos
 
@@ -79,5 +80,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-29
-Stopped at: Phase 76 complete, ready for `/gsd:plan-phase 77`
+Stopped at: Phase 77 complete, ready for `/gsd:plan-phase 78`
 Resume file: None
