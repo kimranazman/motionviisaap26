@@ -153,6 +153,7 @@ export function KanbanCard({ item, isDragging, onClick, onStatusChange, onReassi
       ref={setNodeRef}
       style={style}
       {...attributes}
+      {...dragListeners}
       className={cn(
         'group relative bg-white rounded-2xl border-0 shadow-apple',
         'hover:shadow-apple-hover hover:scale-[1.02]',
@@ -303,19 +304,16 @@ export function KanbanCard({ item, isDragging, onClick, onStatusChange, onReassi
         </div>
       </div>
 
-      {/* Drag Handle - visible on mobile, hover on desktop */}
+      {/* Drag Handle - visible on mobile only, hidden on desktop */}
       {canEdit && (
         <div
-          {...dragListeners}
           className={cn(
             "absolute left-0 top-0 bottom-0 w-8 flex items-center justify-center",
             "cursor-grab active:cursor-grabbing touch-none",
             "rounded-l-2xl",
             "bg-gray-50/80 hover:bg-gray-100/80",
-            // Mobile: always visible
-            // Desktop: visible on hover
-            "md:opacity-0 md:group-hover:opacity-100",
-            "transition-opacity"
+            // Mobile: always visible, Desktop: completely hidden
+            "md:hidden"
           )}
         >
           <GripVertical className="h-4 w-4 text-gray-400" />
