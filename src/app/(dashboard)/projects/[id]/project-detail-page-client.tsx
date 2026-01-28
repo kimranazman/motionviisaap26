@@ -37,6 +37,7 @@ import { AIReviewSheet } from '@/components/ai/ai-review-sheet'
 import { DeliverableReviewSheet } from '@/components/ai/deliverable-review-sheet'
 import { type DocumentCategory, type DocumentAIStatus } from '@/lib/document-utils'
 import { InvoiceExtraction, ReceiptExtraction, DeliverableExtraction } from '@/types/ai-extraction'
+import { useInternalFieldConfig } from '@/lib/hooks/use-internal-field-config'
 
 interface Cost {
   id: string
@@ -113,6 +114,8 @@ interface ProjectDetailPageClientProps {
 
 export function ProjectDetailPageClient({ project }: ProjectDetailPageClientProps) {
   const router = useRouter()
+  const { isHidden: isFieldHidden } = useInternalFieldConfig()
+  const projectIsInternal = project.isInternal ?? false
   const [deliverables, setDeliverables] = useState<Deliverable[]>([])
   const [tasks, setTasks] = useState<Task[]>([])
   const [documents, setDocuments] = useState<Document[]>([])
@@ -385,32 +388,36 @@ export function ProjectDetailPageClient({ project }: ProjectDetailPageClientProp
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
-              {/* Company / Entity */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
-                  <Building2 className="h-3.5 w-3.5" />
-                  {project.isInternal ? 'Entity' : 'Company'}
-                </label>
-                <div className="h-9 px-3 flex items-center text-sm bg-gray-50 rounded-md border">
-                  {project.company?.name || (project.isInternal && project.internalEntity
-                    ? (project.internalEntity === 'MOTIONVII' ? 'Motionvii' : 'Talenta')
-                    : 'No company')}
+              {/* Company / Entity (hidden for internal if configured) */}
+              {!isFieldHidden('companyContact', projectIsInternal) && (
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
+                    <Building2 className="h-3.5 w-3.5" />
+                    {project.isInternal ? 'Entity' : 'Company'}
+                  </label>
+                  <div className="h-9 px-3 flex items-center text-sm bg-gray-50 rounded-md border">
+                    {project.company?.name || (project.isInternal && project.internalEntity
+                      ? (project.internalEntity === 'MOTIONVII' ? 'Motionvii' : 'Talenta')
+                      : 'No company')}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* Contact */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
-                  <User className="h-3.5 w-3.5" />
-                  Contact
-                </label>
-                <div className="h-9 px-3 flex items-center text-sm bg-gray-50 rounded-md border">
-                  {project.contact?.name || 'No contact'}
+              {/* Contact (hidden for internal if configured) */}
+              {!isFieldHidden('companyContact', projectIsInternal) && (
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
+                    <User className="h-3.5 w-3.5" />
+                    Contact
+                  </label>
+                  <div className="h-9 px-3 flex items-center text-sm bg-gray-50 rounded-md border">
+                    {project.contact?.name || 'No contact'}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* KRI Link */}
-              {project.initiative && (
+              {/* KRI Link (hidden for internal if configured) */}
+              {!isFieldHidden('initiativeLink', projectIsInternal) && project.initiative && (
                 <div className="space-y-1.5">
                   <label className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
                     <Target className="h-3.5 w-3.5" />
@@ -444,8 +451,8 @@ export function ProjectDetailPageClient({ project }: ProjectDetailPageClientProp
                 </div>
               </div>
 
-              {/* Source */}
-              {(project.sourceDeal || project.sourcePotential) && (
+              {/* Source (hidden for internal if pipeline source is hidden) */}
+              {!isFieldHidden('pipelineSource', projectIsInternal) && (project.sourceDeal || project.sourcePotential) && (
                 <div className="space-y-1.5">
                   <label className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -474,7 +481,8 @@ export function ProjectDetailPageClient({ project }: ProjectDetailPageClientProp
           </CardContent>
         </Card>
 
-        {/* Financials Card */}
+        {/* Financials Card (hidden if both revenue fields are hidden for internal) */}
+        {!(isFieldHidden('revenue', projectIsInternal) && isFieldHidden('potentialRevenue', projectIsInternal)) && (
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
@@ -640,6 +648,7 @@ export function ProjectDetailPageClient({ project }: ProjectDetailPageClientProp
             )}
           </CardContent>
         </Card>
+        )}
 
         {/* Deliverables Card */}
         <Card>
