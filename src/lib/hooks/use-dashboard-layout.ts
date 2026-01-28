@@ -7,13 +7,16 @@ import { WIDGET_REGISTRY } from '@/lib/widgets/registry';
 
 interface LayoutState {
   current: LayoutWidgetConfig[];
+  responsiveLayouts: Record<string, LayoutWidgetConfig[]>;
   history: LayoutWidgetConfig[][];
   historyIndex: number;
 }
 
 interface UseDashboardLayoutReturn {
   layout: LayoutWidgetConfig[];
+  responsiveLayouts: Record<string, LayoutWidgetConfig[]>;
   updateLayout: (newLayout: LayoutWidgetConfig[]) => void;
+  updateResponsiveLayouts: (currentLayout: LayoutWidgetConfig[], allLayouts: Record<string, LayoutWidgetConfig[]>) => void;
   addWidget: (widgetId: string) => void;
   removeWidget: (instanceId: string) => void;
   undo: () => void;
@@ -24,15 +27,19 @@ interface UseDashboardLayoutReturn {
 const MAX_HISTORY = 20;
 
 /**
- * Dashboard layout hook with undo history
+ * Dashboard layout hook with undo history and per-breakpoint persistence
  * Manages widget positions and provides undo capability
  */
-export function useDashboardLayout(initialLayout: LayoutWidgetConfig[]): UseDashboardLayoutReturn {
+export function useDashboardLayout(
+  initialLayout: LayoutWidgetConfig[],
+  initialResponsiveLayouts?: Record<string, LayoutWidgetConfig[]>
+): UseDashboardLayoutReturn {
   // Store initial layout for dirty comparison
   const initialRef = useRef(JSON.stringify(initialLayout));
 
   const [state, setState] = useState<LayoutState>({
     current: initialLayout,
+    responsiveLayouts: initialResponsiveLayouts || {},
     history: [],
     historyIndex: -1,
   });
@@ -52,6 +59,30 @@ export function useDashboardLayout(initialLayout: LayoutWidgetConfig[]): UseDash
 
       return {
         current: newLayout,
+        responsiveLayouts: prev.responsiveLayouts,
+        history: newHistory,
+        historyIndex: newHistory.length - 1,
+      };
+    });
+  }, []);
+
+  /**
+   * Update both current layout and all responsive breakpoint layouts
+   */
+  const updateResponsiveLayouts = useCallback((
+    currentLayout: LayoutWidgetConfig[],
+    allLayouts: Record<string, LayoutWidgetConfig[]>
+  ) => {
+    setState((prev) => {
+      // Add current state to history before updating
+      const newHistory = [...prev.history, prev.current];
+      if (newHistory.length > MAX_HISTORY) {
+        newHistory.shift();
+      }
+
+      return {
+        current: currentLayout,
+        responsiveLayouts: allLayouts,
         history: newHistory,
         historyIndex: newHistory.length - 1,
       };
@@ -71,6 +102,12 @@ export function useDashboardLayout(initialLayout: LayoutWidgetConfig[]): UseDash
     setState((prev) => {
       const newLayout = addWidgetToLayout(prev.current, widgetId, widgetDef.defaultSize);
 
+      // Also add to all breakpoint layouts
+      const newResponsiveLayouts = { ...prev.responsiveLayouts };
+      for (const [bp, bpLayout] of Object.entries(newResponsiveLayouts)) {
+        newResponsiveLayouts[bp] = addWidgetToLayout(bpLayout, widgetId, widgetDef.defaultSize);
+      }
+
       // Add current state to history
       const newHistory = [...prev.history, prev.current];
       if (newHistory.length > MAX_HISTORY) {
@@ -79,6 +116,7 @@ export function useDashboardLayout(initialLayout: LayoutWidgetConfig[]): UseDash
 
       return {
         current: newLayout,
+        responsiveLayouts: newResponsiveLayouts,
         history: newHistory,
         historyIndex: newHistory.length - 1,
       };
@@ -92,6 +130,12 @@ export function useDashboardLayout(initialLayout: LayoutWidgetConfig[]): UseDash
     setState((prev) => {
       const newLayout = removeWidgetFromLayout(prev.current, instanceId);
 
+      // Also remove from all breakpoint layouts
+      const newResponsiveLayouts = { ...prev.responsiveLayouts };
+      for (const [bp, bpLayout] of Object.entries(newResponsiveLayouts)) {
+        newResponsiveLayouts[bp] = removeWidgetFromLayout(bpLayout, instanceId);
+      }
+
       // Add current state to history
       const newHistory = [...prev.history, prev.current];
       if (newHistory.length > MAX_HISTORY) {
@@ -100,6 +144,7 @@ export function useDashboardLayout(initialLayout: LayoutWidgetConfig[]): UseDash
 
       return {
         current: newLayout,
+        responsiveLayouts: newResponsiveLayouts,
         history: newHistory,
         historyIndex: newHistory.length - 1,
       };
@@ -121,6 +166,7 @@ export function useDashboardLayout(initialLayout: LayoutWidgetConfig[]): UseDash
 
       return {
         current: previousLayout,
+        responsiveLayouts: prev.responsiveLayouts,
         history: newHistory,
         historyIndex: newHistory.length - 1,
       };
@@ -132,7 +178,9 @@ export function useDashboardLayout(initialLayout: LayoutWidgetConfig[]): UseDash
 
   return {
     layout: state.current,
+    responsiveLayouts: state.responsiveLayouts,
     updateLayout,
+    updateResponsiveLayouts,
     addWidget,
     removeWidget,
     undo,

@@ -21,8 +21,21 @@ export interface LayoutWidgetConfig extends WidgetConfig {
   i: string;        // Instance ID (uuid) for react-grid-layout
 }
 
+/**
+ * Per-breakpoint widget layouts for responsive persistence
+ * Each breakpoint can store its own widget positions/sizes
+ */
+export interface ResponsiveLayouts {
+  lg?: WidgetConfig[];
+  md?: WidgetConfig[];
+  sm?: WidgetConfig[];
+  xs?: WidgetConfig[];
+  xxs?: WidgetConfig[];
+}
+
 export interface DashboardLayout {
   widgets: WidgetConfig[];
+  breakpoints?: ResponsiveLayouts;
 }
 
 export type DatePreset =

@@ -288,6 +288,24 @@ export default async function DashboardPage() {
     i: (w as LayoutWidgetConfig).i || `widget-${index}-${w.id}`,
   }))
 
+  // Load per-breakpoint layouts if available
+  const savedBreakpoints = userPrefs.dashboardLayout?.breakpoints
+  let initialResponsiveLayouts: Record<string, LayoutWidgetConfig[]> | undefined
+  if (savedBreakpoints && typeof savedBreakpoints === 'object') {
+    initialResponsiveLayouts = {}
+    for (const [bp, bpWidgets] of Object.entries(savedBreakpoints)) {
+      if (Array.isArray(bpWidgets)) {
+        // Filter by visible widgets and ensure instance IDs exist
+        initialResponsiveLayouts[bp] = (bpWidgets as LayoutWidgetConfig[])
+          .filter(w => visibleWidgetIds.includes(w.id))
+          .map((w, index) => ({
+            ...w,
+            i: w.i || `widget-${index}-${w.id}`,
+          }))
+      }
+    }
+  }
+
   // Get default layout for reset
   const defaultLayout: LayoutWidgetConfig[] = DEFAULT_DASHBOARD_LAYOUT.widgets
     .filter(w => visibleWidgetIds.includes(w.id))
@@ -307,6 +325,7 @@ export default async function DashboardPage() {
   return (
     <DashboardClient
       initialLayout={initialLayout}
+      initialResponsiveLayouts={initialResponsiveLayouts}
       initialDateFilter={userPrefs.dateFilter}
       defaultLayout={defaultLayout}
       visibleWidgetIds={visibleWidgetIds}

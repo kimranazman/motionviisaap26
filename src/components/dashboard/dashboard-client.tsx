@@ -21,6 +21,7 @@ import { createDateFilter } from '@/lib/date-utils';
 
 interface DashboardClientProps {
   initialLayout: LayoutWidgetConfig[];
+  initialResponsiveLayouts?: Record<string, LayoutWidgetConfig[]>;
   initialDateFilter: DateFilter | null;
   defaultLayout: LayoutWidgetConfig[];
   visibleWidgetIds: string[];
@@ -71,6 +72,7 @@ interface DashboardClientProps {
 
 export function DashboardClient({
   initialLayout,
+  initialResponsiveLayouts,
   initialDateFilter,
   defaultLayout,
   visibleWidgetIds,
@@ -86,16 +88,18 @@ export function DashboardClient({
   // Track if this is the first render (skip initial save)
   const isInitialRender = useRef(true);
 
-  // Layout management with undo
+  // Layout management with undo and per-breakpoint persistence
   const {
     layout,
+    responsiveLayouts,
     updateLayout,
+    updateResponsiveLayouts,
     addWidget,
     removeWidget,
     undo,
     canUndo,
     isDirty,
-  } = useDashboardLayout(initialLayout);
+  } = useDashboardLayout(initialLayout, initialResponsiveLayouts);
 
   // Debounced layout for auto-save (1 second)
   const debouncedLayout = useDebounce(layout, 1000);
@@ -110,11 +114,16 @@ export function DashboardClient({
 
     if (!isDirty) return;
 
-    // Save layout
+    // Save layout with per-breakpoint data
     fetch('/api/user/preferences', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ dashboardLayout: { widgets: debouncedLayout } }),
+      body: JSON.stringify({
+        dashboardLayout: {
+          widgets: debouncedLayout,
+          breakpoints: responsiveLayouts,
+        },
+      }),
     }).then(() => {
       toast('Layout saved', {
         action: {
@@ -124,7 +133,7 @@ export function DashboardClient({
         duration: 5000,
       });
     });
-  }, [debouncedLayout, isDirty, undo]);
+  }, [debouncedLayout, isDirty, undo, responsiveLayouts]);
 
   // Debounced date filter for auto-save (500ms)
   const debouncedDateFilter = useDebounce(dateFilter, 500);
@@ -228,7 +237,8 @@ export function DashboardClient({
 
         <DashboardGrid
           layout={layout}
-          onLayoutChange={updateLayout}
+          responsiveLayouts={responsiveLayouts}
+          onLayoutChange={updateResponsiveLayouts}
           onRemoveWidget={removeWidget}
           isEditMode={isEditMode}
           renderWidget={renderWidget}

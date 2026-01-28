@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Responsive, WidthProvider, Layout } from 'react-grid-layout/legacy';
+import { Responsive, WidthProvider, Layout, ResponsiveLayouts } from 'react-grid-layout/legacy';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
@@ -21,7 +21,8 @@ const ROW_HEIGHT = 100;
 
 interface DashboardGridProps {
   layout: LayoutWidgetConfig[];
-  onLayoutChange: (layout: LayoutWidgetConfig[]) => void;
+  responsiveLayouts?: Record<string, LayoutWidgetConfig[]>;
+  onLayoutChange: (layout: LayoutWidgetConfig[], allLayouts: Record<string, LayoutWidgetConfig[]>) => void;
   onRemoveWidget: (instanceId: string) => void;
   isEditMode: boolean;
   renderWidget: (widgetId: string, instanceId: string) => React.ReactNode;
@@ -61,6 +62,7 @@ function DashboardSkeleton() {
  */
 export function DashboardGrid({
   layout,
+  responsiveLayouts,
   onLayoutChange,
   onRemoveWidget,
   isEditMode,
@@ -79,17 +81,49 @@ export function DashboardGrid({
   // Convert our layout format to react-grid-layout format
   const gridLayout = useMemo(() => convertToGridLayout(layout), [layout]);
 
-  // Handle layout change from react-grid-layout
-  const handleLayoutChange = (newGridLayout: Layout) => {
-    // Only update if there are actual changes (prevent unnecessary re-renders)
-    const updatedLayout = convertFromGridLayout(newGridLayout, layout);
+  // Build per-breakpoint grid layouts for ResponsiveGridLayout
+  const gridLayouts = useMemo(() => {
+    if (responsiveLayouts && Object.keys(responsiveLayouts).length > 0) {
+      // Use stored per-breakpoint layouts
+      const result: Record<string, Layout> = {};
+      for (const [bp, bpLayout] of Object.entries(responsiveLayouts)) {
+        result[bp] = convertToGridLayout(bpLayout);
+      }
+      // Fill missing breakpoints with the default layout
+      for (const bp of Object.keys(BREAKPOINTS)) {
+        if (!result[bp]) {
+          result[bp] = gridLayout;
+        }
+      }
+      return result;
+    }
+    // Fallback: same layout for all breakpoints
+    return {
+      lg: gridLayout,
+      md: gridLayout,
+      sm: gridLayout,
+      xs: gridLayout,
+      xxs: gridLayout,
+    };
+  }, [responsiveLayouts, gridLayout]);
 
-    // Compare serialized layouts to detect real changes
+  // Handle layout change from react-grid-layout (two-argument form for responsive)
+  const handleLayoutChange = (_currentLayout: Layout, allLayouts: ResponsiveLayouts) => {
+    // Convert all breakpoint layouts from grid format to our format
+    const convertedAll: Record<string, LayoutWidgetConfig[]> = {};
+    for (const [bp, bpGridLayout] of Object.entries(allLayouts)) {
+      convertedAll[bp] = convertFromGridLayout(bpGridLayout as Layout, layout);
+    }
+
+    // Use the current breakpoint's layout as the "current" layout
+    const currentConverted = convertedAll[currentBreakpoint] || convertFromGridLayout(_currentLayout, layout);
+
+    // Compare to detect real changes
     const currentStr = JSON.stringify(layout);
-    const updatedStr = JSON.stringify(updatedLayout);
+    const updatedStr = JSON.stringify(currentConverted);
 
     if (currentStr !== updatedStr) {
-      onLayoutChange(updatedLayout);
+      onLayoutChange(currentConverted, convertedAll);
     }
   };
 
@@ -116,13 +150,7 @@ export function DashboardGrid({
 
   return (
     <ResponsiveGridLayout
-      layouts={{
-        lg: gridLayout,
-        md: gridLayout,
-        sm: gridLayout,
-        xs: gridLayout,
-        xxs: gridLayout,
-      }}
+      layouts={gridLayouts}
       breakpoints={BREAKPOINTS}
       cols={COLS}
       rowHeight={ROW_HEIGHT}
