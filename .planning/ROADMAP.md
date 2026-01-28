@@ -49,11 +49,11 @@ See `.planning/milestones/` for archived phase details.
   2. Save button appears only when sidebar visibility state has unsaved changes, and a toast confirms successful save
   3. Dashboard CRM Revenue KPI shows the sum of per-project `revenue ?? potentialRevenue` for ACTIVE and COMPLETED projects without double-counting
   4. User can create tasks and subtasks on projects with COMPLETED status, and can edit existing tasks on those projects
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 68-01: TBD
-- [ ] 68-02: TBD
+- [ ] 68-01-PLAN.md — Sidebar bug fixes: remove autoReveal, add Save button with dirty detection and toast
+- [ ] 68-02-PLAN.md — Fix dashboard revenue accuracy, verify task CRUD on completed projects
 
 ### Phase 69: Nested Sidebar Links
 **Goal**: Users can navigate to Departments and Contacts via nested sub-items under Companies in the sidebar
@@ -108,7 +108,7 @@ Note: Phase 71 is independent and can execute in parallel with 69-70 if desired.
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 68. Sidebar Fixes & Quick Wins | v2.4 | 0/TBD | Not started | - |
+| 68. Sidebar Fixes & Quick Wins | v2.4 | 0/2 | Not started | - |
 | 69. Nested Sidebar Links | v2.4 | 0/TBD | Not started | - |
 | 70. Sidebar DnD Reorder | v2.4 | 0/TBD | Not started | - |
 | 71. Internal Project Field Config | v2.4 | 0/TBD | Not started | - |
