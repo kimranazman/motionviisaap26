@@ -33,8 +33,8 @@ See `.planning/milestones/` for archived phase details.
 
 **Milestone Goal:** Fix sidebar settings persistence bugs, add nested Company/Departments/Contacts sidebar links, sidebar drag-and-drop reordering, allow task creation on completed projects, configure internal project field visibility, and fix dashboard revenue accuracy.
 
-- [ ] **Phase 68: Sidebar Fixes & Quick Wins** - Fix autoReveal bug, add save button, fix revenue accuracy, enable tasks on completed projects
-- [ ] **Phase 69: Nested Sidebar Links** - Company nav item expands to show Departments and Contacts as nested sub-items
+- [x] **Phase 68: Sidebar Fixes & Quick Wins** - Fix autoReveal bug, add save button, fix revenue accuracy, enable tasks on completed projects
+- [x] **Phase 69: Nested Sidebar Links** - Company nav item expands to show Departments and Contacts as nested sub-items
 - [ ] **Phase 70: Sidebar Drag-and-Drop Reorder** - Users reorder nav items within groups via Settings page
 - [ ] **Phase 71: Internal Project Field Config** - Admin configures which fields are hidden for internal projects
 
@@ -52,8 +52,8 @@ See `.planning/milestones/` for archived phase details.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 68-01-PLAN.md — Sidebar bug fixes: remove autoReveal, add Save button with dirty detection and toast
-- [ ] 68-02-PLAN.md — Fix dashboard revenue accuracy, verify task CRUD on completed projects
+- [x] 68-01-PLAN.md — Sidebar bug fixes: remove autoReveal, add Save button with dirty detection and toast
+- [x] 68-02-PLAN.md — Fix dashboard revenue accuracy, verify task CRUD on completed projects
 
 ### Phase 69: Nested Sidebar Links
 **Goal**: Users can navigate to Departments and Contacts via nested sub-items under Companies in the sidebar
@@ -65,11 +65,11 @@ Plans:
   3. Sub-items (Departments, Contacts) can be individually hidden via Settings, and hiding the parent Companies hides all sub-items
   4. Mobile sidebar renders nested items with the same hierarchy, indentation, and behavior as desktop
   5. Settings page shows nested items with visual indentation under their parent toggle
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 69-01: TBD
-- [ ] 69-02: TBD
+- [x] 69-01-PLAN.md — Nav config child support, NavGroupComponent nested rendering, sidebar/mobile updates
+- [x] 69-02-PLAN.md — Settings page nested display with indentation and cascade hide logic
 
 ### Phase 70: Sidebar Drag-and-Drop Reorder
 **Goal**: Users can personalize sidebar navigation order by dragging items within groups on the Settings page
@@ -108,7 +108,7 @@ Note: Phase 71 is independent and can execute in parallel with 69-70 if desired.
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 68. Sidebar Fixes & Quick Wins | v2.4 | 0/2 | Not started | - |
-| 69. Nested Sidebar Links | v2.4 | 0/TBD | Not started | - |
+| 68. Sidebar Fixes & Quick Wins | v2.4 | 2/2 | Complete | 2026-01-28 |
+| 69. Nested Sidebar Links | v2.4 | 2/2 | Complete | 2026-01-28 |
 | 70. Sidebar DnD Reorder | v2.4 | 0/TBD | Not started | - |
 | 71. Internal Project Field Config | v2.4 | 0/TBD | Not started | - |

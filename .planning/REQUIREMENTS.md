@@ -17,13 +17,13 @@ Requirements for v2.4 release. Each maps to roadmap phases.
 
 ### Nested Sidebar Navigation (NEST)
 
-- [ ] **NEST-01**: Companies nav item has an expand/collapse chevron showing Departments and Contacts as indented sub-items
-- [ ] **NEST-02**: Clicking "Companies" label navigates to /companies; clicking the chevron toggles sub-items
-- [ ] **NEST-03**: Companies parent is highlighted when on /companies, /departments, or /contacts
-- [ ] **NEST-04**: Sub-items can be individually hidden via Settings page toggles
-- [ ] **NEST-05**: Hiding parent "Companies" also hides Departments and Contacts sub-items
-- [ ] **NEST-06**: Mobile sidebar renders nested items with same hierarchy and behavior
-- [ ] **NEST-07**: Settings page shows nested items with visual indentation under parent
+- [x] **NEST-01**: Companies nav item has an expand/collapse chevron showing Departments and Contacts as indented sub-items
+- [x] **NEST-02**: Clicking "Companies" label navigates to /companies; clicking the chevron toggles sub-items
+- [x] **NEST-03**: Companies parent is highlighted when on /companies, /departments, or /contacts
+- [x] **NEST-04**: Sub-items can be individually hidden via Settings page toggles
+- [x] **NEST-05**: Hiding parent "Companies" also hides Departments and Contacts sub-items
+- [x] **NEST-06**: Mobile sidebar renders nested items with same hierarchy and behavior
+- [x] **NEST-07**: Settings page shows nested items with visual indentation under parent
 
 ### Sidebar Drag-and-Drop Reorder (REORD)
 
@@ -102,13 +102,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SIDE-03 | Phase 68 | Pending |
 | SIDE-04 | Phase 68 | Pending |
 | SIDE-05 | Phase 68 | Pending |
-| NEST-01 | Phase 69 | Pending |
-| NEST-02 | Phase 69 | Pending |
-| NEST-03 | Phase 69 | Pending |
-| NEST-04 | Phase 69 | Pending |
-| NEST-05 | Phase 69 | Pending |
-| NEST-06 | Phase 69 | Pending |
-| NEST-07 | Phase 69 | Pending |
+| NEST-01 | Phase 69 | Complete |
+| NEST-02 | Phase 69 | Complete |
+| NEST-03 | Phase 69 | Complete |
+| NEST-04 | Phase 69 | Complete |
+| NEST-05 | Phase 69 | Complete |
+| NEST-06 | Phase 69 | Complete |
+| NEST-07 | Phase 69 | Complete |
 | REORD-01 | Phase 70 | Pending |
 | REORD-02 | Phase 70 | Pending |
 | REORD-03 | Phase 70 | Pending |
