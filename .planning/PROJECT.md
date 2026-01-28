@@ -10,11 +10,13 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 ## Current State
 
-**Version:** v2.3 CRM & UX Improvements (shipped 2026-01-28)
+**Version:** v2.4 Settings, Sidebar & Bug Fixes (in progress)
 **Codebase:** ~44,430 LOC TypeScript
 **Tech stack:** Next.js 14, Prisma, MariaDB, Tailwind/shadcn, NextAuth.js, OpenAI
 
 **v2.3 delivered:** Fixed modal scroll across all detail views, rebuilt project expand-to-page as dedicated full page, added standalone Departments and Contacts pages with cascading filters, enabled task creation from /tasks page, added internal project support (Motionvii/Talenta), customizable sidebar navigation with per-user preferences, and line item pricing history with quantity/unitPrice tracking and by-item/by-client views.
+
+**v2.4 focus:** Fix sidebar settings persistence bugs (autoReveal too aggressive, no immediate feedback), add nested Company/Departments/Contacts sidebar links, sidebar drag-and-drop reordering, allow completed project editing, configure internal project field visibility, and fix dashboard revenue accuracy for potential project revenue.
 
 ## Requirements
 
@@ -231,7 +233,27 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 ### Active
 
-<!-- Next milestone requirements will be defined via /gsd:new-milestone -->
+<!-- v2.4: Settings, Sidebar & Bug Fixes -->
+
+**Sidebar Settings Fixes:**
+- [ ] Sidebar nav toggle persists correctly (autoReveal not triggered by tab clicks within a page)
+- [ ] Settings page shows Save button with immediate visual feedback on sidebar changes
+- [ ] Sidebar reflects hidden/shown state without requiring page reload
+
+**Sidebar Enhancements:**
+- [ ] Company nav item expands to show Departments and Contacts as nested sub-items
+- [ ] Sidebar link order is drag-and-drop rearrangeable via Settings page
+- [ ] Sidebar order persisted per user
+
+**Project Editing:**
+- [ ] Completed projects remain fully editable (all fields)
+
+**Internal Project Configuration:**
+- [ ] Admin can configure which fields are hidden for internal projects (revenue, pipeline source, etc.)
+- [ ] Internal project defaults applied globally via Settings
+
+**Dashboard Accuracy:**
+- [ ] Revenue progress widget includes potentialRevenue from confirmed potential projects
 
 ### Out of Scope
 
@@ -390,4 +412,4 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | Price Comparison renamed to Pricing History | Broader scope with three tabs (All Items, By Item, By Client) | ✓ Good |
 
 ---
-*Last updated: 2026-01-28 after v2.3 milestone completion*
+*Last updated: 2026-01-28 after v2.4 milestone start*
