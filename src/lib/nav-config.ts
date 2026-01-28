@@ -26,6 +26,7 @@ export interface NavItem {
   name: string
   href: string
   icon: LucideIcon
+  children?: NavItem[]
 }
 
 export interface NavGroup {
@@ -56,9 +57,10 @@ export const navGroups: NavGroup[] = [
     key: 'crm',
     label: 'CRM',
     items: [
-      { name: 'Companies', href: '/companies', icon: Building2 },
-      { name: 'Departments', href: '/departments', icon: Building },
-      { name: 'Contacts', href: '/contacts', icon: Contact },
+      { name: 'Companies', href: '/companies', icon: Building2, children: [
+        { name: 'Departments', href: '/departments', icon: Building },
+        { name: 'Contacts', href: '/contacts', icon: Contact },
+      ]},
       { name: 'Pipeline', href: '/pipeline', icon: Funnel },
       { name: 'Potential Projects', href: '/potential-projects', icon: FolderKanban },
       { name: 'Projects', href: '/projects', icon: Briefcase },
@@ -101,6 +103,11 @@ export function getAllNavHrefs(): string[] {
   for (const group of navGroups) {
     for (const item of group.items) {
       hrefs.push(item.href)
+      if (item.children) {
+        for (const child of item.children) {
+          hrefs.push(child.href)
+        }
+      }
     }
   }
   for (const item of topLevelItems) {
@@ -121,6 +128,11 @@ export function findGroupForPath(pathname: string): string | null {
         if (pathname === '/') return group.key
       } else {
         if (pathname === item.href || pathname.startsWith(item.href)) return group.key
+      }
+      if (item.children) {
+        for (const child of item.children) {
+          if (pathname === child.href || pathname.startsWith(child.href)) return group.key
+        }
       }
     }
   }
