@@ -1,19 +1,82 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { Header } from '@/components/layout/header'
 import { Card } from '@/components/ui/card'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Switch } from '@/components/ui/switch'
+import { Button } from '@/components/ui/button'
 import { useDetailViewMode } from '@/lib/hooks/use-detail-view-mode'
 import type { DetailViewMode } from '@/lib/hooks/use-detail-view-mode'
 import { useNavVisibility } from '@/lib/hooks/use-nav-visibility'
 import { navGroups, topLevelItems, settingsItem, isAlwaysVisible } from '@/lib/nav-config'
+import type { NavItem } from '@/lib/nav-config'
 import { PanelRight, Layers } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { toast } from 'sonner'
 
 export default function SettingsPage() {
   const { mode, setMode, isLoading } = useDetailViewMode()
-  const { isVisible, toggleItem, isLoading: navLoading } = useNavVisibility()
+  const { hiddenItems, isLoading: navLoading, saveHiddenItems } = useNavVisibility()
+  const [localHidden, setLocalHidden] = useState<string[]>([])
+  const [isSaving, setIsSaving] = useState(false)
+
+  // Sync local state when hook loads persisted state
+  useEffect(() => {
+    if (!navLoading) {
+      setLocalHidden(hiddenItems)
+    }
+  }, [navLoading, hiddenItems])
+
+  // Dirty detection: compare sorted arrays
+  const isDirty = JSON.stringify([...localHidden].sort()) !==
+                  JSON.stringify([...hiddenItems].sort())
+
+  // Local toggle (no persist)
+  const handleToggle = (href: string) => {
+    if (isAlwaysVisible(href)) return
+    setLocalHidden((prev) =>
+      prev.includes(href)
+        ? prev.filter((h) => h !== href)
+        : [...prev, href]
+    )
+  }
+
+  // Toggle with cascade: hiding parent also hides all children
+  const handleToggleWithCascade = (item: NavItem) => {
+    if (isAlwaysVisible(item.href)) return
+    setLocalHidden((prev) => {
+      const isCurrentlyHidden = prev.includes(item.href)
+      if (isCurrentlyHidden) {
+        // Unhiding parent: just remove parent from hidden list
+        // Children remain in whatever state they were
+        return prev.filter((h) => h !== item.href)
+      } else {
+        // Hiding parent: also hide all children
+        const childHrefs = item.children?.map((c) => c.href) ?? []
+        const newHidden = [...prev, item.href]
+        for (const childHref of childHrefs) {
+          if (!newHidden.includes(childHref)) {
+            newHidden.push(childHref)
+          }
+        }
+        return newHidden
+      }
+    })
+  }
+
+  // Save handler
+  const handleSave = async () => {
+    setIsSaving(true)
+    try {
+      await saveHiddenItems(localHidden)
+      toast.success('Settings saved')
+    } catch {
+      toast.error('Failed to save settings')
+    } finally {
+      setIsSaving(false)
+    }
+  }
 
   return (
     <>
@@ -116,24 +179,52 @@ export default function SettingsPage() {
                       <div className="space-y-1">
                         {group.items.map((item) => {
                           const alwaysOn = isAlwaysVisible(item.href)
-                          const visible = alwaysOn || isVisible(item.href)
+                          const visible = alwaysOn || !localHidden.includes(item.href)
                           return (
-                            <div
-                              key={item.href}
-                              className="flex items-center justify-between py-2 px-1"
-                            >
-                              <div className="flex items-center gap-3">
-                                <item.icon className="h-4 w-4 text-gray-500" />
-                                <span className="text-sm text-gray-700">{item.name}</span>
-                                {alwaysOn && (
-                                  <span className="text-xs text-gray-400">(always visible)</span>
-                                )}
+                            <div key={item.href}>
+                              {/* Parent item row */}
+                              <div className="flex items-center justify-between py-2 px-1">
+                                <div className="flex items-center gap-3">
+                                  <item.icon className="h-4 w-4 text-gray-500" />
+                                  <span className="text-sm text-gray-700">{item.name}</span>
+                                  {alwaysOn && (
+                                    <span className="text-xs text-gray-400">(always visible)</span>
+                                  )}
+                                </div>
+                                <Switch
+                                  checked={visible}
+                                  onCheckedChange={() =>
+                                    item.children
+                                      ? handleToggleWithCascade(item)
+                                      : handleToggle(item.href)
+                                  }
+                                  disabled={alwaysOn}
+                                />
                               </div>
-                              <Switch
-                                checked={visible}
-                                onCheckedChange={() => toggleItem(item.href)}
-                                disabled={alwaysOn}
-                              />
+                              {/* Nested children */}
+                              {item.children && (
+                                <div className="ml-7 border-l-2 border-gray-100 pl-3 space-y-0.5">
+                                  {item.children.map((child) => {
+                                    const childVisible = !localHidden.includes(child.href) && visible
+                                    return (
+                                      <div
+                                        key={child.href}
+                                        className="flex items-center justify-between py-1.5 px-1"
+                                      >
+                                        <div className="flex items-center gap-3">
+                                          <child.icon className="h-3.5 w-3.5 text-gray-400" />
+                                          <span className="text-sm text-gray-600">{child.name}</span>
+                                        </div>
+                                        <Switch
+                                          checked={childVisible}
+                                          onCheckedChange={() => handleToggle(child.href)}
+                                          disabled={!visible}
+                                        />
+                                      </div>
+                                    )
+                                  })}
+                                </div>
+                              )}
                             </div>
                           )
                         })}
@@ -149,7 +240,7 @@ export default function SettingsPage() {
                     <div className="space-y-1">
                       {topLevelItems.map((item) => {
                         const alwaysOn = isAlwaysVisible(item.href)
-                        const visible = alwaysOn || isVisible(item.href)
+                        const visible = alwaysOn || !localHidden.includes(item.href)
                         return (
                           <div
                             key={item.href}
@@ -164,7 +255,7 @@ export default function SettingsPage() {
                             </div>
                             <Switch
                               checked={visible}
-                              onCheckedChange={() => toggleItem(item.href)}
+                              onCheckedChange={() => handleToggle(item.href)}
                               disabled={alwaysOn}
                             />
                           </div>
@@ -182,6 +273,18 @@ export default function SettingsPage() {
                       </div>
                     </div>
                   </div>
+                </div>
+              )}
+
+              {isDirty && (
+                <div className="pt-4 border-t border-gray-200">
+                  <Button
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className="w-full"
+                  >
+                    {isSaving ? 'Saving...' : 'Save Changes'}
+                  </Button>
                 </div>
               )}
             </div>
