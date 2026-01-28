@@ -1248,3 +1248,233 @@ This is the highest-confidence milestone researched to date. The reason is simpl
 
 *v2.3 Research completed: 2026-01-28*
 *Ready for roadmap: yes*
+
+---
+---
+
+# v2.4 Research Summary: Settings, Sidebar & Bug Fixes
+
+**Project:** SAAP 2026 v2 -- v2.4 Settings, Sidebar & Bug Fixes
+**Domain:** Sidebar navigation behavior, settings UX, drag-and-drop reordering, nested nav links, dashboard revenue accuracy, admin field configuration
+**Researched:** 2026-01-28
+**Confidence:** HIGH
+
+---
+
+## Executive Summary
+
+v2.4 is a **code-only milestone** that requires zero new npm packages. All seven features build on libraries already installed and battle-tested across 67+ completed phases: `@dnd-kit/core@6.3.1` and `@dnd-kit/sortable@10.0.0` (used in 12 files for kanban/pipeline/tasks), `@radix-ui/react-collapsible@1.1.12` (used in `nav-group.tsx`), `sonner@2.0.7` (used in 5+ components), and Prisma with JSON fields (proven pattern in `UserPreferences` and `AdminDefaults`). The milestone has two schema additions -- `navItemOrder Json?` on `UserPreferences` and `hiddenFieldsInternal Json?` on `AdminDefaults` -- both nullable and non-destructive.
+
+The sidebar subsystem is the primary integration risk. Four of seven features modify the same cluster of files (`nav-config.ts`, `use-nav-visibility.ts`, `nav-group.tsx`, `sidebar.tsx`, `settings/page.tsx`). Research identified a strict dependency chain: autoReveal bug fix first (removes problematic auto-mutation), then batch save pattern (replaces fire-and-forget persistence), then nested nav links (structural change to `NavItem` type), then drag-and-drop reorder (builds on the stable nested structure). The three independent features -- completed projects editable, admin field visibility, and revenue widget fix -- can be interleaved freely.
+
+The most critical finding is that **the "completed projects editable" feature may be a no-op**. Direct codebase analysis found no status-based read-only guard on projects -- `canEdit()` in `permissions.ts` checks user role only, and `project-detail-sheet.tsx` renders all fields editable regardless of status. The API route has no status guard either. This needs verification in the running app before planning any code changes. The second critical finding is the **autoReveal race condition**: the fire-and-forget PATCH pattern in `use-nav-visibility.ts` has no concurrency protection, meaning simultaneous `toggleItem` and `autoReveal` calls can overwrite each other's state. The batch save pattern (explicit Save button) resolves this by design.
+
+---
+
+## Key Findings
+
+### Recommended Stack
+
+From v2.4-STACK.md -- zero new packages. This is a pure code milestone.
+
+**Core technologies leveraged (all already installed):**
+- **@dnd-kit/core@6.3.1 + @dnd-kit/sortable@10.0.0** -- sidebar drag-and-drop reordering in Settings, replicating the proven kanban-board.tsx pattern with `verticalListSortingStrategy`
+- **@radix-ui/react-collapsible@1.1.12** -- nested sidebar links (Company > Departments/Contacts), extending the existing group collapse pattern in `nav-group.tsx`
+- **sonner@2.0.7** -- toast feedback for Settings save (`toast.success('Settings saved')`)
+- **Prisma 6.19.2** -- two new nullable JSON fields (`navItemOrder`, `hiddenFieldsInternal`)
+- **@radix-ui/react-switch@1.2.6** -- toggle switches for field visibility admin config (already in Settings)
+
+**No new packages evaluated or needed.** The STACK research verified all package versions against `node_modules` and confirmed API compatibility.
+
+See: `.planning/research/v2.4-STACK.md`
+
+### Expected Features
+
+From v2.4-FEATURES.md -- 7 features with clear dependency chain.
+
+**Must Have (Table Stakes):**
+- **F-01: autoReveal fix** -- Hidden nav items stay hidden regardless of URL navigation. Remove or guard the `autoReveal` function that auto-unhides items on pathname match.
+- **F-02: Settings save button** -- Replace fire-and-forget toggle persistence with explicit Save/Reset buttons and dirty tracking. Single PATCH call on save with toast confirmation.
+- **F-03: Completed projects editable** -- Confirm current behavior (already editable) or remove any hidden restrictions. Likely a no-op requiring documentation only.
+- **F-04: Revenue widget accuracy** -- CRM KPI revenue card uses `revenue ?? potentialRevenue` per project instead of only summing `revenue`. Include ACTIVE and COMPLETED projects.
+
+**Should Have (Differentiators):**
+- **F-05: Nested sidebar links** -- Companies becomes a parent with Departments and Contacts as indented sub-items. Extend `NavItem` with optional `children?: NavItem[]`.
+- **F-06: Sidebar drag-and-drop reorder** -- Users reorder nav items within groups via Settings page DnD. Persisted per-user in `UserPreferences.navItemOrder`.
+- **F-07: Admin field visibility for internal projects** -- Admin configures which fields show/hide for internal projects via `AdminDefaults.hiddenFieldsInternal`.
+
+**Defer to post-v2.4:**
+- Drag-to-reorder sidebar items (F-06 is medium-high complexity, defer if time is tight)
+- Admin field visibility config (F-07 is medium-high complexity, current hardcoded logic works)
+
+**Anti-Features (do NOT build):**
+- Full RBAC on project status transitions (3 users, trust each other)
+- Complex sidebar configuration UI with live preview/themes
+- Per-widget revenue configuration (one consistent definition)
+- Multi-level sidebar nesting (3+ levels is a UX anti-pattern)
+- User-configurable sidebar groups (groups are stable organizational structure)
+- Auto-save timer for settings (contradicts explicit Save button)
+
+See: `.planning/research/v2.4-FEATURES.md`
+
+### Architecture Approach
+
+From v2.4-ARCHITECTURE.md -- four sidebar features form a sequential chain; three features are independent.
+
+The sidebar subsystem has a clean separation today: `nav-config.ts` (static structure), `use-nav-visibility.ts` (show/hide state via API), `use-nav-collapse-state.ts` (expand/collapse via localStorage), and `nav-group.tsx` (rendering). Four features modify this subsystem and must be sequenced carefully.
+
+**Major components and their v2.4 modifications:**
+1. **`nav-config.ts`** -- Add `children?: NavItem[]` to NavItem interface; restructure CRM group with Companies as parent
+2. **`use-nav-visibility.ts`** -- Fix autoReveal logic (exact match only); add batch save support; handle children in visibility checks
+3. **`nav-group.tsx`** -- Render nested items with indentation and expand/collapse chevron
+4. **`settings/page.tsx`** -- Add Save/Reset buttons, nested toggle hierarchy, DnD reordering section, admin field visibility card
+5. **`sidebar.tsx` + `mobile-sidebar.tsx`** -- Apply custom order when rendering, support nested items
+6. **Dashboard `page.tsx`** -- Fix revenue aggregation to use `revenue ?? potentialRevenue` per project
+
+**Schema changes (single migration):**
+```prisma
+model UserPreferences {
+  navItemOrder    Json?  @map("nav_item_order") @db.Json  // NEW
+}
+model AdminDefaults {
+  hiddenFieldsInternal Json? @map("hidden_fields_internal") @db.Json  // NEW
+}
+```
+
+**Key architecture decisions:**
+- Extend NavItem with `children` (not a separate NavSubGroup concept) -- one nesting level is sufficient
+- Store nav order in UserPreferences (not a separate model) -- co-located with hiddenNavItems
+- Store field visibility in AdminDefaults (not UserPreferences) -- system-wide admin setting
+- Keep COMPLETED revenue filter, use `revenue ?? potentialRevenue` fallback -- do not conflate earned with expected
+- Settings page and sidebar use separate hook instances -- accept eventual consistency on save (sidebar refreshes on next page load)
+
+See: `.planning/research/v2.4-ARCHITECTURE.md`
+
+### Critical Pitfalls
+
+From v2.4-PITFALLS.md -- 3 critical, 8 high/moderate pitfalls identified.
+
+1. **autoReveal `startsWith` matching is too broad (Critical)** -- `pathname.startsWith(href)` matches any sub-path, causing hidden items to reappear during in-page navigation. Fix: use exact match (`pathname === href`) or remove autoReveal entirely. Address first.
+
+2. **Race condition in fire-and-forget preference saves (Critical)** -- `toggleItem` and `autoReveal` both fire independent PATCH calls without concurrency protection. Simultaneous calls can overwrite each other. Fix: batch save pattern with explicit Save button eliminates concurrent writes by design.
+
+3. **Nested nav breaks flat href-based visibility system (Critical)** -- The entire visibility system assumes flat `string[]` of hrefs. Adding `children` to NavItem requires updating `isVisible`, `toggleItem`, `autoReveal`, `findGroupForPath`, `getAllNavHrefs`, and the Settings page. Must audit every consumer of `navGroups` and `NavItem` before changing the type.
+
+4. **Drag-and-drop interferes with click navigation (High)** -- @dnd-kit sensors can intercept clicks intended for navigation. Fix: use drag handles only (GripVertical icon), not full-item drag. Set activation distance of 8px. Only enable DnD in Settings page, never in the live sidebar.
+
+5. **Revenue double-counting when including potentialRevenue (High)** -- Projects with both `revenue` and `potentialRevenue` must not sum both fields. Fix: use per-project `revenue ?? potentialRevenue ?? 0` logic (COALESCE pattern), not `SUM(revenue) + SUM(potentialRevenue)`.
+
+6. **No status-based read-only guard exists for projects (High)** -- The "completed projects editable" requirement may be solving a problem that does not exist. Verify in running app first. If confirmed as no-op, document as intentional design decision.
+
+7. **navOrder/hiddenNavItems sync drift (High)** -- Two separate JSON arrays must stay synchronized with `nav-config.ts`. Fix: reconciliation function on sidebar load that filters stale entries and appends new items.
+
+See: `.planning/research/v2.4-PITFALLS.md`
+
+---
+
+## Implications for Roadmap
+
+Based on combined research, the milestone splits cleanly into a **sequential sidebar chain** (4 features that must be built in order) and **3 independent features** that can be interleaved at any point. The FEATURES research identified the dependency graph (F-01 -> F-02 -> F-05 -> F-06), the ARCHITECTURE research validated it with shared-file analysis, and the PITFALLS research confirmed each step must be stable before the next begins.
+
+### Phase 1: Sidebar Bug Fix (autoReveal) + Save Button
+
+**Rationale:** These two features are tightly coupled -- the autoReveal bug is caused by fire-and-forget persistence, and the Save button replaces that pattern. Fixing them together creates a stable persistence foundation for all subsequent sidebar work. This is also the highest-impact change: resolving daily user frustration (hidden items reappearing) with minimal risk (isolated hook logic change).
+**Delivers:** Fixed `autoReveal` logic (exact match or removal), batch save pattern with Save/Reset buttons, dirty tracking, `toast.success` feedback, unsaved changes warning.
+**Addresses:** F-01 (autoReveal fix), F-02 (Save button).
+**Avoids:** Pitfall #1 (broad matching), Pitfall #2 (race condition).
+
+### Phase 2: Dashboard Revenue Fix + Completed Projects Verification
+
+**Rationale:** Both are quick, independent wins that can ship while sidebar structural work is planned. The revenue fix is a single query change (~5 minutes of coding). The completed projects feature is likely a no-op that needs verification, not implementation.
+**Delivers:** Corrected CRM KPI revenue card using `revenue ?? potentialRevenue` per project for ACTIVE + COMPLETED statuses. Verified and documented project editability behavior.
+**Addresses:** F-04 (revenue accuracy), F-03 (completed projects editable).
+**Avoids:** Pitfall #5 (double-counting) with per-project COALESCE logic. Pitfall #6 (unnecessary code changes) by verifying actual behavior first.
+
+### Phase 3: Nested Sidebar Links
+
+**Rationale:** Structural change to the NavItem type that must happen before drag-and-drop reordering, since DnD must handle the nested structure. Requires updating 6+ files that consume `NavItem`: `nav-config.ts`, `nav-group.tsx`, `use-nav-visibility.ts`, `settings/page.tsx`, `sidebar.tsx`, `mobile-sidebar.tsx`. Medium complexity but well-understood -- extends the existing Radix Collapsible pattern.
+**Delivers:** Companies as parent with Departments/Contacts as indented sub-items, expand/collapse chevron on parent items, active state highlighting for parent when child route is active, hierarchical toggle switches in Settings.
+**Addresses:** F-05 (nested sidebar links).
+**Avoids:** Pitfall #3 (breaks flat visibility system) by updating all NavItem consumers. Pitfall #8 (collapse state conflict) by using visually distinct expand indicators and separate state storage from group collapse.
+
+### Phase 4: Sidebar Drag-and-Drop Reorder (Defer Candidate)
+
+**Rationale:** Depends on nested nav being stable (Phase 3). Medium-high complexity: schema migration, DnD integration in Settings page, order persistence in `UserPreferences.navItemOrder`, reconciliation logic for new/removed items. However, 3 users can tolerate default ordering. **Recommend deferring to post-v2.4 if time is tight.**
+**Delivers:** DnD reordering UI in Settings page (drag handles per item within each group), persisted order in UserPreferences, Reset Order button, sidebar renders in custom order.
+**Addresses:** F-06 (sidebar drag-and-drop reorder).
+**Avoids:** Pitfall #4 (drag interferes with click) by using drag handles and Settings-only DnD. Pitfall #7 (navOrder sync drift) with reconciliation function. Pitfall #10 (accessibility regression) by not adding keyboard drag to live sidebar.
+
+### Phase 5: Admin Field Visibility for Internal Projects (Defer Candidate)
+
+**Rationale:** Independent of sidebar chain. Medium-high complexity: new admin config model, conditional field rendering across 3+ project components, admin settings UI. Current hardcoded internal/external field logic works. **Recommend deferring to post-v2.4 unless team creates many internal projects with varying field needs.**
+**Delivers:** `hiddenFieldsInternal` JSON field on AdminDefaults, admin-only field visibility card in Settings, conditional field rendering in project forms/detail views based on admin config.
+**Addresses:** F-07 (admin field visibility).
+**Avoids:** Pitfall #9 (AdminDefaults missing defaults) by defining hardcoded fallback constants in code.
+
+### Phase Ordering Rationale
+
+- **Sidebar bug fix + save button first** because they resolve daily user frustration and establish the persistence pattern all other sidebar features depend on
+- **Revenue fix + project verification second** because they are quick independent wins that deliver immediate value with zero sidebar dependency
+- **Nested nav third** because it is the structural prerequisite for drag-and-drop reordering -- the NavItem type must be stable before adding ordering logic
+- **DnD reorder fourth (defer candidate)** because it is the most complex sidebar feature and the 3-person team can tolerate default ordering
+- **Admin field visibility fifth (defer candidate)** because current hardcoded logic works and this feature is independent of all others
+
+### Research Flags
+
+Phases likely needing review during planning:
+- **Phase 3 (Nested Nav):** Needs careful audit of all `NavItem` consumers before changing the type. TypeScript compiler will catch most issues, but rendering logic and Settings page toggle hierarchy need manual review.
+- **Phase 4 (DnD Reorder):** Needs sensor tuning for activation constraints. The kanban pattern uses `distance: 5` for MouseSensor -- sidebar items are smaller, may need `distance: 8` or delay-based activation.
+
+Phases with standard patterns (skip research):
+- **Phase 1 (Bug Fix + Save Button):** Pure hook refactoring. Well-understood fix-and-replace pattern.
+- **Phase 2 (Revenue Fix + Project Verification):** Single query change + behavioral verification. Trivial.
+- **Phase 5 (Admin Field Visibility):** JSON field in AdminDefaults + conditional rendering. Same pattern as dashboard widget roles.
+
+---
+
+## Confidence Assessment
+
+| Area | Confidence | Notes |
+|------|------------|-------|
+| Stack | HIGH | Zero new dependencies. All libraries verified against `node_modules` with exact versions. @dnd-kit usage proven in 12 files, Radix Collapsible in 7 files, sonner in 5+ files. |
+| Features | HIGH | All 7 features scoped from direct codebase analysis. Feature dependencies mapped with file-level precision. MVP recommendation clearly separates must-ship from deferrable. |
+| Architecture | HIGH | Sidebar subsystem fully mapped (6 files, clear data flow). Schema changes are nullable JSON fields -- non-destructive. Build order validated against shared-file analysis. |
+| Pitfalls | HIGH | 11 pitfalls identified from direct codebase analysis. Root causes traced to specific lines of code (autoReveal lines 73-100, revenue aggregation lines 183-186). Prevention strategies reference existing codebase patterns. |
+
+**Overall confidence: HIGH**
+
+This milestone continues the pattern of previous v2.x milestones: high-confidence, code-only work building on proven patterns. The risk profile is dominated by the sidebar subsystem having 4 sequential changes to shared files -- mitigated by the strict build order. No new packages, no architectural shifts, no infrastructure changes.
+
+### Gaps to Address
+
+- **Completed projects editability verification:** Before any Phase 2 code changes, test in the running app: open a COMPLETED project and attempt to edit. The code shows no restriction, but runtime behavior should be confirmed. If confirmed as no-op, document the design decision and close the feature.
+
+- **autoReveal removal vs. exact-match fix:** The FEATURES research recommends removing autoReveal entirely ("the only way to un-hide is through Settings"). The ARCHITECTURE research suggests exact-match as an alternative. **Recommendation: Remove autoReveal entirely.** The simpler approach is safer and matches user intent -- hiding means hiding, regardless of URL.
+
+- **Nested nav parent-child visibility semantics:** When a parent is hidden, should children auto-hide? When all children are hidden, what happens to the parent? **Recommendation: Hiding parent hides all children. Hiding all children keeps parent visible but without expand chevron. Un-hiding a child auto-shows the parent.**
+
+- **DnD reorder scope for nested items:** Should children be reorderable within their parent? Or do only top-level items within a group get reordered? **Recommendation: Top-level items only. Children follow their parent's position. Keep it simple for 3 users.**
+
+- **Revenue widget scope (COMPLETED only vs. ACTIVE+COMPLETED):** The FEATURES research recommends including ACTIVE projects with potentialRevenue. The ARCHITECTURE research recommends keeping COMPLETED only with potentialRevenue fallback. **Recommendation: Include ACTIVE + COMPLETED** -- this gives a more accurate picture of the revenue pipeline and matches the "CRM KPI" purpose.
+
+---
+
+## Sources
+
+### Primary (HIGH confidence)
+- Direct codebase analysis of 20+ files: `nav-config.ts`, `sidebar.tsx`, `mobile-sidebar.tsx`, `nav-group.tsx`, `use-nav-visibility.ts`, `use-nav-collapse-state.ts`, `settings/page.tsx`, `kanban-board.tsx`, `project-detail-sheet.tsx`, `project-detail-page-client.tsx`, `page.tsx` (dashboard), `crm-kpi-cards.tsx`, `revenue-target.tsx`, `permissions.ts`, `schema.prisma`
+- Package version verification from `node_modules`: @dnd-kit/core@6.3.1, @dnd-kit/sortable@10.0.0, @radix-ui/react-collapsible@1.1.12, sonner@2.0.7
+- @dnd-kit/sortable v10 TypeScript definitions confirming API availability
+
+### Secondary (MEDIUM confidence)
+- Existing @dnd-kit usage patterns across 12 files in the codebase (kanban, pipeline, tasks, potential projects)
+- Existing Radix Collapsible patterns across 7 files
+- UserPreferences and AdminDefaults JSON field patterns already proven in production
+
+### Tertiary (LOW confidence)
+- None -- all findings are from direct codebase analysis with HIGH confidence
+
+---
+
+*v2.4 Research completed: 2026-01-28*
+*Ready for roadmap: yes*
