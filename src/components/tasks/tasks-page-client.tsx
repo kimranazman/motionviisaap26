@@ -3,11 +3,32 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Table2 as TableIcon, KanbanSquare } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogClose,
+} from '@/components/ui/dialog'
+import { Table2 as TableIcon, KanbanSquare, Plus } from 'lucide-react'
+import { TEAM_MEMBER_OPTIONS } from '@/lib/utils'
 import { TaskFilterBar, type DueDateFilter } from './task-filter-bar'
 import { TaskTableView } from './task-table-view'
 import { TaskKanbanView } from './task-kanban-view'
 import { TaskDetailSheet } from '@/components/projects/task-detail-sheet'
+import { ProjectSelect } from './project-select'
 
 export interface CrossProjectTask {
   id: string
@@ -17,6 +38,7 @@ export interface CrossProjectTask {
   priority: 'LOW' | 'MEDIUM' | 'HIGH'
   dueDate: string | null
   assignee: string | null
+  depth: number
   projectId: string
   project: { id: string; title: string }
   _count: { children: number; comments: number }
@@ -32,6 +54,7 @@ export interface ProjectOption {
 interface TasksPageClientProps {
   initialTasks: CrossProjectTask[]
   projects: ProjectOption[]
+  allProjects: ProjectOption[]
 }
 
 const STORAGE_KEY = 'tasks-view-preference'
@@ -68,7 +91,7 @@ function matchesDueDateFilter(
   }
 }
 
-export function TasksPageClient({ initialTasks, projects }: TasksPageClientProps) {
+export function TasksPageClient({ initialTasks, projects, allProjects }: TasksPageClientProps) {
   const router = useRouter()
 
   // Task state
@@ -88,6 +111,18 @@ export function TasksPageClient({ initialTasks, projects }: TasksPageClientProps
   // Detail sheet state
   const [selectedTask, setSelectedTask] = useState<CrossProjectTask | null>(null)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
+
+  // Create dialog state
+  const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [newProjectId, setNewProjectId] = useState<string | null>(null)
+  const [newTitle, setNewTitle] = useState('')
+  const [newDescription, setNewDescription] = useState('')
+  const [newStatus, setNewStatus] = useState('TODO')
+  const [newPriority, setNewPriority] = useState('MEDIUM')
+  const [newDueDate, setNewDueDate] = useState('')
+  const [newAssignee, setNewAssignee] = useState('')
+  const [isCreating, setIsCreating] = useState(false)
+  const [createError, setCreateError] = useState<string | null>(null)
 
   // Load view preference from localStorage (SSR-safe)
   useEffect(() => {
@@ -154,9 +189,54 @@ export function TasksPageClient({ initialTasks, projects }: TasksPageClientProps
     router.refresh()
   }
 
+  // Reset create form
+  const resetCreateForm = () => {
+    setNewProjectId(null)
+    setNewTitle('')
+    setNewDescription('')
+    setNewStatus('TODO')
+    setNewPriority('MEDIUM')
+    setNewDueDate('')
+    setNewAssignee('')
+    setCreateError(null)
+  }
+
+  // Handle create task
+  const handleCreateTask = async () => {
+    if (!newProjectId || !newTitle.trim()) return
+    setIsCreating(true)
+    setCreateError(null)
+    try {
+      const response = await fetch(`/api/projects/${newProjectId}/tasks`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: newTitle.trim(),
+          description: newDescription.trim() || null,
+          status: newStatus,
+          priority: newPriority,
+          dueDate: newDueDate || null,
+          assignee: newAssignee || null,
+        }),
+      })
+      if (!response.ok) {
+        const data = await response.json()
+        setCreateError(data.error || 'Failed to create task')
+        return
+      }
+      setIsCreateOpen(false)
+      resetCreateForm()
+      router.refresh()
+    } catch {
+      setCreateError('Failed to create task')
+    } finally {
+      setIsCreating(false)
+    }
+  }
+
   return (
     <div className="space-y-4">
-      {/* Filter Bar and View Toggle */}
+      {/* Filter Bar, Add Task, and View Toggle */}
       <div className="flex gap-4 flex-col md:flex-row md:items-center md:justify-between">
         <TaskFilterBar
           searchQuery={searchQuery}
@@ -174,23 +254,166 @@ export function TasksPageClient({ initialTasks, projects }: TasksPageClientProps
           onDueDateChange={setDueDateFilter}
         />
 
-        {/* View Toggle */}
-        <Tabs
-          value={viewMode}
-          onValueChange={handleViewChange}
-          className="shrink-0 w-full md:w-auto"
-        >
-          <TabsList className="bg-white/70 backdrop-blur-xl border border-gray-200/50">
-            <TabsTrigger value="table" className="gap-1.5 data-[state=active]:bg-white">
-              <TableIcon className="h-4 w-4" />
-              Table
-            </TabsTrigger>
-            <TabsTrigger value="kanban" className="gap-1.5 data-[state=active]:bg-white">
-              <KanbanSquare className="h-4 w-4" />
-              Kanban
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="flex items-center gap-2 shrink-0 w-full md:w-auto">
+          {/* Add Task Button + Dialog */}
+          <Dialog open={isCreateOpen} onOpenChange={(open) => {
+            setIsCreateOpen(open)
+            if (!open) resetCreateForm()
+          }}>
+            <DialogTrigger asChild>
+              <Button className="w-full sm:w-auto">
+                <Plus className="mr-2 h-4 w-4" />
+                Add Task
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Add New Task</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                {/* Project selector (required) */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Project <span className="text-red-500">*</span>
+                  </label>
+                  <ProjectSelect
+                    value={newProjectId}
+                    onValueChange={setNewProjectId}
+                    projects={allProjects}
+                  />
+                </div>
+
+                {/* Title (required) */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Title <span className="text-red-500">*</span>
+                  </label>
+                  <Input
+                    placeholder="e.g., Set up venue equipment"
+                    value={newTitle}
+                    onChange={(e) => setNewTitle(e.target.value)}
+                  />
+                </div>
+
+                {/* Description */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Description
+                  </label>
+                  <Textarea
+                    placeholder="Optional details..."
+                    value={newDescription}
+                    onChange={(e) => setNewDescription(e.target.value)}
+                    rows={3}
+                  />
+                </div>
+
+                {/* Status and Priority */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Status
+                    </label>
+                    <Select value={newStatus} onValueChange={setNewStatus}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="TODO">To Do</SelectItem>
+                        <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
+                        <SelectItem value="DONE">Done</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Priority
+                    </label>
+                    <Select value={newPriority} onValueChange={setNewPriority}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="LOW">Low</SelectItem>
+                        <SelectItem value="MEDIUM">Medium</SelectItem>
+                        <SelectItem value="HIGH">High</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Due Date and Assignee */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Due Date
+                    </label>
+                    <Input
+                      type="date"
+                      value={newDueDate}
+                      onChange={(e) => setNewDueDate(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      Assignee
+                    </label>
+                    <Select
+                      value={newAssignee || '__unassigned__'}
+                      onValueChange={(v) => setNewAssignee(v === '__unassigned__' ? '' : v)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select assignee" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="__unassigned__">Unassigned</SelectItem>
+                        {TEAM_MEMBER_OPTIONS.map((opt) => (
+                          <SelectItem key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Error message */}
+                {createError && (
+                  <p className="text-sm text-red-500">{createError}</p>
+                )}
+              </div>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button
+                  onClick={handleCreateTask}
+                  disabled={!newProjectId || !newTitle.trim() || isCreating}
+                >
+                  {isCreating ? 'Creating...' : 'Create Task'}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* View Toggle */}
+          <Tabs
+            value={viewMode}
+            onValueChange={handleViewChange}
+            className="shrink-0 w-full md:w-auto"
+          >
+            <TabsList className="bg-white/70 backdrop-blur-xl border border-gray-200/50">
+              <TabsTrigger value="table" className="gap-1.5 data-[state=active]:bg-white">
+                <TableIcon className="h-4 w-4" />
+                Table
+              </TabsTrigger>
+              <TabsTrigger value="kanban" className="gap-1.5 data-[state=active]:bg-white">
+                <KanbanSquare className="h-4 w-4" />
+                Kanban
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
       </div>
 
       {/* Table View */}
