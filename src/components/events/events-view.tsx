@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -11,8 +12,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { cn } from '@/lib/utils'
-import { Calendar, MapPin, DollarSign, Target, CheckCircle2, Users } from 'lucide-react'
+import { Calendar, MapPin, DollarSign, Target, CheckCircle2, Users, Plus, Pencil, Trash2 } from 'lucide-react'
+import { EventFormModal } from './event-form-modal'
 
 interface EventToAttend {
   id: string
@@ -26,6 +38,7 @@ interface EventToAttend {
   targetCompanies: string | null
   actionRequired: string | null
   status: string
+  remarks: string | null
 }
 
 interface EventsViewProps {
@@ -67,8 +80,14 @@ const STATUS_COLORS: Record<string, string> = {
 }
 
 export function EventsView({ events }: EventsViewProps) {
+  const router = useRouter()
   const [priorityFilter, setPriorityFilter] = useState<string>('all')
   const [categoryFilter, setCategoryFilter] = useState<string>('all')
+  const [formOpen, setFormOpen] = useState(false)
+  const [editingEvent, setEditingEvent] = useState<EventToAttend | null>(null)
+  const [deletingEvent, setDeletingEvent] = useState<EventToAttend | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   const filteredEvents = events.filter(event => {
     if (priorityFilter !== 'all' && event.priority !== priorityFilter) return false
@@ -82,6 +101,35 @@ export function EventsView({ events }: EventsViewProps) {
   const tier2Count = events.filter(e => e.priority === 'TIER_2').length
   const tier3Count = events.filter(e => e.priority === 'TIER_3').length
   const energyCount = events.filter(e => e.priority === 'ENERGY').length
+
+  const handleSuccess = () => {
+    router.refresh()
+  }
+
+  const handleDelete = async () => {
+    if (!deletingEvent) return
+    setIsDeleting(true)
+    setDeleteError(null)
+
+    try {
+      const response = await fetch(`/api/events-to-attend/${deletingEvent.id}`, {
+        method: 'DELETE',
+      })
+
+      if (response.ok) {
+        setDeletingEvent(null)
+        router.refresh()
+      } else {
+        const data = await response.json()
+        setDeleteError(data.error || 'Failed to delete event')
+      }
+    } catch (error) {
+      console.error('Failed to delete event:', error)
+      setDeleteError('Failed to delete event')
+    } finally {
+      setIsDeleting(false)
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -132,8 +180,13 @@ export function EventsView({ events }: EventsViewProps) {
         </CardContent>
       </Card>
 
-      {/* Filters */}
+      {/* Filters + Add Button */}
       <div className="flex flex-wrap gap-4">
+        <Button onClick={() => { setEditingEvent(null); setFormOpen(true) }}>
+          <Plus className="mr-2 h-4 w-4" />
+          Add Event
+        </Button>
+
         <Select value={priorityFilter} onValueChange={setPriorityFilter}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Filter by priority" />
@@ -195,12 +248,30 @@ export function EventsView({ events }: EventsViewProps) {
                 <CardTitle className="text-sm font-semibold line-clamp-2">
                   {event.name}
                 </CardTitle>
-                <Badge
-                  variant="outline"
-                  className={cn('shrink-0 text-[10px]', PRIORITY_COLORS[event.priority])}
-                >
-                  {PRIORITY_LABELS[event.priority]}
-                </Badge>
+                <div className="flex items-center gap-1 shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6"
+                    onClick={() => { setEditingEvent(event); setFormOpen(true) }}
+                  >
+                    <Pencil className="h-3 w-3" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 text-red-500 hover:text-red-700 hover:bg-red-50"
+                    onClick={() => setDeletingEvent(event)}
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                  <Badge
+                    variant="outline"
+                    className={cn('text-[10px]', PRIORITY_COLORS[event.priority])}
+                  >
+                    {PRIORITY_LABELS[event.priority]}
+                  </Badge>
+                </div>
               </div>
             </CardHeader>
 
@@ -262,6 +333,50 @@ export function EventsView({ events }: EventsViewProps) {
           </Card>
         ))}
       </div>
+
+      {/* Event Form Modal (Create / Edit) */}
+      <EventFormModal
+        open={formOpen}
+        onOpenChange={setFormOpen}
+        onSuccess={handleSuccess}
+        event={editingEvent}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog
+        open={!!deletingEvent}
+        onOpenChange={(open) => {
+          if (!open) {
+            setDeletingEvent(null)
+            setDeleteError(null)
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Event</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete &quot;{deletingEvent?.name}&quot;?
+              This action cannot be undone.
+              {deleteError && (
+                <span className="block mt-2 text-red-600">
+                  {deleteError}
+                </span>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {isDeleting ? 'Deleting...' : 'Delete Event'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
