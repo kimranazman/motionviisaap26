@@ -559,6 +559,10 @@ model Cost {
   // AI-assigned normalized item name for price comparison
   normalizedItem String? @map("normalized_item") @db.VarChar(100)
 
+  // Line item pricing (optional - for quantity/unit price tracking)
+  quantity  Decimal? @db.Decimal(10, 2)
+  unitPrice Decimal? @map("unit_price") @db.Decimal(12, 2)
+
   supplierId String?   @map("supplier_id")
   supplier   Supplier? @relation(fields: [supplierId], references: [id])
 
