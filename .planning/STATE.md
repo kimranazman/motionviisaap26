@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-28)
 
 **Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, AI-powered intelligence, cross-project task management, per-member workload dashboards, event management, customizable sidebar navigation with nested links and drag-and-drop reorder, internal project support with configurable field visibility, line item pricing history, and intuitive navigation grouping.
-**Current focus:** Planning next milestone
+**Current focus:** v2.6 Views & Calendar Enhancement
 
 ## Current Position
 
-Phase: 74 of 74 (all complete)
+Phase: 74 of 78 (v2.6 in progress)
 Plan: N/A
-Status: v2.5 milestone complete
-Last activity: 2026-01-28 — v2.5 milestone archived
+Status: Milestone initialized, ready for phase planning
+Last activity: 2026-01-28 — v2.6 milestone created
 
-Progress: [##########] 100% (74/74 phases)
+Progress: [#########.] 94% (74/78 phases)
 
 ## Milestone History
 
@@ -38,6 +38,7 @@ Progress: [##########] 100% (74/74 phases)
 | v2.3 | CRM & UX Improvements | 62-67 | 2026-01-28 |
 | v2.4 | Settings, Sidebar & Bug Fixes | 68-71 | 2026-01-28 |
 | v2.5 | Navigation Reorganization | 72-74 | 2026-01-28 |
+| v2.6 | Views & Calendar Enhancement | 75-78 | In Progress |
 
 **Archives:** `.planning/milestones/`
 
@@ -47,18 +48,23 @@ Progress: [##########] 100% (74/74 phases)
 - Total phases completed: 74
 - Total milestones shipped: 18
 
-**v2.5 Stats:**
-- Phases: 72-74 (3 phases)
-- Plans: 3 total
-- Files modified: 19
-- Lines changed: +821, -90
-- Timeline: 2026-01-28 (same day)
+**v2.6 Stats (projected):**
+- Phases: 75-78 (4 phases)
+- Requirements: 29 total
+- Categories: Navigation (3), Projects Kanban (10), Tasks Grouping (4), Main Calendar (12)
 
 ## Accumulated Context
 
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table.
+
+**v2.6 Key Decisions:**
+- Reuse @dnd-kit for projects kanban (already proven in 5+ boards)
+- Build simple custom calendar (no external library)
+- Date markers only, no spanning (user request to avoid clutter)
+- Grey color for completed items
+- View toggle pattern for projects (matches /tasks pattern)
 
 ### Pending Todos
 
@@ -71,5 +77,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: v2.5 milestone complete, ready for `/gsd:new-milestone`
+Stopped at: v2.6 milestone initialized, ready for `/gsd:plan-phase 75`
 Resume file: None
