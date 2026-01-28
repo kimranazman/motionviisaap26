@@ -35,7 +35,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Badge } from '@/components/ui/badge'
 import { Plus, Search, Filter, User, MoreHorizontal, Eye, Star } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { CompanySelect } from '@/components/pipeline/company-select'
