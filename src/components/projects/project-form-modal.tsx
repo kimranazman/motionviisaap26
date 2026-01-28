@@ -23,6 +23,7 @@ import { Loader2 } from 'lucide-react'
 import { CompanySelect } from '@/components/pipeline/company-select'
 import { ContactSelect } from '@/components/pipeline/contact-select'
 import { InitiativeSelect } from './initiative-select'
+import { useInternalFieldConfig } from '@/lib/hooks/use-internal-field-config'
 
 interface Contact {
   id: string
@@ -70,6 +71,7 @@ export function ProjectFormModal({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isLoadingContacts, setIsLoadingContacts] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const { isHidden } = useInternalFieldConfig()
 
   // Reset form when modal closes
   useEffect(() => {
@@ -148,8 +150,8 @@ export function ProjectFormModal({
           internalEntity: isInternal ? internalEntity : null,
           companyId: isInternal ? null : companyId,
           contactId: isInternal ? null : (contactId || null),
-          initiativeId: initiativeId || null,
-          revenue: revenue ? parseFloat(revenue) : null,
+          initiativeId: isHidden('initiativeLink', isInternal) ? null : (initiativeId || null),
+          revenue: isHidden('revenue', isInternal) ? null : (revenue ? parseFloat(revenue) : null),
           description: description.trim() || null,
         }),
       })
@@ -267,28 +269,32 @@ export function ProjectFormModal({
               </div>
             )}
 
-            {/* Revenue */}
-            <div className="space-y-2">
-              <Label htmlFor="revenue">Revenue</Label>
-              <Input
-                id="revenue"
-                type="number"
-                step="0.01"
-                min="0"
-                value={revenue}
-                onChange={(e) => setRevenue(e.target.value)}
-                placeholder="0.00"
-              />
-            </div>
+            {/* Revenue (hidden for internal projects if configured) */}
+            {!isHidden('revenue', isInternal) && (
+              <div className="space-y-2">
+                <Label htmlFor="revenue">Revenue</Label>
+                <Input
+                  id="revenue"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={revenue}
+                  onChange={(e) => setRevenue(e.target.value)}
+                  placeholder="0.00"
+                />
+              </div>
+            )}
 
-            {/* KRI Link */}
-            <div className="space-y-2">
-              <Label>Link to KRI</Label>
-              <InitiativeSelect
-                value={initiativeId}
-                onValueChange={setInitiativeId}
-              />
-            </div>
+            {/* KRI Link (hidden for internal projects if configured) */}
+            {!isHidden('initiativeLink', isInternal) && (
+              <div className="space-y-2">
+                <Label>Link to KRI</Label>
+                <InitiativeSelect
+                  value={initiativeId}
+                  onValueChange={setInitiativeId}
+                />
+              </div>
+            )}
 
             {/* Description */}
             <div className="space-y-2">
