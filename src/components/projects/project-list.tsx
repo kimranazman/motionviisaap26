@@ -28,6 +28,10 @@ interface Project {
   initiative: { id: string; title: string } | null
   sourceDeal: { id: string; title: string; stageChangedAt?: string } | null
   sourcePotential: { id: string; title: string } | null
+  // NEW: Optional kanban data fields (for compatibility)
+  taskCount?: number
+  taskDoneCount?: number
+  totalCost?: number
 }
 
 interface ProjectListProps {
