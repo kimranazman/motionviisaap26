@@ -3,13 +3,17 @@
 import { Header } from '@/components/layout/header'
 import { Card } from '@/components/ui/card'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Switch } from '@/components/ui/switch'
 import { useDetailViewMode } from '@/lib/hooks/use-detail-view-mode'
 import type { DetailViewMode } from '@/lib/hooks/use-detail-view-mode'
+import { useNavVisibility } from '@/lib/hooks/use-nav-visibility'
+import { navGroups, topLevelItems, settingsItem, isAlwaysVisible } from '@/lib/nav-config'
 import { PanelRight, Layers } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export default function SettingsPage() {
   const { mode, setMode, isLoading } = useDetailViewMode()
+  const { isVisible, toggleItem, isLoading: navLoading } = useNavVisibility()
 
   return (
     <>
@@ -81,6 +85,104 @@ export default function SettingsPage() {
                     <RadioGroupItem value="drawer" id="mode-drawer" className="sr-only" />
                   </label>
                 </RadioGroup>
+              )}
+            </div>
+          </Card>
+
+          {/* Sidebar Navigation */}
+          <Card className="p-6">
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-base font-semibold text-gray-900">Sidebar Navigation</h3>
+                <p className="text-sm text-gray-500 mt-1">
+                  Choose which items to show in the sidebar. Dashboard and Settings are always visible.
+                </p>
+              </div>
+
+              {navLoading ? (
+                <div className="space-y-3">
+                  {[...Array(6)].map((_, i) => (
+                    <div key={i} className="h-8 rounded bg-gray-100 animate-pulse" />
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {/* Nav groups */}
+                  {navGroups.map((group) => (
+                    <div key={group.key}>
+                      <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                        {group.label}
+                      </h4>
+                      <div className="space-y-1">
+                        {group.items.map((item) => {
+                          const alwaysOn = isAlwaysVisible(item.href)
+                          const visible = alwaysOn || isVisible(item.href)
+                          return (
+                            <div
+                              key={item.href}
+                              className="flex items-center justify-between py-2 px-1"
+                            >
+                              <div className="flex items-center gap-3">
+                                <item.icon className="h-4 w-4 text-gray-500" />
+                                <span className="text-sm text-gray-700">{item.name}</span>
+                                {alwaysOn && (
+                                  <span className="text-xs text-gray-400">(always visible)</span>
+                                )}
+                              </div>
+                              <Switch
+                                checked={visible}
+                                onCheckedChange={() => toggleItem(item.href)}
+                                disabled={alwaysOn}
+                              />
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Top-level items */}
+                  <div>
+                    <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                      General
+                    </h4>
+                    <div className="space-y-1">
+                      {topLevelItems.map((item) => {
+                        const alwaysOn = isAlwaysVisible(item.href)
+                        const visible = alwaysOn || isVisible(item.href)
+                        return (
+                          <div
+                            key={item.href}
+                            className="flex items-center justify-between py-2 px-1"
+                          >
+                            <div className="flex items-center gap-3">
+                              <item.icon className="h-4 w-4 text-gray-500" />
+                              <span className="text-sm text-gray-700">{item.name}</span>
+                              {alwaysOn && (
+                                <span className="text-xs text-gray-400">(always visible)</span>
+                              )}
+                            </div>
+                            <Switch
+                              checked={visible}
+                              onCheckedChange={() => toggleItem(item.href)}
+                              disabled={alwaysOn}
+                            />
+                          </div>
+                        )
+                      })}
+
+                      {/* Settings item */}
+                      <div className="flex items-center justify-between py-2 px-1">
+                        <div className="flex items-center gap-3">
+                          <settingsItem.icon className="h-4 w-4 text-gray-500" />
+                          <span className="text-sm text-gray-700">{settingsItem.name}</span>
+                          <span className="text-xs text-gray-400">(always visible)</span>
+                        </div>
+                        <Switch checked={true} disabled />
+                      </div>
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
           </Card>
