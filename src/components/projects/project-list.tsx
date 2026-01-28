@@ -21,6 +21,8 @@ interface Project {
   startDate: string | null
   endDate: string | null
   isArchived?: boolean
+  isInternal?: boolean
+  internalEntity?: string | null
   company: { id: string; name: string } | null
   contact: { id: string; name: string } | null
   initiative: { id: string; title: string } | null
@@ -39,6 +41,7 @@ export function ProjectList({ initialData, initialShowArchived = false, openProj
   const userCanEdit = canEdit(session?.user?.role as never)
 
   const [projects, setProjects] = useState<Project[]>(initialData)
+  const [selectedType, setSelectedType] = useState<'ALL' | 'CLIENT' | 'INTERNAL'>('ALL')
   const [selectedStatus, setSelectedStatus] = useState<ProjectStatusId | 'ALL'>('ALL')
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
@@ -58,11 +61,13 @@ export function ProjectList({ initialData, initialShowArchived = false, openProj
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Filter projects by selected status
-  const filteredProjects =
-    selectedStatus === 'ALL'
-      ? projects
-      : projects.filter((p) => p.status === selectedStatus)
+  // Filter projects by type and status
+  const filteredProjects = projects.filter((p) => {
+    if (selectedType === 'CLIENT' && p.isInternal) return false
+    if (selectedType === 'INTERNAL' && !p.isInternal) return false
+    if (selectedStatus !== 'ALL' && p.status !== selectedStatus) return false
+    return true
+  })
 
   // Handle new project created
   const handleProjectCreated = (newProject: Project) => {
@@ -138,22 +143,44 @@ export function ProjectList({ initialData, initialShowArchived = false, openProj
             {showArchived ? 'Showing Archived' : 'Show Archived'}
           </Button>
 
+          {/* Type filter tabs */}
+          <div className="flex items-center gap-1 p-1 bg-gray-100 rounded-lg">
+            {([
+              { id: 'ALL' as const, label: 'All' },
+              { id: 'CLIENT' as const, label: 'Client' },
+              { id: 'INTERNAL' as const, label: 'Internal' },
+            ]).map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setSelectedType(tab.id)}
+                className={cn(
+                  'px-3 py-1.5 text-sm font-medium rounded-md transition-colors',
+                  selectedType === tab.id
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                )}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
           {/* Status filter tabs */}
           <div className="flex items-center gap-1 p-1 bg-gray-100 rounded-lg">
             {statusTabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setSelectedStatus(tab.id)}
-              className={cn(
-                'px-3 py-1.5 text-sm font-medium rounded-md transition-colors',
-                selectedStatus === tab.id
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              )}
-            >
-              {tab.label}
-            </button>
-          ))}
+              <button
+                key={tab.id}
+                onClick={() => setSelectedStatus(tab.id)}
+                className={cn(
+                  'px-3 py-1.5 text-sm font-medium rounded-md transition-colors',
+                  selectedStatus === tab.id
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                )}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
         </div>
 
