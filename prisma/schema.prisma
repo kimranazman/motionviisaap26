@@ -631,8 +631,9 @@ model UserPreferences {
 model AdminDefaults {
   id String @id @default(cuid())
 
-  dashboardLayout Json @db.Json
-  widgetRoles     Json @db.Json
+  dashboardLayout     Json  @db.Json
+  widgetRoles         Json  @db.Json
+  internalFieldConfig Json? @map("internal_field_config") @db.Json
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
