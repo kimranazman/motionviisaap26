@@ -179,7 +179,7 @@ export function PotentialFormModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Add Potential Project</DialogTitle>
+          <DialogTitle>Add Repeat Client</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit}>
