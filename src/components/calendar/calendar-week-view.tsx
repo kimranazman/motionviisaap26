@@ -40,7 +40,7 @@ export function CalendarWeekView({
     <div className="border border-gray-200 rounded-lg overflow-hidden">
       {/* Week Grid */}
       <div className="grid grid-cols-7">
-        {days.map((day, index) => {
+        {days.map((day) => {
           const dayItems = getItemsForDay(day)
           const isToday = isSameDay(day, new Date())
 
