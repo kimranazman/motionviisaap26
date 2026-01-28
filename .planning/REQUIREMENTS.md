@@ -44,10 +44,10 @@ Requirements for v2.3 release. Each maps to roadmap phases.
 
 ### Sidebar Customization
 
-- [ ] **NAV-01**: User can show/hide sidebar nav items via Settings page
-- [ ] **NAV-02**: Sidebar customization persisted per user in database (UserPreferences)
-- [ ] **NAV-03**: Dashboard and Settings nav items cannot be hidden (always visible)
-- [ ] **NAV-04**: Hidden nav item auto-reveals if user navigates to that page directly
+- [x] **NAV-01**: User can show/hide sidebar nav items via Settings page
+- [x] **NAV-02**: Sidebar customization persisted per user in database (UserPreferences)
+- [x] **NAV-03**: Dashboard and Settings nav items cannot be hidden (always visible)
+- [x] **NAV-04**: Hidden nav item auto-reveals if user navigates to that page directly
 
 ### Line Item Pricing
 
@@ -125,10 +125,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INT-03 | Phase 65 | Complete |
 | INT-04 | Phase 65 | Complete |
 | INT-05 | Phase 65 | Complete |
-| NAV-01 | Phase 66 | Pending |
-| NAV-02 | Phase 66 | Pending |
-| NAV-03 | Phase 66 | Pending |
-| NAV-04 | Phase 66 | Pending |
+| NAV-01 | Phase 66 | Complete |
+| NAV-02 | Phase 66 | Complete |
+| NAV-03 | Phase 66 | Complete |
+| NAV-04 | Phase 66 | Complete |
 | PRICE-01 | Phase 67 | Pending |
 | PRICE-02 | Phase 67 | Pending |
 | PRICE-03 | Phase 67 | Pending |

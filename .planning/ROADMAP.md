@@ -14,8 +14,8 @@ v2.3 is a consolidation milestone that fixes persistent UX bugs, expands CRM bro
 - [x] **Phase 62: Modal Scroll + Expand Fixes** - Fix scrolling and expand-to-page across all detail modals
 - [x] **Phase 63: Standalone CRM Pages** - Standalone Departments and Contacts pages under CRM
 - [x] **Phase 64: Task Creation on /tasks** - Add Task button with project selector on cross-project tasks page
-- [ ] **Phase 65: Internal Project Flag** - Internal projects (Motionvii / Talenta) without external company requirement
-- [ ] **Phase 66: Customizable Sidebar Navigation** - Users choose which sidebar links to show/hide
+- [x] **Phase 65: Internal Project Flag** - Internal projects (Motionvii / Talenta) without external company requirement
+- [x] **Phase 66: Customizable Sidebar Navigation** - Users choose which sidebar links to show/hide
 - [ ] **Phase 67: Line Item Pricing History** - Quantity/unit price tracking with by-item and by-client views
 
 ## Phase Details
@@ -90,10 +90,11 @@ Plans:
   2. Sidebar visibility preferences persist across sessions (stored in database per user)
   3. Dashboard and Settings nav items are always visible and cannot be hidden
   4. Navigating directly to a URL whose nav item is hidden auto-reveals that item in the sidebar
-**Plans**: TBD
+**Plans**: 2 plans in 2 waves
 
 Plans:
-- [ ] 66-01: TBD
+- [x] 66-01: Schema + API + Nav Visibility Hook (wave 1)
+- [x] 66-02: Sidebar Filtering + Settings UI (wave 2)
 
 ### Phase 67: Line Item Pricing History
 **Goal**: Users can track and compare item pricing with quantity and unit price detail
@@ -121,6 +122,6 @@ Phases execute in order: 62 -> 63 -> 64 -> 65 -> 66 -> 67
 | 62. Modal Scroll + Expand Fixes | 2/2 | Complete | 2026-01-28 |
 | 63. Standalone CRM Pages | 3/3 | Complete | 2026-01-28 |
 | 64. Task Creation on /tasks | 2/2 | Complete | 2026-01-28 |
-| 65. Internal Project Flag | 0/TBD | Not started | - |
-| 66. Customizable Sidebar Navigation | 0/TBD | Not started | - |
+| 65. Internal Project Flag | 2/2 | Complete | 2026-01-28 |
+| 66. Customizable Sidebar Navigation | 2/2 | Complete | 2026-01-28 |
 | 67. Line Item Pricing History | 0/TBD | Not started | - |
