@@ -51,12 +51,12 @@ Requirements for v2.3 release. Each maps to roadmap phases.
 
 ### Line Item Pricing
 
-- [ ] **PRICE-01**: Cost model has optional quantity and unitPrice fields
-- [ ] **PRICE-02**: CostForm supports entering quantity and unit price with auto-calculated total
-- [ ] **PRICE-03**: AI receipt import persists quantity and unitPrice from extraction
-- [ ] **PRICE-04**: By-item pricing history view showing all prices for a normalized item across projects
-- [ ] **PRICE-05**: By-client pricing history view showing all items charged to a specific company
-- [ ] **PRICE-06**: Existing cost aggregation (sum of amount) remains unchanged (amount is canonical total)
+- [x] **PRICE-01**: Cost model has optional quantity and unitPrice fields
+- [x] **PRICE-02**: CostForm supports entering quantity and unit price with auto-calculated total
+- [x] **PRICE-03**: AI receipt import persists quantity and unitPrice from extraction
+- [x] **PRICE-04**: By-item pricing history view showing all prices for a normalized item across projects
+- [x] **PRICE-05**: By-client pricing history view showing all items charged to a specific company
+- [x] **PRICE-06**: Existing cost aggregation (sum of amount) remains unchanged (amount is canonical total)
 
 ## v2 Requirements
 
@@ -129,12 +129,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | NAV-02 | Phase 66 | Complete |
 | NAV-03 | Phase 66 | Complete |
 | NAV-04 | Phase 66 | Complete |
-| PRICE-01 | Phase 67 | Pending |
-| PRICE-02 | Phase 67 | Pending |
-| PRICE-03 | Phase 67 | Pending |
-| PRICE-04 | Phase 67 | Pending |
-| PRICE-05 | Phase 67 | Pending |
-| PRICE-06 | Phase 67 | Pending |
+| PRICE-01 | Phase 67 | Complete |
+| PRICE-02 | Phase 67 | Complete |
+| PRICE-03 | Phase 67 | Complete |
+| PRICE-04 | Phase 67 | Complete |
+| PRICE-05 | Phase 67 | Complete |
+| PRICE-06 | Phase 67 | Complete |
 
 **Coverage:**
 - v1 requirements: 33 total

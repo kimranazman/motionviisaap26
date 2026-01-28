@@ -16,7 +16,7 @@ v2.3 is a consolidation milestone that fixes persistent UX bugs, expands CRM bro
 - [x] **Phase 64: Task Creation on /tasks** - Add Task button with project selector on cross-project tasks page
 - [x] **Phase 65: Internal Project Flag** - Internal projects (Motionvii / Talenta) without external company requirement
 - [x] **Phase 66: Customizable Sidebar Navigation** - Users choose which sidebar links to show/hide
-- [ ] **Phase 67: Line Item Pricing History** - Quantity/unit price tracking with by-item and by-client views
+- [x] **Phase 67: Line Item Pricing History** - Quantity/unit price tracking with by-item and by-client views
 
 ## Phase Details
 
@@ -106,11 +106,11 @@ Plans:
   3. User can view pricing history for a specific normalized item across all projects (by-item view)
   4. User can view all items charged to a specific company (by-client view)
   5. Existing cost aggregation (sum of amount) remains unchanged -- amount is the canonical total
-**Plans**: TBD
+**Plans**: 2 plans in 2 waves
 
 Plans:
-- [ ] 67-01: TBD
-- [ ] 67-02: TBD
+- [x] 67-01: Schema + Cost CRUD + AI Import for Quantity/Unit Price (wave 1)
+- [x] 67-02: Pricing History Views (By-Item + By-Client) (wave 2)
 
 ## Progress
 
@@ -124,4 +124,4 @@ Phases execute in order: 62 -> 63 -> 64 -> 65 -> 66 -> 67
 | 64. Task Creation on /tasks | 2/2 | Complete | 2026-01-28 |
 | 65. Internal Project Flag | 2/2 | Complete | 2026-01-28 |
 | 66. Customizable Sidebar Navigation | 2/2 | Complete | 2026-01-28 |
-| 67. Line Item Pricing History | 0/TBD | Not started | - |
+| 67. Line Item Pricing History | 2/2 | Complete | 2026-01-28 |
