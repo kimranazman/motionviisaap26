@@ -15,7 +15,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { Loader2, CalendarIcon } from 'lucide-react'
+import { Loader2, CalendarIcon, Plus } from 'lucide-react'
 import { TaskComments } from './task-comments'
 import { TaskTagSelect } from './task-tag-select'
 import { TEAM_MEMBER_OPTIONS, cn } from '@/lib/utils'
@@ -24,6 +24,7 @@ import {
   getTaskPriorityColor,
   formatTaskStatus,
   formatTaskPriority,
+  canAddSubtask,
 } from '@/lib/task-utils'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { DatePickerCalendar } from '@/components/ui/date-picker-with-presets'
@@ -50,6 +51,7 @@ interface Task {
   assignee: string | null
   projectId: string
   parentId: string | null
+  depth?: number
   tags?: TaskTag[]
 }
 
@@ -92,6 +94,11 @@ export function TaskDetailSheet({
   // Tags state - loaded from task
   const [tags, setTags] = useState<TaskTag[]>([])
 
+  // Subtask creation state
+  const [showSubtaskForm, setShowSubtaskForm] = useState(false)
+  const [subtaskTitle, setSubtaskTitle] = useState('')
+  const [isCreatingSubtask, setIsCreatingSubtask] = useState(false)
+
   // Initialize form when task changes
   useEffect(() => {
     if (task && open) {
@@ -103,6 +110,8 @@ export function TaskDetailSheet({
       setAssignee(task.assignee || '')
       setTags(task.tags || [])
       setError(null)
+      setShowSubtaskForm(false)
+      setSubtaskTitle('')
     }
   }, [task, open])
 
@@ -153,6 +162,31 @@ export function TaskDetailSheet({
   // Handle tags change - refresh task data
   const handleTagsChange = () => {
     onTaskUpdate()
+  }
+
+  // Handle subtask creation
+  const handleCreateSubtask = async () => {
+    if (!task || !subtaskTitle.trim()) return
+    setIsCreatingSubtask(true)
+    try {
+      const response = await fetch(`/api/projects/${projectId}/tasks`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: subtaskTitle.trim(),
+          parentId: task.id,
+        }),
+      })
+      if (response.ok) {
+        setSubtaskTitle('')
+        setShowSubtaskForm(false)
+        onTaskUpdate()
+      }
+    } catch (err) {
+      console.error('Failed to create subtask:', err)
+    } finally {
+      setIsCreatingSubtask(false)
+    }
   }
 
   if (!task) return null
@@ -330,6 +364,61 @@ export function TaskDetailSheet({
                 onTagsChange={handleTagsChange}
               />
             </div>
+
+            {/* Subtasks */}
+            {canAddSubtask(task.depth ?? 0) && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label>Subtasks</Label>
+                  {!showSubtaskForm && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowSubtaskForm(true)}
+                    >
+                      <Plus className="mr-1 h-4 w-4" />
+                      Add Subtask
+                    </Button>
+                  )}
+                </div>
+                {showSubtaskForm && (
+                  <div className="flex gap-2">
+                    <Input
+                      value={subtaskTitle}
+                      onChange={(e) => setSubtaskTitle(e.target.value)}
+                      placeholder="Subtask title..."
+                      autoFocus
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && subtaskTitle.trim()) {
+                          handleCreateSubtask()
+                        }
+                        if (e.key === 'Escape') {
+                          setShowSubtaskForm(false)
+                          setSubtaskTitle('')
+                        }
+                      }}
+                    />
+                    <Button
+                      size="sm"
+                      onClick={handleCreateSubtask}
+                      disabled={!subtaskTitle.trim() || isCreatingSubtask}
+                    >
+                      {isCreatingSubtask ? 'Adding...' : 'Add'}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setShowSubtaskForm(false)
+                        setSubtaskTitle('')
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Error message */}
             {error && <p className="text-sm text-red-500">{error}</p>}
