@@ -79,7 +79,7 @@ export function DetailView({
           side={isMobile ? 'bottom' : 'right'}
           resizable={!isMobile}
           className={cn(
-            isMobile && 'h-[85vh] rounded-t-2xl',
+            isMobile && 'h-[85vh] rounded-t-2xl flex flex-col',
             !isMobile && 'flex flex-col',
             className
           )}
