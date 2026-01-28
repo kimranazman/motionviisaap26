@@ -9,6 +9,8 @@ import {
   ClipboardList,
   Ticket,
   Building2,
+  Building,
+  Contact,
   Funnel,
   FolderKanban,
   Briefcase,
@@ -55,6 +57,8 @@ export const navGroups: NavGroup[] = [
     label: 'CRM',
     items: [
       { name: 'Companies', href: '/companies', icon: Building2 },
+      { name: 'Departments', href: '/departments', icon: Building },
+      { name: 'Contacts', href: '/contacts', icon: Contact },
       { name: 'Pipeline', href: '/pipeline', icon: Funnel },
       { name: 'Potential Projects', href: '/potential-projects', icon: FolderKanban },
       { name: 'Projects', href: '/projects', icon: Briefcase },
