@@ -87,11 +87,34 @@ export function ProjectsPageClient({
   }
 
   // Handle project update from detail sheet
-  const handleProjectUpdated = (updatedProject: ProjectForPage) => {
+  // The sheet returns its own Project type, so we merge with our extended data
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleProjectUpdated = (updatedProject: any) => {
     setProjects(prev =>
-      prev.map(p => (p.id === updatedProject.id ? updatedProject : p))
+      prev.map(p => {
+        if (p.id === updatedProject.id) {
+          // Merge: keep our kanban fields, update from sheet
+          return {
+            ...p,
+            ...updatedProject,
+            taskCount: p.taskCount,
+            taskDoneCount: p.taskDoneCount,
+            totalCost: p.totalCost,
+          }
+        }
+        return p
+      })
     )
-    setSelectedProject(updatedProject)
+    // Update selected project maintaining kanban fields
+    if (selectedProject) {
+      setSelectedProject({
+        ...selectedProject,
+        ...updatedProject,
+        taskCount: selectedProject.taskCount,
+        taskDoneCount: selectedProject.taskDoneCount,
+        totalCost: selectedProject.totalCost,
+      })
+    }
   }
 
   // Handle project delete from detail sheet
