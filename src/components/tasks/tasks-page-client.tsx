@@ -27,6 +27,7 @@ import { TEAM_MEMBER_OPTIONS } from '@/lib/utils'
 import { TaskFilterBar, type DueDateFilter } from './task-filter-bar'
 import { TaskTableView } from './task-table-view'
 import { TaskKanbanView } from './task-kanban-view'
+import { TaskKanbanProjectView } from './task-kanban-project-view'
 import { TaskDetailSheet } from '@/components/projects/task-detail-sheet'
 import { ProjectSelect } from './project-select'
 
@@ -58,6 +59,7 @@ interface TasksPageClientProps {
 }
 
 const STORAGE_KEY = 'tasks-view-preference'
+const GROUPING_STORAGE_KEY = 'tasks-grouping-preference'
 
 function matchesDueDateFilter(
   task: { dueDate: string | null; status: string },
@@ -108,6 +110,9 @@ export function TasksPageClient({ initialTasks, projects, allProjects }: TasksPa
   // View state
   const [viewMode, setViewMode] = useState<'table' | 'kanban'>('table')
 
+  // Grouping mode state (only applies to kanban view)
+  const [groupMode, setGroupMode] = useState<'status' | 'project'>('status')
+
   // Detail sheet state
   const [selectedTask, setSelectedTask] = useState<CrossProjectTask | null>(null)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
@@ -136,12 +141,35 @@ export function TasksPageClient({ initialTasks, projects, allProjects }: TasksPa
     }
   }, [])
 
+  // Load grouping preference from localStorage (SSR-safe)
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(GROUPING_STORAGE_KEY)
+      if (stored === 'status' || stored === 'project') {
+        setGroupMode(stored)
+      }
+    } catch {
+      /* ignore */
+    }
+  }, [])
+
   // Persist view preference
   const handleViewChange = (mode: string) => {
     const validMode = mode as 'table' | 'kanban'
     setViewMode(validMode)
     try {
       localStorage.setItem(STORAGE_KEY, validMode)
+    } catch {
+      /* ignore */
+    }
+  }
+
+  // Persist grouping preference
+  const handleGroupingChange = (mode: string) => {
+    const validMode = mode as 'status' | 'project'
+    setGroupMode(validMode)
+    try {
+      localStorage.setItem(GROUPING_STORAGE_KEY, validMode)
     } catch {
       /* ignore */
     }
@@ -396,23 +424,44 @@ export function TasksPageClient({ initialTasks, projects, allProjects }: TasksPa
             </DialogContent>
           </Dialog>
 
-          {/* View Toggle */}
-          <Tabs
-            value={viewMode}
-            onValueChange={handleViewChange}
-            className="shrink-0 w-full md:w-auto"
-          >
-            <TabsList className="bg-white/70 backdrop-blur-xl border border-gray-200/50">
-              <TabsTrigger value="table" className="gap-1.5 data-[state=active]:bg-white">
-                <TableIcon className="h-4 w-4" />
-                Table
-              </TabsTrigger>
-              <TabsTrigger value="kanban" className="gap-1.5 data-[state=active]:bg-white">
-                <KanbanSquare className="h-4 w-4" />
-                Kanban
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+          {/* View Toggle + Grouping Toggle */}
+          <div className="flex items-center gap-2">
+            {/* Grouping Toggle (only in kanban mode) */}
+            {viewMode === 'kanban' && (
+              <Tabs
+                value={groupMode}
+                onValueChange={handleGroupingChange}
+                className="shrink-0"
+              >
+                <TabsList className="bg-white/70 backdrop-blur-xl border border-gray-200/50 h-9">
+                  <TabsTrigger value="status" className="text-xs px-2 data-[state=active]:bg-white">
+                    By Status
+                  </TabsTrigger>
+                  <TabsTrigger value="project" className="text-xs px-2 data-[state=active]:bg-white">
+                    By Project
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            )}
+
+            {/* View Toggle */}
+            <Tabs
+              value={viewMode}
+              onValueChange={handleViewChange}
+              className="shrink-0 w-full md:w-auto"
+            >
+              <TabsList className="bg-white/70 backdrop-blur-xl border border-gray-200/50">
+                <TabsTrigger value="table" className="gap-1.5 data-[state=active]:bg-white">
+                  <TableIcon className="h-4 w-4" />
+                  Table
+                </TabsTrigger>
+                <TabsTrigger value="kanban" className="gap-1.5 data-[state=active]:bg-white">
+                  <KanbanSquare className="h-4 w-4" />
+                  Kanban
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
         </div>
       </div>
 
@@ -421,9 +470,24 @@ export function TasksPageClient({ initialTasks, projects, allProjects }: TasksPa
         <TaskTableView tasks={filteredTasks} onTaskClick={handleTaskClick} />
       )}
 
-      {/* Kanban View */}
-      {viewMode === 'kanban' && (
+      {/* Kanban View (By Status) */}
+      {viewMode === 'kanban' && groupMode === 'status' && (
         <TaskKanbanView
+          tasks={filteredTasks}
+          onTaskClick={handleTaskClick}
+          onTasksChange={(updatedTasks) => {
+            // Merge updated tasks back into full tasks array
+            setTasks(prev => prev.map(t => {
+              const updated = updatedTasks.find(u => u.id === t.id)
+              return updated || t
+            }))
+          }}
+        />
+      )}
+
+      {/* Kanban View (By Project) */}
+      {viewMode === 'kanban' && groupMode === 'project' && (
+        <TaskKanbanProjectView
           tasks={filteredTasks}
           onTaskClick={handleTaskClick}
           onTasksChange={(updatedTasks) => {
