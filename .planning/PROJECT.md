@@ -10,11 +10,11 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 ## Current State
 
-**Version:** v2.1 Navigation & Views (shipped 2026-01-28)
-**Codebase:** ~38,400 LOC TypeScript
+**Version:** v2.2 Bug Fixes & UX Polish (shipped 2026-01-28)
+**Codebase:** ~40,300 LOC TypeScript
 **Tech stack:** Next.js 14, Prisma, MariaDB, Tailwind/shadcn, NextAuth.js, OpenAI
 
-**v2.1 delivered:** Unified collapsible sidebar navigation with shared config, cross-project /tasks page with table/kanban views and drag-and-drop, per-member workload dashboards (/members overview + /members/[name] detail with 5 sections).
+**v2.2 delivered:** Fixed critical UI bugs (project detail navigation, modal scroll, sidebar scroll, dashboard breakpoint persistence, kanban drag handles, page spacing), added full event CRUD, and enhanced calendar with week view and full KR labels.
 
 ## Requirements
 
@@ -203,26 +203,22 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - ✓ /members/[name] detail with stats header and 5 sections (KRs, Initiatives, Accountable, Tasks, Support Tasks) — v2.1
 - ✓ Red highlighting for overdue/AT_RISK/HIGH priority items — v2.1
 
+**v2.2 Bug Fixes & UX Polish:**
+- ✓ Fix project detail navigation error (dedicated /projects/[id] page) — v2.2
+- ✓ Fix unscrollable modals (removed conflicting grid class, added flex layout) — v2.2
+- ✓ Fix sidebar scroll (flex-col layout, overflow-y-auto on nav) — v2.2
+- ✓ Dashboard per-breakpoint layout persistence — v2.2
+- ✓ Kanban full-card drag on desktop, touch handles on mobile — v2.2
+- ✓ Companies and Suppliers page spacing matching Price Comparison — v2.2
+- ✓ Departments visible and functional in company detail view — v2.2
+- ✓ Tasks visible and functional in project detail view — v2.2
+- ✓ Event CRUD (create, edit, delete) with form modal and card actions — v2.2
+- ✓ Calendar week view toggle with expanded day cells — v2.2
+- ✓ Calendar full KR labels (e.g., "KR1.1 - Achieve RM1M Revenue") — v2.2
+
 ### Active
 
-<!-- v2.2 Bug Fixes & UX Polish -->
-
-**Bug Fixes:**
-- [ ] Fix project detail error when clicking project cards on /projects page
-- [ ] Fix unscrollable modals when content overflows viewport
-- [ ] Fix unscrollable sidebar menu
-- [ ] Fix dashboard saving mobile layout that overwrites desktop layout (need per-breakpoint persistence)
-- [ ] Fix kanban drag handles: hide dotted handles on desktop, allow drag from anywhere on card
-- [ ] Fix Companies and Suppliers page spacing/whitespace (match Price Comparison layout)
-
-**UI/Discoverability Fixes:**
-- [ ] Fix departments not appearing in company detail UI (code exists from v1.4 but not rendering)
-- [ ] Fix tasks/subtasks not appearing in project detail UI (code exists from v1.4 but not visible)
-
-**New Features:**
-- [ ] Event CRUD: create new events, edit existing events, delete events (currently read-only)
-- [ ] Calendar week view with more space per day (replace "+N more" overflow)
-- [ ] Calendar KR labels show full name (e.g., "KR1.1 - Achieve RM1M Revenue" not just "KR1.1")
+<!-- Next milestone requirements will be defined via /gsd:new-milestone -->
 
 ### Out of Scope
 
@@ -253,8 +249,8 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - Accessible at https://saap.motionvii.com (Cloudflare tunnel)
 - Data seeded from MotionVii_SAAP_2026_v2.xlsx (6 KRs, 37 initiatives, 30 support tasks, 59 KR join links)
 - v2.1 shipped — collapsible sidebar, cross-project tasks, member workload dashboards
-- v2.2 in progress — bug fixes, UX polish, event CRUD, calendar enhancements
-- 38,400 LOC TypeScript across 56 phases (v1.0-v2.1)
+- v2.2 shipped — bug fixes, UX polish, event CRUD, calendar enhancements
+- 40,300 LOC TypeScript across 61 phases (v1.0-v2.2)
 - Primary admin: khairul@talenta.com.my
 
 ## Infrastructure
@@ -366,4 +362,4 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | NOT clause for Accountable For section | Prevents double-counting members who are both accountable and personInCharge | ✓ Good |
 
 ---
-*Last updated: 2026-01-28 after v2.2 milestone start*
+*Last updated: 2026-01-28 after v2.2 milestone*

@@ -1,5 +1,45 @@
 # Milestone History
 
+## v2.2: Bug Fixes & UX Polish
+
+**Shipped:** 2026-01-28
+**Duration:** 1 day
+**Phases:** 5 (Phases 57-61)
+**Plans:** 11
+**Stats:** 23 commits, 20 files changed, +1,163 / -146 lines
+
+### Summary
+
+Fixed critical UI bugs (project detail navigation error, unscrollable modals, sidebar scroll, dashboard breakpoint persistence, kanban drag handles, page spacing), verified department and task visibility in detail views, added full event CRUD (create, edit, delete), and enhanced the calendar with week view toggle and full KR labels.
+
+### Key Accomplishments
+
+- Fixed project detail navigation with dedicated /projects/[id] server page and client wrapper
+- Fixed modal scroll by removing conflicting grid class and adding flex layout for mobile containers
+- Fixed sidebar scroll with flex-col layout and overflow-y-auto on nav element
+- Per-breakpoint dashboard layout persistence so mobile saves don't overwrite desktop
+- Full-card drag on desktop kanban (hidden grip handles), touch handles on mobile
+- Event CRUD with POST/PATCH/DELETE API routes, form modal for create/edit, delete confirmation dialog
+- Calendar week view toggle with expanded day cells and no item truncation
+- Full KR labels in calendar (e.g., "KR1.1 - Achieve RM1M Revenue" instead of just identifier)
+
+### Requirements Delivered
+
+| Category | Count | IDs |
+|----------|-------|-----|
+| Bug Fixes (BUG) | 8 | BUG-01 to BUG-08 |
+| UI Visibility (VIS) | 5 | VIS-01 to VIS-05 |
+| Events (EVT) | 5 | EVT-01 to EVT-05 |
+| Calendar (CAL) | 4 | CAL-01 to CAL-04 |
+| **Total** | **22** | |
+
+### Artifacts
+
+- Roadmap: `.planning/milestones/v2.2-ROADMAP.md`
+- Requirements: `.planning/milestones/v2.2-REQUIREMENTS.md`
+
+---
+
 ## v2.1: Navigation & Views
 
 **Shipped:** 2026-01-28
