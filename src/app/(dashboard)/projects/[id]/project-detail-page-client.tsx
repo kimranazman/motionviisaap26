@@ -97,6 +97,8 @@ interface Project {
   startDate: string | null
   endDate: string | null
   isArchived?: boolean
+  isInternal?: boolean
+  internalEntity?: string | null
   company: { id: string; name: string } | null
   contact: { id: string; name: string } | null
   initiative: { id: string; title: string } | null
@@ -336,6 +338,11 @@ export function ProjectDetailPageClient({ project }: ProjectDetailPageClientProp
                 <Badge className={cn('shrink-0', getProjectStatusColor(project.status))}>
                   {formatProjectStatus(project.status)}
                 </Badge>
+                {project.isInternal && (
+                  <Badge className="shrink-0 bg-amber-50 text-amber-700 border-amber-200">
+                    Internal
+                  </Badge>
+                )}
                 {project.isArchived && (
                   <Badge variant="outline" className="text-gray-500">
                     Archived
@@ -345,11 +352,15 @@ export function ProjectDetailPageClient({ project }: ProjectDetailPageClientProp
               <h1 className="text-xl font-semibold text-gray-900 truncate">
                 {project.title}
               </h1>
-              {project.company && (
+              {project.company ? (
                 <p className="text-sm text-gray-500 mt-0.5">
                   {project.company.name}
                 </p>
-              )}
+              ) : project.isInternal && project.internalEntity ? (
+                <p className="text-sm text-gray-500 mt-0.5">
+                  {project.internalEntity === 'MOTIONVII' ? 'Motionvii' : 'Talenta'}
+                </p>
+              ) : null}
             </div>
             <Link href={`/projects?open=${project.id}`}>
               <Button variant="outline" size="sm">
@@ -374,14 +385,16 @@ export function ProjectDetailPageClient({ project }: ProjectDetailPageClientProp
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
-              {/* Company */}
+              {/* Company / Entity */}
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
                   <Building2 className="h-3.5 w-3.5" />
-                  Company
+                  {project.isInternal ? 'Entity' : 'Company'}
                 </label>
                 <div className="h-9 px-3 flex items-center text-sm bg-gray-50 rounded-md border">
-                  {project.company?.name || 'No company'}
+                  {project.company?.name || (project.isInternal && project.internalEntity
+                    ? (project.internalEntity === 'MOTIONVII' ? 'Motionvii' : 'Talenta')
+                    : 'No company')}
                 </div>
               </div>
 
