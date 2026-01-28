@@ -238,7 +238,7 @@ export function PotentialDetailSheet({
       if (response.ok) {
         const updated = await response.json()
         onUpdate(updated)
-        toast.success(updated.isArchived ? 'Potential archived' : 'Potential unarchived')
+        toast.success(updated.isArchived ? 'Repeat client archived' : 'Repeat client unarchived')
       } else {
         toast.error('Failed to update archive status')
       }
@@ -322,7 +322,7 @@ export function PotentialDetailSheet({
 
       {isReadOnly ? (
         <div className="text-sm text-muted-foreground text-center py-2 px-4">
-          Converted potentials cannot be edited
+          Converted repeat clients cannot be edited
         </div>
       ) : (
         <Button
