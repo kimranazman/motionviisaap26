@@ -1007,3 +1007,244 @@ All four research dimensions converge on the same conclusion: this milestone is 
 
 *v1.5 Research completed: 2026-01-26*
 *Ready for roadmap: yes*
+
+---
+---
+
+# v2.3 Research Summary: CRM & UX Improvements
+
+**Project:** SAAP 2026 v2 -- v2.3 CRM & UX Improvements
+**Domain:** CRM entity management, modal UX, sidebar customization, line item pricing
+**Researched:** 2026-01-28
+**Confidence:** HIGH
+
+---
+
+## Executive Summary
+
+v2.3 is a consolidation milestone that improves daily-use workflows rather than introducing new architectural patterns. The six features -- modal scroll fixes, standalone Departments/Contacts pages, Add Task on /tasks, internal project flag, customizable sidebar, and line item pricing history -- are all buildable with **zero new npm dependencies**. Every feature maps directly to patterns already proven in the codebase across 61+ completed phases. This is the most "pattern-reuse-heavy" milestone to date.
+
+The recommended approach starts with **UX bug fixes** (modal scroll, expand-to-page), progresses through **additive CRUD pages** (standalone Departments and Contacts following the `/companies` template), then tackles **schema changes** (internal project flag making `companyId` nullable, sidebar preferences in `UserPreferences`, quantity/unitPrice on Cost). The architecture research confirms that all six features follow the established Server Component page + Client list component + API route pattern. The STACK research explicitly evaluated and rejected 6 packages (zustand, TanStack Table, body-scroll-lock, vaul, SWR, react-checkbox) -- the existing stack covers every need.
+
+The single highest-risk change is **making `Project.companyId` optional** for internal projects. The PITFALLS research identified 26+ files that assume `company` is non-null on projects, including runtime crash points in project cards, pipeline cards, and the AI pending endpoint. This schema change must be done with a full file audit and type-driven refactoring, not incrementally discovered. The second risk area is **line item pricing history**, which requires adding `quantity`/`unitPrice` fields to the Cost model without breaking existing aggregation logic that sums `cost.amount` -- the canonical total must remain `amount`, with quantity/unitPrice as informational fields only.
+
+---
+
+## Key Findings
+
+### Recommended Stack
+
+From v2.3-STACK.md -- zero new packages required. All features buildable with the existing stack.
+
+**Core technologies leveraged (unchanged):**
+- **Next.js 14.2.28 (App Router)** -- server components for new pages, API routes for CRUD
+- **Prisma 6.19.2** -- schema migrations for 3 model changes (Project, Cost, UserPreferences)
+- **Radix UI primitives** -- Dialog scroll fixes (CSS-only), Switch for toggles, Tabs for pricing views
+- **shadcn/ui** -- Table, Select, Input, Dialog for new CRUD pages
+- **cmdk 1.1.1** -- project selector combobox for task creation dialog
+
+**Packages explicitly evaluated and rejected:**
+
+| Package | Why Rejected |
+|---------|-------------|
+| `zustand` | React Context + API fetch is the established pattern; 3 users do not need client-state optimization |
+| `@tanstack/react-table` | Existing shadcn Table + manual filtering works at this data scale; adding a parallel pattern mid-project is risky |
+| `body-scroll-lock` | Radix's built-in `react-remove-scroll` handles this; CSS fixes are sufficient |
+| `vaul` | Existing Sheet component with resize already works; switching adds risk |
+| `swr` / `@tanstack/react-query` | Existing fetch-in-useEffect is consistent; introducing a data fetching library mid-project fragments the codebase |
+| `@radix-ui/react-checkbox` | `@radix-ui/react-switch` (already installed) is more appropriate for on/off toggles |
+
+See: `.planning/research/v2.3-STACK.md`
+
+### Expected Features
+
+From v2.3-FEATURES.md -- prioritized with dependency analysis.
+
+**Must Have (Table Stakes):**
+- Modal scroll fix (CSS-only, audit all `DetailView` consumers)
+- Expand-to-page consistency (wire `expandHref` on existing modals)
+- Standalone Departments page (`/departments`) with company filter
+- Standalone Contacts page (`/contacts`) with company + department cascading filters
+- Cross-entity navigation links (department -> company, contact -> company/department)
+- Department and Contact detail modals (following `CompanyDetailModal` pattern)
+- Nav config update (add Departments, Contacts to CRM group)
+- Add Task button on `/tasks` page with project selector dialog
+- Internal project flag (`isInternal` boolean) with visual badge and filter
+- Internal project filter on `/projects` page (All / Client / Internal)
+
+**Should Have (Differentiators):**
+- Customizable sidebar (show/hide nav items via Settings, persisted in `UserPreferences`)
+- Line item pricing history by-item view (quantity/unitPrice on Cost model)
+
+**Defer to v2.4+:**
+- By-client pricing history view
+- Pricing trend visualization (sparklines)
+- Contact quick-search in header
+- Bulk contact import (CSV)
+- Drag-to-reorder sidebar items
+- Sidebar item badges (counts)
+
+**Anti-Features (do NOT build):**
+- Full CRM contact management suite (email tracking, call logging, activity timelines)
+- Complex role-based sidebar visibility (3 users do not need per-role presets)
+- Real-time pricing alerts (static history page is sufficient)
+- Inline sidebar customization (right-click to hide); use Settings page instead
+- Pricing prediction / ML models
+- Multi-currency pricing history
+- Contact activity timeline
+
+See: `.planning/research/v2.3-FEATURES.md`
+
+### Architecture Approach
+
+The architecture is strictly additive. Two new standalone pages (`/departments`, `/contacts`) follow the exact pattern of the existing `/companies` page: server component fetches all records with relations, passes to a client list component with search/filter/table/detail-modal. Task creation on `/tasks` wraps the existing `TaskForm` in a Dialog with a project combobox. Internal projects make `companyId` nullable on the Project model and add conditional rendering throughout. Sidebar customization adds a `sidebarConfig` JSON field to `UserPreferences` and filters nav items at render time. Line item pricing adds `quantity`/`unitPrice` nullable fields to Cost.
+
+**Schema changes (single migration):**
+1. `Project.companyId` -- `String` becomes `String?` (nullable); add `isInternal Boolean @default(false)`
+2. `Cost` -- add `quantity Decimal?` and `unitPrice Decimal?` (nullable, backward-compatible)
+3. `UserPreferences` -- add `sidebarConfig Json?` (same pattern as `dashboardLayout`)
+
+**Key architecture decisions:**
+- Add `quantity`/`unitPrice` to existing `Cost` model (NOT a separate `InvoiceLineItem` table) -- the STACK research proposed a new model but the ARCHITECTURE research correctly identifies that costs ARE line items; a separate model over-normalizes
+- Use `hiddenItems: string[]` array for sidebar config (NOT a full visibility map) -- default is "show all", new nav items auto-appear, simpler merge logic
+- Keep `amount` as canonical total on Cost -- `quantity`/`unitPrice` are informational/audit fields, existing aggregation (`sum(amount)`) remains unchanged
+
+See: `.planning/research/v2.3-ARCHITECTURE.md`
+
+### Critical Pitfalls
+
+From v2.3-PITFALLS.md -- 4 critical, 4 moderate, 4 minor pitfalls identified.
+
+1. **ScrollArea height collapse in Dialog (Critical)** -- Radix `ScrollArea` inside `DialogContent` fails to scroll because `overflow-y-auto` on the container competes with `ScrollArea`'s internal viewport. Fix: remove `overflow-y-auto` from `DialogContent`, give `ScrollArea` explicit bounded height. Test ALL 7 detail sheet types in both dialog and drawer modes.
+
+2. **Expand-to-page renders modal-on-empty-page (Critical)** -- `/projects/[id]` page wraps `ProjectDetailSheet` with `open={true}` instead of rendering content inline. This is not a true full-page view. Fix: extract shared content components (`DetailContent`) usable by both modal and page contexts. Design this pattern before creating any new standalone entity pages.
+
+3. **companyId optional cascades through 26+ files (Critical)** -- Changing `Project.companyId` to nullable triggers runtime crashes (`Cannot read property 'name' of null`) in project cards, pipeline cards, potential cards, supplier detail modal, manifest utils, and the AI pending endpoint. Fix: audit ALL `project.company` references first, change TypeScript interfaces to `company: ... | null`, add null guards everywhere, then apply the schema migration.
+
+4. **Line item pricing breaks Cost aggregation (Critical)** -- Adding `quantity`/`unitPrice` introduces ambiguity about whether `amount` equals `quantity * unitPrice`. Fix: keep `amount` as the canonical total that all aggregation uses. `quantity`/`unitPrice` are informational. Validate that `amount == quantity * unitPrice` (within rounding tolerance) on save, but store all three independently.
+
+5. **AlertDialog inside Dialog focus trap conflict (Moderate)** -- Nested dialog portals can cause focus trap issues when AlertDialog closes. Test the full flow after scroll fixes.
+
+6. **Sidebar customization lock-out (Moderate)** -- Users hiding all nav items creates a disorienting experience. Enforce: Dashboard and Settings always visible, auto-reveal active page if its nav item is hidden, provide "Reset to defaults" button.
+
+7. **Standalone pages duplicate data fetching (Moderate)** -- New entity pages must share data-fetching logic with existing modals to prevent divergence. Extract shared data layer utilities.
+
+8. **AI quantity extraction accuracy for Malaysian invoices (Moderate)** -- Lump sum invoices, Malay language labels, and mixed formats reduce extraction accuracy. Cross-validate `quantity * unitPrice == lineTotal`, default to lump sum when ambiguous.
+
+See: `.planning/research/v2.3-PITFALLS.md`
+
+---
+
+## Implications for Roadmap
+
+Based on combined research, the milestone has a clear dependency structure. Modal fixes must come first (every new feature adds content to modals). CRM pages are independent of each other but both need nav config updates before sidebar customization can be finalized. Internal projects touch the core data model and should be isolated. Line item pricing is the most complex and should come last.
+
+### Phase 1: Modal Scroll + Expand Fixes
+
+**Rationale:** This is a blocking UX fix. Every subsequent feature (CRM pages, pricing history) renders content inside modals. The scroll issue gets worse as more content is added. Fix the foundation before building on it.
+**Delivers:** Fixed `DialogContent` scroll behavior, consistent `ScrollArea` usage across all detail sheets, `overscroll-behavior: contain` for mobile, verified expand-to-page behavior.
+**Addresses:** Modal scroll fix (table stakes), expand-to-page consistency (table stakes).
+**Avoids:** Pitfall #1 (ScrollArea height collapse), Pitfall #2 (modal-on-page), Pitfall #5 (AlertDialog focus trap), Pitfall #9 (iOS bounce).
+
+### Phase 2: Standalone CRM Pages (Departments + Contacts)
+
+**Rationale:** These are additive pages with no schema changes required. Both Department and Contact models already exist. The pages follow the exact pattern of `/companies` -- server fetch, client table, search/filter, detail modal. Building them together ensures consistent patterns and shared nav config update.
+**Delivers:** `/departments` page with company filter, `/contacts` page with company + department cascading filter, detail modals for both, cross-entity navigation links, nav config update adding both to CRM group.
+**Addresses:** Standalone Departments/Contacts (table stakes), company/department filters (table stakes), nav config update (table stakes), detail modals (table stakes).
+**Avoids:** Pitfall #7 (duplicate data fetching) by reusing existing component patterns.
+
+### Phase 3: Task Creation on /tasks Page
+
+**Rationale:** Independent feature with no dependencies on other phases. Missing CRUD entry point that breaks user expectations -- every other list page has an Add button. Uses existing `TaskForm` and `POST /api/projects/[id]/tasks` endpoint.
+**Delivers:** Add Task button on `/tasks` toolbar, AddTaskModal with project combobox selector, task form fields reusing existing TaskForm component.
+**Addresses:** Add Task button on /tasks (table stakes).
+**Avoids:** No significant pitfalls -- uses existing patterns entirely.
+
+### Phase 4: Internal Project Flag
+
+**Rationale:** Isolated in its own phase because it is the most impactful schema change (26+ files affected). Must be done with a full audit checklist, not incrementally. Making `companyId` nullable touches project forms, cards, pipeline cards, potential cards, supplier detail, AI pending endpoint, and manifest utils.
+**Delivers:** `isInternal` boolean and nullable `companyId` on Project model, "Internal Project" toggle on project form, "Internal" badge on project cards/detail, project list filter (All / Client / Internal), null guards on all `project.company` references.
+**Addresses:** Internal project flag (table stakes), internal project filter (table stakes), internal project visual distinction (table stakes).
+**Avoids:** Pitfall #3 (companyId cascade) by doing a full file audit before the schema change, using TypeScript compiler errors to find all crash points.
+
+### Phase 5: Customizable Sidebar Navigation
+
+**Rationale:** Depends on nav config being stable (all new items from Phase 2 already added). Self-contained feature that extends the existing `UserPreferences` pattern. The nav is now 18+ items across 3 groups -- personalization adds real value.
+**Delivers:** `sidebarConfig` JSON field on UserPreferences, sidebar customization UI in Settings page (switches per nav item), sidebar rendering that filters hidden items, safeguards (Dashboard/Settings always visible, auto-reveal active page).
+**Addresses:** Toggle nav link visibility (table stakes), sidebar customization UI in Settings (table stakes).
+**Avoids:** Pitfall #6 (lock-out) with minimum visible set and auto-reveal, Pitfall #10 (localStorage) by using server-side DB persistence.
+
+### Phase 6: Line Item Pricing History
+
+**Rationale:** Most complex feature in v2.3 -- schema change + form update + AI import pipeline modification + new query views. Saved for last so all other features are stable. The schema change is additive (nullable fields) so it does not break existing data.
+**Delivers:** `quantity` and `unitPrice` nullable fields on Cost model, updated CostForm with optional quantity/unitPrice inputs and auto-calculation, updated receipt import to persist quantity/unitPrice from AI extraction, updated supplier-items page with unit price column for comparison.
+**Addresses:** Line item pricing history by-item view (differentiator), AI-extracted line item detail persistence (differentiator).
+**Avoids:** Pitfall #4 (amount ambiguity) by keeping `amount` as canonical total, Pitfall #8 (AI extraction accuracy) with cross-validation rules and lump-sum defaults.
+
+### Phase Ordering Rationale
+
+- **Modal fixes first** because every subsequent feature adds content to modals, making scroll issues worse
+- **CRM pages second** because they have no schema dependencies and establish the component patterns used by subsequent phases
+- **Task creation third** because it is independent and quick -- a single dialog wrapping an existing form
+- **Internal projects fourth** because the 26+ file cascade must be done in isolation to catch regressions cleanly, and it benefits from CRM pages being stable
+- **Sidebar customization fifth** because it depends on nav config being finalized (new CRM items added in Phase 2)
+- **Line item pricing last** because it is the most complex integration (schema + AI pipeline + forms + display) and benefits from all other changes being stable
+
+### Research Flags
+
+Phases likely needing deeper review during planning:
+- **Phase 4 (Internal Projects):** Needs a comprehensive file audit of all `project.company` references before implementation. TypeScript compiler will surface most issues, but template strings and dynamic access patterns may be missed.
+- **Phase 6 (Line Item Pricing):** Needs clarification on whether the receipt import pipeline should auto-persist quantity/unitPrice or require manual review. The existing PENDING -> ANALYZED -> IMPORTED flow already has a review step -- leverage it.
+
+Phases with standard patterns (skip research):
+- **Phase 1 (Modal Scroll):** CSS-only fixes verified against Radix docs and shadcn issues.
+- **Phase 2 (CRM Pages):** Copy-paste pattern from existing `/companies` page. No unknowns.
+- **Phase 3 (Task Creation):** Wraps existing `TaskForm` in a Dialog. Trivial integration.
+- **Phase 5 (Sidebar Customization):** Mirrors existing `detailViewMode` preference pattern exactly.
+
+---
+
+## Confidence Assessment
+
+| Area | Confidence | Notes |
+|------|------------|-------|
+| Stack | HIGH | Zero new dependencies. All libraries already installed and battle-tested across 61+ phases. Stack research verified against package.json and explicitly rejected 6 alternative packages. |
+| Features | HIGH | Feature scope grounded in direct codebase analysis. Anti-features clearly scoped for 3-person team. Complexity estimates provided (48.5h total). |
+| Architecture | HIGH | Every feature follows an existing pattern proven in the codebase. Schema changes are additive or nullable. Build order validated against component dependencies. |
+| Pitfalls | HIGH | 12 pitfalls identified from codebase analysis, Radix/shadcn issue trackers, and domain research. The companyId cascade (Pitfall #3) was verified with a file-by-file audit identifying 26+ affected files. |
+
+**Overall confidence: HIGH**
+
+This is the highest-confidence milestone researched to date. The reason is simple: every feature is a variation of a pattern already implemented in the codebase. The risk profile is dominated by one factor -- the `companyId` nullable migration -- which is well-understood and preventable with a systematic audit.
+
+### Gaps to Address
+
+- **STACK vs ARCHITECTURE disagreement on pricing model:** The STACK research proposes a new `InvoiceLineItem` Prisma model for client-side pricing. The ARCHITECTURE research recommends adding `quantity`/`unitPrice` to the existing `Cost` model. **Resolution: Use the ARCHITECTURE approach (extend Cost).** The Cost model IS the line item store. A separate model creates unnecessary complexity and fragmented queries. Client-side invoice line items (revenue) are already handled by `project.revenue` -- granular line item tracking is a v2.4+ concern.
+
+- **Expand-to-page pattern design:** The current `/projects/[id]` page renders a modal on an empty page. Before creating CRM standalone pages, the team should decide: (a) fix the project detail page first as a template, or (b) accept modal-on-page as the pattern for now. **Recommendation: Accept the current pattern for v2.3** -- fixing it requires extracting shared content components which is a significant refactor. Note this as tech debt for v2.4.
+
+- **Receipt vs Invoice import for pricing:** The ARCHITECTURE research correctly identifies that receipt import (supplier expenses) creates Cost entries, while invoice import (client revenue) only updates `project.revenue`. For supplier pricing history, the focus should be on receipt import pipeline. The invoice import creating Cost entries would conflate revenue with expenses. **Recommendation: Only update receipt import to persist quantity/unitPrice.**
+
+---
+
+## Sources
+
+### Primary (HIGH confidence)
+- Radix Dialog/ScrollArea documentation and known issues (Issue #2307, shadcn #16, PR #8103)
+- Prisma documentation -- optional relations, nullable columns, JSON fields
+- Direct codebase analysis -- 20+ files audited for companyId references, dialog.tsx, detail-view.tsx, nav-config.ts patterns
+- shadcn/ui Sidebar documentation -- persistence patterns for sidebar state
+
+### Secondary (MEDIUM confidence)
+- Radix Primitives discussions (#1586) -- react-remove-scroll shifting fixed headers
+- Redgate and Vertabelo -- invoice line item and billing system schema design patterns
+- UX Planet, Nielsen Norman Group -- sidebar navigation best practices
+
+### Tertiary (LOW confidence)
+- Invoice OCR accuracy benchmarks (Mindee, AIMutliple) -- AI quantity extraction reliability
+- iOS Safari elastic bounce behavior -- needs runtime verification on actual devices
+
+---
+
+*v2.3 Research completed: 2026-01-28*
+*Ready for roadmap: yes*
