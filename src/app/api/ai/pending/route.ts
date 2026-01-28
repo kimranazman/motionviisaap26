@@ -72,7 +72,7 @@ export async function GET() {
         projectSummary = {
           id: doc.project.id,
           title: doc.project.title,
-          company: doc.project.company.name,
+          company: doc.project.company?.name || 'Internal',
           pendingInvoices: 0,
           pendingReceipts: 0,
         }
