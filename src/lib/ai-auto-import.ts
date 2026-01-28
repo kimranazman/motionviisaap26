@@ -30,6 +30,8 @@ interface AIResults {
   items?: Array<{
     description: string
     amount: number
+    quantity?: number
+    unitPrice?: number
     suggestedCategory?: string
     confidence: ConfidenceLevel
   }>
@@ -273,6 +275,8 @@ async function autoImportReceipt(
         projectId,
         description: item.description,
         amount: item.amount,
+        quantity: item.quantity ?? null,
+        unitPrice: item.unitPrice ?? null,
         categoryId,
         date: costDate,
         aiImported: true,

@@ -6,6 +6,8 @@ import { ReceiptExtraction } from '@/types/ai-extraction'
 interface ReceiptImportItem {
   description: string
   amount: number
+  quantity?: number | null
+  unitPrice?: number | null
   categoryId: string | null
   suggestedCategory?: string
   include: boolean
@@ -203,6 +205,8 @@ export async function POST(request: NextRequest) {
           projectId,
           description: item.description,
           amount: item.amount,
+          quantity: item.quantity ?? null,
+          unitPrice: item.unitPrice ?? null,
           categoryId: finalCategoryId,
           date: costDate,
           aiImported: true,

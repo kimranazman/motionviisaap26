@@ -32,6 +32,8 @@ export interface InvoiceExtraction {
 export interface ReceiptItem {
   description: string
   amount: number
+  quantity?: number
+  unitPrice?: number
   suggestedCategory?: string
   suggestedCategoryId?: string
   confidence: ConfidenceLevel
