@@ -1,9 +1,60 @@
 export const dynamic = 'force-dynamic'
 
 import { Header } from '@/components/layout/header'
-import { CalendarView } from '@/components/calendar/calendar-view'
+import { MainCalendar } from '@/components/calendar/main-calendar'
 import { ViewModeToggle } from '@/components/objectives/view-mode-toggle'
 import prisma from '@/lib/prisma'
+
+async function getTasks() {
+  const tasks = await prisma.task.findMany({
+    where: {
+      dueDate: { not: null }
+    },
+    select: {
+      id: true,
+      title: true,
+      dueDate: true,
+      status: true,
+      projectId: true,
+    },
+    orderBy: {
+      dueDate: 'asc'
+    }
+  })
+
+  return tasks.map(t => ({
+    ...t,
+    dueDate: t.dueDate ? t.dueDate.toISOString() : null,
+  }))
+}
+
+async function getProjects() {
+  const projects = await prisma.project.findMany({
+    where: {
+      isArchived: false,
+      OR: [
+        { startDate: { not: null } },
+        { endDate: { not: null } }
+      ]
+    },
+    select: {
+      id: true,
+      title: true,
+      startDate: true,
+      endDate: true,
+      status: true,
+    },
+    orderBy: {
+      startDate: 'asc'
+    }
+  })
+
+  return projects.map(p => ({
+    ...p,
+    startDate: p.startDate ? p.startDate.toISOString() : null,
+    endDate: p.endDate ? p.endDate.toISOString() : null,
+  }))
+}
 
 async function getInitiatives() {
   const initiatives = await prisma.initiative.findMany({
@@ -11,11 +62,13 @@ async function getInitiatives() {
       id: true,
       title: true,
       keyResult: { select: { krId: true, description: true } },
-      department: true,
-      status: true,
       startDate: true,
       endDate: true,
+      status: true,
     },
+    orderBy: {
+      startDate: 'asc'
+    }
   })
 
   return initiatives.map(i => ({
@@ -28,39 +81,29 @@ async function getInitiatives() {
   }))
 }
 
-async function getEventsToAttend() {
-  const events = await prisma.eventToAttend.findMany({
-    select: {
-      id: true,
-      name: true,
-      priority: true,
-      category: true,
-      eventDate: true,
-      location: true,
-      status: true,
-    },
-  })
-  return events
-}
-
 export default async function CalendarPage() {
-  const [initiatives, events] = await Promise.all([
+  const [tasks, projects, initiatives] = await Promise.all([
+    getTasks(),
+    getProjects(),
     getInitiatives(),
-    getEventsToAttend(),
   ])
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header
         title="Calendar"
-        description="Initiative timelines and events to attend"
+        description="Unified view of tasks, projects, and initiatives"
       />
 
       <div className="p-6">
         <div className="mb-6">
           <ViewModeToggle />
         </div>
-        <CalendarView initiatives={initiatives} events={events} />
+        <MainCalendar
+          tasks={tasks}
+          projects={projects}
+          initiatives={initiatives}
+        />
       </div>
     </div>
   )
