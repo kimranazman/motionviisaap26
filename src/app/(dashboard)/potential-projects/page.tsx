@@ -58,7 +58,7 @@ export default async function PotentialProjectsPage({
   return (
     <div className="flex flex-col h-screen">
       <Header
-        title="Potential Projects"
+        title="Repeat Clients"
         description="Track repeat client opportunities"
       />
       <main className="flex-1 overflow-auto p-6">
