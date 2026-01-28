@@ -10,20 +10,15 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 ## Current State
 
-**Version:** v2.5 Navigation Reorganization (in progress)
-**Codebase:** ~45,153 LOC TypeScript
+**Version:** v2.5 Navigation Reorganization (shipped 2026-01-28)
+**Codebase:** ~45,153 LOC TypeScript across 74 phases
 **Tech stack:** Next.js 14, Prisma, MariaDB, Tailwind/shadcn, NextAuth.js, OpenAI
 
-**v2.4 delivered:** Fixed sidebar settings persistence (removed autoReveal, added batch Save with dirty detection and toast), added nested Company/Departments/Contacts sidebar navigation with cascade hide, drag-and-drop sidebar reordering via Settings with per-user persistence, fixed dashboard revenue accuracy with per-project coalesce, verified task CRUD on completed projects, and added admin-configurable internal project field visibility.
+**v2.5 delivered:** Created "Work" navigation group between SAAP and CRM containing Projects and Tasks together. Renamed "Potential Projects" to "Repeat Clients" throughout UI (nav, headers, dialogs, toasts, modals). Added expandable Members navigation with clickable links to individual team member pages (Khairul, Azlan, Izyani).
 
-## Current Milestone: v2.5 Navigation Reorganization
+## Next Milestone Goals
 
-**Goal:** Reorganize sidebar navigation to group related items logically, rename "Potential Projects" to "Repeat Clients", and add quick navigation links to individual team member pages.
-
-**Target features:**
-- Create "Work" nav group containing Projects and Tasks together
-- Rename "Potential Projects" to "Repeat Clients" throughout the app
-- Make Members expandable with clickable links to individual member pages (Khairul, Azlan, Izyani)
+To be defined via `/gsd:new-milestone`.
 
 ## Requirements
 
@@ -248,13 +243,18 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - ✓ Task CRUD on completed projects verified working — v2.4
 - ✓ Admin-configurable internal project field visibility (5 field types, system-wide) — v2.4
 
+**v2.5 Navigation Reorganization:**
+- ✓ "Work" nav group created between SAAP and CRM with Projects and Tasks — v2.5
+- ✓ "Potential Projects" renamed to "Repeat Clients" in nav, headers, dialogs, toasts, modals — v2.5
+- ✓ Members sidebar item has expandable children for individual team member pages — v2.5
+- ✓ Active child route auto-expands parent in sidebar — v2.5
+- ✓ Mobile sidebar parity with desktop expandable behavior — v2.5
+
 ### Active
 
-<!-- v2.5 Navigation Reorganization -->
+<!-- Next milestone requirements will go here -->
 
-- [ ] Create "Work" nav group with Projects and Tasks
-- [ ] Rename "Potential Projects" to "Repeat Clients" in menu and UI
-- [ ] Add clickable member links to Members sidebar item
+(Awaiting next milestone definition)
 
 ### Out of Scope
 
@@ -288,7 +288,8 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - v2.2 shipped — bug fixes, UX polish, event CRUD, calendar enhancements
 - v2.3 shipped — modal fixes, standalone CRM pages, task creation, internal projects, sidebar customization, pricing history
 - v2.4 shipped — sidebar persistence fixes, nested nav, DnD reorder, revenue fix, internal field config
-- 45,153 LOC TypeScript across 71 phases (v1.0-v2.4)
+- v2.5 shipped — Work nav group, Repeat Clients rename, Members quick nav links
+- 45,153 LOC TypeScript across 74 phases (v1.0-v2.5)
 - Sister company: Talenta Ideas Sdn. Bhd. (internal projects between Motionvii and Talenta)
 - Primary admin: khairul@talenta.com.my
 
@@ -420,4 +421,4 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | Submit nullifies hidden field values | Prevents stale data from being saved when fields are hidden | ✓ Good |
 
 ---
-*Last updated: 2026-01-28 after v2.4 milestone*
+*Last updated: 2026-01-28 after v2.5 milestone*

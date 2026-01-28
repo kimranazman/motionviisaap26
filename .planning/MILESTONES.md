@@ -1,5 +1,41 @@
 # Milestone History
 
+## v2.5: Navigation Reorganization
+
+**Shipped:** 2026-01-28
+**Duration:** < 1 day
+**Phases:** 3 (Phases 72-74)
+**Plans:** 3
+**Stats:** 19 files changed, +821 / -90 lines
+
+### Summary
+
+Reorganized sidebar navigation to group related items logically. Created "Work" navigation group between SAAP and CRM containing Projects and Tasks together. Renamed "Potential Projects" to "Repeat Clients" throughout the UI. Added expandable Members navigation with clickable links to individual team member pages.
+
+### Key Accomplishments
+
+- Created "Work" nav group between SAAP and CRM with Projects and Tasks together for logical grouping
+- Renamed "Potential Projects" to "Repeat Clients" in nav label, page header, dialogs, toasts, and modals (7 files)
+- Added expandable Members navigation with children for Khairul, Azlan, Izyani
+- Active child route auto-expands parent in both desktop and mobile sidebars
+- Maintained backward compatibility: URLs (/potential-projects) and database models (PotentialProject) unchanged
+
+### Requirements Delivered
+
+| Category | Count | IDs |
+|----------|-------|-----|
+| Navigation Reorganization (NAV) | 7 | NAV-01 to NAV-07 |
+| Repeat Clients Rename (RENAME) | 4 | RENAME-01 to RENAME-04 |
+| Members Quick Navigation (MBR) | 5 | MBR-01 to MBR-05 |
+| **Total** | **16** | |
+
+### Artifacts
+
+- Roadmap: `.planning/milestones/v2.5-ROADMAP.md`
+- Requirements: `.planning/milestones/v2.5-REQUIREMENTS.md`
+
+---
+
 ## v2.4: Settings, Sidebar & Bug Fixes
 
 **Shipped:** 2026-01-28
