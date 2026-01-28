@@ -70,7 +70,7 @@ export const navGroups: NavGroup[] = [
         { name: 'Contacts', href: '/contacts', icon: Contact },
       ]},
       { name: 'Pipeline', href: '/pipeline', icon: Funnel },
-      { name: 'Potential Projects', href: '/potential-projects', icon: FolderKanban },
+      { name: 'Repeat Clients', href: '/potential-projects', icon: FolderKanban },
       { name: 'Suppliers', href: '/suppliers', icon: Truck },
       { name: 'Pricing History', href: '/supplier-items', icon: Scale },
     ],
