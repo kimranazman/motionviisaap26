@@ -438,7 +438,7 @@ export function CompanyDetailModal({
                 {company.potentials.length > 0 && (
                   <div className="space-y-2">
                     <h4 className="text-sm font-medium text-gray-500">
-                      Potential Projects ({company._count.potentials})
+                      Repeat Clients ({company._count.potentials})
                     </h4>
                     <div className="space-y-1">
                       {company.potentials.map((potential) => (
