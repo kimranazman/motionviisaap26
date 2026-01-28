@@ -13,7 +13,7 @@ v2.3 is a consolidation milestone that fixes persistent UX bugs, expands CRM bro
 
 - [x] **Phase 62: Modal Scroll + Expand Fixes** - Fix scrolling and expand-to-page across all detail modals
 - [x] **Phase 63: Standalone CRM Pages** - Standalone Departments and Contacts pages under CRM
-- [ ] **Phase 64: Task Creation on /tasks** - Add Task button with project selector on cross-project tasks page
+- [x] **Phase 64: Task Creation on /tasks** - Add Task button with project selector on cross-project tasks page
 - [ ] **Phase 65: Internal Project Flag** - Internal projects (Motionvii / Talenta) without external company requirement
 - [ ] **Phase 66: Customizable Sidebar Navigation** - Users choose which sidebar links to show/hide
 - [ ] **Phase 67: Line Item Pricing History** - Quantity/unit price tracking with by-item and by-client views
@@ -60,10 +60,11 @@ Plans:
   1. User can click Add Task button on /tasks page and fill out a task creation form
   2. Add Task dialog requires selecting a project to link the new task to
   3. User can create subtasks from task detail view with correct bidirectional parent-child link
-**Plans**: TBD
+**Plans**: 2 plans in 2 waves
 
 Plans:
-- [ ] 64-01: TBD
+- [x] 64-01: Add Task dialog with project selector (wave 1)
+- [x] 64-02: Subtask creation from task detail view (wave 2)
 
 ### Phase 65: Internal Project Flag
 **Goal**: Users can create and manage internal projects (Motionvii / Talenta) without an external company
@@ -119,7 +120,7 @@ Phases execute in order: 62 -> 63 -> 64 -> 65 -> 66 -> 67
 |-------|---------------|--------|-----------|
 | 62. Modal Scroll + Expand Fixes | 2/2 | Complete | 2026-01-28 |
 | 63. Standalone CRM Pages | 3/3 | Complete | 2026-01-28 |
-| 64. Task Creation on /tasks | 0/TBD | Not started | - |
+| 64. Task Creation on /tasks | 2/2 | Complete | 2026-01-28 |
 | 65. Internal Project Flag | 0/TBD | Not started | - |
 | 66. Customizable Sidebar Navigation | 0/TBD | Not started | - |
 | 67. Line Item Pricing History | 0/TBD | Not started | - |

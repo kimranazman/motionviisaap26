@@ -30,9 +30,9 @@ Requirements for v2.3 release. Each maps to roadmap phases.
 
 ### Task Management
 
-- [ ] **TASK-01**: User can create a task from the /tasks page via Add Task button
-- [ ] **TASK-02**: Add Task dialog includes project selector (required) for linking task to a project
-- [ ] **TASK-03**: User can create subtasks from task detail view (bidirectional parent-child link)
+- [x] **TASK-01**: User can create a task from the /tasks page via Add Task button
+- [x] **TASK-02**: Add Task dialog includes project selector (required) for linking task to a project
+- [x] **TASK-03**: User can create subtasks from task detail view (bidirectional parent-child link)
 
 ### Internal Projects
 
@@ -117,9 +117,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CRM-09 | Phase 63 | Complete |
 | CRM-10 | Phase 63 | Complete |
 | CRM-11 | Phase 63 | Complete |
-| TASK-01 | Phase 64 | Pending |
-| TASK-02 | Phase 64 | Pending |
-| TASK-03 | Phase 64 | Pending |
+| TASK-01 | Phase 64 | Complete |
+| TASK-02 | Phase 64 | Complete |
+| TASK-03 | Phase 64 | Complete |
 | INT-01 | Phase 65 | Pending |
 | INT-02 | Phase 65 | Pending |
 | INT-03 | Phase 65 | Pending |

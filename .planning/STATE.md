@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-28)
 
 **Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, AI-powered intelligence, cross-project task management, per-member workload dashboards, event management, and enhanced calendar.
-**Current focus:** v2.3 CRM & UX Improvements (Phase 64: Task Creation on /tasks)
+**Current focus:** v2.3 CRM & UX Improvements (Phase 65: Internal Project Flag)
 
 ## Current Position
 
-Phase: 64 of 67 (Task Creation on /tasks)
+Phase: 65 of 67 (Internal Project Flag)
 Plan: 0 of TBD in current phase
 Status: Ready to plan
-Last activity: 2026-01-28 -- Phase 63 complete
+Last activity: 2026-01-28 -- Phase 64 complete
 
-Progress: [███░░░░░░░] 33% (2/6 phases)
+Progress: [█████░░░░░] 50% (3/6 phases)
 
 ## Milestone History
 
@@ -41,7 +41,7 @@ Progress: [███░░░░░░░] 33% (2/6 phases)
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5 (v2.3)
+- Total plans completed: 7 (v2.3)
 - Average duration: N/A
 - Total execution time: N/A
 
@@ -51,6 +51,7 @@ Progress: [███░░░░░░░] 33% (2/6 phases)
 |-------|-------|-------|----------|
 | 62 | 2 | - | - |
 | 63 | 3 | - | - |
+| 64 | 2 | - | - |
 
 ## Accumulated Context
 
@@ -70,5 +71,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Phase 63 complete, ready to plan Phase 64
+Stopped at: Phase 64 complete, ready to plan Phase 65
 Resume file: None
