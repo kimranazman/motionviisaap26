@@ -10,11 +10,20 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 ## Current State
 
-**Version:** v2.4 Settings, Sidebar & Bug Fixes (shipped 2026-01-28)
+**Version:** v2.5 Navigation Reorganization (in progress)
 **Codebase:** ~45,153 LOC TypeScript
 **Tech stack:** Next.js 14, Prisma, MariaDB, Tailwind/shadcn, NextAuth.js, OpenAI
 
 **v2.4 delivered:** Fixed sidebar settings persistence (removed autoReveal, added batch Save with dirty detection and toast), added nested Company/Departments/Contacts sidebar navigation with cascade hide, drag-and-drop sidebar reordering via Settings with per-user persistence, fixed dashboard revenue accuracy with per-project coalesce, verified task CRUD on completed projects, and added admin-configurable internal project field visibility.
+
+## Current Milestone: v2.5 Navigation Reorganization
+
+**Goal:** Reorganize sidebar navigation to group related items logically, rename "Potential Projects" to "Repeat Clients", and add quick navigation links to individual team member pages.
+
+**Target features:**
+- Create "Work" nav group containing Projects and Tasks together
+- Rename "Potential Projects" to "Repeat Clients" throughout the app
+- Make Members expandable with clickable links to individual member pages (Khairul, Azlan, Izyani)
 
 ## Requirements
 
@@ -241,9 +250,11 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 ### Active
 
-<!-- Next milestone: TBD -->
+<!-- v2.5 Navigation Reorganization -->
 
-(No active requirements — run `/gsd:new-milestone` to define next milestone)
+- [ ] Create "Work" nav group with Projects and Tasks
+- [ ] Rename "Potential Projects" to "Repeat Clients" in menu and UI
+- [ ] Add clickable member links to Members sidebar item
 
 ### Out of Scope
 
