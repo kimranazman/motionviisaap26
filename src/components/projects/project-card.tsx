@@ -14,6 +14,8 @@ interface Project {
   potentialRevenue: number | null     // From deal/potential conversion
   status: string
   isArchived?: boolean
+  isInternal?: boolean
+  internalEntity?: string | null
   company: { id: string; name: string } | null
   contact: { id: string; name: string } | null
   initiative: { id: string; title: string } | null
@@ -67,13 +69,18 @@ export function ProjectCard({ project, onClick }: ProjectCardProps) {
               {project.title}
             </h3>
 
-            {/* Company */}
-            {project.company && (
+            {/* Company / Entity */}
+            {project.company ? (
               <div className="flex items-center gap-1.5 mt-1 text-sm text-gray-500">
                 <Building2 className="h-3.5 w-3.5" />
                 <span className="truncate">{project.company.name}</span>
               </div>
-            )}
+            ) : project.isInternal && project.internalEntity ? (
+              <div className="flex items-center gap-1.5 mt-1 text-sm text-gray-500">
+                <Building2 className="h-3.5 w-3.5" />
+                <span className="truncate">{project.internalEntity === 'MOTIONVII' ? 'Motionvii' : 'Talenta'}</span>
+              </div>
+            ) : null}
           </div>
 
           {/* Revenue */}
@@ -118,6 +125,16 @@ export function ProjectCard({ project, onClick }: ProjectCardProps) {
               </>
             )}
           </Badge>
+
+          {/* Internal indicator */}
+          {project.isInternal && (
+            <Badge
+              variant="outline"
+              className="text-xs bg-amber-50 text-amber-700 border-amber-200"
+            >
+              Internal
+            </Badge>
+          )}
 
           {/* KRI indicator */}
           {project.initiative && (
