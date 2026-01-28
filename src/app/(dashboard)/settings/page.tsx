@@ -28,9 +28,11 @@ import {
   arrayMove,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { PanelRight, Layers, GripVertical, RotateCcw } from 'lucide-react'
+import { PanelRight, Layers, GripVertical, RotateCcw, EyeOff } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
+import { useInternalFieldConfig } from '@/lib/hooks/use-internal-field-config'
+import { INTERNAL_FIELD_KEYS, DEFAULT_INTERNAL_FIELD_CONFIG, type InternalFieldKey } from '@/types/internal-fields'
 
 /** Sortable nav item row with drag handle */
 function SortableNavItem({
@@ -132,6 +134,11 @@ export default function SettingsPage() {
   const [localOrder, setLocalOrder] = useState<Record<string, string[]>>({})
   const [isSaving, setIsSaving] = useState(false)
 
+  // Internal field config state
+  const { config: internalFieldConfig, isLoading: fieldConfigLoading } = useInternalFieldConfig()
+  const [localHiddenFields, setLocalHiddenFields] = useState<InternalFieldKey[]>([])
+  const [isFieldConfigSaving, setIsFieldConfigSaving] = useState(false)
+
   // DnD sensors with activation distance to prevent accidental drags
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -204,6 +211,52 @@ export default function SettingsPage() {
   // Reset order to default
   const handleResetOrder = () => {
     setLocalOrder(getDefaultNavOrder())
+  }
+
+  // Sync internal field config local state
+  useEffect(() => {
+    if (!fieldConfigLoading) {
+      setLocalHiddenFields(
+        (internalFieldConfig?.hiddenFields ?? DEFAULT_INTERNAL_FIELD_CONFIG.hiddenFields) as InternalFieldKey[]
+      )
+    }
+  }, [fieldConfigLoading, internalFieldConfig])
+
+  // Internal field config dirty detection
+  const currentHiddenFields = (internalFieldConfig?.hiddenFields ?? DEFAULT_INTERNAL_FIELD_CONFIG.hiddenFields) as string[]
+  const isFieldConfigDirty = JSON.stringify([...localHiddenFields].sort()) !==
+                             JSON.stringify([...currentHiddenFields].sort())
+
+  // Internal field toggle handler
+  const handleFieldToggle = (key: InternalFieldKey) => {
+    setLocalHiddenFields(prev =>
+      prev.includes(key)
+        ? prev.filter(k => k !== key)
+        : [...prev, key]
+    )
+  }
+
+  // Internal field config save handler
+  const handleFieldConfigSave = async () => {
+    setIsFieldConfigSaving(true)
+    try {
+      const response = await fetch('/api/admin/internal-fields', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          internalFieldConfig: { hiddenFields: localHiddenFields }
+        }),
+      })
+      if (response.ok) {
+        toast.success('Internal field settings saved')
+      } else {
+        toast.error('Failed to save settings')
+      }
+    } catch {
+      toast.error('Failed to save settings')
+    } finally {
+      setIsFieldConfigSaving(false)
+    }
   }
 
   // Save handler - persists both visibility and order
@@ -433,6 +486,63 @@ export default function SettingsPage() {
                     className="flex-1"
                   >
                     {isSaving ? 'Saving...' : 'Save Changes'}
+                  </Button>
+                </div>
+              )}
+            </div>
+          </Card>
+
+          {/* Internal Project Fields */}
+          <Card className="p-6">
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2">
+                  <EyeOff className="h-4 w-4" />
+                  Internal Project Fields
+                </h3>
+                <p className="text-sm text-gray-500 mt-1">
+                  Choose which fields to hide when a project is marked as internal.
+                  This applies system-wide for all users.
+                </p>
+              </div>
+
+              {fieldConfigLoading ? (
+                <div className="space-y-3">
+                  {[...Array(5)].map((_, i) => (
+                    <div key={i} className="h-8 rounded bg-gray-100 animate-pulse" />
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  {INTERNAL_FIELD_KEYS.map(({ key, label, description }) => {
+                    const isHidden = localHiddenFields.includes(key)
+                    return (
+                      <div
+                        key={key}
+                        className="flex items-center justify-between py-2 px-1"
+                      >
+                        <div>
+                          <span className="text-sm text-gray-700">{label}</span>
+                          <p className="text-xs text-gray-400">{description}</p>
+                        </div>
+                        <Switch
+                          checked={isHidden}
+                          onCheckedChange={() => handleFieldToggle(key)}
+                        />
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+
+              {isFieldConfigDirty && (
+                <div className="pt-4 border-t border-gray-200">
+                  <Button
+                    onClick={handleFieldConfigSave}
+                    disabled={isFieldConfigSaving}
+                    className="w-full"
+                  >
+                    {isFieldConfigSaving ? 'Saving...' : 'Save Field Settings'}
                   </Button>
                 </div>
               )}
