@@ -10,13 +10,11 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 ## Current State
 
-**Version:** v2.4 Settings, Sidebar & Bug Fixes (in progress)
-**Codebase:** ~44,430 LOC TypeScript
+**Version:** v2.4 Settings, Sidebar & Bug Fixes (shipped 2026-01-28)
+**Codebase:** ~45,153 LOC TypeScript
 **Tech stack:** Next.js 14, Prisma, MariaDB, Tailwind/shadcn, NextAuth.js, OpenAI
 
-**v2.3 delivered:** Fixed modal scroll across all detail views, rebuilt project expand-to-page as dedicated full page, added standalone Departments and Contacts pages with cascading filters, enabled task creation from /tasks page, added internal project support (Motionvii/Talenta), customizable sidebar navigation with per-user preferences, and line item pricing history with quantity/unitPrice tracking and by-item/by-client views.
-
-**v2.4 focus:** Fix sidebar settings persistence bugs (autoReveal too aggressive, no immediate feedback), add nested Company/Departments/Contacts sidebar links, sidebar drag-and-drop reordering, allow completed project editing, configure internal project field visibility, and fix dashboard revenue accuracy for potential project revenue.
+**v2.4 delivered:** Fixed sidebar settings persistence (removed autoReveal, added batch Save with dirty detection and toast), added nested Company/Departments/Contacts sidebar navigation with cascade hide, drag-and-drop sidebar reordering via Settings with per-user persistence, fixed dashboard revenue accuracy with per-project coalesce, verified task CRUD on completed projects, and added admin-configurable internal project field visibility.
 
 ## Requirements
 
@@ -231,29 +229,21 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - ✓ Line item pricing history — by-client view (all items charged to a client with spend) — v2.3
 - ✓ AI receipt extraction captures quantity and unit price — v2.3
 
+**v2.4 Settings, Sidebar & Bug Fixes:**
+- ✓ Sidebar nav toggle persists correctly (autoReveal removed, batch Save button) — v2.4
+- ✓ Save button with dirty detection and toast confirmation — v2.4
+- ✓ Nested Company/Departments/Contacts sidebar navigation with cascade hide — v2.4
+- ✓ Sidebar drag-and-drop reorder within groups via Settings page — v2.4
+- ✓ Per-user sidebar order persistence (navItemOrder JSON field) — v2.4
+- ✓ Dashboard revenue accuracy (per-project revenue ?? potentialRevenue for ACTIVE + COMPLETED) — v2.4
+- ✓ Task CRUD on completed projects verified working — v2.4
+- ✓ Admin-configurable internal project field visibility (5 field types, system-wide) — v2.4
+
 ### Active
 
-<!-- v2.4: Settings, Sidebar & Bug Fixes -->
+<!-- Next milestone: TBD -->
 
-**Sidebar Settings Fixes:**
-- [ ] Sidebar nav toggle persists correctly (autoReveal not triggered by tab clicks within a page)
-- [ ] Settings page shows Save button with immediate visual feedback on sidebar changes
-- [ ] Sidebar reflects hidden/shown state without requiring page reload
-
-**Sidebar Enhancements:**
-- [ ] Company nav item expands to show Departments and Contacts as nested sub-items
-- [ ] Sidebar link order is drag-and-drop rearrangeable via Settings page
-- [ ] Sidebar order persisted per user
-
-**Project Editing:**
-- [ ] Completed projects remain fully editable (all fields)
-
-**Internal Project Configuration:**
-- [ ] Admin can configure which fields are hidden for internal projects (revenue, pipeline source, etc.)
-- [ ] Internal project defaults applied globally via Settings
-
-**Dashboard Accuracy:**
-- [ ] Revenue progress widget includes potentialRevenue from confirmed potential projects
+(No active requirements — run `/gsd:new-milestone` to define next milestone)
 
 ### Out of Scope
 
@@ -286,7 +276,8 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - v2.1 shipped — collapsible sidebar, cross-project tasks, member workload dashboards
 - v2.2 shipped — bug fixes, UX polish, event CRUD, calendar enhancements
 - v2.3 shipped — modal fixes, standalone CRM pages, task creation, internal projects, sidebar customization, pricing history
-- 44,430 LOC TypeScript across 67 phases (v1.0-v2.3)
+- v2.4 shipped — sidebar persistence fixes, nested nav, DnD reorder, revenue fix, internal field config
+- 45,153 LOC TypeScript across 71 phases (v1.0-v2.4)
 - Sister company: Talenta Ideas Sdn. Bhd. (internal projects between Motionvii and Talenta)
 - Primary admin: khairul@talenta.com.my
 
@@ -407,9 +398,15 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | internalEntity as string field | MOTIONVII/TALENTA values; simpler than enum for 2-value field | ✓ Good |
 | hiddenNavItems as JSON field | Array of href strings in UserPreferences; flexible for future nav changes | ✓ Good |
 | ALWAYS_VISIBLE_HREFS constant | Dashboard and Settings cannot be hidden; hardcoded set in nav-config | ✓ Good |
-| autoReveal on direct navigation | Hidden items auto-show when user navigates to that URL; prevents broken navigation | ✓ Good |
+| autoReveal on direct navigation | Hidden items auto-show when user navigates to that URL; prevents broken navigation | ⚠️ Removed in v2.4 — caused sidebar items to reappear unexpectedly |
 | Quantity/unitPrice as optional Decimals | Backward compatible; existing costs without qty/unitPrice continue to work | ✓ Good |
 | Price Comparison renamed to Pricing History | Broader scope with three tabs (All Items, By Item, By Client) | ✓ Good |
+| Remove autoReveal entirely | Cleaner than restricting; batch Save button handles persistence | ✓ Good |
+| NavItem children array for nesting | Simpler than separate config; reuses existing NavItem type | ✓ Good |
+| DndContext per nav group | Prevents cross-group drags without axis modifiers; no extra dependency | ✓ Good |
+| GET internal-fields uses requireAuth | All users need read access for conditional field rendering | ✓ Good |
+| Toggle checked = hidden for field config | Intuitive admin UX — "check to hide this field on internal projects" | ✓ Good |
+| Submit nullifies hidden field values | Prevents stale data from being saved when fields are hidden | ✓ Good |
 
 ---
-*Last updated: 2026-01-28 after v2.4 milestone start*
+*Last updated: 2026-01-28 after v2.4 milestone*

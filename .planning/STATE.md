@@ -4,15 +4,15 @@
 
 See: .planning/PROJECT.md (updated 2026-01-28)
 
-**Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, AI-powered intelligence, cross-project task management, per-member workload dashboards, event management, customizable sidebar navigation, internal project support, and line item pricing history.
-**Current focus:** v2.4 Settings, Sidebar & Bug Fixes — Phase 71
+**Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, AI-powered intelligence, cross-project task management, per-member workload dashboards, event management, customizable sidebar navigation with nested links and drag-and-drop reorder, internal project support with configurable field visibility, and line item pricing history.
+**Current focus:** Planning next milestone
 
 ## Current Position
 
-Phase: 71 of 71 (Internal Project Field Config)
-Plan: 2/2 complete
-Status: Phase 71 complete — all v2.4 phases done
-Last activity: 2026-01-28 — Phase 71 executed and verified
+Phase: 71 of 71 (all complete)
+Plan: N/A
+Status: Milestone v2.4 complete — ready for next milestone
+Last activity: 2026-01-28 — v2.4 milestone archived
 
 Progress: [██████████] 100% (4/4 v2.4 phases)
 
@@ -36,35 +36,30 @@ Progress: [██████████] 100% (4/4 v2.4 phases)
 | v2.1 | Navigation & Views | 54-56 | 2026-01-28 |
 | v2.2 | Bug Fixes & UX Polish | 57-61 | 2026-01-28 |
 | v2.3 | CRM & UX Improvements | 62-67 | 2026-01-28 |
-| v2.4 | Settings, Sidebar & Bug Fixes | 68-71 | In progress |
+| v2.4 | Settings, Sidebar & Bug Fixes | 68-71 | 2026-01-28 |
 
 **Archives:** `.planning/milestones/`
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6 (v2.4)
-- Average duration: ~2 min
-- Total execution time: ~12 min
+- Total plans completed: 8 (v2.4)
+- Total execution time: 1 day
 
 **By Phase:**
 
-| Phase | Plans | Total | Avg/Plan |
-|-------|-------|-------|----------|
-| 68 | 2 | ~4 min | ~2 min |
-| 69 | 2 | ~4 min | ~2 min |
-| 70 | 2 | ~4 min | ~2 min |
+| Phase | Plans | Completed |
+|-------|-------|-----------|
+| 68 | 2 | 2026-01-28 |
+| 69 | 2 | 2026-01-28 |
+| 70 | 2 | 2026-01-28 |
+| 71 | 2 | 2026-01-28 |
 
 ## Accumulated Context
 
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table.
-Key research findings for v2.4:
-- Sidebar dependency chain: autoReveal fix -> save button -> nested links -> DnD reorder
-- Revenue fix and task-on-completed-projects fix are independent of sidebar work
-- Zero new npm packages required
-- "Completed projects editable" is specifically about task CRUD, not general project editing
 
 ### Pending Todos
 
@@ -77,5 +72,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Phase 71 complete, all v2.4 phases done
+Stopped at: v2.4 milestone complete, ready for next milestone
 Resume file: None

@@ -1,5 +1,45 @@
 # Milestone History
 
+## v2.4: Settings, Sidebar & Bug Fixes
+
+**Shipped:** 2026-01-28
+**Duration:** 1 day
+**Phases:** 4 (Phases 68-71)
+**Plans:** 8
+**Stats:** 34 files changed, +2,630 / -303 lines
+
+### Summary
+
+Fixed sidebar settings persistence bugs (removed autoReveal, added Save button with dirty detection), added nested Company/Departments/Contacts sidebar navigation, drag-and-drop sidebar reordering via Settings, fixed dashboard revenue accuracy with per-project coalesce, verified task CRUD on completed projects, and added admin-configurable field visibility for internal projects.
+
+### Key Accomplishments
+
+- Fixed sidebar persistence: removed autoReveal entirely, added batch Save button with dirty detection and toast confirmation
+- Nested sidebar navigation: Companies expands to show Departments and Contacts with cascade hide, split click zones, parent highlighting
+- Drag-and-drop sidebar reorder: @dnd-kit sortable within groups, per-user persistence, Reset Order button
+- Dashboard revenue fix: per-project `revenue ?? potentialRevenue` for ACTIVE + COMPLETED projects without double-counting
+- Internal project field config: admin toggles for 5 field types, system-wide via AdminDefaults, conditional rendering in forms and detail views
+- Task CRUD on completed projects verified working (no blocking code existed)
+
+### Requirements Delivered
+
+| Category | Count | IDs |
+|----------|-------|-----|
+| Sidebar Fixes (SIDE) | 5 | SIDE-01 to SIDE-05 |
+| Nested Navigation (NEST) | 7 | NEST-01 to NEST-07 |
+| Sidebar Reorder (REORD) | 7 | REORD-01 to REORD-07 |
+| Revenue Accuracy (REV) | 4 | REV-01 to REV-04 |
+| Task on Completed (TASK) | 3 | TASK-01 to TASK-03 |
+| Internal Field Config (INTL) | 6 | INTL-01 to INTL-06 |
+| **Total** | **32** | |
+
+### Artifacts
+
+- Roadmap: `.planning/milestones/v2.4-ROADMAP.md`
+- Requirements: `.planning/milestones/v2.4-REQUIREMENTS.md`
+
+---
+
 ## v2.3: CRM & UX Improvements
 
 **Shipped:** 2026-01-28
