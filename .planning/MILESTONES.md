@@ -1,5 +1,45 @@
 # Milestone History
 
+## v2.3: CRM & UX Improvements
+
+**Shipped:** 2026-01-28
+**Duration:** 1 day
+**Phases:** 6 (Phases 62-67)
+**Plans:** 13
+**Stats:** 95 files changed, +11,894 / -281 lines
+
+### Summary
+
+Fixed persistent modal scroll and expand-to-page bugs, added standalone CRM pages for Departments and Contacts with cascading filters, enabled task creation from the cross-project /tasks page, introduced internal project support (Motionvii/Talenta) without external company requirement, added customizable sidebar navigation with per-user preferences, and built line item pricing history with quantity/unitPrice tracking and by-item/by-client views.
+
+### Key Accomplishments
+
+- Fixed modal scroll across all 7 detail views (DialogContent overflow-hidden) and rebuilt project expand-to-page as full dedicated page
+- Standalone /departments and /contacts pages with cascading company/department filters, create dialogs, and detail modals
+- Task creation from /tasks page with searchable ProjectSelect combobox + subtask creation from task detail with depth validation
+- Internal project support with isInternal flag, entity selection (Motionvii/Talenta), nullable companyId, type filter tabs, and Internal badges
+- Customizable sidebar navigation with hiddenNavItems per user, always-visible Dashboard/Settings, and auto-reveal on direct URL navigation
+- Line item pricing history with quantity/unitPrice fields, CostForm auto-calc, AI receipt extraction, and three-tab Pricing History page (All Items, By Item, By Client)
+
+### Requirements Delivered
+
+| Category | Count | IDs |
+|----------|-------|-----|
+| UX Fixes (UX) | 4 | UX-01 to UX-04 |
+| CRM Browsing (CRM) | 11 | CRM-01 to CRM-11 |
+| Task Management (TASK) | 3 | TASK-01 to TASK-03 |
+| Internal Projects (INT) | 5 | INT-01 to INT-05 |
+| Sidebar Customization (NAV) | 4 | NAV-01 to NAV-04 |
+| Line Item Pricing (PRICE) | 6 | PRICE-01 to PRICE-06 |
+| **Total** | **33** | |
+
+### Artifacts
+
+- Roadmap: `.planning/milestones/v2.3-ROADMAP.md`
+- Requirements: `.planning/milestones/v2.3-REQUIREMENTS.md`
+
+---
+
 ## v2.2: Bug Fixes & UX Polish
 
 **Shipped:** 2026-01-28

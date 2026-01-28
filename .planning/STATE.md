@@ -4,17 +4,17 @@
 
 See: .planning/PROJECT.md (updated 2026-01-28)
 
-**Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, AI-powered intelligence, cross-project task management, per-member workload dashboards, event management, and enhanced calendar.
-**Current focus:** v2.3 CRM & UX Improvements -- COMPLETE (all 6 phases done)
+**Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, AI-powered intelligence, cross-project task management, per-member workload dashboards, event management, customizable sidebar navigation, internal project support, and line item pricing history.
+**Current focus:** Planning next milestone
 
 ## Current Position
 
-Phase: 67 of 67 (Line Item Pricing History) -- COMPLETE
-Plan: 2 of 2 in current phase
-Status: Phase complete, milestone ready for audit
-Last activity: 2026-01-28 -- Phase 67 complete
+Phase: 67 of 67 (all phases complete)
+Plan: N/A
+Status: v2.3 milestone complete, ready for next milestone
+Last activity: 2026-01-28 — v2.3 milestone archived
 
-Progress: [██████████] 100% (6/6 phases)
+Progress: [██████████] 100% (6/6 v2.3 phases)
 
 ## Milestone History
 
@@ -35,6 +35,7 @@ Progress: [██████████] 100% (6/6 phases)
 | v2.0 | OKR Restructure & Support Tasks | 46-53 | 2026-01-27 |
 | v2.1 | Navigation & Views | 54-56 | 2026-01-28 |
 | v2.2 | Bug Fixes & UX Polish | 57-61 | 2026-01-28 |
+| v2.3 | CRM & UX Improvements | 62-67 | 2026-01-28 |
 
 **Archives:** `.planning/milestones/`
 
@@ -61,7 +62,7 @@ Progress: [██████████] 100% (6/6 phases)
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table.
-No v2.3 decisions yet.
+v2.3 decisions: 14 decisions added (DialogContent overflow, full-page detail, cascading filters, isPrimary transaction, ProjectSelect, depth validation, nullable companyId, internalEntity, hiddenNavItems, ALWAYS_VISIBLE_HREFS, autoReveal, optional Decimals, Pricing History rename).
 
 ### Pending Todos
 
@@ -74,5 +75,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: Phase 67 complete, milestone v2.3 ready for audit
+Stopped at: v2.3 milestone complete and archived
 Resume file: None
