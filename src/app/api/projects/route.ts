@@ -11,10 +11,13 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const showArchived = searchParams.get('showArchived') === 'true'
+    const type = searchParams.get('type') // 'client' | 'internal' | 'all' | null
 
     const projects = await prisma.project.findMany({
       where: {
         ...(showArchived ? {} : { isArchived: false }),
+        ...(type === 'client' ? { isInternal: false } : {}),
+        ...(type === 'internal' ? { isInternal: true } : {}),
       },
       include: {
         company: {
@@ -69,11 +72,25 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!body.companyId || typeof body.companyId !== 'string') {
-      return NextResponse.json(
-        { error: 'Company is required' },
-        { status: 400 }
-      )
+    const isInternal = body.isInternal === true
+
+    if (isInternal) {
+      // Internal project: require internalEntity, no companyId needed
+      const validEntities = ['MOTIONVII', 'TALENTA']
+      if (!body.internalEntity || !validEntities.includes(body.internalEntity)) {
+        return NextResponse.json(
+          { error: 'Internal projects require an entity (Motionvii or Talenta)' },
+          { status: 400 }
+        )
+      }
+    } else {
+      // Client project: require companyId
+      if (!body.companyId || typeof body.companyId !== 'string') {
+        return NextResponse.json(
+          { error: 'Company is required' },
+          { status: 400 }
+        )
+      }
     }
 
     const project = await prisma.project.create({
@@ -82,8 +99,10 @@ export async function POST(request: NextRequest) {
         description: body.description || null,
         revenue: body.revenue ? parseFloat(body.revenue) : null,
         status: ProjectStatus.DRAFT,
-        companyId: body.companyId,
-        contactId: body.contactId || null,
+        isInternal,
+        internalEntity: isInternal ? body.internalEntity : null,
+        companyId: isInternal ? null : body.companyId,
+        contactId: isInternal ? null : (body.contactId || null),
         initiativeId: body.initiativeId || null,
       },
       include: {
