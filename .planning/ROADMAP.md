@@ -56,7 +56,7 @@ See `.planning/milestones/` for archived phase details.
 - `src/components/nav-group.tsx` - Verify nested rendering
 - `src/components/mobile-sidebar.tsx` - Verify mobile rendering
 
-**Status:** Pending
+**Status:** Complete (2026-01-29)
 
 ---
 
@@ -157,9 +157,9 @@ See `.planning/milestones/` for archived phase details.
 
 ## Progress
 
-Phase 74 of 78 | v2.6 in progress
+Phase 75 of 78 | v2.6 in progress
 
-Progress: [#########.] 94% (74/78 phases)
+Progress: [#########.] 95% (75/78 phases)
 
 ---
 

@@ -9,9 +9,9 @@ Requirements for v2.6 release. Each maps to roadmap phases.
 
 ### Navigation (NAV)
 
-- [ ] **NAV-01**: Members nav item moved from top-level to nested under Work group
-- [ ] **NAV-02**: Desktop sidebar renders Members under Work with correct indentation
-- [ ] **NAV-03**: Mobile sidebar renders Members under Work with correct indentation
+- [x] **NAV-01**: Members nav item moved from top-level to nested under Work group
+- [x] **NAV-02**: Desktop sidebar renders Members under Work with correct indentation
+- [x] **NAV-03**: Mobile sidebar renders Members under Work with correct indentation
 
 ### Projects Kanban (PROJ)
 
@@ -85,9 +85,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| NAV-01 | Phase 75 | Pending |
-| NAV-02 | Phase 75 | Pending |
-| NAV-03 | Phase 75 | Pending |
+| NAV-01 | Phase 75 | Complete |
+| NAV-02 | Phase 75 | Complete |
+| NAV-03 | Phase 75 | Complete |
 | PROJ-01 | Phase 76 | Pending |
 | PROJ-02 | Phase 76 | Pending |
 | PROJ-03 | Phase 76 | Pending |
@@ -122,4 +122,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-28*
-*Last updated: 2026-01-28 after initial definition*
+*Last updated: 2026-01-29 after Phase 75 completion*
