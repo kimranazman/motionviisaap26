@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-28)
 
 **Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, AI-powered intelligence, cross-project task management, per-member workload dashboards, event management, customizable sidebar navigation with nested links and drag-and-drop reorder, internal project support with configurable field visibility, and line item pricing history.
-**Current focus:** Planning next milestone
+**Current focus:** v2.5 Navigation Reorganization
 
 ## Current Position
 
-Phase: 71 of 71 (all complete)
-Plan: N/A
-Status: Milestone v2.4 complete — ready for next milestone
-Last activity: 2026-01-28 — v2.4 milestone archived
+Phase: 72 of 74
+Plan: N/A (not yet planned)
+Status: v2.5 milestone initialized — ready for phase planning
+Last activity: 2026-01-28 — v2.5 milestone created
 
-Progress: [██████████] 100% (4/4 v2.4 phases)
+Progress: [░░░░░░░░░░] 0% (0/3 v2.5 phases)
 
 ## Milestone History
 
@@ -37,29 +37,35 @@ Progress: [██████████] 100% (4/4 v2.4 phases)
 | v2.2 | Bug Fixes & UX Polish | 57-61 | 2026-01-28 |
 | v2.3 | CRM & UX Improvements | 62-67 | 2026-01-28 |
 | v2.4 | Settings, Sidebar & Bug Fixes | 68-71 | 2026-01-28 |
+| v2.5 | Navigation Reorganization | 72-74 | In Progress |
 
 **Archives:** `.planning/milestones/`
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8 (v2.4)
-- Total execution time: 1 day
+- Total plans completed: N/A (v2.5 just started)
+- Total execution time: N/A
 
 **By Phase:**
 
 | Phase | Plans | Completed |
 |-------|-------|-----------|
-| 68 | 2 | 2026-01-28 |
-| 69 | 2 | 2026-01-28 |
-| 70 | 2 | 2026-01-28 |
-| 71 | 2 | 2026-01-28 |
+| 72 | TBD | Pending |
+| 73 | TBD | Pending |
+| 74 | TBD | Pending |
 
 ## Accumulated Context
 
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table.
+
+**v2.5 Decisions:**
+- Create "Work" nav group between SAAP and CRM (not at end) for logical flow
+- Keep URL `/potential-projects` unchanged when renaming to "Repeat Clients" (minimize migration risk)
+- Keep database model name `PotentialProject` unchanged (internal implementation detail)
+- Add children to Members in topLevelItems using same pattern as Companies nested nav
 
 ### Pending Todos
 
@@ -72,5 +78,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-28
-Stopped at: v2.4 milestone complete, ready for next milestone
+Stopped at: v2.5 milestone initialized, ready for `/gsd:plan-phase 72`
 Resume file: None

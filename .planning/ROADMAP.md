@@ -19,6 +19,7 @@
 - ✅ **v2.2 Bug Fixes & UX Polish** - Phases 57-61 (shipped 2026-01-28)
 - ✅ **v2.3 CRM & UX Improvements** - Phases 62-67 (shipped 2026-01-28)
 - ✅ **v2.4 Settings, Sidebar & Bug Fixes** - Phases 68-71 (shipped 2026-01-28)
+- ◆ **v2.5 Navigation Reorganization** - Phases 72-74 (in progress)
 
 ## Phases
 
@@ -29,6 +30,89 @@ See `.planning/milestones/` for archived phase details.
 
 </details>
 
+### v2.5 Navigation Reorganization
+
+#### Phase 72: Create Work Group & Move Items
+
+**Goal:** Create a new "Work" navigation group containing Projects and Tasks together.
+
+**Requirements:**
+- NAV-01: Create "Work" nav group in nav-config.ts
+- NAV-02: Move Projects item from CRM group to Work group
+- NAV-03: Move Tasks item from topLevelItems to Work group
+- NAV-04: Update sidebar.tsx to render new Work group
+- NAV-05: Update mobile-sidebar.tsx with same changes
+- NAV-06: Update findGroupForPath for new group
+- NAV-07: Update getDefaultNavOrder for new group
+
+**Success Criteria:**
+1. "Work" group appears in sidebar between SAAP and CRM
+2. Projects and Tasks are both visible under Work group
+3. Tasks no longer appears as standalone top-level item
+4. CRM group no longer contains Projects
+5. Navigation works correctly on both desktop and mobile
+6. Existing user nav preferences gracefully handle the restructure
+
+**Files to modify:**
+- `src/lib/nav-config.ts`
+- `src/components/sidebar.tsx`
+- `src/components/mobile-sidebar.tsx`
+
+---
+
+#### Phase 73: Rename Potential Projects to Repeat Clients
+
+**Goal:** Rename "Potential Projects" to "Repeat Clients" throughout the application UI.
+
+**Requirements:**
+- RENAME-01: Change nav label to "Repeat Clients"
+- RENAME-02: Update page title
+- RENAME-03: Update component headers/breadcrumbs
+- RENAME-04: Update toast messages and UI text
+
+**Success Criteria:**
+1. Sidebar shows "Repeat Clients" instead of "Potential Projects"
+2. Page title is "Repeat Clients"
+3. All UI references say "Repeat Clients"
+4. URL remains `/potential-projects` (implementation detail)
+5. Database model remains `PotentialProject` (internal)
+
+**Files to modify:**
+- `src/lib/nav-config.ts`
+- `src/app/(protected)/potential-projects/page.tsx`
+- `src/components/potential-project-*.tsx` (headers/titles)
+
+---
+
+#### Phase 74: Members Quick Navigation Links
+
+**Goal:** Add clickable children to Members nav item for quick access to individual team member pages.
+
+**Requirements:**
+- MBR-01: Add children array to Members nav item
+- MBR-02: Create child items for Khairul, Azlan, Izyani
+- MBR-03: Apply nested nav pattern from Companies
+- MBR-04: Keep parent /members link clickable
+- MBR-05: Update topLevelItems structure for children support
+
+**Success Criteria:**
+1. Members in sidebar shows expand chevron
+2. Clicking expand reveals Khairul, Azlan, Izyani links
+3. Each child link navigates to /members/[name]
+4. Clicking Members parent still goes to /members overview
+5. Nested styling matches Companies/Departments/Contacts pattern
+6. Mobile sidebar shows same expandable behavior
+
+**Files to modify:**
+- `src/lib/nav-config.ts`
+- `src/components/sidebar.tsx`
+- `src/components/mobile-sidebar.tsx`
+- `src/components/nav-group.tsx` (if needed for top-level nested items)
+
+---
+
 ## Progress
 
-All 71 phases complete across 17 milestones. Run `/gsd:new-milestone` to start next milestone.
+Phase 72 of 74 | v2.5 in progress
+
+Progress: [░░░░░░░░░░] 0% (0/3 v2.5 phases)
