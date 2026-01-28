@@ -42,6 +42,8 @@ export async function GET(
     const serializedCosts = costs.map(cost => ({
       ...cost,
       amount: Number(cost.amount),
+      quantity: cost.quantity !== null ? Number(cost.quantity) : null,
+      unitPrice: cost.unitPrice !== null ? Number(cost.unitPrice) : null,
     }))
 
     return NextResponse.json(serializedCosts)
@@ -120,6 +122,8 @@ export async function POST(
         categoryId: body.categoryId,
         date: body.date ? new Date(body.date) : new Date(),
         supplierId: body.supplierId || null,
+        quantity: body.quantity !== undefined && body.quantity !== null ? parseFloat(body.quantity) : null,
+        unitPrice: body.unitPrice !== undefined && body.unitPrice !== null ? parseFloat(body.unitPrice) : null,
       },
       include: {
         category: { select: { id: true, name: true } },
@@ -127,10 +131,12 @@ export async function POST(
       },
     })
 
-    // Convert Decimal amount to Number
+    // Convert Decimal amounts to Number
     return NextResponse.json({
       ...cost,
       amount: Number(cost.amount),
+      quantity: cost.quantity !== null ? Number(cost.quantity) : null,
+      unitPrice: cost.unitPrice !== null ? Number(cost.unitPrice) : null,
     }, { status: 201 })
   } catch (error) {
     console.error('Error creating cost:', error)
