@@ -7,6 +7,7 @@ import { prisma } from '@/lib/prisma'
 import type { AdminDefaults } from '@prisma/client'
 import { UserRole } from '@prisma/client'
 import type { DashboardLayout, WidgetRoleRestrictions } from '@/types/dashboard'
+import type { InternalFieldConfig } from '@/types/internal-fields'
 import { WIDGET_REGISTRY } from './registry'
 
 /**
@@ -61,6 +62,7 @@ export function getDefaultWidgetRoles(): WidgetRoleRestrictions {
 export async function getAdminDefaults(): Promise<{
   dashboardLayout: DashboardLayout
   widgetRoles: WidgetRoleRestrictions
+  internalFieldConfig: InternalFieldConfig | null
   id: string
   createdAt: Date
   updatedAt: Date
@@ -81,6 +83,7 @@ export async function getAdminDefaults(): Promise<{
     updatedAt: defaults.updatedAt,
     dashboardLayout: defaults.dashboardLayout as unknown as DashboardLayout,
     widgetRoles: defaults.widgetRoles as unknown as WidgetRoleRestrictions,
+    internalFieldConfig: defaults.internalFieldConfig as unknown as InternalFieldConfig | null,
   }
 }
 
@@ -92,6 +95,7 @@ export async function updateAdminDefaults(
   updates: Partial<{
     dashboardLayout: DashboardLayout
     widgetRoles: WidgetRoleRestrictions
+    internalFieldConfig: InternalFieldConfig
   }>
 ): Promise<AdminDefaults> {
   const data: Record<string, unknown> = {}
@@ -102,6 +106,10 @@ export async function updateAdminDefaults(
 
   if (updates.widgetRoles !== undefined) {
     data.widgetRoles = updates.widgetRoles as unknown as object
+  }
+
+  if (updates.internalFieldConfig !== undefined) {
+    data.internalFieldConfig = updates.internalFieldConfig as unknown as object
   }
 
   return prisma.adminDefaults.update({
