@@ -63,7 +63,7 @@ export const navGroups: NavGroup[] = [
       { name: 'Potential Projects', href: '/potential-projects', icon: FolderKanban },
       { name: 'Projects', href: '/projects', icon: Briefcase },
       { name: 'Suppliers', href: '/suppliers', icon: Truck },
-      { name: 'Price Comparison', href: '/supplier-items', icon: Scale },
+      { name: 'Pricing History', href: '/supplier-items', icon: Scale },
     ],
   },
   {
