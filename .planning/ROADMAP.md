@@ -32,31 +32,17 @@ See `.planning/milestones/` for archived phase details.
 
 ### v2.5 Navigation Reorganization
 
-#### Phase 72: Create Work Group & Move Items
+#### Phase 72: Create Work Group & Move Items ✓
 
 **Goal:** Create a new "Work" navigation group containing Projects and Tasks together.
 
-**Requirements:**
-- NAV-01: Create "Work" nav group in nav-config.ts
-- NAV-02: Move Projects item from CRM group to Work group
-- NAV-03: Move Tasks item from topLevelItems to Work group
-- NAV-04: Update sidebar.tsx to render new Work group
-- NAV-05: Update mobile-sidebar.tsx with same changes
-- NAV-06: Update findGroupForPath for new group
-- NAV-07: Update getDefaultNavOrder for new group
+**Status:** Complete (2026-01-28)
 
-**Success Criteria:**
-1. "Work" group appears in sidebar between SAAP and CRM
-2. Projects and Tasks are both visible under Work group
-3. Tasks no longer appears as standalone top-level item
-4. CRM group no longer contains Projects
-5. Navigation works correctly on both desktop and mobile
-6. Existing user nav preferences gracefully handle the restructure
-
-**Files to modify:**
-- `src/lib/nav-config.ts`
-- `src/components/sidebar.tsx`
-- `src/components/mobile-sidebar.tsx`
+**Delivered:**
+- Work nav group added between SAAP and CRM
+- Projects moved from CRM to Work group
+- Tasks moved from topLevelItems to Work group
+- Both desktop and mobile sidebars updated
 
 ---
 
@@ -113,6 +99,6 @@ See `.planning/milestones/` for archived phase details.
 
 ## Progress
 
-Phase 72 of 74 | v2.5 in progress
+Phase 73 of 74 | v2.5 in progress
 
-Progress: [░░░░░░░░░░] 0% (0/3 v2.5 phases)
+Progress: [███░░░░░░░] 33% (1/3 v2.5 phases)
