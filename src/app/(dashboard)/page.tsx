@@ -35,24 +35,39 @@ async function getDashboardData() {
     }
   })
 
-  // Real revenue from KeyResult model
+  // Revenue from KeyResult → Initiative → Project chain
   const revenueKRs = await prisma.keyResult.findMany({
     where: { metricType: 'REVENUE' },
-    select: { krId: true, description: true, target: true, actual: true },
+    select: {
+      krId: true,
+      description: true,
+      target: true,
+      initiatives: {
+        select: {
+          projects: {
+            where: { status: { in: ['ACTIVE', 'COMPLETED'] } },
+            select: { revenue: true, potentialRevenue: true },
+          },
+        },
+      },
+    },
     orderBy: { krId: 'asc' },
   })
-  const revenueTarget = revenueKRs.reduce(
-    (sum, kr) => sum + Number(kr.target), 0
-  )
-  const revenueProgress = revenueKRs.reduce(
-    (sum, kr) => sum + Number(kr.actual), 0
-  )
-  const revenueBreakdown = revenueKRs.map(kr => ({
-    krId: kr.krId,
-    description: kr.description,
-    target: Number(kr.target),
-    actual: Number(kr.actual),
-  }))
+  const revenueBreakdown = revenueKRs.map(kr => {
+    const actual = kr.initiatives.reduce((sum, init) =>
+      sum + init.projects.reduce((s, p) =>
+        s + (Number(p.revenue) || Number(p.potentialRevenue) || 0), 0
+      ), 0
+    )
+    return {
+      krId: kr.krId,
+      description: kr.description,
+      target: Number(kr.target),
+      actual,
+    }
+  })
+  const revenueTarget = revenueBreakdown.reduce((sum, kr) => sum + kr.target, 0)
+  const revenueProgress = revenueBreakdown.reduce((sum, kr) => sum + kr.actual, 0)
 
   // Calculate stats
   const completedCount = statusCounts.find(s => s.status === 'COMPLETED')?._count || 0

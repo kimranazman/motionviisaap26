@@ -37,16 +37,30 @@ export async function GET() {
       }
     })
 
-    // Real revenue from KeyResult model
+    // Revenue from KeyResult → Initiative → Project chain
     const revenueKRs = await prisma.keyResult.findMany({
       where: { metricType: 'REVENUE' },
-      select: { target: true, actual: true },
+      select: {
+        target: true,
+        initiatives: {
+          select: {
+            projects: {
+              where: { status: { in: ['ACTIVE', 'COMPLETED'] } },
+              select: { revenue: true, potentialRevenue: true },
+            },
+          },
+        },
+      },
     })
     const revenueTarget = revenueKRs.reduce(
       (sum, kr) => sum + Number(kr.target), 0
     )
     const revenueProgress = revenueKRs.reduce(
-      (sum, kr) => sum + Number(kr.actual), 0
+      (sum, kr) => sum + kr.initiatives.reduce((s, init) =>
+        s + init.projects.reduce((ps, p) =>
+          ps + (Number(p.revenue) || Number(p.potentialRevenue) || 0), 0
+        ), 0
+      ), 0
     )
 
     const completedCount = statusCounts.find(s => s.status === 'COMPLETED')?._count || 0
