@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -35,6 +35,8 @@ interface Cost {
   categoryId: string
   date: string
   supplierId?: string | null
+  quantity?: number | null
+  unitPrice?: number | null
 }
 
 interface CostFormProps {
@@ -61,8 +63,27 @@ export function CostForm({
   const [supplierId, setSupplierId] = useState<string | null>(
     cost?.supplierId || null
   )
+  const [quantity, setQuantity] = useState(cost?.quantity?.toString() || '')
+  const [unitPrice, setUnitPrice] = useState(cost?.unitPrice?.toString() || '')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Auto-calculate amount when quantity and unitPrice change
+  useEffect(() => {
+    const qty = parseFloat(quantity)
+    const price = parseFloat(unitPrice)
+    if (!isNaN(qty) && qty > 0 && !isNaN(price) && price > 0) {
+      setAmount((qty * price).toFixed(2))
+    }
+  }, [quantity, unitPrice])
+
+  const hasAutoCalc =
+    quantity &&
+    unitPrice &&
+    !isNaN(parseFloat(quantity)) &&
+    parseFloat(quantity) > 0 &&
+    !isNaN(parseFloat(unitPrice)) &&
+    parseFloat(unitPrice) > 0
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -98,6 +119,8 @@ export function CostForm({
           categoryId,
           date: date.toISOString(),
           supplierId: supplierId || null,
+          quantity: quantity ? parseFloat(quantity) : null,
+          unitPrice: unitPrice ? parseFloat(unitPrice) : null,
         }),
       })
 
@@ -133,6 +156,34 @@ export function CostForm({
           />
         </div>
 
+        {/* Quantity */}
+        <div className="space-y-2">
+          <Label htmlFor="cost-quantity">Quantity</Label>
+          <Input
+            id="cost-quantity"
+            type="number"
+            step="0.01"
+            min="0"
+            value={quantity}
+            onChange={(e) => setQuantity(e.target.value)}
+            placeholder="e.g., 5"
+          />
+        </div>
+
+        {/* Unit Price */}
+        <div className="space-y-2">
+          <Label htmlFor="cost-unit-price">Unit Price (RM)</Label>
+          <Input
+            id="cost-unit-price"
+            type="number"
+            step="0.01"
+            min="0"
+            value={unitPrice}
+            onChange={(e) => setUnitPrice(e.target.value)}
+            placeholder="0.00"
+          />
+        </div>
+
         {/* Amount */}
         <div className="space-y-2">
           <Label htmlFor="cost-amount">
@@ -147,6 +198,11 @@ export function CostForm({
             onChange={(e) => setAmount(e.target.value)}
             placeholder="0.00"
           />
+          {hasAutoCalc && (
+            <p className="text-xs text-muted-foreground">
+              Auto-calculated: {quantity} x RM {parseFloat(unitPrice).toFixed(2)}
+            </p>
+          )}
         </div>
 
         {/* Category */}
