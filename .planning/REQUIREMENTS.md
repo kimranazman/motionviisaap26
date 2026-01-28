@@ -61,34 +61,34 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BUG-01 | TBD | Pending |
-| BUG-02 | TBD | Pending |
-| BUG-03 | TBD | Pending |
-| BUG-04 | TBD | Pending |
-| BUG-05 | TBD | Pending |
-| BUG-06 | TBD | Pending |
-| BUG-07 | TBD | Pending |
-| BUG-08 | TBD | Pending |
-| VIS-01 | TBD | Pending |
-| VIS-02 | TBD | Pending |
-| VIS-03 | TBD | Pending |
-| VIS-04 | TBD | Pending |
-| VIS-05 | TBD | Pending |
-| EVT-01 | TBD | Pending |
-| EVT-02 | TBD | Pending |
-| EVT-03 | TBD | Pending |
-| EVT-04 | TBD | Pending |
-| EVT-05 | TBD | Pending |
-| CAL-01 | TBD | Pending |
-| CAL-02 | TBD | Pending |
-| CAL-03 | TBD | Pending |
-| CAL-04 | TBD | Pending |
+| BUG-01 | Phase 57 | Pending |
+| BUG-02 | Phase 57 | Pending |
+| BUG-03 | Phase 57 | Pending |
+| BUG-04 | Phase 58 | Pending |
+| BUG-05 | Phase 58 | Pending |
+| BUG-06 | Phase 58 | Pending |
+| BUG-07 | Phase 58 | Pending |
+| BUG-08 | Phase 58 | Pending |
+| VIS-01 | Phase 59 | Pending |
+| VIS-02 | Phase 59 | Pending |
+| VIS-03 | Phase 59 | Pending |
+| VIS-04 | Phase 59 | Pending |
+| VIS-05 | Phase 59 | Pending |
+| EVT-01 | Phase 60 | Pending |
+| EVT-02 | Phase 60 | Pending |
+| EVT-03 | Phase 60 | Pending |
+| EVT-04 | Phase 60 | Pending |
+| EVT-05 | Phase 60 | Pending |
+| CAL-01 | Phase 61 | Pending |
+| CAL-02 | Phase 61 | Pending |
+| CAL-03 | Phase 61 | Pending |
+| CAL-04 | Phase 61 | Pending |
 
 **Coverage:**
 - v1 requirements: 22 total
-- Mapped to phases: 0
-- Unmapped: 22 ⚠️
+- Mapped to phases: 22
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-28*
-*Last updated: 2026-01-28 after initial definition*
+*Last updated: 2026-01-28 after roadmap creation*
