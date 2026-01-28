@@ -11,7 +11,7 @@ v2.3 is a consolidation milestone that fixes persistent UX bugs, expands CRM bro
 
 ## Phases
 
-- [ ] **Phase 62: Modal Scroll + Expand Fixes** - Fix scrolling and expand-to-page across all detail modals
+- [x] **Phase 62: Modal Scroll + Expand Fixes** - Fix scrolling and expand-to-page across all detail modals
 - [ ] **Phase 63: Standalone CRM Pages** - Standalone Departments and Contacts pages under CRM
 - [ ] **Phase 64: Task Creation on /tasks** - Add Task button with project selector on cross-project tasks page
 - [ ] **Phase 65: Internal Project Flag** - Internal projects (Motionvii / Talenta) without external company requirement
@@ -32,8 +32,8 @@ v2.3 is a consolidation milestone that fixes persistent UX bugs, expands CRM bro
 **Plans**: TBD
 
 Plans:
-- [ ] 62-01: TBD
-- [ ] 62-02: TBD
+- [x] 62-01: Fix modal scroll in all detail views (wave 1)
+- [x] 62-02: Fix expand-to-page for detail views (wave 2)
 
 ### Phase 63: Standalone CRM Pages
 **Goal**: Users can browse, filter, and manage departments and contacts as standalone pages without navigating through company detail
@@ -117,7 +117,7 @@ Phases execute in order: 62 -> 63 -> 64 -> 65 -> 66 -> 67
 
 | Phase | Plans Complete | Status | Completed |
 |-------|---------------|--------|-----------|
-| 62. Modal Scroll + Expand Fixes | 0/TBD | Not started | - |
+| 62. Modal Scroll + Expand Fixes | 2/2 | Complete | 2026-01-28 |
 | 63. Standalone CRM Pages | 0/TBD | Not started | - |
 | 64. Task Creation on /tasks | 0/TBD | Not started | - |
 | 65. Internal Project Flag | 0/TBD | Not started | - |

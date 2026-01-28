@@ -9,10 +9,10 @@ Requirements for v2.3 release. Each maps to roadmap phases.
 
 ### UX Fixes
 
-- [ ] **UX-01**: All detail modals scroll content when it exceeds viewport height
-- [ ] **UX-02**: Expand-to-page button opens dedicated full page (not modal-on-empty-page)
-- [ ] **UX-03**: ScrollArea works correctly inside DialogContent across all 7+ detail sheet types
-- [ ] **UX-04**: Modal scroll works in both Dialog and Drawer modes
+- [x] **UX-01**: All detail modals scroll content when it exceeds viewport height
+- [x] **UX-02**: Expand-to-page button opens dedicated full page (not modal-on-empty-page)
+- [x] **UX-03**: ScrollArea works correctly inside DialogContent across all 7+ detail sheet types
+- [x] **UX-04**: Modal scroll works in both Dialog and Drawer modes
 
 ### CRM Entity Browsing
 
@@ -102,10 +102,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| UX-01 | Phase 62 | Pending |
-| UX-02 | Phase 62 | Pending |
-| UX-03 | Phase 62 | Pending |
-| UX-04 | Phase 62 | Pending |
+| UX-01 | Phase 62 | Complete |
+| UX-02 | Phase 62 | Complete |
+| UX-03 | Phase 62 | Complete |
+| UX-04 | Phase 62 | Complete |
 | CRM-01 | Phase 63 | Pending |
 | CRM-02 | Phase 63 | Pending |
 | CRM-03 | Phase 63 | Pending |
