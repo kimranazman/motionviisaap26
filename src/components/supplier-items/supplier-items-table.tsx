@@ -28,6 +28,8 @@ interface SupplierItem {
   description: string
   normalizedItem: string | null
   amount: number
+  quantity: number | null
+  unitPrice: number | null
   date: string
   supplier: { id: string; name: string } | null
   project: { id: string; title: string } | null
@@ -174,23 +176,25 @@ export function SupplierItemsTable({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[30%]">Description</TableHead>
-                <TableHead className="w-[20%]">Category</TableHead>
-                <TableHead className="hidden md:table-cell w-[15%]">
+                <TableHead className="w-[24%]">Description</TableHead>
+                <TableHead className="w-[16%]">Category</TableHead>
+                <TableHead className="hidden md:table-cell w-[12%]">
                   Supplier
                 </TableHead>
-                <TableHead className="w-[15%]">
+                <TableHead className="hidden lg:table-cell w-[7%]">Qty</TableHead>
+                <TableHead className="hidden lg:table-cell w-[10%]">Unit Price</TableHead>
+                <TableHead className="w-[12%]">
                   <Button
                     variant="ghost"
                     size="sm"
                     className="-ml-3 h-8 hover:bg-transparent"
                     onClick={toggleSortDirection}
                   >
-                    Price
+                    Total
                     <ArrowUpDown className="ml-1 h-4 w-4" />
                   </Button>
                 </TableHead>
-                <TableHead className="hidden md:table-cell w-[20%]">
+                <TableHead className="hidden md:table-cell w-[16%]">
                   Project
                 </TableHead>
               </TableRow>
@@ -222,6 +226,16 @@ export function SupplierItemsTable({
                       {item.supplier?.name || '-'}
                     </span>
                   </TableCell>
+                  <TableCell className="hidden lg:table-cell">
+                    <span className="text-sm text-gray-600">
+                      {item.quantity != null ? item.quantity : '-'}
+                    </span>
+                  </TableCell>
+                  <TableCell className="hidden lg:table-cell">
+                    <span className="text-sm text-gray-600">
+                      {item.unitPrice != null ? formatCurrency(item.unitPrice) : '-'}
+                    </span>
+                  </TableCell>
                   <TableCell>
                     <span
                       className={cn(
@@ -242,7 +256,7 @@ export function SupplierItemsTable({
 
               {filteredItems.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-12">
+                  <TableCell colSpan={7} className="text-center py-12">
                     <div className="flex flex-col items-center gap-3">
                       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
                         <Tag className="h-6 w-6 text-gray-400" />
