@@ -124,6 +124,8 @@ interface Project {
   startDate: string | null
   endDate: string | null
   isArchived?: boolean
+  isInternal?: boolean
+  internalEntity?: string | null
   company: { id: string; name: string } | null
   contact: { id: string; name: string } | null
   initiative: { id: string; title: string } | null
@@ -382,6 +384,8 @@ export function ProjectDetailSheet({
 }: ProjectDetailSheetProps) {
   const [title, setTitle] = useState('')
   const [status, setStatus] = useState('')
+  const [isInternal, setIsInternal] = useState(false)
+  const [internalEntity, setInternalEntity] = useState<string | null>(null)
   const [companyId, setCompanyId] = useState<string | null>(null)
   const [contactId, setContactId] = useState<string | null>(null)
   const [contacts, setContacts] = useState<Contact[]>([])
@@ -437,6 +441,8 @@ export function ProjectDetailSheet({
     if (project && open) {
       setTitle(project.title)
       setStatus(project.status)
+      setIsInternal(project.isInternal || false)
+      setInternalEntity(project.internalEntity || null)
       setCompanyId(project.company?.id || null)
       setContactId(project.contact?.id || null)
       setInitiativeId(project.initiative?.id || null)
@@ -574,9 +580,17 @@ export function ProjectDetailSheet({
       setError('Title is required')
       return
     }
-    if (!companyId) {
-      setError('Company is required')
-      return
+
+    if (isInternal) {
+      if (!internalEntity) {
+        setError('Entity is required for internal projects')
+        return
+      }
+    } else {
+      if (!companyId) {
+        setError('Company is required')
+        return
+      }
     }
 
     setIsSaving(true)
@@ -588,8 +602,10 @@ export function ProjectDetailSheet({
         body: JSON.stringify({
           title: title.trim(),
           status,
-          companyId,
-          contactId: contactId || null,
+          isInternal,
+          internalEntity: isInternal ? internalEntity : null,
+          companyId: isInternal ? null : companyId,
+          contactId: isInternal ? null : (contactId || null),
           initiativeId: initiativeId || null,
           description: description.trim() || null,
           startDate: startDate ? startDate.toISOString() : null,
@@ -909,6 +925,8 @@ export function ProjectDetailSheet({
   const hasChanges =
     title !== project.title ||
     status !== project.status ||
+    isInternal !== (project.isInternal || false) ||
+    internalEntity !== (project.internalEntity || null) ||
     companyId !== (project.company?.id || null) ||
     contactId !== (project.contact?.id || null) ||
     initiativeId !== (project.initiative?.id || null) ||
@@ -1035,32 +1053,78 @@ export function ProjectDetailSheet({
               </Select>
             </div>
 
-            {/* Company */}
-            <div className="space-y-2">
-              <Label>
-                Company <span className="text-red-500">*</span>
-              </Label>
-              <CompanySelect
-                value={companyId}
-                onValueChange={handleCompanyChange}
+            {/* Internal Project Toggle */}
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="edit-isInternal"
+                checked={isInternal}
+                onChange={(e) => {
+                  setIsInternal(e.target.checked)
+                  if (e.target.checked) {
+                    setCompanyId(null)
+                    setContactId(null)
+                    setContacts([])
+                  } else {
+                    setInternalEntity(null)
+                  }
+                }}
+                className="rounded border-gray-300"
               />
+              <Label htmlFor="edit-isInternal">Internal Project</Label>
             </div>
 
-            {/* Contact */}
-            <div className="space-y-2">
-              <Label>Contact</Label>
-              <ContactSelect
-                value={contactId}
-                onValueChange={setContactId}
-                contacts={contacts}
-                disabled={!companyId || isLoadingContacts}
-              />
-              {isLoadingContacts && (
-                <p className="text-xs text-muted-foreground">
-                  Loading contacts...
-                </p>
-              )}
-            </div>
+            {/* Entity Selector (when internal) */}
+            {isInternal && (
+              <div className="space-y-2">
+                <Label>
+                  Entity <span className="text-red-500">*</span>
+                </Label>
+                <Select
+                  value={internalEntity || ''}
+                  onValueChange={setInternalEntity}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select entity..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="MOTIONVII">Motionvii</SelectItem>
+                    <SelectItem value="TALENTA">Talenta</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {/* Company (hidden when internal) */}
+            {!isInternal && (
+              <div className="space-y-2">
+                <Label>
+                  Company <span className="text-red-500">*</span>
+                </Label>
+                <CompanySelect
+                  value={companyId}
+                  onValueChange={handleCompanyChange}
+                />
+              </div>
+            )}
+
+            {/* Contact (hidden when internal) */}
+            {!isInternal && (
+              <div className="space-y-2">
+                <Label>Contact</Label>
+                <ContactSelect
+                  value={contactId}
+                  onValueChange={setContactId}
+                  contacts={contacts}
+                  disabled={!companyId || isLoadingContacts}
+                />
+                {isLoadingContacts && (
+                  <p className="text-xs text-muted-foreground">
+                    Loading contacts...
+                  </p>
+                )}
+              </div>
+            )}
 
             {/* KRI Link */}
             <div className="space-y-2">
