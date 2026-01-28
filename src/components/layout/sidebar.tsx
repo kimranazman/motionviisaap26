@@ -15,9 +15,9 @@ export function Sidebar() {
   const { expandedGroups, toggleGroup } = useNavCollapseState(pathname)
 
   return (
-    <aside className="hidden md:fixed md:inset-y-0 md:left-0 md:z-50 md:block md:w-64 bg-white border-r border-gray-200">
+    <aside className="hidden md:fixed md:inset-y-0 md:left-0 md:z-50 md:flex md:flex-col md:w-64 bg-white border-r border-gray-200">
       {/* Logo */}
-      <div className="flex items-center gap-2 px-6 py-5 border-b border-gray-200">
+      <div className="flex items-center gap-2 px-6 py-5 border-b border-gray-200 shrink-0">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600">
           <Target className="h-5 w-5 text-white" />
         </div>
@@ -28,7 +28,7 @@ export function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex flex-col gap-1 p-4">
+      <nav className="flex-1 overflow-y-auto flex flex-col gap-1 p-4">
         {/* Collapsible groups */}
         {navGroups
           .filter((group) => !group.requireRole || session?.user?.role === group.requireRole)

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Plus, Archive } from 'lucide-react'
@@ -47,7 +47,7 @@ export function ProjectList({ initialData, initialShowArchived = false, openProj
   const [isTogglingArchived, setIsTogglingArchived] = useState(false)
 
   // Handle opening project from URL param
-  useState(() => {
+  useEffect(() => {
     if (openProjectId) {
       const projectToOpen = initialData.find(p => p.id === openProjectId)
       if (projectToOpen) {
@@ -55,7 +55,8 @@ export function ProjectList({ initialData, initialShowArchived = false, openProj
         setIsDetailOpen(true)
       }
     }
-  })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Filter projects by selected status
   const filteredProjects =

@@ -39,9 +39,9 @@ const DialogContent = React.forwardRef<
       ref={ref}
       className={cn(
         // Base styles
-        "fixed z-50 grid w-full gap-4 border bg-background p-6 shadow-lg duration-200 overflow-y-auto",
+        "fixed z-50 w-full gap-4 border bg-background p-6 shadow-lg duration-200 overflow-y-auto",
         // Mobile: slide from bottom, nearly full-screen
-        "inset-x-0 bottom-0 h-[calc(100vh-2rem)] rounded-t-2xl",
+        "inset-x-0 bottom-0 h-[calc(100vh-2rem)] rounded-t-2xl flex flex-col",
         // Mobile animations
         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
         "data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
