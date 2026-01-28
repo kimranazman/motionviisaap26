@@ -50,12 +50,12 @@ Requirements for v2.4 release. Each maps to roadmap phases.
 
 ### Internal Project Field Config (INTL)
 
-- [ ] **INTL-01**: Admin settings section shows toggles for internal project field visibility
-- [ ] **INTL-02**: Configurable fields include: revenue, potentialRevenue, pipeline source (deal/potential), company/contact, initiative link
-- [ ] **INTL-03**: Configuration stored in AdminDefaults (system-wide, not per-user)
-- [ ] **INTL-04**: Project form dynamically hides fields based on admin config when project is internal
-- [ ] **INTL-05**: Project detail view follows same field visibility rules
-- [ ] **INTL-06**: Sensible defaults applied when no admin config exists (hide revenue and pipeline source for internal projects)
+- [x] **INTL-01**: Admin settings section shows toggles for internal project field visibility
+- [x] **INTL-02**: Configurable fields include: revenue, potentialRevenue, pipeline source (deal/potential), company/contact, initiative link
+- [x] **INTL-03**: Configuration stored in AdminDefaults (system-wide, not per-user)
+- [x] **INTL-04**: Project form dynamically hides fields based on admin config when project is internal
+- [x] **INTL-05**: Project detail view follows same field visibility rules
+- [x] **INTL-06**: Sensible defaults applied when no admin config exists (hide revenue and pipeline source for internal projects)
 
 ## v2 Requirements
 
@@ -123,12 +123,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TASK-01 | Phase 68 | Pending |
 | TASK-02 | Phase 68 | Pending |
 | TASK-03 | Phase 68 | Pending |
-| INTL-01 | Phase 71 | Pending |
-| INTL-02 | Phase 71 | Pending |
-| INTL-03 | Phase 71 | Pending |
-| INTL-04 | Phase 71 | Pending |
-| INTL-05 | Phase 71 | Pending |
-| INTL-06 | Phase 71 | Pending |
+| INTL-01 | Phase 71 | Complete |
+| INTL-02 | Phase 71 | Complete |
+| INTL-03 | Phase 71 | Complete |
+| INTL-04 | Phase 71 | Complete |
+| INTL-05 | Phase 71 | Complete |
+| INTL-06 | Phase 71 | Complete |
 
 **Coverage:**
 - v1 requirements: 32 total

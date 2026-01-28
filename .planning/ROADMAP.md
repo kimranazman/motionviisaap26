@@ -94,11 +94,11 @@ Plans:
   1. Admin settings section shows toggles for internal project fields (revenue, potentialRevenue, pipeline source, company/contact, initiative link) with sensible defaults
   2. Configuration is stored in AdminDefaults and applies system-wide (not per-user)
   3. Project form dynamically hides configured fields when the project is internal, and project detail view follows the same visibility rules
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 71-01: TBD
-- [ ] 71-02: TBD
+- [x] 71-01-PLAN.md — Internal field config backend: schema, types, API, hook
+- [x] 71-02-PLAN.md — Settings UI, project form/detail field hiding integration
 
 ## Progress
 
@@ -111,4 +111,4 @@ Note: Phase 71 is independent and can execute in parallel with 69-70 if desired.
 | 68. Sidebar Fixes & Quick Wins | v2.4 | 2/2 | Complete | 2026-01-28 |
 | 69. Nested Sidebar Links | v2.4 | 2/2 | Complete | 2026-01-28 |
 | 70. Sidebar DnD Reorder | v2.4 | 2/2 | Complete | 2026-01-28 |
-| 71. Internal Project Field Config | v2.4 | 0/TBD | Not started | - |
+| 71. Internal Project Field Config | v2.4 | 2/2 | Complete | 2026-01-28 |
