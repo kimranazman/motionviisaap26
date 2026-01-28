@@ -19,6 +19,7 @@ import {
   Users,
   ListChecks,
   Users2,
+  User,
   Settings,
 } from 'lucide-react'
 
@@ -86,7 +87,11 @@ export const navGroups: NavGroup[] = [
 ]
 
 export const topLevelItems: TopLevelNavItem[] = [
-  { name: 'Members', href: '/members', icon: Users2 },
+  { name: 'Members', href: '/members', icon: Users2, children: [
+    { name: 'Khairul', href: '/members/khairul', icon: User },
+    { name: 'Azlan', href: '/members/azlan', icon: User },
+    { name: 'Izyani', href: '/members/izyani', icon: User },
+  ]},
 ]
 
 export const settingsItem: NavItem = {
@@ -118,6 +123,11 @@ export function getAllNavHrefs(): string[] {
   }
   for (const item of topLevelItems) {
     hrefs.push(item.href)
+    if (item.children) {
+      for (const child of item.children) {
+        hrefs.push(child.href)
+      }
+    }
   }
   hrefs.push(settingsItem.href)
   return hrefs
