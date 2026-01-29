@@ -16,7 +16,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Button } from '@/components/ui/button'
 import { useDetailViewMode } from '@/lib/hooks/use-detail-view-mode'
 import { cn } from '@/lib/utils'
@@ -80,11 +79,11 @@ export function DetailView({
           resizable={!isMobile}
           className={cn(
             isMobile && 'h-[85vh] rounded-t-2xl flex flex-col',
-            !isMobile && 'flex flex-col',
+            !isMobile && 'h-screen flex flex-col',
             className
           )}
         >
-          <SheetHeader className={cn('pr-8', headerClassName)}>
+          <SheetHeader className={cn('pr-8 shrink-0', headerClassName)}>
             <div className="flex items-center justify-between">
               <SheetTitle className="text-left text-lg leading-snug flex-1">
                 {title}
@@ -92,9 +91,9 @@ export function DetailView({
               {expandHref && <ExpandButton href={expandHref} />}
             </div>
           </SheetHeader>
-          <ScrollArea className={cn('flex-1 mt-4', contentClassName)}>
+          <div className={cn('flex-1 min-h-0 mt-4 overflow-y-auto', contentClassName)}>
             {children}
-          </ScrollArea>
+          </div>
           {footer && (
             <div className="p-4 border-t shrink-0 mt-auto">
               {footer}
