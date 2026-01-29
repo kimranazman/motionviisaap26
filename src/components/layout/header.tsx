@@ -16,6 +16,7 @@ import { NotificationBell } from './notification-bell'
 import { MobileSidebar } from './mobile-sidebar'
 import { SignOutButton } from '@/components/auth/sign-out-button'
 import { DetailViewToggle } from './detail-view-toggle'
+import { AiAnalyzeButton } from './ai-analyze-button'
 import { useDetailViewMode } from '@/lib/hooks/use-detail-view-mode'
 import { PanelRight, Columns2, Settings } from 'lucide-react'
 import Link from 'next/link'
@@ -74,6 +75,9 @@ export function Header({ title, description }: HeaderProps) {
 
         {/* Detail View Toggle */}
         <DetailViewToggle />
+
+        {/* AI Analyze - Admin only */}
+        {session?.user?.role === 'ADMIN' && <AiAnalyzeButton />}
 
         {/* Notifications */}
         <NotificationBell />
