@@ -3,6 +3,7 @@ import { ServicesTabs } from '@/components/services-pricing/services-tabs'
 import { AllServicesTable } from '@/components/services-pricing/all-services-table'
 import { ServicesByService } from '@/components/services-pricing/services-by-service'
 import { ServicesByClient } from '@/components/services-pricing/services-by-client'
+import { ExportButton } from '@/components/services-pricing/export-button'
 
 export const dynamic = 'force-dynamic'
 
@@ -65,11 +66,14 @@ export default async function ServicesPricingPage() {
 
   return (
     <div className="space-y-6 p-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Services Pricing</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Track and compare service pricing across projects and clients
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Services Pricing</h1>
+          <p className="text-sm text-gray-500 mt-1">
+            Track and compare service pricing across projects and clients
+          </p>
+        </div>
+        <ExportButton />
       </div>
 
       <ServicesTabs
