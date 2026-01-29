@@ -16,6 +16,7 @@ import {
   Briefcase,
   Truck,
   Scale,
+  Receipt,
   Users,
   ListChecks,
   Users2,
@@ -60,6 +61,7 @@ export const navGroups: NavGroup[] = [
     items: [
       { name: 'Projects', href: '/projects', icon: Briefcase },
       { name: 'Tasks', href: '/tasks', icon: ListChecks },
+      { name: 'Services Pricing', href: '/services-pricing', icon: Receipt },
       { name: 'Members', href: '/members', icon: Users2, children: [
         { name: 'Khairul', href: '/members/khairul', icon: User },
         { name: 'Azlan', href: '/members/azlan', icon: User },
