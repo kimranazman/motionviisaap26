@@ -53,7 +53,9 @@ export async function POST(request: Request) {
     // Uses nohup and & to run in background so SSH returns immediately
     // Redirects output to a log file for debugging
     const logFile = `/tmp/saap-ai-analyze-${Date.now()}.log`
-    const remoteCommand = `cd ${projectPath} && nohup claude "${claudeCommand}" > ${logFile} 2>&1 &`
+    // Use full path to claude since SSH doesn't load shell profile
+    const claudePath = '/Users/khairul/.local/bin/claude'
+    const remoteCommand = `cd ${projectPath} && nohup ${claudePath} "${claudeCommand}" > ${logFile} 2>&1 &`
 
     const sshCommand = `ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 ${sshUser}@${sshHost} '${remoteCommand}'`
 
