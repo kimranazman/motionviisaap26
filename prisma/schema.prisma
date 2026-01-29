@@ -195,10 +195,11 @@ enum ProjectStatus {
   CANCELLED
 }
 
-// Document categories for project files (v1.3)
+// Document categories for project files (v1.3, v2.9 added QUOTATION)
 enum DocumentCategory {
   RECEIPT
   INVOICE
+  QUOTATION
   OTHER
 }
 
