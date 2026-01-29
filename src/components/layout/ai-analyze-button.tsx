@@ -129,7 +129,7 @@ export function AiAnalyzeButton() {
           description: data.error || 'SSH connection failed',
         })
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to start analysis', {
         description: 'Network error',
       })
