@@ -16,9 +16,16 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 **v2.7 delivered:** Services Pricing History page at /services-pricing/ with three-tab view (All Services, By Service, By Client). Statistics per view showing count, min/max/avg pricing, and total revenue. Search and filter functionality. Export to Excel (XLSX). Click row to open deliverable detail modal for editing. Navigation link under Work group with Receipt icon.
 
-## Next Milestone
+## Current Milestone: v2.8 AI Analyze Button
 
-Ready to define next milestone. Run `/gsd:new-milestone` to start.
+**Goal:** Add a UI button in the header that triggers Claude Code's /ai-analyze command on the Mac via SSH from the NAS deployment.
+
+**Target features:**
+- Header button (Sparkles icon) with pending count badge (admin-only)
+- Dropdown menu with analysis types: All, Costs, Invoices, Receipts, Deliverables
+- SSH trigger from NAS to Mac running Claude Code with Max subscription
+- Hybrid polling for completion (every 15s for 90s, show result or "still running")
+- Error handling with toast feedback for SSH failures
 
 ## Requirements
 
@@ -272,7 +279,18 @@ Ready to define next milestone. Run `/gsd:new-milestone` to start.
 
 ### Active
 
-<!-- Next milestone requirements will be defined here -->
+<!-- v2.8 AI Analyze Button -->
+
+- [ ] SSH from NAS to Mac works without password — v2.8
+- [ ] Claude command executes successfully on Mac via SSH — v2.8
+- [ ] Pending API returns granular counts (costs, invoices, receipts, deliverables, total) — v2.8
+- [ ] AI trigger endpoint SSHs to Mac and runs Claude /ai-analyze command — v2.8
+- [ ] SSH errors surface as error toast to user — v2.8
+- [ ] Header button with Sparkles icon (admin-only) — v2.8
+- [ ] Badge showing total pending count — v2.8
+- [ ] Dropdown menu with analysis type options and counts — v2.8
+- [ ] Hybrid polling (every 15s for 90s) with completion feedback — v2.8
+- [ ] Toast feedback on trigger success/failure — v2.8
 
 ### Out of Scope
 
@@ -441,4 +459,4 @@ Ready to define next milestone. Run `/gsd:new-milestone` to start.
 | Submit nullifies hidden field values | Prevents stale data from being saved when fields are hidden | ✓ Good |
 
 ---
-*Last updated: 2026-01-29 after v2.7 milestone complete*
+*Last updated: 2026-01-29 after v2.8 milestone started*
