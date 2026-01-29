@@ -6,7 +6,7 @@
  */
 
 import * as XLSX from 'xlsx'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { formatDate } from '@/lib/utils'
 
 // ---------------------------------------------------------------------------
 // Types
