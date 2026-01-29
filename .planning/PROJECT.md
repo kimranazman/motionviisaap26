@@ -10,22 +10,15 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 ## Current State
 
-**Version:** v2.7 Services Pricing History (shipped 2026-01-29)
-**Codebase:** ~48,800 LOC TypeScript across 79 phases
+**Version:** v2.8 AI Analyze Button (shipped 2026-01-29)
+**Codebase:** ~49,400 LOC TypeScript across 83 phases
 **Tech stack:** Next.js 14, Prisma, MariaDB, Tailwind/shadcn, NextAuth.js, OpenAI
 
-**v2.7 delivered:** Services Pricing History page at /services-pricing/ with three-tab view (All Services, By Service, By Client). Statistics per view showing count, min/max/avg pricing, and total revenue. Search and filter functionality. Export to Excel (XLSX). Click row to open deliverable detail modal for editing. Navigation link under Work group with Receipt icon.
+**v2.8 delivered:** Header button (Sparkles icon) for admin users that triggers Claude Code's /ai-analyze command on Mac via SSH. Pending count badge with dropdown menu showing analysis types (All, Costs, Invoices, Receipts, Deliverables) each with their count. Hybrid polling (every 15s for 90s) with toast feedback on completion. SSH setup documented for NAS-to-Mac communication.
 
-## Current Milestone: v2.8 AI Analyze Button
+## Current Milestone: None (planning next)
 
-**Goal:** Add a UI button in the header that triggers Claude Code's /ai-analyze command on the Mac via SSH from the NAS deployment.
-
-**Target features:**
-- Header button (Sparkles icon) with pending count badge (admin-only)
-- Dropdown menu with analysis types: All, Costs, Invoices, Receipts, Deliverables
-- SSH trigger from NAS to Mac running Claude Code with Max subscription
-- Hybrid polling for completion (every 15s for 90s, show result or "still running")
-- Error handling with toast feedback for SSH failures
+Previous milestone v2.8 shipped. Use `/gsd:new-milestone` to start the next milestone.
 
 ## Requirements
 
@@ -277,20 +270,21 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 - ✓ Click row to open deliverable detail modal — v2.7
 - ✓ Navigation link under Work group in sidebar — v2.7
 
+**v2.8 AI Analyze Button:**
+- ✓ SSH setup documented for NAS-to-Mac communication — v2.8
+- ✓ Claude command execution documented via SSH — v2.8
+- ✓ Pending API returns granular counts (costs, invoices, receipts, deliverables, total) — v2.8
+- ✓ AI trigger endpoint SSHs to Mac and runs Claude /ai-analyze command — v2.8
+- ✓ SSH errors surface as error toast to user — v2.8
+- ✓ Header button with Sparkles icon (admin-only) — v2.8
+- ✓ Badge showing total pending count — v2.8
+- ✓ Dropdown menu with analysis type options and counts — v2.8
+- ✓ Hybrid polling (every 15s for 90s) with completion feedback — v2.8
+- ✓ Toast feedback on trigger success/failure — v2.8
+
 ### Active
 
-<!-- v2.8 AI Analyze Button -->
-
-- [ ] SSH from NAS to Mac works without password — v2.8
-- [ ] Claude command executes successfully on Mac via SSH — v2.8
-- [ ] Pending API returns granular counts (costs, invoices, receipts, deliverables, total) — v2.8
-- [ ] AI trigger endpoint SSHs to Mac and runs Claude /ai-analyze command — v2.8
-- [ ] SSH errors surface as error toast to user — v2.8
-- [ ] Header button with Sparkles icon (admin-only) — v2.8
-- [ ] Badge showing total pending count — v2.8
-- [ ] Dropdown menu with analysis type options and counts — v2.8
-- [ ] Hybrid polling (every 15s for 90s) with completion feedback — v2.8
-- [ ] Toast feedback on trigger success/failure — v2.8
+<!-- Next milestone requirements will go here -->
 
 ### Out of Scope
 
@@ -459,4 +453,4 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 | Submit nullifies hidden field values | Prevents stale data from being saved when fields are hidden | ✓ Good |
 
 ---
-*Last updated: 2026-01-29 after v2.8 milestone started*
+*Last updated: 2026-01-29 after v2.8 milestone shipped*

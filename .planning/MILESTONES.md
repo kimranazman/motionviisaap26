@@ -1,5 +1,72 @@
 # Milestone History
 
+## v2.8: AI Analyze Button
+
+**Shipped:** 2026-01-29
+**Duration:** < 1 day
+**Phases:** 4 (Phases 80-83)
+**Plans:** 5
+**Stats:** 6 commits, 7 files changed, +570 lines
+
+### Summary
+
+Added a header button that triggers Claude Code's /ai-analyze command on the Mac via SSH from the NAS deployment. Admin-only with pending count badge, dropdown menu for analysis types, and hybrid polling for completion feedback.
+
+### Key Accomplishments
+
+- SSH setup documentation for NAS-to-Mac communication (Mac IP: 192.168.100.148)
+- Extended /api/ai/pending with granular counts by type (costs, invoices, receipts, deliverables, total)
+- Created /api/ai/trigger endpoint that SSHs to Mac and runs Claude /ai-analyze in background
+- AiAnalyzeButton component with Sparkles icon, badge, dropdown menu, and hybrid polling (15s for 90s)
+- Toast feedback on trigger success/failure and completion detection
+
+### Requirements Delivered
+
+| Category | Count | IDs |
+|----------|-------|-----|
+| Infrastructure (INFRA) | 2 | INFRA-01 to INFRA-02 |
+| Pending API (API) | 3 | API-01 to API-03 |
+| Trigger API (TRIG) | 5 | TRIG-01 to TRIG-05 |
+| UI Component (UI) | 6 | UI-01 to UI-06 |
+| Polling (POLL) | 5 | POLL-01 to POLL-05 |
+| **Total** | **21** | |
+
+### Artifacts
+
+- Roadmap: `.planning/milestones/v2.8-ROADMAP.md`
+- Requirements: `.planning/milestones/v2.8-REQUIREMENTS.md`
+
+---
+
+## v2.7: Services Pricing History
+
+**Shipped:** 2026-01-29
+**Duration:** < 1 day
+**Phases:** 1 (Phase 79)
+**Plans:** 6
+**Stats:** Services pricing view with three tabs, statistics, and Excel export
+
+### Summary
+
+Added a dedicated Services Pricing History page showing all deliverables with value across projects, with three-tab organization (All Services, By Service, By Client), statistics per view, search/filter, Excel export, and row-click detail editing.
+
+### Key Accomplishments
+
+- Services Pricing History page at /services-pricing/
+- Three-tab view: All Services, By Service, By Client
+- Statistics per view (count, min/max/avg pricing, total revenue)
+- Search and filter functionality
+- Export to Excel (XLSX)
+- Row click to open deliverable detail modal
+- Navigation link under Work group with Receipt icon
+
+### Artifacts
+
+- Roadmap: `.planning/milestones/v2.7-ROADMAP.md`
+- Requirements: `.planning/milestones/v2.7-REQUIREMENTS.md`
+
+---
+
 ## v2.6: Views & Calendar Enhancement
 
 **Shipped:** 2026-01-29

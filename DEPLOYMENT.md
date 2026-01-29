@@ -179,3 +179,58 @@ ssh adminmotionvii@192.168.1.20 "sudo /usr/local/bin/docker exec saap2026-db mys
 - NAS has local secrets in docker-compose.yml that aren't in git
 - Use stash workflow: `git stash && git pull origin main && git stash pop`
 - If merge conflict after stash pop, keep the stashed version (has secrets)
+
+## SSH to Mac for AI Analysis
+
+The AI Analyze button in the UI triggers Claude commands on the Mac via SSH from the NAS Docker container.
+
+### Prerequisites
+- Mac must have Remote Login enabled (System Settings → General → Sharing)
+- Mac IP: **192.168.100.148** (verify with `ipconfig getifaddr en0`)
+- Network must allow NAS (192.168.1.x) to reach Mac (192.168.100.x)
+
+### SSH Key Setup
+
+1. **Generate SSH key in NAS Docker container:**
+```bash
+# SSH to NAS
+ssh adminmotionvii@192.168.1.20
+
+# Access the running app container
+sudo /usr/local/bin/docker exec -it saap2026-app /bin/sh
+
+# Generate SSH key
+ssh-keygen -t ed25519 -C "saap-nas-to-mac" -N "" -f ~/.ssh/id_ed25519
+
+# Display the public key
+cat ~/.ssh/id_ed25519.pub
+```
+
+2. **Add public key to Mac:**
+```bash
+# On Mac
+mkdir -p ~/.ssh && chmod 700 ~/.ssh
+echo "ssh-ed25519 AAAA... saap-nas-to-mac" >> ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+```
+
+3. **Test connection from NAS container:**
+```bash
+ssh -o StrictHostKeyChecking=no khairul@192.168.100.148 "echo hello"
+```
+
+### Environment Variables
+
+Add to docker-compose.yml on NAS:
+```yaml
+environment:
+  - MAC_SSH_HOST=192.168.100.148
+  - MAC_SSH_USER=khairul
+  - MAC_PROJECT_PATH=/Users/khairul/Documents/MyDev/Work/Motionvii/saap2026v2
+```
+
+### Troubleshooting
+
+- **Connection refused**: Enable Remote Login on Mac
+- **Permission denied**: Verify authorized_keys has correct permissions (600)
+- **Network unreachable**: Check routing between 192.168.1.x and 192.168.100.x subnets

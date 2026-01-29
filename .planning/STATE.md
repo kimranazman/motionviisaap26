@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-01-29)
 
 **Core value:** Team can visualize and track initiative progress across multiple views with full CRM, project management, AI-powered intelligence, cross-project task management, per-member workload dashboards, event management, customizable sidebar navigation with nested links and drag-and-drop reorder, internal project support with configurable field visibility, line item pricing history, intuitive navigation grouping, Projects/Tasks Kanban boards, unified Calendar view, services pricing history, and AI analysis triggered from UI.
-**Current focus:** v2.8 AI Analyze Button
+**Current focus:** Planning next milestone
 
 ## Current Position
 
-Phase: 83 of 83 (AiAnalyzeButton Component)
-Plan: Complete
-Status: Phase complete
-Last activity: 2026-01-29 — Phase 83 completed
+Phase: 83 of 83 (complete)
+Plan: N/A
+Status: v2.8 shipped, ready for next milestone
+Last activity: 2026-01-29 — v2.8 AI Analyze Button shipped
 
 Progress: [##########] 100% (83/83 phases)
 
@@ -40,6 +40,7 @@ Progress: [##########] 100% (83/83 phases)
 | v2.5 | Navigation Reorganization | 72-74 | 2026-01-28 |
 | v2.6 | Views & Calendar Enhancement | 75-78 | 2026-01-29 |
 | v2.7 | Services Pricing History | 79 | 2026-01-29 |
+| v2.8 | AI Analyze Button | 80-83 | 2026-01-29 |
 
 **Archives:** `.planning/milestones/`
 
@@ -47,7 +48,7 @@ Progress: [##########] 100% (83/83 phases)
 
 **Velocity:**
 - Total phases completed: 83
-- Total milestones shipped: 20
+- Total milestones shipped: 21
 - v2.8 phases: 4 (80-83)
 
 ## Accumulated Context
@@ -62,11 +63,14 @@ None.
 
 ### Blockers/Concerns
 
-- Phase 82 (AI Trigger API) requires Phase 80 SSH setup to be completed
-- SSH from NAS Docker container to Mac requires network access verification
+- Phase 80 SSH setup is manual — user must enable Remote Login on Mac and configure SSH keys
 
 ## Session Continuity
 
 Last session: 2026-01-29
-Stopped at: Phase 83 complete, v2.8 milestone ready to ship
+Stopped at: v2.8 milestone shipped
 Resume file: None
+
+## Next Steps
+
+Run `/gsd:new-milestone` to start the next milestone.

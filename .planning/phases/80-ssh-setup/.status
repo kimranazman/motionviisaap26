@@ -1,0 +1,20 @@
+COMPLETE
+
+Phase 80 completed with documentation. This is a manual infrastructure setup phase.
+
+**What was done:**
+- Detected Mac IP address: 192.168.100.148
+- Detected Mac username: khairul
+- Found Remote Login is currently DISABLED (needs manual enable)
+- Created comprehensive setup plan: 80-01-PLAN.md
+- Updated .env.example with MAC_SSH_* variables
+- Updated deployment.md with SSH setup instructions
+
+**Manual steps required by user:**
+1. Enable Remote Login on Mac (System Settings -> General -> Sharing)
+2. Generate SSH key on NAS Docker container
+3. Add public key to Mac's ~/.ssh/authorized_keys
+4. Test connection: ssh khairul@192.168.100.148 "echo hello"
+5. Add MAC_SSH_* env vars to NAS docker-compose.yml
+
+See .planning/phases/80-ssh-setup/80-01-PLAN.md for complete instructions.
