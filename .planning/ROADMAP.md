@@ -21,7 +21,7 @@
 - **v2.4 Settings, Sidebar & Bug Fixes** - Phases 68-71 (shipped 2026-01-28) - [archive](.planning/milestones/v2.4-ROADMAP.md)
 - **v2.5 Navigation Reorganization** - Phases 72-74 (shipped 2026-01-28) - [archive](.planning/milestones/v2.5-ROADMAP.md)
 - **v2.6 Views & Calendar Enhancement** - Phases 75-78 (shipped 2026-01-29) - [archive](.planning/milestones/v2.6-ROADMAP.md)
-- **v2.7 Services Pricing History** - Phase 79 (shipped 2026-01-29)
+- **v2.7 Services Pricing History** - Phase 79 (shipped 2026-01-29) - [archive](.planning/milestones/v2.7-ROADMAP.md)
 
 ## Phases
 
