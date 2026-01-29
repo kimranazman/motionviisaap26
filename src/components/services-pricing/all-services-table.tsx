@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/table'
 import { Search, X, Package, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
+import { DeliverableDetailSheet } from './deliverable-detail-sheet'
 
 interface ServiceDeliverable {
   id: string
@@ -48,13 +49,16 @@ export function AllServicesTable({
   initialServices,
   companies,
 }: AllServicesTableProps) {
+  const [services, setServices] = useState(initialServices)
   const [search, setSearch] = useState('')
   const [companyFilter, setCompanyFilter] = useState<string | null>(null)
   const [sortField, setSortField] = useState<SortField>('date')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
+  const [selectedDeliverable, setSelectedDeliverable] = useState<ServiceDeliverable | null>(null)
+  const [detailOpen, setDetailOpen] = useState(false)
 
   const filteredAndSorted = useMemo(() => {
-    let result = [...initialServices]
+    let result = [...services]
 
     // Search filter
     if (search) {
@@ -85,7 +89,7 @@ export function AllServicesTable({
     })
 
     return result
-  }, [initialServices, search, companyFilter, sortField, sortDirection])
+  }, [services, search, companyFilter, sortField, sortDirection])
 
   const hasFilters = search || companyFilter
 
@@ -107,6 +111,24 @@ export function AllServicesTable({
     ) : (
       <ArrowDown className="h-4 w-4 ml-1" />
     )
+  }
+
+  const handleRowClick = (service: ServiceDeliverable) => {
+    setSelectedDeliverable(service)
+    setDetailOpen(true)
+  }
+
+  const handleUpdate = async () => {
+    // Refresh data from API
+    try {
+      const res = await fetch('/api/services-pricing?view=all')
+      if (res.ok) {
+        const data = await res.json()
+        setServices(data.deliverables)
+      }
+    } catch (error) {
+      console.error('Failed to refresh services:', error)
+    }
   }
 
   return (
@@ -155,7 +177,7 @@ export function AllServicesTable({
 
       {/* Summary */}
       <div className="text-sm text-gray-500">
-        Showing {filteredAndSorted.length} of {initialServices.length} services
+        Showing {filteredAndSorted.length} of {services.length} services
       </div>
 
       {/* Table */}
@@ -196,7 +218,11 @@ export function AllServicesTable({
             </TableHeader>
             <TableBody>
               {filteredAndSorted.map((service) => (
-                <TableRow key={service.id}>
+                <TableRow
+                  key={service.id}
+                  onClick={() => handleRowClick(service)}
+                  className="cursor-pointer hover:bg-gray-50"
+                >
                   <TableCell>
                     <p className="font-medium text-gray-900 line-clamp-2">
                       {service.title}
@@ -261,6 +287,14 @@ export function AllServicesTable({
           </Table>
         </CardContent>
       </Card>
+
+      {/* Detail Sheet */}
+      <DeliverableDetailSheet
+        deliverable={selectedDeliverable}
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
+        onUpdate={handleUpdate}
+      />
     </div>
   )
 }

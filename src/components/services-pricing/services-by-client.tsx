@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   Select,
@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/table'
 import { Loader2, Building2 } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
+import { DeliverableDetailSheet } from './deliverable-detail-sheet'
 
 interface ServiceDeliverable {
   id: string
@@ -42,28 +43,31 @@ export function ServicesByClient({ companies }: ServicesByClientProps) {
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null)
   const [services, setServices] = useState<ServiceDeliverable[]>([])
   const [loading, setLoading] = useState(false)
+  const [selectedDeliverable, setSelectedDeliverable] = useState<ServiceDeliverable | null>(null)
+  const [detailOpen, setDetailOpen] = useState(false)
+
+  const fetchData = useCallback(async () => {
+    setLoading(true)
+    try {
+      const params = new URLSearchParams({ view: 'by-client' })
+      if (selectedCompany) {
+        params.set('companyId', selectedCompany)
+      }
+      const response = await fetch(`/api/services-pricing?${params}`)
+      if (response.ok) {
+        const data = await response.json()
+        setServices(data.deliverables)
+      }
+    } catch (error) {
+      console.error('Failed to fetch services by client:', error)
+    } finally {
+      setLoading(false)
+    }
+  }, [selectedCompany])
 
   useEffect(() => {
-    async function fetchData() {
-      setLoading(true)
-      try {
-        const params = new URLSearchParams({ view: 'by-client' })
-        if (selectedCompany) {
-          params.set('companyId', selectedCompany)
-        }
-        const response = await fetch(`/api/services-pricing?${params}`)
-        if (response.ok) {
-          const data = await response.json()
-          setServices(data.deliverables)
-        }
-      } catch (error) {
-        console.error('Failed to fetch services by client:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
     fetchData()
-  }, [selectedCompany])
+  }, [fetchData])
 
   const stats = useMemo(() => {
     if (services.length === 0) return null
@@ -73,6 +77,15 @@ export function ServicesByClient({ companies }: ServicesByClientProps) {
       totalRevenue,
     }
   }, [services])
+
+  const handleRowClick = (service: ServiceDeliverable) => {
+    setSelectedDeliverable(service)
+    setDetailOpen(true)
+  }
+
+  const handleUpdate = () => {
+    fetchData()
+  }
 
   return (
     <div className="space-y-4">
@@ -147,7 +160,11 @@ export function ServicesByClient({ companies }: ServicesByClientProps) {
               </TableHeader>
               <TableBody>
                 {services.map((service) => (
-                  <TableRow key={service.id}>
+                  <TableRow
+                    key={service.id}
+                    onClick={() => handleRowClick(service)}
+                    className="cursor-pointer hover:bg-gray-50"
+                  >
                     <TableCell>
                       <p className="font-medium text-gray-900 line-clamp-2">
                         {service.title}
@@ -221,6 +238,14 @@ export function ServicesByClient({ companies }: ServicesByClientProps) {
           </CardContent>
         </Card>
       )}
+
+      {/* Detail Sheet */}
+      <DeliverableDetailSheet
+        deliverable={selectedDeliverable}
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
+        onUpdate={handleUpdate}
+      />
     </div>
   )
 }

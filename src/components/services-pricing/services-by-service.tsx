@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   Select,
@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/table'
 import { Loader2, TrendingUp } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
+import { DeliverableDetailSheet } from './deliverable-detail-sheet'
 
 interface ServiceDeliverable {
   id: string
@@ -42,28 +43,31 @@ export function ServicesByService({ serviceTitles }: ServicesByServiceProps) {
   const [selectedService, setSelectedService] = useState<string | null>(null)
   const [services, setServices] = useState<ServiceDeliverable[]>([])
   const [loading, setLoading] = useState(false)
+  const [selectedDeliverable, setSelectedDeliverable] = useState<ServiceDeliverable | null>(null)
+  const [detailOpen, setDetailOpen] = useState(false)
+
+  const fetchData = useCallback(async () => {
+    setLoading(true)
+    try {
+      const params = new URLSearchParams({ view: 'by-service' })
+      if (selectedService) {
+        params.set('service', selectedService)
+      }
+      const response = await fetch(`/api/services-pricing?${params}`)
+      if (response.ok) {
+        const data = await response.json()
+        setServices(data.deliverables)
+      }
+    } catch (error) {
+      console.error('Failed to fetch services by service:', error)
+    } finally {
+      setLoading(false)
+    }
+  }, [selectedService])
 
   useEffect(() => {
-    async function fetchData() {
-      setLoading(true)
-      try {
-        const params = new URLSearchParams({ view: 'by-service' })
-        if (selectedService) {
-          params.set('service', selectedService)
-        }
-        const response = await fetch(`/api/services-pricing?${params}`)
-        if (response.ok) {
-          const data = await response.json()
-          setServices(data.deliverables)
-        }
-      } catch (error) {
-        console.error('Failed to fetch services by service:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
     fetchData()
-  }, [selectedService])
+  }, [fetchData])
 
   const stats = useMemo(() => {
     if (services.length === 0) return null
@@ -78,6 +82,15 @@ export function ServicesByService({ serviceTitles }: ServicesByServiceProps) {
       avg: values.reduce((sum, v) => sum + v, 0) / values.length,
     }
   }, [services])
+
+  const handleRowClick = (service: ServiceDeliverable) => {
+    setSelectedDeliverable(service)
+    setDetailOpen(true)
+  }
+
+  const handleUpdate = () => {
+    fetchData()
+  }
 
   return (
     <div className="space-y-4">
@@ -168,7 +181,11 @@ export function ServicesByService({ serviceTitles }: ServicesByServiceProps) {
               </TableHeader>
               <TableBody>
                 {services.map((service) => (
-                  <TableRow key={service.id}>
+                  <TableRow
+                    key={service.id}
+                    onClick={() => handleRowClick(service)}
+                    className="cursor-pointer hover:bg-gray-50"
+                  >
                     {!selectedService && (
                       <TableCell>
                         <span className="text-sm font-medium text-gray-900">
@@ -242,6 +259,14 @@ export function ServicesByService({ serviceTitles }: ServicesByServiceProps) {
           </CardContent>
         </Card>
       )}
+
+      {/* Detail Sheet */}
+      <DeliverableDetailSheet
+        deliverable={selectedDeliverable}
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
+        onUpdate={handleUpdate}
+      />
     </div>
   )
 }
