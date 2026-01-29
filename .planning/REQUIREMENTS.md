@@ -14,9 +14,9 @@ Requirements for v2.8 release. Each maps to roadmap phases.
 
 ### Pending API
 
-- [ ] **API-01**: GET /api/ai/pending returns costs count (costs with supplierId but no normalizedItem)
-- [ ] **API-02**: GET /api/ai/pending returns deliverables count (documents without aiExtracted deliverables)
-- [ ] **API-03**: Response includes structured object: { costs, invoices, receipts, deliverables, total }
+- [x] **API-01**: GET /api/ai/pending returns costs count (costs with supplierId but no normalizedItem)
+- [x] **API-02**: GET /api/ai/pending returns deliverables count (documents without aiExtracted deliverables)
+- [x] **API-03**: Response includes structured object: { costs, invoices, receipts, deliverables, total }
 
 ### Trigger API
 
@@ -73,9 +73,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | INFRA-01 | Phase 80 | Pending |
 | INFRA-02 | Phase 80 | Pending |
-| API-01 | Phase 81 | Pending |
-| API-02 | Phase 81 | Pending |
-| API-03 | Phase 81 | Pending |
+| API-01 | Phase 81 | Complete |
+| API-02 | Phase 81 | Complete |
+| API-03 | Phase 81 | Complete |
 | TRIG-01 | Phase 82 | Pending |
 | TRIG-02 | Phase 82 | Pending |
 | TRIG-03 | Phase 82 | Pending |
