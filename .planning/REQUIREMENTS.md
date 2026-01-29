@@ -28,20 +28,20 @@ Requirements for v2.8 release. Each maps to roadmap phases.
 
 ### UI Component
 
-- [ ] **UI-01**: Header button with Sparkles icon (admin-only visibility)
-- [ ] **UI-02**: Badge showing total pending count
-- [ ] **UI-03**: Dropdown menu with options: All, Costs, Invoices, Receipts, Deliverables
-- [ ] **UI-04**: Each dropdown item shows count for that type
-- [ ] **UI-05**: Toast feedback on trigger click ("Analyzing..." message)
-- [ ] **UI-06**: Error toast when SSH fails
+- [x] **UI-01**: Header button with Sparkles icon (admin-only visibility)
+- [x] **UI-02**: Badge showing total pending count
+- [x] **UI-03**: Dropdown menu with options: All, Costs, Invoices, Receipts, Deliverables
+- [x] **UI-04**: Each dropdown item shows count for that type
+- [x] **UI-05**: Toast feedback on trigger click ("Analyzing..." message)
+- [x] **UI-06**: Error toast when SSH fails
 
 ### Polling
 
-- [ ] **POLL-01**: After trigger, poll pending count every 15 seconds
-- [ ] **POLL-02**: Stop polling after 90 seconds max
-- [ ] **POLL-03**: If count decreased, show success toast with items analyzed
-- [ ] **POLL-04**: If timeout with no change, show "Still running on Mac" info toast
-- [ ] **POLL-05**: Badge refreshes during polling
+- [x] **POLL-01**: After trigger, poll pending count every 15 seconds
+- [x] **POLL-02**: Stop polling after 90 seconds max
+- [x] **POLL-03**: If count decreased, show success toast with items analyzed
+- [x] **POLL-04**: If timeout with no change, show "Still running on Mac" info toast
+- [x] **POLL-05**: Badge refreshes during polling
 
 ## v2 Requirements
 
@@ -81,17 +81,17 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TRIG-03 | Phase 82 | Pending |
 | TRIG-04 | Phase 82 | Pending |
 | TRIG-05 | Phase 82 | Pending |
-| UI-01 | Phase 83 | Pending |
-| UI-02 | Phase 83 | Pending |
-| UI-03 | Phase 83 | Pending |
-| UI-04 | Phase 83 | Pending |
-| UI-05 | Phase 83 | Pending |
-| UI-06 | Phase 83 | Pending |
-| POLL-01 | Phase 83 | Pending |
-| POLL-02 | Phase 83 | Pending |
-| POLL-03 | Phase 83 | Pending |
-| POLL-04 | Phase 83 | Pending |
-| POLL-05 | Phase 83 | Pending |
+| UI-01 | Phase 83 | Complete |
+| UI-02 | Phase 83 | Complete |
+| UI-03 | Phase 83 | Complete |
+| UI-04 | Phase 83 | Complete |
+| UI-05 | Phase 83 | Complete |
+| UI-06 | Phase 83 | Complete |
+| POLL-01 | Phase 83 | Complete |
+| POLL-02 | Phase 83 | Complete |
+| POLL-03 | Phase 83 | Complete |
+| POLL-04 | Phase 83 | Complete |
+| POLL-05 | Phase 83 | Complete |
 
 **Coverage:**
 - v1 requirements: 21 total
@@ -100,4 +100,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-29*
-*Last updated: 2026-01-29 after initial definition*
+*Last updated: 2026-01-29 after Phase 83 completion*
