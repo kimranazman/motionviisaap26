@@ -21,56 +21,23 @@
 - **v2.4 Settings, Sidebar & Bug Fixes** - Phases 68-71 (shipped 2026-01-28) - [archive](.planning/milestones/v2.4-ROADMAP.md)
 - **v2.5 Navigation Reorganization** - Phases 72-74 (shipped 2026-01-28) - [archive](.planning/milestones/v2.5-ROADMAP.md)
 - **v2.6 Views & Calendar Enhancement** - Phases 75-78 (shipped 2026-01-29) - [archive](.planning/milestones/v2.6-ROADMAP.md)
-- 🚧 **v2.7 Services Pricing History** - Phase 79 (in progress)
+- **v2.7 Services Pricing History** - Phase 79 (shipped 2026-01-29)
 
 ## Phases
 
 <details>
-<summary>v1.0 through v2.6 (Phases 1-78) - SHIPPED</summary>
+<summary>v1.0 through v2.7 (Phases 1-79) - SHIPPED</summary>
 
 See `.planning/milestones/` for archived phase details.
 
 </details>
 
-### 🚧 v2.7 Services Pricing History (In Progress)
-
-#### Phase 79: Services Pricing History Page
-
-**Goal:** Create a Services Pricing History page to track deliverable/service pricing across projects and clients — the revenue counterpart to existing supplier cost tracking (Pricing History).
-
-**Depends on:** None (new standalone page following existing pattern)
-
-**Success Criteria:**
-1. User can navigate to /services-pricing/ from Work nav group
-2. User can view all deliverables with value in "All Services" tab with search/filter
-3. User can view pricing grouped by service in "By Service" tab with min/max/avg stats
-4. User can view pricing grouped by client in "By Client" tab with total revenue stats
-5. User can export services pricing data to Excel (XLSX)
-6. User can click any row to open deliverable detail modal for editing
-
-**Requirements Covered:**
-- PAGE-01, PAGE-02, PAGE-03 (Page Structure)
-- ALL-01, ALL-02, ALL-03, ALL-04, ALL-05 (All Services Tab)
-- SVC-01, SVC-02, SVC-03, SVC-04 (By Service Tab)
-- CLT-01, CLT-02, CLT-03, CLT-04 (By Client Tab)
-- EXP-01, EXP-02, EXP-03 (Excel Export)
-- DTL-01, DTL-02 (Deliverable Detail)
-- NAV-01, NAV-02 (Navigation)
-
-**Plans:**
-- [ ] 79-01: API route and page foundation
-- [ ] 79-02: All Services tab with table
-- [ ] 79-03: By Service tab with stats
-- [ ] 79-04: By Client tab with stats
-- [ ] 79-05: Excel export
-- [ ] 79-06: Detail modal integration and nav link
-
 ## Progress
 
-Phase 79 of 79 | v2.7 in progress
+Phase 79 of 79 | v2.7 complete
 
-Progress: [#########░] 99% (78/79 phases complete)
+Progress: [##########] 100% (79/79 phases complete)
 
 ---
 *Roadmap created: 2026-01-29*
-*Last updated: 2026-01-29 after v2.7 milestone started*
+*Last updated: 2026-01-29 after v2.7 milestone completed*
