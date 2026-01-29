@@ -1435,6 +1435,7 @@ export function ProjectDetailSheet({
               onDocumentsChange={handleDocumentsRefresh}
               onReview={handleReviewDocument}
               onReviewDeliverable={handleReviewDeliverable}
+              onReanalyze={handleDocumentsRefresh}
             />
 
             {/* Error message */}

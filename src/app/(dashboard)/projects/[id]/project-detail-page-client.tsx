@@ -826,6 +826,7 @@ export function ProjectDetailPageClient({ project }: ProjectDetailPageClientProp
                 onDocumentsChange={handleDocumentsChange}
                 onReview={handleReviewDocument}
                 onReviewDeliverable={handleReviewDeliverables}
+                onReanalyze={handleDocumentsChange}
               />
             )}
           </CardContent>

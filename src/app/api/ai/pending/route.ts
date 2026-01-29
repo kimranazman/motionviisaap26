@@ -13,6 +13,7 @@ interface ProjectPendingSummary {
   company: string
   pendingInvoices: number
   pendingReceipts: number
+  pendingQuotations: number
   hasManifest: boolean
 }
 
@@ -21,6 +22,7 @@ interface PendingDocumentsResponse {
   costs: number
   invoices: number
   receipts: number
+  quotations: number
   deliverables: number
   total: number
   // Existing fields (backward compatibility)
@@ -36,7 +38,7 @@ export async function GET() {
 
   try {
     // Query all granular counts in parallel
-    const [costsCount, invoicesCount, receiptsCount, deliverablesCount] =
+    const [costsCount, invoicesCount, receiptsCount, quotationsCount, deliverablesCount] =
       await Promise.all([
         // Costs with supplier but no normalizedItem
         prisma.cost.count({
@@ -59,6 +61,13 @@ export async function GET() {
             aiStatus: 'PENDING',
           },
         }),
+        // Pending quotations
+        prisma.document.count({
+          where: {
+            category: 'QUOTATION',
+            aiStatus: 'PENDING',
+          },
+        }),
         // Projects with invoices but no aiExtracted deliverables
         prisma.project.count({
           where: {
@@ -77,14 +86,14 @@ export async function GET() {
       ])
 
     const total =
-      costsCount + invoicesCount + receiptsCount + deliverablesCount
+      costsCount + invoicesCount + receiptsCount + quotationsCount + deliverablesCount
 
-    // Query all pending documents (INVOICE and RECEIPT only)
+    // Query all pending documents (INVOICE, RECEIPT, and QUOTATION)
     const pendingDocuments = await prisma.document.findMany({
       where: {
         aiStatus: 'PENDING',
         category: {
-          in: ['INVOICE', 'RECEIPT'],
+          in: ['INVOICE', 'RECEIPT', 'QUOTATION'],
         },
       },
       select: {
@@ -112,6 +121,7 @@ export async function GET() {
         company: string
         pendingInvoices: number
         pendingReceipts: number
+        pendingQuotations: number
       }
     >()
 
@@ -126,6 +136,7 @@ export async function GET() {
           company: doc.project.company?.name || 'Internal',
           pendingInvoices: 0,
           pendingReceipts: 0,
+          pendingQuotations: 0,
         }
         projectMap.set(projectId, projectSummary)
       }
@@ -134,6 +145,8 @@ export async function GET() {
         projectSummary.pendingInvoices++
       } else if (doc.category === 'RECEIPT') {
         projectSummary.pendingReceipts++
+      } else if (doc.category === 'QUOTATION') {
+        projectSummary.pendingQuotations++
       }
     }
 
@@ -159,8 +172,9 @@ export async function GET() {
     projects.sort(
       (a, b) =>
         b.pendingInvoices +
-        b.pendingReceipts -
-        (a.pendingInvoices + a.pendingReceipts)
+        b.pendingReceipts +
+        b.pendingQuotations -
+        (a.pendingInvoices + a.pendingReceipts + a.pendingQuotations)
     )
 
     const totalPending = pendingDocuments.length
@@ -173,6 +187,7 @@ export async function GET() {
       costs: costsCount,
       invoices: invoicesCount,
       receipts: receiptsCount,
+      quotations: quotationsCount,
       deliverables: deliverablesCount,
       total,
       // Existing fields

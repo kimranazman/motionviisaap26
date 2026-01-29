@@ -27,6 +27,7 @@ interface PendingCounts {
   costs: number
   invoices: number
   receipts: number
+  quotations: number
   deliverables: number
   total: number
 }
@@ -54,6 +55,7 @@ export function AiAnalyzeButton() {
           costs: data.costs,
           invoices: data.invoices,
           receipts: data.receipts,
+          quotations: data.quotations,
           deliverables: data.deliverables,
           total: data.total,
         })
@@ -218,6 +220,12 @@ export function AiAnalyzeButton() {
           disabled={(counts?.receipts ?? 0) === 0 || isTriggering || isPolling}
         >
           Receipts ({counts?.receipts ?? 0})
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => openDialog('quotation')}
+          disabled={(counts?.quotations ?? 0) === 0 || isTriggering || isPolling}
+        >
+          Quotations ({counts?.quotations ?? 0})
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => openDialog('deliverables')}

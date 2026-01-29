@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/auth-utils'
 
 // Valid analysis types
-const VALID_TYPES = ['all', 'costs', 'invoice', 'receipt', 'deliverables'] as const
+const VALID_TYPES = ['all', 'costs', 'invoice', 'receipt', 'quotation', 'deliverables'] as const
 type AnalysisType = (typeof VALID_TYPES)[number]
 
 interface TriggerRequest {

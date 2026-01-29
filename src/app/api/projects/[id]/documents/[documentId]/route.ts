@@ -70,7 +70,7 @@ export async function PATCH(
     const body = await request.json()
 
     // Validate category
-    const validCategories = ['RECEIPT', 'INVOICE', 'OTHER']
+    const validCategories = ['RECEIPT', 'INVOICE', 'QUOTATION', 'OTHER']
     if (body.category && !validCategories.includes(body.category)) {
       return NextResponse.json(
         { error: 'Invalid category' },
@@ -94,7 +94,7 @@ export async function PATCH(
     const document = await prisma.document.update({
       where: { id: documentId },
       data: {
-        category: body.category as 'RECEIPT' | 'INVOICE' | 'OTHER',
+        category: body.category as 'RECEIPT' | 'INVOICE' | 'QUOTATION' | 'OTHER',
       },
       include: {
         uploadedBy: { select: { id: true, name: true } },

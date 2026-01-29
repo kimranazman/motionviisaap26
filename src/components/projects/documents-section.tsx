@@ -45,6 +45,7 @@ interface DocumentsSectionProps {
   onDocumentsChange: () => void
   onReview?: (doc: Document) => void
   onReviewDeliverable?: (doc: Document) => void
+  onReanalyze?: (doc: Document) => void
 }
 
 export function DocumentsSection({
@@ -54,6 +55,7 @@ export function DocumentsSection({
   onDocumentsChange,
   onReview,
   onReviewDeliverable,
+  onReanalyze,
 }: DocumentsSectionProps) {
   const [files, setFiles] = useState<FileWithProgress[]>([])
   const [defaultCategory, setDefaultCategory] = useState<DocumentCategory>('OTHER')
@@ -225,6 +227,7 @@ export function DocumentsSection({
               onDocumentChange={onDocumentsChange}
               onReview={onReview}
               onReviewDeliverable={onReviewDeliverable}
+              onReanalyze={onReanalyze}
             />
           )}
 

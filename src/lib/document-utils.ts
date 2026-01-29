@@ -3,6 +3,7 @@ export function getCategoryColor(category: string): string {
   const colors: Record<string, string> = {
     RECEIPT: 'bg-green-100 text-green-700 border-green-200',
     INVOICE: 'bg-blue-100 text-blue-700 border-blue-200',
+    QUOTATION: 'bg-purple-100 text-purple-700 border-purple-200',
     OTHER: 'bg-gray-100 text-gray-700 border-gray-200',
   }
   return colors[category] || colors.OTHER
@@ -26,6 +27,7 @@ export function isPreviewable(mimeType: string): boolean {
 export const DOCUMENT_CATEGORIES = [
   { value: 'RECEIPT', label: 'Receipt' },
   { value: 'INVOICE', label: 'Invoice' },
+  { value: 'QUOTATION', label: 'Quotation' },
   { value: 'OTHER', label: 'Other' },
 ] as const
 

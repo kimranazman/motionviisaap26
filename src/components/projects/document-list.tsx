@@ -24,12 +24,14 @@ interface DocumentListProps {
   onDocumentChange: () => void
   onReview?: (document: Document) => void
   onReviewDeliverable?: (document: Document) => void
+  onReanalyze?: (document: Document) => void
 }
 
 const CATEGORY_TABS = [
   { id: 'ALL', label: 'All' },
   { id: 'RECEIPT', label: 'Receipt' },
   { id: 'INVOICE', label: 'Invoice' },
+  { id: 'QUOTATION', label: 'Quotation' },
   { id: 'OTHER', label: 'Other' },
 ] as const
 
@@ -42,6 +44,7 @@ export function DocumentList({
   onDocumentChange,
   onReview,
   onReviewDeliverable,
+  onReanalyze,
 }: DocumentListProps) {
   const [selectedCategory, setSelectedCategory] = useState<FilterCategory>('ALL')
 
@@ -98,6 +101,7 @@ export function DocumentList({
               onDelete={onDocumentChange}
               onReview={onReview}
               onReviewDeliverable={onReviewDeliverable}
+              onReanalyze={onReanalyze}
             />
           ))}
         </div>

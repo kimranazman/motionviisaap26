@@ -21,7 +21,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
-import { FileText, ImageIcon, Download, Trash2, Eye, Sparkles, Package } from 'lucide-react'
+import { FileText, ImageIcon, Download, Trash2, Eye, Sparkles, Package, RefreshCw } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 import { formatFileSize, getCategoryColor, getAIStatusColor, formatAIStatus, isPreviewable, DOCUMENT_CATEGORIES, type DocumentCategory, type DocumentAIStatus } from '@/lib/document-utils'
 
@@ -45,6 +45,7 @@ interface DocumentCardProps {
   onDelete: () => void
   onReview?: (document: Document) => void
   onReviewDeliverable?: (document: Document) => void
+  onReanalyze?: (document: Document) => void
 }
 
 export function DocumentCard({
@@ -55,9 +56,11 @@ export function DocumentCard({
   onDelete,
   onReview,
   onReviewDeliverable,
+  onReanalyze,
 }: DocumentCardProps) {
   const [isDeleting, setIsDeleting] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
+  const [isReanalyzing, setIsReanalyzing] = useState(false)
   const isImage = isPreviewable(document.mimeType)
   const Icon = isImage ? ImageIcon : FileText
 
@@ -115,6 +118,29 @@ export function DocumentCard({
       window.open(`/api/files/${projectId}/${storageFilename}`, '_blank')
     }
   }
+
+  const handleReanalyze = async () => {
+    if (!onReanalyze) return
+    setIsReanalyzing(true)
+    try {
+      const response = await fetch(
+        `/api/projects/${projectId}/documents/${document.id}/reanalyze`,
+        { method: 'POST' }
+      )
+      if (response.ok) {
+        onReanalyze(document)
+      }
+    } catch (error) {
+      console.error('Failed to trigger reanalysis:', error)
+    } finally {
+      setIsReanalyzing(false)
+    }
+  }
+
+  // Check if document can be reanalyzed (analyzable category and not currently pending)
+  const canReanalyze = onReanalyze &&
+    ['INVOICE', 'RECEIPT', 'QUOTATION'].includes(document.category) &&
+    document.aiStatus !== 'PENDING'
 
   return (
     <div className="p-3 border rounded-lg bg-white hover:bg-gray-50 space-y-2">
@@ -182,6 +208,20 @@ export function DocumentCard({
             title="Import Deliverables"
           >
             <Package className="h-4 w-4" />
+          </Button>
+        )}
+
+        {/* Reanalyze - for analyzable documents that aren't pending */}
+        {canReanalyze && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-amber-600 hover:text-amber-700 hover:bg-amber-50"
+            onClick={handleReanalyze}
+            disabled={isReanalyzing}
+            title="Reanalyze document"
+          >
+            <RefreshCw className={`h-4 w-4 ${isReanalyzing ? 'animate-spin' : ''}`} />
           </Button>
         )}
 
