@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { Sparkles, Loader2 } from 'lucide-react'
+import { Sparkles, Loader2, MessageSquare } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -11,6 +11,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
 
 interface PendingCounts {
@@ -27,6 +37,9 @@ export function AiAnalyzeButton() {
   const [isLoading, setIsLoading] = useState(true)
   const [isTriggering, setIsTriggering] = useState(false)
   const [isPolling, setIsPolling] = useState(false)
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [pendingType, setPendingType] = useState<string>('all')
+  const [customInstruction, setCustomInstruction] = useState('')
   const initialCountRef = useRef<number>(0)
   const pollCountRef = useRef<number>(0)
   const pollIntervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -105,18 +118,32 @@ export function AiAnalyzeButton() {
     }, 15000)
   }, [counts?.total, fetchCounts, stopPolling])
 
+  // Open dialog for custom instruction
+  const openDialog = (type: string) => {
+    setPendingType(type)
+    setCustomInstruction('')
+    setDialogOpen(true)
+  }
+
   // Trigger analysis
-  const handleTrigger = async (type: string) => {
+  const handleTrigger = async (type: string, instruction?: string) => {
     if (isTriggering || isPolling) return
 
+    setDialogOpen(false)
     setIsTriggering(true)
-    toast.info('Analyzing...', { description: `Running ${type} analysis` })
+    const desc = instruction
+      ? `Running ${type} analysis with instructions`
+      : `Running ${type} analysis`
+    toast.info('Analyzing...', { description: desc })
 
     try {
       const res = await fetch('/api/ai/trigger', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type }),
+        body: JSON.stringify({
+          type,
+          customInstruction: instruction || undefined,
+        }),
       })
 
       if (res.status === 202) {
@@ -126,7 +153,7 @@ export function AiAnalyzeButton() {
       } else {
         const data = await res.json().catch(() => ({}))
         toast.error('Analysis failed', {
-          description: data.error || 'SSH connection failed',
+          description: data.error || 'Webhook connection failed',
         })
       }
     } catch {
@@ -142,6 +169,7 @@ export function AiAnalyzeButton() {
   const showBadge = !isLoading && total > 0
 
   return (
+    <>
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
@@ -162,41 +190,80 @@ export function AiAnalyzeButton() {
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
+      <DropdownMenuContent align="end" className="w-52">
         <DropdownMenuLabel>AI Analysis</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onClick={() => handleTrigger('all')}
+          onClick={() => openDialog('all')}
           disabled={total === 0 || isTriggering || isPolling}
         >
+          <MessageSquare className="mr-2 h-4 w-4" />
           Analyze All ({total})
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onClick={() => handleTrigger('costs')}
+          onClick={() => openDialog('costs')}
           disabled={(counts?.costs ?? 0) === 0 || isTriggering || isPolling}
         >
           Costs ({counts?.costs ?? 0})
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={() => handleTrigger('invoice')}
+          onClick={() => openDialog('invoice')}
           disabled={(counts?.invoices ?? 0) === 0 || isTriggering || isPolling}
         >
           Invoices ({counts?.invoices ?? 0})
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={() => handleTrigger('receipt')}
+          onClick={() => openDialog('receipt')}
           disabled={(counts?.receipts ?? 0) === 0 || isTriggering || isPolling}
         >
           Receipts ({counts?.receipts ?? 0})
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={() => handleTrigger('deliverables')}
+          onClick={() => openDialog('deliverables')}
           disabled={(counts?.deliverables ?? 0) === 0 || isTriggering || isPolling}
         >
           Deliverables ({counts?.deliverables ?? 0})
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+
+    {/* Custom Instruction Dialog */}
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>AI Analysis</DialogTitle>
+          <DialogDescription>
+            Run {pendingType} analysis. Add custom instructions if needed.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <div className="grid gap-2">
+            <Label htmlFor="instruction">Custom Instruction (optional)</Label>
+            <Input
+              id="instruction"
+              placeholder="e.g., Mark quotation as revenue"
+              value={customInstruction}
+              onChange={(e) => setCustomInstruction(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleTrigger(pendingType, customInstruction)
+                }
+              }}
+            />
+          </div>
+        </div>
+        <DialogFooter className="gap-2 sm:gap-0">
+          <Button variant="outline" onClick={() => setDialogOpen(false)}>
+            Cancel
+          </Button>
+          <Button onClick={() => handleTrigger(pendingType, customInstruction)}>
+            <Sparkles className="mr-2 h-4 w-4" />
+            Run Analysis
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+    </>
   )
 }

@@ -7,6 +7,7 @@ type AnalysisType = (typeof VALID_TYPES)[number]
 
 interface TriggerRequest {
   type?: AnalysisType
+  customInstruction?: string
 }
 
 // POST /api/ai/trigger - Trigger AI analysis on Mac via webhook
@@ -43,7 +44,10 @@ export async function POST(request: Request) {
 
     const webhookUrl = `http://${webhookHost}:${webhookPort}/trigger`
 
-    console.log(`[AI Trigger] Calling webhook: ${webhookUrl} with type=${type}`)
+    const customInstruction = body.customInstruction?.trim() || ''
+    console.log(
+      `[AI Trigger] Calling webhook: ${webhookUrl} with type=${type}${customInstruction ? `, instruction="${customInstruction}"` : ''}`
+    )
 
     // Call the webhook on Mac
     const response = await fetch(webhookUrl, {
@@ -52,7 +56,7 @@ export async function POST(request: Request) {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${webhookToken}`,
       },
-      body: JSON.stringify({ type }),
+      body: JSON.stringify({ type, customInstruction }),
     })
 
     if (!response.ok) {

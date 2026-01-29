@@ -53,22 +53,30 @@ const server = http.createServer((req, res) => {
   req.on('data', chunk => { body += chunk })
   req.on('end', () => {
     let type = 'all'
+    let customInstruction = ''
     try {
       const data = JSON.parse(body)
       if (data.type && ['all', 'costs', 'invoice', 'receipt', 'deliverables'].includes(data.type)) {
         type = data.type
       }
+      if (data.customInstruction && typeof data.customInstruction === 'string') {
+        customInstruction = data.customInstruction.trim()
+      }
     } catch (e) {
       // Use default
     }
 
-    const claudeArg = type === 'all' ? '/ai-analyze' : `/ai-analyze ${type}`
+    // Build the command - if custom instruction, append it
+    let claudeArg = type === 'all' ? '/ai-analyze' : `/ai-analyze ${type}`
+    if (customInstruction) {
+      claudeArg += ` -- ${customInstruction}`
+    }
     const logFile = `/tmp/saap-ai-analyze-${Date.now()}.log`
 
     console.log(`[${new Date().toISOString()}] Triggering: claude "${claudeArg}"`)
 
-    // Spawn Claude process
-    const claude = spawn(CLAUDE_PATH, [claudeArg], {
+    // Spawn Claude process with --dangerously-skip-permissions for automation
+    const claude = spawn(CLAUDE_PATH, ['--dangerously-skip-permissions', claudeArg], {
       cwd: PROJECT_PATH,
       detached: true,
       stdio: ['ignore', 'pipe', 'pipe'],
