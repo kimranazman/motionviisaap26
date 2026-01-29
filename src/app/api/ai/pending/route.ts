@@ -17,6 +17,13 @@ interface ProjectPendingSummary {
 }
 
 interface PendingDocumentsResponse {
+  // Granular counts for badge display
+  costs: number
+  invoices: number
+  receipts: number
+  deliverables: number
+  total: number
+  // Existing fields (backward compatibility)
   totalPending: number
   projects: ProjectPendingSummary[]
   claudeCommand: string
@@ -28,6 +35,50 @@ export async function GET() {
   if (error) return error
 
   try {
+    // Query all granular counts in parallel
+    const [costsCount, invoicesCount, receiptsCount, deliverablesCount] =
+      await Promise.all([
+        // Costs with supplier but no normalizedItem
+        prisma.cost.count({
+          where: {
+            supplierId: { not: null },
+            normalizedItem: null,
+          },
+        }),
+        // Pending invoices
+        prisma.document.count({
+          where: {
+            category: 'INVOICE',
+            aiStatus: 'PENDING',
+          },
+        }),
+        // Pending receipts
+        prisma.document.count({
+          where: {
+            category: 'RECEIPT',
+            aiStatus: 'PENDING',
+          },
+        }),
+        // Projects with invoices but no aiExtracted deliverables
+        prisma.project.count({
+          where: {
+            documents: {
+              some: {
+                category: 'INVOICE',
+              },
+            },
+            deliverables: {
+              none: {
+                aiExtracted: true,
+              },
+            },
+          },
+        }),
+      ])
+
+    const total =
+      costsCount + invoicesCount + receiptsCount + deliverablesCount
+
     // Query all pending documents (INVOICE and RECEIPT only)
     const pendingDocuments = await prisma.document.findMany({
       where: {
@@ -118,6 +169,13 @@ export async function GET() {
     const claudeCommand = `claude "Read .claude/prompts/bulk-analysis.md and process uploads/projects/"`
 
     const response: PendingDocumentsResponse = {
+      // Granular counts
+      costs: costsCount,
+      invoices: invoicesCount,
+      receipts: receiptsCount,
+      deliverables: deliverablesCount,
+      total,
+      // Existing fields
       totalPending,
       projects,
       claudeCommand,
