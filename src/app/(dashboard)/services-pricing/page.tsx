@@ -1,5 +1,8 @@
 import prisma from '@/lib/prisma'
 import { ServicesTabs } from '@/components/services-pricing/services-tabs'
+import { AllServicesTable } from '@/components/services-pricing/all-services-table'
+import { ServicesByService } from '@/components/services-pricing/services-by-service'
+import { ServicesByClient } from '@/components/services-pricing/services-by-client'
 
 export const dynamic = 'force-dynamic'
 
@@ -71,20 +74,13 @@ export default async function ServicesPricingPage() {
 
       <ServicesTabs
         allServicesContent={
-          <div className="text-sm text-gray-500">
-            All Services tab content - {serializedDeliverables.length} deliverables loaded
-          </div>
+          <AllServicesTable
+            initialServices={serializedDeliverables}
+            companies={companies}
+          />
         }
-        byServiceContent={
-          <div className="text-sm text-gray-500">
-            By Service tab content - {serviceTitles.length} services available
-          </div>
-        }
-        byClientContent={
-          <div className="text-sm text-gray-500">
-            By Client tab content - {companies.length} clients available
-          </div>
-        }
+        byServiceContent={<ServicesByService serviceTitles={serviceTitles} />}
+        byClientContent={<ServicesByClient companies={companies} />}
       />
     </div>
   )
