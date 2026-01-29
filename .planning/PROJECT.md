@@ -16,9 +16,18 @@ Team can visualize and track initiative progress across multiple views (Kanban, 
 
 **v2.6 delivered:** Members navigation moved under Work group. Projects Kanban board with drag-and-drop status columns (Draft, Active, Completed, Cancelled) and enhanced project cards showing status badges, client info, date ranges, task progress, and revenue/cost. Tasks Kanban view with project grouping option (collapsible project sections). Unified Calendar view showing task/project/initiative dates with day/week/month views and date markers (no spanning).
 
-## Next Milestone
+## Current Milestone: v2.7 Services Pricing History
 
-Planning next milestone. Run `/gsd:new-milestone` to start.
+**Goal:** Track deliverable/service pricing across projects and clients — the revenue counterpart to existing supplier cost tracking.
+
+**Target features:**
+- Services Pricing History page at /services-pricing/
+- Three-tab view: All Services, By Service, By Client
+- Statistics per view (min/max/avg/total pricing)
+- Search and filter functionality
+- Export to Excel
+- Click row to open deliverable detail modal for editing
+- Navigation link under Work group
 
 ## Requirements
 
@@ -262,9 +271,17 @@ Planning next milestone. Run `/gsd:new-milestone` to start.
 
 ### Active
 
-<!-- Next milestone - to be defined with /gsd:new-milestone -->
+<!-- v2.7 Services Pricing History -->
 
-(No active requirements - run `/gsd:new-milestone` to define next milestone)
+**v2.7 Services Pricing History:**
+- [ ] Services Pricing History page at /services-pricing/
+- [ ] All Services tab with main table showing all deliverables with value
+- [ ] By Service tab grouping by service title with min/max/avg stats
+- [ ] By Client tab grouping by company with total revenue stats
+- [ ] Search and filter functionality
+- [ ] Export to Excel (XLSX)
+- [ ] Click row to open deliverable detail modal
+- [ ] Navigation link under Work group in sidebar
 
 ### Out of Scope
 
@@ -432,4 +449,4 @@ Planning next milestone. Run `/gsd:new-milestone` to start.
 | Submit nullifies hidden field values | Prevents stale data from being saved when fields are hidden | ✓ Good |
 
 ---
-*Last updated: 2026-01-29 after v2.6 milestone shipped*
+*Last updated: 2026-01-29 after v2.7 milestone started*
